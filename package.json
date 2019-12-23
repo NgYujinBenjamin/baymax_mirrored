@@ -33,7 +33,8 @@
     "wait-on": "^3.3.0"
   },
   "scripts": {
-    "electron": "cross-env NODE_ENV=developement nodemon --exec \"\"electron electron.js\"\"",
+    "electron-nodemon": "cross-env NODE_ENV=development nodemon --exec \"\"electron electron.js\"\"",
+    "electron": "cross-env NODE_ENV=development electron electron.js",
     "react-start": "cross-env BROWSER=none react-scripts start",
     "react-build": "react-scripts build",
     "react-test": "react-scripts test",

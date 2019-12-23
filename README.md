@@ -11,4 +11,4 @@
 
 ## Take Note
 - this is a boilerplate that runs electron and create-react-app together
-- this setup has hot-reload meaning any changes made to the app, it will re-compiled and run the application automatically so don't have the exit the app and run again
+- this setup will re-compiled and run the application automatically if any changes are made
