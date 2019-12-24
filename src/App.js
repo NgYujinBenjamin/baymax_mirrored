@@ -1,11 +1,20 @@
 import React from 'react';
 import './App.css';
+import { Container } from '@material-ui/core';
+import Navbar from './components/layout/Navbar';
+import Baseline from './components/linearization/Baseline';
+import UploadState from './context/upload/UploadState';
 
 const App = () => {
   return (
-    <div className="App">
-      <h1>Hello from React app</h1>
-    </div>
+    <UploadState>
+      <div className='App'>
+        <Navbar />
+        <Container>
+          <Baseline />
+        </Container>
+      </div>
+    </UploadState>
   );
 }
 

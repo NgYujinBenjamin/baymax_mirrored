@@ -1,0 +1,2 @@
+export const SET_BASELINE = 'SET_BASELINE';
+export const SET_STATUS_BASELINE = 'SET_STATUS_BASELINE';
