@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useContext } from 'react'
-import { Paper, Typography, Button, Box, Collapse } from '@material-ui/core'
+import { Typography, Button, Box, Collapse, Card, CardContent, CardActions } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import Linearize from './Linearize';
 import UploadContext from '../../context/upload/uploadContext'
@@ -26,47 +26,46 @@ const Baseline = () => {
     if(uploadContext.hasBaseline) { return <Linearize /> }
     return (
         <Fragment>
-            <Paper className={classes.paper} >
-                <Typography variant='h6' component='span'>
-                    Import baseline excel file?  
-                </Typography>
-                <Box component='span' className={classes.box}>
-                    <Button 
-                        className={classes.button} 
-                        variant='contained' 
-                        color='default' 
-                        onClick={handleExpandBtn}
-                        aria-expanded={expanded}
-                    >
-                        Yes
-                    </Button>
-                    <Button 
-                        className={classes.button} 
-                        variant='contained' 
-                        color='default'
-                        onClick={handleSubmit}
-                    >
-                        No
-                    </Button>
-                </Box>
-                <Collapse in={expanded}>
-                    <Box className={classes.collapseBox}>
-                        <input type='file' onChange={handleFileChange} />
-                    </Box>
-                    <Button variant='contained' color='primary' onClick={handleSubmit}>Submit</Button>
-                </Collapse>
-            </Paper>
+            <Card>
+                <CardContent>
+                    <CardActions disableSpacing>
+                        <Typography component='span' variant='h6'>Import baseline excel file?</Typography>
+                        <Box component='span' className={classes.box}>
+                            <Button 
+                                className={classes.button} 
+                                variant='contained' 
+                                color='default' 
+                                onClick={handleExpandBtn}
+                                aria-expanded={expanded}
+                            >
+                                Yes
+                            </Button>
+                            <Button 
+                                className={classes.button} 
+                                variant='contained' 
+                                color='default'
+                                onClick={handleSubmit}
+                            >
+                                No
+                            </Button>
+                        </Box>
+                    </CardActions>
+                    <Collapse in={expanded}>
+                        <Box className={classes.collapseBox}>
+                            <input type='file' onChange={handleFileChange} />
+                        </Box>
+                        <Button fullWidth variant='contained' color='primary' onClick={handleSubmit}>Submit</Button>
+                    </Collapse>
+                </CardContent>
+            </Card>
         </Fragment>
     )
 }
 
 
 const useStyles = makeStyles(theme => ({
-    paper: {
-        padding: 16
-    },
     box: {
-        float: 'right'
+        marginLeft: 'auto'
     },
     button: {
         marginRight: 8
