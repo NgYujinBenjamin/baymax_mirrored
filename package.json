@@ -18,6 +18,8 @@
     }
   },
   "dependencies": {
+    "@material-ui/core": "^4.8.0",
+    "@material-ui/icons": "^4.5.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -30,7 +32,9 @@
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-scripts": "3.3.0",
-    "wait-on": "^3.3.0"
+    "typeface-roboto": "0.0.75",
+    "wait-on": "^3.3.0",
+    "xlsx": "^0.15.4"
   },
   "scripts": {
     "electron-nodemon": "cross-env NODE_ENV=development nodemon --exec \"\"electron electron.js\"\"",
