@@ -1,4 +1,4 @@
-import { SET_BASELINE, SET_STATUS_BASELINE, SET_LINEARIZE, SET_BAYS, UPDATE_LINEARIZE } from '../types';
+import { SET_BASELINE, SET_STATUS_BASELINE, SET_LINEARIZE, SET_BAYS } from '../types';
 
 export default (state, action) => {
     switch(action.type) {

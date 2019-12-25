@@ -31,9 +31,9 @@ const Preresult = () => {
     }
 
     const handleLinearize = (event) => {
-        console.log(linearize);
         event.preventDefault();
         uploadContext.updateLinearize(objs);
+        uploadContext.getResult(objs, uploadContext.bays);
     }
 
     const checkme = () => {
@@ -60,8 +60,14 @@ const Preresult = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <Button className={classes.marginTop} fullWidth color='primary' variant='contained' onClick={handleLinearize}>Begin Linearization</Button>
-            <Button onClick={checkme}>Check</Button>
+            <Button 
+                className={classes.marginTop} 
+                fullWidth color='primary' 
+                variant='contained' 
+                onClick={handleLinearize}
+            >
+                Begin Linearization
+            </Button>
         </Fragment>
     )
 }

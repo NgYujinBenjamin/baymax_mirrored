@@ -3,6 +3,7 @@ import UploadContext from './uploadContext';
 import UploadReducer from './uploadReducer';
 import { SET_BASELINE, SET_STATUS_BASELINE, SET_LINEARIZE, SET_BAYS } from '../types';
 import XLSX from 'xlsx';
+const { ipcRenderer } = window.require("electron")
 
 const UploadState = (props) => {
     const initialState = {
@@ -12,12 +13,18 @@ const UploadState = (props) => {
         histories: [],
         history: {},
         loading: false,
-        hasBaseline: false
+        hasBaseline: false,
+        postResult: []
     }
 
     const [state, dispatch] = useReducer(UploadReducer, initialState);
 
     //methods all over here
+    const getResult = (objs, bay) => {
+        const preResult = [{bay: bay}, ...objs];
+        ipcRenderer.send('getResult:send', JSON.stringify(preResult));
+    }
+
     const setBays = (num) => dispatch({ type: SET_BAYS, payload: num })
 
     const updateLinearize = (data) => dispatch({ type: SET_LINEARIZE, payload: data })
@@ -72,7 +79,8 @@ const UploadState = (props) => {
             setStatusBaseline,
             setLinearize,
             setBays,
-            updateLinearize
+            updateLinearize,
+            getResult
         }}>
         {props.children}
     </UploadContext.Provider>
