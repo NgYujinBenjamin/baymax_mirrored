@@ -1,2 +1,4 @@
 export const SET_BASELINE = 'SET_BASELINE';
 export const SET_STATUS_BASELINE = 'SET_STATUS_BASELINE';
+export const SET_LINEARIZE = 'SET_LINEARIZE';
+export const SET_BAYS = 'SET_BAYS';

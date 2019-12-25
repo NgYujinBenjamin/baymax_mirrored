@@ -6,7 +6,6 @@ import UploadContext from '../../context/upload/uploadContext'
 
 const Baseline = () => {
     const uploadContext = useContext(UploadContext);
-
     const classes = useStyles();
     const [expanded, setExpanded] = useState(false);
 
@@ -19,7 +18,6 @@ const Baseline = () => {
     }
 
     const handleSubmit = (event) => {
-        console.log(uploadContext.baseline);
         uploadContext.setStatusBaseline();
     }
 
@@ -71,7 +69,7 @@ const useStyles = makeStyles(theme => ({
         marginRight: 8
     },
     collapseBox: {
-        marginBottom: 12,
+        marginBottom: 16,
         marginTop: 8
     }
 }));
