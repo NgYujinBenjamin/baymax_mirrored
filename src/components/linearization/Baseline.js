@@ -18,8 +18,7 @@ const Baseline = () => {
     }
 
     const handleSubmit = (event) => {
-        // uploadContext.setStatusBaseline();
-        console.log(uploadContext.baseline)
+        uploadContext.setStatusBaseline();
     }
 
     if(uploadContext.hasBaseline) { return <Linearize /> }

@@ -48,6 +48,7 @@ const Linearize = () => {
                             <InputLabel className={classes.marginBottom} htmlFor='file'>Import excel file:</InputLabel>
                             <input name='bayFile' className={classes.marginBottom} type='file' onChange={handleFileChange} accept=".xlsx, .xlsm" />
                             <Button color='primary' variant='contained' fullWidth onClick={handleConfirm}>Confirm</Button>
+                            {(uploadContext.linearize.length > 0 && uploadContext.bays !== '') && <Button fullWidth color='default' variant='contained' className={classes.marginTop} onClick={uploadContext.clearPreresult}>Clear</Button>}
                         </Box>
                         <Box>
                             {(uploadContext.linearize.length > 0 && uploadContext.bays !== '') && <Preresult />}
@@ -65,6 +66,9 @@ const useStyles = makeStyles(theme => ({
     },
     marginBottom: {
         marginBottom: 12
+    },
+    marginTop: {
+        marginTop: 8
     }
 }));
 
