@@ -18,7 +18,8 @@ const Baseline = () => {
     }
 
     const handleSubmit = (event) => {
-        uploadContext.setStatusBaseline();
+        // uploadContext.setStatusBaseline();
+        console.log(uploadContext.baseline)
     }
 
     if(uploadContext.hasBaseline) { return <Linearize /> }
@@ -50,7 +51,7 @@ const Baseline = () => {
                     </CardActions>
                     <Collapse in={expanded}>
                         <Box className={classes.collapseBox}>
-                            <input type='file' onChange={handleFileChange} />
+                            <input type='file' onChange={handleFileChange} accept=".xlsx, .xlsm" />
                         </Box>
                         <Button fullWidth variant='contained' color='primary' onClick={handleSubmit}>Submit</Button>
                     </Collapse>

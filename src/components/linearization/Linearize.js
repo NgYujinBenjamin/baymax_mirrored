@@ -46,7 +46,7 @@ const Linearize = () => {
                         </Box>
                         <Box className={classes.box}>
                             <InputLabel className={classes.marginBottom} htmlFor='file'>Import excel file:</InputLabel>
-                            <input name='bayFile' className={classes.marginBottom} type='file' onChange={handleFileChange} />
+                            <input name='bayFile' className={classes.marginBottom} type='file' onChange={handleFileChange} accept=".xlsx, .xlsm" />
                             <Button color='primary' variant='contained' fullWidth onClick={handleConfirm}>Confirm</Button>
                         </Box>
                         <Box>
