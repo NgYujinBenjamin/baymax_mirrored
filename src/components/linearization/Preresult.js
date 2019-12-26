@@ -7,7 +7,7 @@ import UploadContext from '../../context/upload/uploadContext'
 const Preresult = ({ fileName }) => {
     const uploadContext = useContext(UploadContext);
     const classes = useStyles();
-    const { loading, linearize } = uploadContext;
+    const { linearize } = uploadContext;
 
     const [objs, setObjects] = useState(linearize);
 

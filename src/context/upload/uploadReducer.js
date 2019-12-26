@@ -1,7 +1,12 @@
-import { SET_BASELINE, SET_STATUS_BASELINE, SET_LINEARIZE, SET_BAYS, CLEAR_PRERESULT } from '../types';
+import { SET_BASELINE, SET_STATUS_BASELINE, SET_LINEARIZE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING } from '../types';
 
 export default (state, action) => {
     switch(action.type) {
+        case SET_LOADING:
+            return {
+                ...state,
+                loading: true
+            }
         case CLEAR_PRERESULT:
             return {
                 ...state,
