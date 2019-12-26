@@ -3,14 +3,17 @@ import { Button, Box, Card, CardContent, Input, InputLabel } from '@material-ui/
 import { makeStyles } from '@material-ui/core/styles'
 import Preresult from './Preresult'
 import UploadContext from '../../context/upload/uploadContext'
+import AlertContext from '../../context/alert/alertContext'
 
 const Linearize = () => {
     const uploadContext = useContext(UploadContext);
+    const alertContext = useContext(AlertContext);
     const classes = useStyles();
 
     const [userInput, setUserInput] = useState({
         bayComponent: '',
-        bayFile: {}
+        bayFile: null,
+        fileName: ''
     })
 
     const handleChange = (event) => {
@@ -22,17 +25,22 @@ const Linearize = () => {
     };
 
     const handleFileChange = (event) => {
-        // console.log(event.target.files[0])
+        // console.log(event.target.files[0].name)
         setUserInput({
             ...userInput,
-            [event.target.name]: event.target.files[0]
+            [event.target.name]: event.target.files[0],
+            fileName: event.target.files[0].name
         });
     }
     
     const handleConfirm = (event) => {
         event.preventDefault();
-        uploadContext.setLinearize(userInput.bayFile);
-        uploadContext.setBays(userInput.bayComponent);
+        if(userInput.bayComponent === '' || userInput.bayFile === null){
+            alertContext.setAlert('Please enter the number of available bays and upload an excel file');
+        } else {
+            uploadContext.setLinearize(userInput.bayFile);
+            uploadContext.setBays(userInput.bayComponent);
+        }
     }
 
     return (
@@ -51,7 +59,7 @@ const Linearize = () => {
                             {(uploadContext.linearize.length > 0 && uploadContext.bays !== '') && <Button fullWidth color='default' variant='contained' className={classes.marginTop} onClick={uploadContext.clearPreresult}>Clear</Button>}
                         </Box>
                         <Box>
-                            {(uploadContext.linearize.length > 0 && uploadContext.bays !== '') && <Preresult />}
+                            {(uploadContext.linearize.length > 0 && uploadContext.bays !== '') && <Preresult fileName={userInput.fileName} />}
                         </Box>
                     </form>
                 </CardContent>

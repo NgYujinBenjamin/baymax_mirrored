@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import PreresultItem from './PreresultItem'
 import UploadContext from '../../context/upload/uploadContext'
 
-const Preresult = () => {
+const Preresult = ({ fileName }) => {
     const uploadContext = useContext(UploadContext);
     const classes = useStyles();
     const { loading, linearize } = uploadContext;
@@ -35,16 +35,19 @@ const Preresult = () => {
         uploadContext.updateLinearize(objs);
         uploadContext.getResult(objs, uploadContext.bays);
     }
-
-    const checkme = () => {
-        console.log(linearize);
-    }
     
     return (
         <Fragment>
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
+                        <TableRow>
+                            <TableCell>{fileName}</TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
+                        </TableRow>
                         <TableRow>
                             <TableCell>Argo ID</TableCell>
                             <TableCell>UTID</TableCell>
