@@ -5,7 +5,8 @@ import { Container } from '@material-ui/core';
 
 import Navbar from './components/layout/Navbar';
 import Alert from './components/layout/Alert';
-import Home from './components/pages/Home';
+import Linearize from './components/linearization/Linearize';
+import Baseline from './components/linearization/Baseline';
 
 import UploadState from './context/upload/UploadState';
 import AlertState from './context/alert/AlertState';
@@ -20,7 +21,8 @@ const App = () => {
             <Container>
               <Alert />
                 <Switch>
-                  <Route exact path='/' component={Home} />
+                  <Route exact path='/' component={Baseline} />
+                  <Route exact path='/linearize' component={Linearize} />
                 </Switch>
             </Container>
         </Fragment>

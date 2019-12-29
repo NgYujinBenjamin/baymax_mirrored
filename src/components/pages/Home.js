@@ -1,10 +1,10 @@
 import React, { Fragment } from 'react'
 import Baseline from '../linearization/Baseline';
 
-const Home = () => {
+const Home = (props) => {
     return (
         <Fragment>
-            <Baseline />
+            <Baseline history={props.history} />
         </Fragment>
     )
 }

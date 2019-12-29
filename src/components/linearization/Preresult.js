@@ -7,7 +7,8 @@ import UploadContext from '../../context/upload/uploadContext'
 const Preresult = ({ fileName }) => {
     const uploadContext = useContext(UploadContext);
     const classes = useStyles();
-    const { linearize } = uploadContext;
+
+    const { linearize, updateLinearize, getResult, bays } = uploadContext;
 
     const [objs, setObjects] = useState(linearize);
 
@@ -32,8 +33,8 @@ const Preresult = ({ fileName }) => {
 
     const handleLinearize = (event) => {
         event.preventDefault();
-        uploadContext.updateLinearize(objs);
-        uploadContext.getResult(objs, uploadContext.bays);
+        updateLinearize(objs);
+        getResult(objs, bays);
     }
     
     return (

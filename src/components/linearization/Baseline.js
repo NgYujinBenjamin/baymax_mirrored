@@ -1,27 +1,34 @@
 import React, { Fragment, useState, useContext } from 'react'
 import { Typography, Button, Box, Collapse, Card, CardContent, CardActions } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import Linearize from './Linearize';
 import UploadContext from '../../context/upload/uploadContext'
 
-const Baseline = () => {
+const Baseline = (props) => {
     const uploadContext = useContext(UploadContext);
     const classes = useStyles();
+
+    const { setBaseline, baseline } = uploadContext;
+
     const [expanded, setExpanded] = useState(false);
+    const [file, setFile] = useState(null);
 
     const handleExpandBtn = (event) => {
         setExpanded(!expanded);
     }
 
     const handleFileChange = (event) => {
-        uploadContext.setBaseline(event.target.files[0]);
+        setFile(event.target.files[0]);
     }
 
     const handleSubmit = (event) => {
-        uploadContext.setStatusBaseline();
+        props.history.push('/linearize');
     }
 
-    if(uploadContext.hasBaseline) { return <Linearize /> }
+    const handleCollapseSubmit = (event) => {
+        setBaseline(file);
+        props.history.push('/linearize');
+    }
+
     return (
         <Fragment>
             <Card>
@@ -52,7 +59,7 @@ const Baseline = () => {
                         <Box className={classes.collapseBox}>
                             <input type='file' onChange={handleFileChange} accept=".xlsx, .xlsm" />
                         </Box>
-                        <Button fullWidth variant='contained' color='primary' onClick={handleSubmit}>Submit</Button>
+                        <Button fullWidth variant='contained' color='primary' onClick={handleCollapseSubmit}>Submit</Button>
                     </Collapse>
                 </CardContent>
             </Card>

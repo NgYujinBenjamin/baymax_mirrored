@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useContext } from 'react'
+import React, { Fragment, useState, useContext, useEffect } from 'react'
 import { Button, Box, Card, CardContent, Input, InputLabel } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import Preresult from './Preresult'
@@ -9,6 +9,8 @@ const Linearize = () => {
     const uploadContext = useContext(UploadContext);
     const alertContext = useContext(AlertContext);
     const classes = useStyles();
+
+    const { setLinearize, setBays, clearPreresult, linearize, bays } = uploadContext;
 
     const [userInput, setUserInput] = useState({
         bayComponent: '',
@@ -25,7 +27,6 @@ const Linearize = () => {
     };
 
     const handleFileChange = (event) => {
-        // console.log(event.target.files[0].name)
         setUserInput({
             ...userInput,
             [event.target.name]: event.target.files[0],
@@ -35,33 +36,44 @@ const Linearize = () => {
     
     const handleConfirm = (event) => {
         event.preventDefault();
-        if(userInput.bayComponent === '' || userInput.bayFile === null){
+        const regx = /^[0-9]+$/;
+        
+        if(!regx.test(userInput.bayComponent)){
+            alertContext.setAlert('Please enter a number in the available bay field');
+        } else if(userInput.bayComponent === '' || userInput.bayFile === null) {
             alertContext.setAlert('Please enter the number of available bays and upload an excel file');
         } else {
-            uploadContext.setLinearize(userInput.bayFile);
-            uploadContext.setBays(userInput.bayComponent);
+            setLinearize(userInput.bayFile);
+            setBays(userInput.bayComponent);
         }
+    }
+
+    const handleClearPreresult = () => {
+        clearPreresult();
+        setUserInput({
+            bayComponent: '',
+            bayFile: null,
+            fileName: ''
+        })
     }
 
     return (
         <Fragment>
             <Card>
                 <CardContent>
-                    <form>
-                        <Box className={classes.box}>
-                            <InputLabel htmlFor='bays'>No of Available Bays:</InputLabel>
-                            <Input fullWidth type='text' id='bays' name='bayComponent' value={userInput.bayComponent} onChange={handleChange} required />
-                        </Box>
-                        <Box className={classes.box}>
-                            <InputLabel className={classes.marginBottom} htmlFor='file'>Import excel file:</InputLabel>
-                            <input name='bayFile' className={classes.marginBottom} type='file' onChange={handleFileChange} accept=".xlsx, .xlsm" />
-                            <Button color='primary' variant='contained' fullWidth onClick={handleConfirm}>Confirm</Button>
-                            {(uploadContext.linearize.length > 0 && uploadContext.bays !== '') && <Button fullWidth color='default' variant='contained' className={classes.marginTop} onClick={uploadContext.clearPreresult}>Clear</Button>}
-                        </Box>
-                        <Box>
-                            {(uploadContext.linearize.length > 0 && uploadContext.bays !== '') && <Preresult fileName={userInput.fileName} />}
-                        </Box>
-                    </form>
+                    <Box className={classes.box}>
+                        <InputLabel htmlFor='bays'>No of Available Bays:</InputLabel>
+                        <Input fullWidth type='text' id='bays' name='bayComponent' value={userInput.bayComponent} onChange={handleChange} required />
+                    </Box>
+                    <Box className={classes.box}>
+                        <InputLabel className={classes.marginBottom} htmlFor='file'>Import excel file:</InputLabel>
+                        <input name='bayFile' className={classes.marginBottom} type='file' onChange={handleFileChange} accept=".xlsx, .xlsm" />
+                        <Button color='primary' variant='contained' fullWidth onClick={handleConfirm}>Confirm</Button>
+                        {(linearize.length > 0 && bays !== '') && <Button fullWidth color='default' variant='contained' className={classes.marginTop} onClick={handleClearPreresult}>Clear</Button>}
+                    </Box>
+                    <Box>
+                        {(linearize.length > 0 && bays !== '') && <Preresult fileName={userInput.fileName} />}
+                    </Box>
                 </CardContent>
             </Card>
         </Fragment>

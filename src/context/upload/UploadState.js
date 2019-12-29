@@ -1,13 +1,13 @@
 import React, { useReducer } from 'react';
 import UploadContext from './uploadContext';
 import UploadReducer from './uploadReducer';
-import { SET_BASELINE, SET_STATUS_BASELINE, SET_LINEARIZE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING } from '../types';
+import { SET_BASELINE, SET_STATUS_BASELINE, SET_LINEARIZE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_LINEARIZE } from '../types';
 import XLSX from 'xlsx';
 const { ipcRenderer } = window.require("electron")
 
 const UploadState = (props) => {
     const initialState = {
-        baseline: [],
+        baseline: null,
         linearize: [],
         bays: '',
         histories: [],
@@ -29,7 +29,7 @@ const UploadState = (props) => {
 
     const setBays = (num) => dispatch({ type: SET_BAYS, payload: num })
 
-    const updateLinearize = (data) => dispatch({ type: SET_LINEARIZE, payload: data })
+    const updateLinearize = (data) => dispatch({ type: UPDATE_LINEARIZE, payload: data })
 
     const setLinearize = (file) => {
         let reader = new FileReader();

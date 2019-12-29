@@ -19,4 +19,8 @@ app.on('ready', () => {
 ipcMain.on('getResult:send', (event, preResult) => {
     //[{bay:noofbay},{},{},{},....]
     let res = JSON.parse(preResult);
+    console.log(res[0]);
+    console.log(res[1]);
+    console.log(res[2]);
+    console.log(res[3]);
 });

@@ -6,17 +6,17 @@ import AlertContext from '../../context/alert/alertContext';
 const Alert = () => {
     const alertContext = useContext(AlertContext);
 
-    const { alert } = alertContext;
-
     return (
-        alert !== null && (
-            <Card variant='outlined' style={{marginBottom: 12, backgroundColor: '#f4f4f8'}}>
-                <CardActions disableSpacing style={{padding: 16}}>
-                    <CancelRoundedIcon color='error' style={{marginRight:8}} />
-                    <Typography component='span' variant='body2' color='error'>{alert}</Typography>
-                </CardActions>
-            </Card>
-        )
+        alertContext.alert.length > 0 && alertContext.alert.map(al => (
+            <div key={al.id}>
+                <Card variant='outlined' style={{marginBottom: 12, backgroundColor: 'red'}}>
+                    <CardActions disableSpacing style={{padding: 16}}>
+                        <CancelRoundedIcon style={{marginRight:8, color:'white'}} />
+                        <Typography component='span' variant='body2' style={{color:'white'}}>{al.msg}</Typography>
+                    </CardActions>
+                </Card>
+            </div>
+        ))
     )
 }
 
