@@ -26,7 +26,6 @@ app.on('ready', () => {
 
 ipcMain.on('loadUser:send', (event, data) => {
     const { id } = JSON.parse(data);
-    // console.log(id);
     if(id === user1.id){
         mainWindow.webContents.send('loadUser:received', JSON.stringify(user1));
     }
@@ -36,7 +35,7 @@ ipcMain.on('login:send', (event, formData) => {
     const { username, password } = JSON.parse(formData);
     console.log(username, password)
     
-    if(username !== user1.username || password !== user1.password) {
+    if((username !== user1.username && password !== user1.password) || username !== user1.username || password !== user1.password) {
         mainWindow.webContents.send('login:received', JSON.stringify({
             type: 'ERROR',
             data: {

@@ -1,7 +1,7 @@
 import React, { useReducer } from 'react';
 import AuthContext from './authContext';
 import AuthReducer from './authReducer';
-import { LOGIN_SUCCESS, LOGIN_FAIL, AUTH_ERROR, LOGOUT, USER_LOADED, CLEAR_ERRORS, SET_AUTH_LOADING } from '../types';
+import { LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, USER_LOADED, CLEAR_ERRORS, SET_AUTH_LOADING } from '../types';
 const { ipcRenderer } = window.require("electron");
 
 const AuthState = (props) => {
@@ -36,7 +36,7 @@ const AuthState = (props) => {
         setAuthLoading(); 
 
         ipcRenderer.send('login:send', JSON.stringify(formData));
-        ipcRenderer.on('login:received', (event, res) => {
+        ipcRenderer.once('login:received', (event, res) => {
             const response = JSON.parse(res);
             
             if(response.type === 'ERROR'){
@@ -58,7 +58,7 @@ const AuthState = (props) => {
     const logout = () => dispatch({ type: LOGOUT })
 
     //clear errors
-    const clearErrors = () => console.log();
+    const clearErrors = () => dispatch({ type: CLEAR_ERRORS })
 
     //set loading
     const setAuthLoading = () => dispatch ({ type: SET_AUTH_LOADING })

@@ -11,13 +11,19 @@ const Login = (props) => {
     const authContext = useContext(AuthContext);
 
     const { setAlert } = alertContext;
-    const { login, isAuthenticated } = authContext;
+    const { login, isAuthenticated, clearErrors, error } = authContext;
 
     useEffect(() => {
         if(isAuthenticated){
             props.history.push('/')
         }
-    }, [isAuthenticated, props.history])
+
+        if(error === 'Invalid credentials'){
+            setAlert(error);
+            clearErrors();
+        }
+        //eslint-disable-next-line
+    }, [isAuthenticated, props.history, error])
 
     const [user, setUser] = useState({
        username: '',
@@ -44,10 +50,6 @@ const Login = (props) => {
             })
         }
     }
-
-    // const check = (event) => {
-    //     console.log(stateDummy)
-    // }
 
     return (
         <Container maxWidth='xs'>

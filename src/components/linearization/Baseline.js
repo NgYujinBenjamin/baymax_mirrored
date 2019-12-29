@@ -9,7 +9,7 @@ const Baseline = (props) => {
     const authContext = useContext(AuthContext);
     const classes = useStyles();
 
-    const { setBaseline, baseline } = uploadContext;
+    const { setBaseline } = uploadContext;
 
     useEffect(() => {
         authContext.loadUser();

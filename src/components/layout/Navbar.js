@@ -1,6 +1,7 @@
 import React, { Fragment, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { AppBar, Typography, Button, Toolbar } from '@material-ui/core'
+import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
 import AuthContext from '../../context/auth/authContext'
 
 const Navbar = () => {
@@ -15,9 +16,10 @@ const Navbar = () => {
     const authLinks = (
         <Fragment>
             <Typography variant="h6" color="inherit" style={styles.title}>Baymax</Typography>
-            <Button disabled style={{color:'white'}}>Hello { user && user.username }</Button>
+            <Button disabled style={{color:'white'}}>Hello, { user && user.username }</Button>
             <Button style={{color:'white'}} onClick={handleLogout}>
                 Logout
+                <ExitToAppRoundedIcon style={{marginLeft:3}}/>
             </Button>
         </Fragment>
     )
