@@ -7,6 +7,7 @@ import Navbar from './components/layout/Navbar';
 import Alert from './components/layout/Alert';
 import Linearize from './components/linearization/Linearize';
 import Baseline from './components/linearization/Baseline';
+import Login from './components/auth/Login'
 
 import UploadState from './context/upload/UploadState';
 import AlertState from './context/alert/AlertState';
@@ -21,8 +22,9 @@ const App = () => {
             <Container>
               <Alert />
                 <Switch>
-                  <Route exact path='/' component={Baseline} />
+                  <Route exact path='/base' component={Baseline} />
                   <Route exact path='/linearize' component={Linearize} />
+                  <Route exact path='/' component={Login} />
                 </Switch>
             </Container>
         </Fragment>
