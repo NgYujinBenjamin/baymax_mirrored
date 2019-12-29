@@ -1,5 +1,6 @@
 # Baymax Application
 - Final Year Project Application
+- Login Page => Username: admin, Password: password
 
 ## Setup
 1. git clone url-at-github
