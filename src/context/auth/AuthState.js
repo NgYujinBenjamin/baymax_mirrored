@@ -1,15 +1,16 @@
 import React, { useReducer } from 'react';
 import AuthContext from './authContext';
 import AuthReducer from './authReducer';
-import { LOGIN_SUCCESS, LOGIN_FAIL, AUTH_ERROR, LOGOUT, USER_LOADED, CLEAR_ERRORS } from '../types';
+import { LOGIN_SUCCESS, LOGIN_FAIL, AUTH_ERROR, LOGOUT, USER_LOADED, CLEAR_ERRORS, SET_AUTH_LOADING } from '../types';
+const { ipcRenderer } = window.require("electron");
 
 const AuthState = (props) => {
     const initialState = {
         token: localStorage.getItem('token'),
-        isAuthenticated: null,
+        isAuthenticated: false,
         user: null,
         error: null,
-        loading: true
+        loading: false
     };
 
     const [state, dispatch] = useReducer(AuthReducer, initialState);
@@ -17,16 +18,50 @@ const AuthState = (props) => {
     //all methods here
     
     //load user
-    const loadUser = () => console.log();
+    const loadUser = () => {
+        setAuthLoading(); 
+
+        ipcRenderer.send('loadUser:send', JSON.stringify({ id: state.id }));
+        ipcRenderer.on('loadUser:received', (event, res) => {
+            const response = JSON.parse(res);
+            dispatch({
+                type: USER_LOADED,
+                payload: response
+            })
+        })
+    }
 
     //login user
-    const login = () => console.log();
+    const login = (formData) => {
+        setAuthLoading(); 
+
+        ipcRenderer.send('login:send', JSON.stringify(formData));
+        ipcRenderer.on('login:received', (event, res) => {
+            const response = JSON.parse(res);
+            
+            if(response.type === 'ERROR'){
+                dispatch({
+                    type: LOGIN_FAIL,
+                    payload: response.data.msg
+                })
+            } else if(response.type === 'SUCCESS') {
+                dispatch({
+                    type: LOGIN_SUCCESS,
+                    payload: response.data
+                })
+                loadUser();
+            }
+        })
+    } 
 
     //logout user
-    const logout = () => console.log();
+    const logout = () => dispatch({ type: LOGOUT })
 
     //clear errors
     const clearErrors = () => console.log();
+
+    //set loading
+    const setAuthLoading = () => dispatch ({ type: SET_AUTH_LOADING })
 
     return <AuthContext.Provider
         value={{

@@ -1,13 +1,41 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useContext } from 'react'
+import { Link } from 'react-router-dom'
 import { AppBar, Typography, Button, Toolbar } from '@material-ui/core'
+import AuthContext from '../../context/auth/authContext'
 
 const Navbar = () => {
+    const authContext = useContext(AuthContext);
+
+    const { isAuthenticated, logout, user } = authContext;
+
+    const handleLogout = () => {
+        logout();
+    }
+
+    const authLinks = (
+        <Fragment>
+            <Typography variant="h6" color="inherit" style={styles.title}>Baymax</Typography>
+            <Button disabled style={{color:'white'}}>Hello { user && user.username }</Button>
+            <Button style={{color:'white'}} onClick={handleLogout}>
+                Logout
+            </Button>
+        </Fragment>
+    )
+
+    const guestLinks = (
+        <Fragment>
+            <Typography variant="h6" color="inherit" style={styles.title}>Baymax</Typography>
+            <Button style={{color:'white'}}>
+                <Link to='/login' style={{color:'white', textDecoration:'none'}}>Login</Link>
+            </Button>
+        </Fragment>
+    )
+
     return (
         <Fragment>
             <AppBar style={styles.menu} position="sticky">
                 <Toolbar>
-                    <Typography variant="h6" color="inherit" style={styles.title}>Baymax</Typography>
-                    <Button color='inherit'>Login</Button>
+                    { isAuthenticated ? authLinks : guestLinks }
                 </Toolbar>
             </AppBar>
         </Fragment>

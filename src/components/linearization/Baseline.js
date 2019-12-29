@@ -1,13 +1,20 @@
-import React, { Fragment, useState, useContext } from 'react'
+import React, { Fragment, useState, useContext, useEffect } from 'react'
 import { Typography, Button, Box, Collapse, Card, CardContent, CardActions } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import UploadContext from '../../context/upload/uploadContext'
+import AuthContext from '../../context/auth/authContext'
 
 const Baseline = (props) => {
     const uploadContext = useContext(UploadContext);
+    const authContext = useContext(AuthContext);
     const classes = useStyles();
 
     const { setBaseline, baseline } = uploadContext;
+
+    useEffect(() => {
+        authContext.loadUser();
+        //eslint-disable-next-line
+    }, [])
 
     const [expanded, setExpanded] = useState(false);
     const [file, setFile] = useState(null);

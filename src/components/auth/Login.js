@@ -1,10 +1,53 @@
-import React, { Fragment } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Avatar, Button, Typography, TextField, Container } from '@material-ui/core'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
+import AlertContext from '../../context/alert/alertContext'
+import AuthContext from '../../context/auth/authContext'
 
-const Login = () => {
+const Login = (props) => {
     const classes = useStyles();
+    const alertContext = useContext(AlertContext);
+    const authContext = useContext(AuthContext);
+
+    const { setAlert } = alertContext;
+    const { login, isAuthenticated } = authContext;
+
+    useEffect(() => {
+        if(isAuthenticated){
+            props.history.push('/')
+        }
+    }, [isAuthenticated, props.history])
+
+    const [user, setUser] = useState({
+       username: '',
+       password: '' 
+    });
+
+    const { username, password } = user;
+
+    const handleChange = (event) => {
+        setUser({
+            ...user,
+            [event.target.name]: event.target.value
+        })
+    }
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        if(username === '' || password === ''){
+            setAlert('Please fill in all fields');
+        } else {
+            login({
+                username: username,
+                password: password
+            })
+        }
+    }
+
+    // const check = (event) => {
+    //     console.log(stateDummy)
+    // }
 
     return (
         <Container maxWidth='xs'>
@@ -15,7 +58,7 @@ const Login = () => {
                 <Typography component='h1' variant='h5'>
                     Sign In
                 </Typography>
-                <form className={classes.form}>
+                <form className={classes.form} onSubmit={handleSubmit}>
                     <TextField 
                         variant='outlined' 
                         margin='normal' 
@@ -26,6 +69,7 @@ const Login = () => {
                         name='username' 
                         label='Username'
                         autoFocus
+                        onChange={handleChange}
                     />
                     <TextField 
                         variant='outlined' 
@@ -36,6 +80,7 @@ const Login = () => {
                         required
                         id='password'
                         name='password'
+                        onChange={handleChange}
                     />
                     <Button
                         type='submit'

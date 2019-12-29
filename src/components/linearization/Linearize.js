@@ -4,13 +4,20 @@ import { makeStyles } from '@material-ui/core/styles'
 import Preresult from './Preresult'
 import UploadContext from '../../context/upload/uploadContext'
 import AlertContext from '../../context/alert/alertContext'
+import AuthContext from '../../context/auth/authContext'
 
 const Linearize = () => {
     const uploadContext = useContext(UploadContext);
     const alertContext = useContext(AlertContext);
+    const authContext = useContext(AuthContext);
     const classes = useStyles();
 
     const { setLinearize, setBays, clearPreresult, linearize, bays } = uploadContext;
+
+    useEffect(() => {
+        authContext.loadUser();
+        //eslint-disable-next-line
+    }, [])
 
     const [userInput, setUserInput] = useState({
         bayComponent: '',

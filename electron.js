@@ -6,6 +6,14 @@ const { app, BrowserWindow, ipcMain } = electron;
 
 let mainWindow;
 
+//dummy account
+const user1 = {
+    id: 1,
+    username: 'admin',
+    password: 'password',
+    type: 'administrator'
+}
+
 app.on('ready', () => {
     mainWindow = new BrowserWindow({
         webPreferences: { nodeIntegration: true }
@@ -15,6 +23,36 @@ app.on('ready', () => {
     'http://localhost:3000' : `file://${path.join(__dirname,'./public/index.html')}`);
     mainWindow.on('closed', () => mainWindow = null);
 });
+
+ipcMain.on('loadUser:send', (event, data) => {
+    const { id } = JSON.parse(data);
+    // console.log(id);
+    if(id === user1.id){
+        mainWindow.webContents.send('loadUser:received', JSON.stringify(user1));
+    }
+})
+
+ipcMain.on('login:send', (event, formData) => {
+    const { username, password } = JSON.parse(formData);
+    console.log(username, password)
+    
+    if(username !== user1.username || password !== user1.password) {
+        mainWindow.webContents.send('login:received', JSON.stringify({
+            type: 'ERROR',
+            data: {
+                msg: 'Invalid credentials',
+            }
+        }))
+    } else {
+        mainWindow.webContents.send('login:received', JSON.stringify({
+            type: 'SUCCESS',
+            data: {
+                id: user1.id,
+                token: '123456789'
+            }
+        }))
+    }
+})
 
 ipcMain.on('getResult:send', (event, preResult) => {
     //[{bay:noofbay},{},{},{},....]
