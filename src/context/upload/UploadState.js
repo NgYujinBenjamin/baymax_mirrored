@@ -36,12 +36,22 @@ const UploadState = (props) => {
         reader.readAsArrayBuffer(file);
         reader.onload = (e) => {
             let data = new Uint8Array(e.target.result);
-            let workbook = XLSX.read(data, { type: 'array' });
+            let workbook = XLSX.read(data, { type: 'array', cellDates: true });
             let firstSheetName = workbook.SheetNames[0];
             let worksheet = workbook.Sheets[firstSheetName];
             let excelData = XLSX.utils.sheet_to_json(worksheet);
-            excelData.pop();
 
+            excelData.forEach((obj) => {
+                obj['MRP Date'] = obj['MRP Date'] === undefined ? '' : obj['MRP Date'].toLocaleDateString('en-GB');
+                obj['Created On'] = obj['Created On'] === undefined ? '' : obj['Created On'].toLocaleDateString('en-GB');
+                obj['Created Time'] = obj['Created Time'] === undefined ? '' : obj['Created Time'].toLocaleString('en-GB', { timeZone: 'UTC' });
+                obj['SAP Customer Req Date'] = obj['SAP Customer Req Date'] === undefined ? '' : obj['SAP Customer Req Date'].toLocaleDateString('en-GB');
+                obj['Ship Recog Date'] = obj['Ship Recog Date'] === undefined ? '' : obj['Ship Recog Date'].toLocaleDateString('en-GB');
+                obj['Slot Request Date'] = obj['Slot Request Date'] === undefined ? '' : obj['Slot Request Date'].toLocaleDateString('en-GB');
+            });
+
+            excelData[excelData.length - 1]['Argo ID'] === undefined && excelData.pop();
+            
             dispatch({
                 type: SET_LINEARIZE,
                 payload: excelData

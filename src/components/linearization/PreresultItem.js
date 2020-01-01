@@ -5,8 +5,8 @@ const PreresultItem = memo (({ obj, onChange }) => {
     const argoID = obj['Argo ID'];
     const utID = obj['Slot ID/UTID'];
     const productName = obj['Build Product'];
-    const cycleTime = obj['Cycle Time Days'];
-    const mrpDate = obj['MRP Date'];
+    let cycleTime = obj['Cycle Time Days'];
+    let mrpDate = obj['MRP Date'];
 
     const cycleName = 'Cycle Time Days';
     const mrpName = 'MRP Date';
