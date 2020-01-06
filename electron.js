@@ -11,7 +11,8 @@ const user1 = {
     id: 1,
     username: 'admin',
     password: 'password',
-    type: 'administrator'
+    type: 'administrator',
+    secret: '123456789'
 }
 
 app.on('ready', () => {
@@ -25,9 +26,11 @@ app.on('ready', () => {
 });
 
 ipcMain.on('loadUser:send', (event, data) => {
-    const { id } = JSON.parse(data);
-    if(id === user1.id){
-        mainWindow.webContents.send('loadUser:received', JSON.stringify(user1));
+    const { token } = JSON.parse(data);
+    if(token === user1.secret){
+        mainWindow.webContents.send('loadUser:received', JSON.stringify({ type: 'SUCCESS', user: user1 }));
+    } else if(token === null){
+        mainWindow.webContents.send('loadUser:received', JSON.stringify({ type: 'ERROR' }));
     }
 })
 

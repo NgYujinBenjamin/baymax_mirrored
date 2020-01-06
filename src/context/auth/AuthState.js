@@ -1,16 +1,16 @@
 import React, { useReducer } from 'react';
 import AuthContext from './authContext';
 import AuthReducer from './authReducer';
-import { LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, USER_LOADED, CLEAR_ERRORS, SET_AUTH_LOADING } from '../types';
+import { LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, USER_LOADED, CLEAR_ERRORS, AUTH_ERROR } from '../types';
 const { ipcRenderer } = window.require("electron");
 
 const AuthState = (props) => {
     const initialState = {
         token: localStorage.getItem('token'),
-        isAuthenticated: false,
+        isAuthenticated: null,
         user: null,
         error: null,
-        loading: false
+        loading: true
     };
 
     const [state, dispatch] = useReducer(AuthReducer, initialState);
@@ -19,22 +19,25 @@ const AuthState = (props) => {
     
     //load user
     const loadUser = () => {
-        setAuthLoading(); 
-
-        ipcRenderer.send('loadUser:send', JSON.stringify({ id: state.id }));
-        ipcRenderer.on('loadUser:received', (event, res) => {
+        ipcRenderer.send('loadUser:send', JSON.stringify({ token: state.token }));
+        ipcRenderer.once('loadUser:received', (event, res) => {
             const response = JSON.parse(res);
-            dispatch({
-                type: USER_LOADED,
-                payload: response
-            })
+            
+            if(response.type === 'SUCCESS'){
+                dispatch({
+                    type: USER_LOADED,
+                    payload: response.user
+                })
+            } else if(response.type === 'ERROR'){
+                dispatch({
+                    type: AUTH_ERROR
+                })
+            }
         })
     }
 
     //login user
     const login = (formData) => {
-        setAuthLoading(); 
-
         ipcRenderer.send('login:send', JSON.stringify(formData));
         ipcRenderer.once('login:received', (event, res) => {
             const response = JSON.parse(res);
@@ -59,9 +62,6 @@ const AuthState = (props) => {
 
     //clear errors
     const clearErrors = () => dispatch({ type: CLEAR_ERRORS })
-
-    //set loading
-    const setAuthLoading = () => dispatch ({ type: SET_AUTH_LOADING })
 
     return <AuthContext.Provider
         value={{
