@@ -21,6 +21,7 @@ const UploadState = (props) => {
 
     //methods all over here
     const getResult = (objs, bay) => {
+        // const preResult = { bay: bay, response: [...objs] }
         const preResult = [{bay: bay}, ...objs];
         ipcRenderer.send('getResult:send', JSON.stringify(preResult));
     }
