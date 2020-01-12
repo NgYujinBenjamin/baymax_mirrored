@@ -1,6 +1,7 @@
 import React, { Fragment, useEffect, useContext } from 'react'
 import { Grid } from '@material-ui/core'
 import Users from '../users/Users'
+import UserForm from '../users/UserForm'
 import AuthContext from '../../context/auth/authContext'
 
 const Admin = () => {
@@ -13,9 +14,9 @@ const Admin = () => {
 
     return (
         <Fragment>
-            <Grid container spacing={1}>
+            <Grid container spacing={2}>
                 <Grid item xs>
-                    {/* User form */}
+                    <UserForm />
                 </Grid>
                 <Grid item xs>
                     <Users />

@@ -1,6 +1,7 @@
 import React, { useReducer } from 'react';
 import AdminReducer from './adminReducer';
 import AdminContext from './adminContext';
+import uuid from 'uuid'
 import { ADD_USER, GET_USERS, DELETE_USER } from '../types';
 
 const AdminState = (props) => {
@@ -42,7 +43,14 @@ const AdminState = (props) => {
     const getUsers = () => console.log();
 
     //create user
-    const addUser = () => console.log();
+    const addUser = (user) => {
+        user.id = uuid.v4();
+        console.log(user)
+        dispatch({
+            type: ADD_USER,
+            payload: user
+        })
+    }
 
     //delete user
     const deleteUser = () => console.log();

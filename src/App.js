@@ -20,8 +20,8 @@ const App = () => {
   return (
     <AuthState>
     <UploadState>
-    <AlertState>
     <AdminState>
+    <AlertState>
       <Router>
         <Fragment>
           <Navbar />
@@ -36,8 +36,8 @@ const App = () => {
             </Container>
         </Fragment>
       </Router>
-    </AdminState>
     </AlertState>  
+    </AdminState>
     </UploadState>
     </AuthState>
   );
