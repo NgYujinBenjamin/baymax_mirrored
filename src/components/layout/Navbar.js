@@ -17,6 +17,9 @@ const Navbar = () => {
         <Fragment>
             <Typography variant="h6" color="inherit" style={styles.title}>Baymax</Typography>
             <Button disabled style={{color:'white'}}>Hello, { user && user.username }</Button>
+            <Button style={{color:'white'}}>
+                <Link to='/admin' style={{color:'white', textDecoration:'none'}}>Users</Link>
+            </Button>
             <Button style={{color:'white'}} onClick={handleLogout}>
                 Logout
                 <ExitToAppRoundedIcon style={{marginLeft:3}}/>
