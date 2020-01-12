@@ -13,3 +13,6 @@ export const LOGOUT = 'LOGOUT';
 export const USER_LOADED = 'USER_LOADED';
 export const AUTH_ERROR = 'AUTH_ERROR';
 export const CLEAR_ERRORS = 'CLEAR_ERRORS';
+export const ADD_USER = 'ADD_USER';
+export const GET_USERS = 'GET_USERS';
+export const DELETE_USER = 'DELETE_USER'
