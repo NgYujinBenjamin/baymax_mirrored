@@ -22,10 +22,10 @@ public class algo {
         // Date date2 = (Date) data[1][9];
 
         int max_bays = 26, num_rows = data.length, num_cols = data[0].length;
-        ArrayList<Object>[] bay_usage = new ArrayList[max_bays];
+        ArrayList<Object[]>[] bay_usage = new ArrayList[max_bays];
         // initialize
         for (int i = 0; i < max_bays; i++) {
-            bay_usage[i] = new ArrayList<Object>();
+            bay_usage[i] = new ArrayList<Object[]>();
         }
 
         /**
@@ -73,7 +73,7 @@ public class algo {
             numToolsAllocated += 1;
             // System.out.println((i+1)+" "+earliestTool[0]);
             bay_usage[i].add(earliestTool);
-            ArrayList<Object> toolsToBeQueuedAfterEarliest = new ArrayList<>();
+            ArrayList<Object[]> toolsToBeQueuedAfterEarliest = new ArrayList<>();
             updateToolsToBeQueuedAfterEarliest(earliestTool, data, toolsToBeQueuedAfterEarliest);
             // System.out.println(toolsToBeQueuedAfterEarliest.size());
             numToolsAllocated += toolsToBeQueuedAfterEarliest.size();
@@ -84,10 +84,23 @@ public class algo {
         }
 
         System.out.println(numToolsAllocated);
+        int bay_num = 0;
+        String out = "";
+        for (int i = 0; i < max_bays; i++) {
+            ArrayList<Object[]> objects = bay_usage[i];
+            out += "Bay: "+(bay_num+1)+" ";
+            for (int j = 0; j < objects.size(); j++) {
+                out+=objects.get(j)[0]+":::";
+
+            }
+            System.out.println(out);
+            out = "";
+            bay_num+=1;
+        }
     }
 
     public static void updateToolsToBeQueuedAfterEarliest(Object[] prevTool, Object[][] data,
-                                                          ArrayList<Object> toolList) {
+                                                          ArrayList<Object[]> toolList) {
         Object[] nextClosestTool = getNextClosestTool(prevTool, data);
         if (nextClosestTool[0] == null) {
             return;
