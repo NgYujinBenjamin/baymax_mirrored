@@ -1,8 +1,8 @@
 export const SET_BASELINE = 'SET_BASELINE';
-export const SET_STATUS_BASELINE = 'SET_STATUS_BASELINE';
 export const SET_LINEARIZE = 'SET_LINEARIZE';
 export const SET_BAYS = 'SET_BAYS';
 export const CLEAR_PRERESULT = 'CLEAR_PRERESULT';
+export const CREATE_RESULT = 'CREATE_RESULT';
 export const SET_ALERT = 'SET_ALERT';
 export const REMOVE_ALERT = 'REMOVE_ALERT';
 export const SET_LOADING = 'SET_LOADING';

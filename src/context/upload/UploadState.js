@@ -1,29 +1,40 @@
 import React, { useReducer } from 'react';
 import UploadContext from './uploadContext';
 import UploadReducer from './uploadReducer';
-import { SET_BASELINE, SET_STATUS_BASELINE, SET_LINEARIZE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_LINEARIZE } from '../types';
+import { SET_BASELINE, SET_LINEARIZE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_LINEARIZE, CREATE_RESULT } from '../types';
 import XLSX from 'xlsx';
 const { ipcRenderer } = window.require("electron")
 
 const UploadState = (props) => {
     const initialState = {
         baseline: null,
-        linearize: [],
+        linearize: null,
         bays: '',
-        histories: [],
-        history: {},
         loading: false,
-        hasBaseline: false,
-        postResult: []
+        postResult: null,
+        linearizeDone: false
     }
 
     const [state, dispatch] = useReducer(UploadReducer, initialState);
 
     //methods all over here
-    const getResult = (objs, bay) => {
-        const preResult = { bay: bay, response: [...objs] }
+    const createResult = (objs, bay) => {
+        setLoading();
+
+        const preResult = { bay: bay, data: [...objs] }
         // const preResult = [{bay: bay}, ...objs];
         ipcRenderer.send('getResult:send', JSON.stringify(preResult));
+        ipcRenderer.once('getResult:received', (event, res) => {
+            const response = JSON.parse(res);
+            
+            if(response.type === 'SUCCESS'){
+                // console.log(response.data)
+                dispatch({
+                    type: CREATE_RESULT,
+                    payload: response.data
+                })
+            }
+        })
     }
 
     const clearPreresult = () => dispatch({ type: CLEAR_PRERESULT })
@@ -33,6 +44,8 @@ const UploadState = (props) => {
     const updateLinearize = (data) => dispatch({ type: UPDATE_LINEARIZE, payload: data })
 
     const setLinearize = (file) => {
+        setLoading();
+
         let reader = new FileReader();
         reader.readAsArrayBuffer(file);
         reader.onload = (e) => {
@@ -77,8 +90,6 @@ const UploadState = (props) => {
         }
     }
 
-    const setStatusBaseline = () => dispatch({ type: SET_STATUS_BASELINE })
-
     const setLoading = () => dispatch({ type: SET_LOADING })
 
     return <UploadContext.Provider
@@ -86,16 +97,14 @@ const UploadState = (props) => {
             baseline: state.baseline,
             linearize: state.linearize,
             bays: state.bays,
-            histories: state.histories,
-            history: state.history,
             loading: state.loading,
-            hasBaseline: state.hasBaseline,
+            linearizeDone: state.linearizeDone,
+            postResult: state.postResult,
             setBaseline,
-            setStatusBaseline,
             setLinearize,
             setBays,
             updateLinearize,
-            getResult,
+            createResult,
             clearPreresult,
             setLoading
         }}>
