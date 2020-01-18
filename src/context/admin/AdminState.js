@@ -55,7 +55,6 @@ const AdminState = (props) => {
     //delete user
     const deleteUser = () => console.log();
 
-
     return <AdminContext.Provider 
         value={{
             users: state.users,
