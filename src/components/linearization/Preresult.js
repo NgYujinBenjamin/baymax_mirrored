@@ -8,7 +8,7 @@ const Preresult = ({ fileName }) => {
     const uploadContext = useContext(UploadContext);
     const classes = useStyles();
 
-    const { linearize, updateLinearize, getResult, bays } = uploadContext;
+    const { linearize, updateLinearize, createResult, bays } = uploadContext;
 
     const [objs, setObjects] = useState(linearize);
 
@@ -34,7 +34,7 @@ const Preresult = ({ fileName }) => {
     const handleLinearize = (event) => {
         event.preventDefault();
         updateLinearize(objs);
-        getResult(objs, bays);
+        createResult(objs, bays);
     }
     
     return (
