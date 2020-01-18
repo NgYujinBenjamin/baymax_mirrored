@@ -3,7 +3,7 @@ import java.text.*;
 
 import org.apache.commons.lang3.time.DateUtils;
 
-public class Product{
+public class Product implements Comparable<Product>{
     private Integer argoID;
     private Integer plant;
     private String buildComplete;
@@ -197,11 +197,29 @@ public class Product{
      * 
      */
     public void calculateToolStart(){
+        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
         toolStartDate = DateUtils.addDays(MRPDate, -cycleTimeDays);
     }
 
-    public Date getToolStart(){
+
+    public int compareTo(Product other){
+        Date thisToolStart = toolStartDate;
+        Date otherToolStart = other.getToolStartDate();
+
+        return thisToolStart.compareTo(otherToolStart);
+        
+    }
+
+    /**
+     * Getters & Setters
+     * @return
+     */
+    public Date getToolStartDate(){
         return toolStartDate;
     }
 
+    public Date getMRPDate(){
+        return MRPDate;
+    }
 }

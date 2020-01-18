@@ -4,39 +4,23 @@ import java.util.*;
 import java.text.SimpleDateFormat;
 
 import org.apache.poi.ss.usermodel.Cell;  
-<<<<<<< Updated upstream
-import org.apache.poi.ss.usermodel.Row;
-=======
 import org.apache.poi.ss.usermodel.*;
->>>>>>> Stashed changes
 import org.apache.poi.ss.usermodel.DateUtil;
 
 import org.apache.poi.xssf.usermodel.XSSFSheet;  
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-<<<<<<< Updated upstream
-public class algo{
-    public static void main(String[] args){
-        Object[][] allData = readData("C:\\Users\\User\\Desktop\\FYP\\Copy of School MasterOpsPlan_10.14.19 FC.xlsx");
-        // Test
-        // System.out.println(allData[0][0]);
-    }
-
-    /**
-     * To read the data from the xlsx file
-     */
-    public static Object[][] readData (String directory){
-=======
 
 public class algo{
     public static void main(String[] args){
         // 1. Read the Data from the XLSX file (not needed once integrate w frontend)
         List<Map<String, Object>> allData = readData("C:\\Users\\User\\Desktop\\FYP\\Copy of School MasterOpsPlan_10.14.19 FC_Filtered.xlsx");
     
-        
+        // Variable allProduct will store an ArrayList of Product
+        // Overall Goal: Convert each row of data (represented as a HashMap in allData) into a Product Object
         List<Product> allProduct = new ArrayList<>();
-        // 2. Compute the Tool Start Date and Append the information in the HashMap (which represents each row of Data)
         
+        // 2. Create an instance of product class for each row of data. Compute the Tool Start Date using calculateToolStart(). Then, add into ArrayList of product
         for (int i = 0; i < allData.size(); i++){
             Product p = new Product(allData.get(i));
             p.calculateToolStart();
@@ -44,6 +28,23 @@ public class algo{
             
         }
         // System.out.println(allData.size() + " vs " + allProduct.size());  // Check: Check that the number of rows matches the number of elements in the ArrayList
+
+        // 3. Sort the ArrayList of Product by ToolStartDate.
+        // Purpose: We will start assigning Products to the Bays, starting with the earliest first. 
+        // This is because the end-date/ MRP date of an earlier product will mark the earliest available date to take in the next product
+        Collections.sort(allProduct);
+
+        // 4a. Generate Schedule
+        // generateSchedule() will assign the product to the bays, automatically creating a new Bay if none of the Bays are available to handle the product
+        // baySchedule.size() gives us the miniumum number of Bays required for 100% fulfillment
+        BaySchedule baySchedule = new BaySchedule(allProduct);
+        baySchedule.generateSchedule();
+        System.out.println(baySchedule.getSchedule().size());
+
+        // 4b. Generate Schedule with Cap
+        // generateSchedule(int maxBays) will try to fulfill as many products as possible, while ensuring that the total number of bays used < max bays specified
+        baySchedule.generateSchedule(26);
+        System.out.println(baySchedule.getSchedule().size());
 
     }
 
@@ -55,7 +56,6 @@ public class algo{
      * @return
      */
     public static List<Map<String, Object>> readData (String directory){
->>>>>>> Stashed changes
         try {  
             File file = new File(directory);   //creating a new file instance  
             FileInputStream fis = new FileInputStream(file);   //obtaining bytes from the file 
@@ -65,34 +65,6 @@ public class algo{
             int numRows = sheet.getPhysicalNumberOfRows();
             int numCols = sheet.getRow(0).getPhysicalNumberOfCells();
 
-<<<<<<< Updated upstream
-            Object[][] allData = new Object[numRows][numCols];
-
-            Iterator<Row> iter = sheet.iterator();    //iterating over excel file             
-            while (iter.hasNext()){  
-                Row row = iter.next();
-                int rowNum = row.getRowNum();
-
-                Iterator<Cell> cellIterator = row.cellIterator();   //iterating over each column  
-
-                while (cellIterator.hasNext()){  
-                    Cell cell = cellIterator.next();  
-                    int colNum = cell.getColumnIndex();
-                    
-                    switch (cell.getCellType()){  
-                        case Cell.CELL_TYPE_STRING:    //field that represents string cell type  
-                            allData[rowNum][colNum] = cell.getStringCellValue();  
-                            break;  
-                        case Cell.CELL_TYPE_NUMERIC:    //field that represents number cell type  
-                            if (DateUtil.isCellDateFormatted(cell)){
-                                allData[rowNum][colNum] = cell.getDateCellValue();
-                            } else {
-                                allData[rowNum][colNum] = cell.getNumericCellValue();
-                            }
-                            break;
-                    }  
-                }  
-=======
             Row firstRow = sheet.getRow(0);
             
             int rowCount = sheet.getLastRowNum();
@@ -136,7 +108,6 @@ public class algo{
                 }
                 allData.add(rowData);
                 // System.out.println("-*-*-*-*-*-*-"); 
->>>>>>> Stashed changes
             }
             return allData;
         }  
