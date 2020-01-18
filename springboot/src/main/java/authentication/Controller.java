@@ -40,6 +40,40 @@ public class Controller {
         }
     }
     
+    // done?
+    @RequestMapping(path = "/changepassword", method = RequestMethod.GET)
+    public String changePass(@RequestParam(value="username") String username,
+                         @RequestParam(value="oldpassword") String oldpassword,
+                         @RequestParam(value="newpassword") String newpassword) throws Exception{
+        if (oldpassword == null || newpassword == null || username == null){
+            return "400";
+        } else {         
+            mysqlcon conn = new mysqlcon();
+            try {
+                conn.changePassword(username, oldpassword, newpassword);
+                return "200";   
+            } catch(Exception e) {
+                return "400";
+            }   
+        }
+    }
+
+    // done?
+    @RequestMapping(path = "/resetpassword", method = RequestMethod.GET)
+    public String resetPass(@RequestParam(value="username") String username) throws Exception{
+        if (username == null){
+            return "400";
+        } else {         
+            mysqlcon conn = new mysqlcon();
+            try {
+                conn.resetPassword(username);
+                return "200";   
+            } catch(Exception e) {
+                return "400";
+            }   
+        }
+    }
+
     // to be completed
     @RequestMapping(path = "/generate", method = RequestMethod.GET)
     public String generateToken(@RequestParam(value="username") String username) throws Exception{
