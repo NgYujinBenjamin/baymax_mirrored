@@ -3,12 +3,27 @@ import { makeStyles } from '@material-ui/core/styles'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box, Grid } from '@material-ui/core'
 import PostresultItem from './PostresultItem'
 import UploadContext from '../../context/upload/uploadContext'
+import DeleteIcon from '@material-ui/icons/Delete';
+import SaveIcon from '@material-ui/icons/Save';
+import GetAppIcon from '@material-ui/icons/GetApp';
 
 const Postresult = () => {
     const classes = useStyles();
     const uploadContext = useContext(UploadContext);
 
-    const { postResult } = uploadContext;
+    const { postResult, createExport, saveFile, clearAll } = uploadContext;
+
+    const handleClearAll = () => {
+        clearAll();
+    }
+
+    const handleSave = () => {
+        saveFile(postResult);
+    }
+
+    const handleExport = () => {
+        createExport(postResult);
+    }
 
     return (
         <Fragment>
@@ -33,13 +48,13 @@ const Postresult = () => {
             <Box className={classes.marginTop}>
                 <Grid container spacing={1}>
                     <Grid item xs>
-                        <Button fullWidth variant='contained'>Clear All</Button>
+                        <Button fullWidth variant='contained' onClick={handleClearAll} startIcon={<DeleteIcon />} color='secondary'>Clear All</Button>
                     </Grid>
                     <Grid item xs>
-                        <Button fullWidth variant='contained'>Save</Button>
+                        <Button fullWidth variant='contained' onClick={handleSave} startIcon={<SaveIcon />} color='primary'>Save</Button>
                     </Grid>
                     <Grid item xs>
-                        <Button fullWidth variant='contained'>Export</Button>
+                        <Button fullWidth variant='contained' onClick={handleExport} startIcon={<GetAppIcon />}>Export</Button>
                     </Grid>
                 </Grid>
             </Box>

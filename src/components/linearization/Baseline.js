@@ -3,6 +3,7 @@ import { Typography, Button, Box, Collapse, Card, CardContent, CardActions } fro
 import { makeStyles } from '@material-ui/core/styles'
 import UploadContext from '../../context/upload/uploadContext'
 import AuthContext from '../../context/auth/authContext'
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 
 const Baseline = (props) => {
     const uploadContext = useContext(UploadContext);
@@ -18,12 +19,14 @@ const Baseline = (props) => {
 
     const [expanded, setExpanded] = useState(false);
     const [file, setFile] = useState(null);
+    const [name, setName] = useState(null);
 
     const handleExpandBtn = (event) => {
         setExpanded(!expanded);
     }
 
     const handleFileChange = (event) => {
+        setName(event.target.files[0].name);
         setFile(event.target.files[0]);
     }
 
@@ -40,8 +43,8 @@ const Baseline = (props) => {
         <Fragment>
             <Card>
                 <CardContent>
-                    <CardActions disableSpacing>
-                        <Typography component='span' variant='h6'>Import baseline excel file?</Typography>
+                    <CardActions disableSpacing style={{ paddingLeft: '0' }}>
+                        <Typography component='span' variant='h5'>Import baseline excel file?</Typography>
                         <Box component='span' className={classes.box}>
                             <Button 
                                 className={classes.button} 
@@ -64,9 +67,26 @@ const Baseline = (props) => {
                     </CardActions>
                     <Collapse in={expanded}>
                         <Box className={classes.collapseBox}>
-                            <input type='file' onChange={handleFileChange} accept=".xlsx, .xlsm" />
+                            <Typography variant='h5' style={{ marginBottom: '8px' }}>
+                                Upload Excel File
+                            </Typography>
+                            <input 
+                                type='file' 
+                                onChange={handleFileChange} 
+                                accept=".xlsx, .xlsm" 
+                                id='baseline-file' 
+                                style={{ display: 'none' }} 
+                            />
+                            <label htmlFor='baseline-file'>
+                                <Button variant='contained' color='primary' component='span' startIcon={<CloudUploadIcon />}>
+                                    Upload
+                                </Button>
+                            </label>
+                            <Typography component='span' variant='body2' style={{ marginLeft: '12px'}}>
+                                {name !== null && name}
+                            </Typography>
                         </Box>
-                        <Button fullWidth variant='contained' color='primary' onClick={handleCollapseSubmit}>Submit</Button>
+                        {(file && name) && <Button fullWidth variant='contained' color='primary' onClick={handleCollapseSubmit}>Submit</Button>}
                     </Collapse>
                 </CardContent>
             </Card>
