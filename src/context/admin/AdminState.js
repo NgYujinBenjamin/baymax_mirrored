@@ -2,7 +2,8 @@ import React, { useReducer } from 'react';
 import AdminReducer from './adminReducer';
 import AdminContext from './adminContext';
 import uuid from 'uuid'
-import { ADD_USER, GET_USERS, DELETE_USER } from '../types';
+import axios from 'axios';
+import { ADD_USER, GET_USERS, DELETE_USER, USER_ERROR } from '../types';
 
 const AdminState = (props) => {
     const initialState = {
@@ -40,10 +41,46 @@ const AdminState = (props) => {
     //all actions here
 
     //get all users
-    const getUsers = () => console.log();
+    const getUsers = () => {
+        // try {
+        //     const res = await axios.get('<IP-ADDRESS>:<PORT>/<PATH>');
+        //     console.log(res)
+        //     dispatch({
+        //         type: GET_USERS,
+        //         payload: res.data
+        //     }) 
+        // } catch (err) {
+        //     dispatch({
+        //         type: USER_ERROR,
+        //         payload: err.response.data
+        //     })
+        // }
+
+        console.log();
+    }
 
     //create user
     const addUser = (user) => {
+        // const config = {
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     }
+        // }
+
+        // try {
+        //     const res = await axios.post('<IP-ADDRESS>:<PORT>/<PATH>', user, config);
+        //     console.log(res);
+        //     dispatch({
+        //         type: ADD_USER,
+        //         payload: res.data
+        //     });
+        // } catch (err) {
+        //     dispatch({
+        //         type: USER_ERROR,
+        //         payload: err.response.data
+        //     })
+        // }
+        
         user.id = uuid.v4();
         console.log(user)
         dispatch({
