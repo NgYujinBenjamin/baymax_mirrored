@@ -3,7 +3,7 @@ import AdminReducer from './adminReducer';
 import AdminContext from './adminContext';
 import uuid from 'uuid'
 import axios from 'axios';
-import { ADD_USER, GET_USERS, DELETE_USER, USER_ERROR } from '../types';
+import { ADD_USER, GET_USERS, DELETE_USER, USER_ERROR, RESET_PASSWORD } from '../types';
 
 const AdminState = (props) => {
     const initialState = {
@@ -110,13 +110,30 @@ const AdminState = (props) => {
         })
     }
 
+    const resetPassword = (id) => {
+        // try {
+        //     await axios.get(`<IP-ADDRESS>:<PORT>/<PATH>/${id}`)
+        //     dispatch({
+        //         type: RESET_PASSWORD
+        //     })
+        // } catch (err) {
+        //     dispatch({
+        //         type: USER_ERROR,
+        //         payload: err.response.data
+        //     })
+        // }
+
+        console.log();
+    }
+
     return <AdminContext.Provider 
         value={{
             users: state.users,
             error: state.error,
             getUsers,
             addUser,
-            deleteUser
+            deleteUser,
+            resetPassword
         }}>
         { props.children }        
     </AdminContext.Provider>

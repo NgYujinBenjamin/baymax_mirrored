@@ -16,6 +16,10 @@ const UserItem = ({ user }) => {
         deleteUser(id);
     }
 
+    const handleReset = () => {
+        resetPassword(id);
+    }
+
     return (
         <Fragment>
             <Card style={{ marginBottom: '12px' }}>
@@ -57,7 +61,12 @@ const UserItem = ({ user }) => {
                     >
                         Delete
                     </Button>
-                    <Button startIcon={<RefreshIcon />} variant='contained' style={{ margin: '4px'}}>
+                    <Button 
+                        startIcon={<RefreshIcon />} 
+                        variant='contained' 
+                        style={{ margin: '4px'}}
+                        onClick={handleReset}
+                    >
                         Reset Password
                     </Button>
                 </CardActions>

@@ -1,4 +1,4 @@
-import { ADD_USER, GET_USERS, DELETE_USER, USER_ERROR } from '../types';
+import { ADD_USER, GET_USERS, DELETE_USER, USER_ERROR, RESET_PASSWORD } from '../types';
 
 export default (state, action) => {
     switch(action.type){
@@ -25,6 +25,7 @@ export default (state, action) => {
                 ...state,
                 error: action.payload
             }
+        case RESET_PASSWORD:
         default:
             return state
     }
