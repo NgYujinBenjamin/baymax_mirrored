@@ -2,6 +2,8 @@ import React, { useReducer } from 'react';
 import AuthContext from './authContext';
 import AuthReducer from './authReducer';
 import { LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, USER_LOADED, CLEAR_ERRORS, AUTH_ERROR } from '../types';
+import axios from 'axios';
+import setAuthToken from '../../utils/setAuthToken';
 const { ipcRenderer } = window.require("electron");
 
 const AuthState = (props) => {
@@ -19,6 +21,23 @@ const AuthState = (props) => {
     
     //load user
     const loadUser = () => {
+        // if(localStorage.token){
+        //     setAuthToken(localStorage.token);
+        // }
+
+        // try {
+        //     const res = await axios.get('<IP-ADDRESS>:<PORT>/<PATH>');
+        //     console.log(res.data);
+        //     dispatch({
+        //         type: USER_LOADED,
+        //         payload: res.data
+        //     })
+        // } catch (err) {
+        //     dispatch({
+        //         type: AUTH_ERROR
+        //     })
+        // }
+
         ipcRenderer.send('loadUser:send', JSON.stringify({ token: state.token }));
         ipcRenderer.once('loadUser:received', (event, res) => {
             const response = JSON.parse(res);
@@ -38,6 +57,28 @@ const AuthState = (props) => {
 
     //login user
     const login = (formData) => {
+        // const config = {
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     }
+        // }
+
+        // try {
+        //     const res = await axios.post('<IP-ADDRESS>:<PORT>/<PATH>', formData, config);
+        //     console.log(res);
+        //     dispatch({
+        //         type: LOGIN_SUCCESS,
+        //         payload: res.data
+        //     });
+        //     loadUser();
+        // } catch (err) {
+        //     console.log(err);
+        //     dispatch({
+        //         type: LOGIN_FAIL,
+        //         payload: err.response.data
+        //     });
+        // }
+
         ipcRenderer.send('login:send', JSON.stringify(formData));
         ipcRenderer.once('login:received', (event, res) => {
             const response = JSON.parse(res);
