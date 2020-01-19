@@ -90,7 +90,25 @@ const AdminState = (props) => {
     }
 
     //delete user
-    const deleteUser = () => console.log();
+    const deleteUser = (id) => {
+        // try {
+        //     await axios.delete(`<IP-ADDRESS>:<PORT>/<PATH>/${id}`)
+        //     dispatch({
+        //         type: DELETE_USER,
+        //         payload: id
+        //     })
+        // } catch (err) {
+        //     dispatch({
+        //         type: USER_ERROR,
+        //         payload: err.response.data
+        //     })
+        // }
+
+        dispatch({
+            type: DELETE_USER,
+            payload: id
+        })
+    }
 
     return <AdminContext.Provider 
         value={{

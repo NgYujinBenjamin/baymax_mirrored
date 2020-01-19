@@ -14,6 +14,17 @@ export default (state, action) => {
                 users: [action.payload, ...state.users],
                 loading: false
             }
+        case DELETE_USER:
+            return {
+                ...state,
+                users: state.users.filter(user => user.id !== action.payload),
+                loading: false
+            }
+        case USER_ERROR:
+            return {
+                ...state,
+                error: action.payload
+            }
         default:
             return state
     }
