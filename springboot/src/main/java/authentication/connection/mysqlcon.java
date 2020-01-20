@@ -8,14 +8,14 @@ public class mysqlcon{
         try{
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/baymaxdb","root","");
+            Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/baymaxdb?useSSL=false","root","");
             Statement stmt=con.createStatement();
             String my_string = "select * from users WHERE username = '" + username + "'";
             ResultSet rs=stmt.executeQuery(my_string);
 
             String rv = "";
             while(rs.next())
-            rv += (rs.getString(2)+" "+rs.getString(4));
+            rv += (rs.getString(2)+" "+rs.getString(3));
 
             con.close();
             return rv;

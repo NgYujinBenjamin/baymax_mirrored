@@ -40,7 +40,7 @@ public class Controller {
         }
     }
     
-    // done?
+    // done
     @RequestMapping(path = "/changepassword", method = RequestMethod.GET)
     public String changePass(@RequestParam(value="username") String username,
                          @RequestParam(value="oldpassword") String oldpassword,
@@ -58,7 +58,7 @@ public class Controller {
         }
     }
 
-    // done?
+    // done
     @RequestMapping(path = "/resetpassword", method = RequestMethod.GET)
     public String resetPass(@RequestParam(value="username") String username) throws Exception{
         if (username == null){
@@ -68,6 +68,28 @@ public class Controller {
             try {
                 conn.resetPassword(username);
                 return "200";   
+            } catch(Exception e) {
+                return "400";
+            }   
+        }
+    }
+    
+    //done
+    @RequestMapping(path = "/verifyuser", method = RequestMethod.GET)
+    public String verifyUser(@RequestParam(value="username") String username,
+                            @RequestParam(value="password") String password) throws Exception{
+        if (username == null || password == null){
+            return "400";
+        } else {         
+            mysqlcon conn = new mysqlcon();
+            try {
+                String user = conn.getUser(username);
+                String pass = user.split(" ")[1];
+                // return user;
+                if (password.equals(pass)){
+                    return "200";
+                }
+                return "400";   
             } catch(Exception e) {
                 return "400";
             }   
