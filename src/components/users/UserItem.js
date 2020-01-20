@@ -1,12 +1,24 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useContext } from 'react'
 import { Card, CardContent, CardActions, Typography, Button, Box } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import WorkIcon from '@material-ui/icons/Work';
 import PersonIcon from '@material-ui/icons/Person';
+import AdminContext from '../../context/admin/adminContext';
 
 const UserItem = ({ user }) => {
-    const { username, firstname, lastname, department, role } = user
+    const adminContext = useContext(AdminContext);
+
+    const { deleteUser } = adminContext
+    const { id, username, firstname, lastname, department, role } = user
+
+    const handleDelete = () => {
+        deleteUser(id);
+    }
+
+    const handleReset = () => {
+        resetPassword(id);
+    }
 
     return (
         <Fragment>
@@ -40,10 +52,21 @@ const UserItem = ({ user }) => {
                     </Typography>
                 </CardContent>
                 <CardActions>
-                    <Button startIcon={<DeleteIcon />} variant='contained' color='secondary' style={{ margin: '4px' }}>
+                    <Button 
+                        startIcon={<DeleteIcon />} 
+                        variant='contained' 
+                        color='secondary' 
+                        style={{ margin: '4px' }}
+                        onClick={handleDelete}
+                    >
                         Delete
                     </Button>
-                    <Button startIcon={<RefreshIcon />} variant='contained' style={{ margin: '4px'}}>
+                    <Button 
+                        startIcon={<RefreshIcon />} 
+                        variant='contained' 
+                        style={{ margin: '4px'}}
+                        onClick={handleReset}
+                    >
                         Reset Password
                     </Button>
                 </CardActions>

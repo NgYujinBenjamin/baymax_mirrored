@@ -18,3 +18,5 @@ export const CLEAR_ERRORS = 'CLEAR_ERRORS';
 export const ADD_USER = 'ADD_USER';
 export const GET_USERS = 'GET_USERS';
 export const DELETE_USER = 'DELETE_USER';
+export const USER_ERROR = 'USER_ERROR';
+export const RESET_PASSWORD = 'RESET_PASSWORD';

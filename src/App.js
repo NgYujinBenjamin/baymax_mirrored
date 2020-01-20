@@ -14,7 +14,12 @@ import PrivateRoute from './components/routing/PrivateRoute';
 import UploadState from './context/upload/UploadState';
 import AlertState from './context/alert/AlertState';
 import AuthState from './context/auth/AuthState';
-import AdminState from './context/admin/AdminState'
+import AdminState from './context/admin/AdminState';
+import setAuthToken from './utils/setAuthToken';
+
+// if(localStorage.token){
+//   setAuthToken(localStorage.token);
+// }
 
 const App = () => {
   return (
