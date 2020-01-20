@@ -26,7 +26,7 @@ const AuthState = (props) => {
         }
 
         try {
-            const res = await axios.get(`localhost:8080/verify?token=${token}`);
+            const res = await axios.get('<IP-ADDRESS>:<PORT>/<PATH>');
             console.log(res.data);
             dispatch({
                 type: USER_LOADED,
@@ -64,7 +64,7 @@ const AuthState = (props) => {
         }
 
         try {
-            const res = await axios.post('localhost:8080/login', formData, config);
+            const res = await axios.post('<IP-ADDRESS>:<PORT>/<PATH>', formData, config);
             console.log(res);
             dispatch({
                 type: LOGIN_SUCCESS,
