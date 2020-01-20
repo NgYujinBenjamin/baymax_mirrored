@@ -64,11 +64,7 @@ const AuthState = (props) => {
         }
 
         try {
-<<<<<<< HEAD
-            const res = await axios.post('<IP-ADDRESS>:<PORT>/<PATH>', formData, config);
-=======
             const res = await axios.post('http://localhost:8080/login', formData, config);
->>>>>>> 9eb673cc628bd1f2b9117a540cc5e4a2c180b3fe
             console.log(res);
             dispatch({
                 type: LOGIN_SUCCESS,
