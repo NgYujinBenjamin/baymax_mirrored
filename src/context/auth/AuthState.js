@@ -26,7 +26,7 @@ const AuthState = (props) => {
         }
 
         try {
-            const res = await axios.get('<IP-ADDRESS>:<PORT>/<PATH>');
+            const res = await axios.get(`http://localhost:8080/verify?token=${localStorage.token}`);
             console.log(res.data);
             dispatch({
                 type: USER_LOADED,
@@ -64,18 +64,22 @@ const AuthState = (props) => {
         }
 
         try {
+<<<<<<< HEAD
             const res = await axios.post('<IP-ADDRESS>:<PORT>/<PATH>', formData, config);
+=======
+            const res = await axios.post('http://localhost:8080/login', formData, config);
+>>>>>>> 9eb673cc628bd1f2b9117a540cc5e4a2c180b3fe
             console.log(res);
             dispatch({
                 type: LOGIN_SUCCESS,
-                payload: res.data
+                payload: res.data.token
             });
             loadUser();
         } catch (err) {
             console.log(err);
             dispatch({
                 type: LOGIN_FAIL,
-                payload: err.response.data
+                payload: err
             });
         }
 

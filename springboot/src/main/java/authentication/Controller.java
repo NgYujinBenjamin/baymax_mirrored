@@ -3,16 +3,24 @@ package authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-    import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.*;
 import java.text.SimpleDateFormat;
 
 import connection.*;
 import main.java.authentication.Algorithm;
+import main.java.authentication.LoginDetails;
+import main.java.authentication.PseudoToken;
+import main.java.authentication.User;
 import authentication.*;
 
+import com.google.gson.Gson;
+
+@CrossOrigin
 @RestController
 public class Controller {
 
@@ -74,60 +82,71 @@ public class Controller {
         }
     }
     
-    //done
-    @RequestMapping(path = "/verifyuser", method = RequestMethod.GET)
-    public String verifyUser(@RequestParam(value="username") String username,
-                            @RequestParam(value="password") String password) throws Exception{
-        if (username == null || password == null){
-            return "400";
-        } else {         
-            mysqlcon conn = new mysqlcon();
-            try {
-                String user = conn.getUser(username);
-                String pass = user.split(" ")[1];
-                // return user;
-                if (password.equals(pass)){
-                    return "200";
-                }
-                return "400";   
-            } catch(Exception e) {
-                return "400";
-            }   
-        }
-    }
-
-    // to be completed
-    @RequestMapping(path = "/generate", method = RequestMethod.GET)
-    public String generateToken(@RequestParam(value="username") String username) throws Exception{
+    //changing
+    @RequestMapping(path = "/login", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
+    public PseudoToken login(@RequestBody LoginDetails inputDetails) throws Exception{        
         mysqlcon conn = new mysqlcon();
         try {
-            String user = conn.getUser(username);
-            String name = user.split(" ")[0];
-            String pass = user.split(" ")[1];
-            String return_token = token.createToken(username, pass);
-            return return_token;   
+            // String user = conn.getUser(inputDetails.getUsername());
+            // String pass = 
+
+            PseudoToken rv = new PseudoToken(inputDetails.getUsername() + " " + inputDetails.getPassword());
+
+            return rv;
+
+            // Gson gson = new Gson();
+            // LoginDetails ld = gson.fromJson(inputDetails, LoginDetails.class);
+            // LoginDetails ld = gson.fromJson("{'username' : 'helloworld', 'password' : '123456'}", LoginDetails.class);
+            
+            // getting the username from json string
+            // return ld.getUsername();
+            
+            // String user = conn.getUser(ld.getUsername());
+            // String pass = user.split(" ")[1];
+            // String pseudotoken = user;
+            // if (ld.getPassword().equals(pass)){
+            //     return "{'token' : " + pseudotoken + "}";
+            // }
+            // return "400";   
         } catch(Exception e) {
-            return "500";
+            PseudoToken rv = new PseudoToken(inputDetails.getUsername() + " " + inputDetails.getPassword());
+
+            return rv;
+        }   
+    }
+    
+    // to be completed
+    @RequestMapping(path = "/verify", method = RequestMethod.GET, produces = "application/json")
+    public User verifyToken(@RequestParam(value="token") String user_token) throws Exception{
+        //should be using JWT
+        String input_name = user_token.split(" ")[0];
+        String input_pass = user_token.split(" ")[1];    
+        try {    
+            return new User(input_name);
+
+            // return is_valid;
+        } catch(Exception e) {
+            return new User(input_name);
         }
+           
     }
 
     // to be completed
-    @RequestMapping(path = "/authenticate", method = RequestMethod.GET)
-    public Boolean authenticateToken(@RequestParam(value="username") String username,
-                                     @RequestParam(value="token") String user_token) throws Exception{
-         mysqlcon conn = new mysqlcon();
-        try {
-            String user = conn.getUser(username);
-            String name = user.split(" ")[0];
-            String pass = user.split(" ")[1];        
-            Boolean is_valid = token.authenticateToken(user_token, name, pass);
-            return is_valid;
-        } catch(Exception e) {
-            return false;
-        }
-        
-        
-    }
+    // @RequestMapping(path = "/generate", method = RequestMethod.GET)
+    // public String generateToken(@RequestParam(value="username") String username) throws Exception{
+    //     mysqlcon conn = new mysqlcon();
+    //     try {
+    //         String user = conn.getUser(username);
+    //         String name = user.split(" ")[0];
+    //         String pass = user.split(" ")[1];
+    //         String return_token = token.createToken(username, pass);
+    //         return return_token;   
+    //     } catch(Exception e) {
+    //         return "500";
+    //     }
+    // }
+
+    
 
     // to be ported over, data test
     @RequestMapping(path= "/algorithm", method = RequestMethod.GET)

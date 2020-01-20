@@ -1,5 +1,8 @@
 authentication\Application.class
-authentication\Controller.class
+main\java\authentication\PseudoToken.class
 authentication\Token.class
+main\java\authentication\User.class
 connection\mysqlcon.class
+main\java\authentication\LoginDetails.class
+authentication\Controller.class
 main\java\authentication\Algorithm.class
