@@ -17,9 +17,9 @@ import AuthState from './context/auth/AuthState';
 import AdminState from './context/admin/AdminState';
 import setAuthToken from './utils/setAuthToken';
 
-// if(localStorage.token){
-//   setAuthToken(localStorage.token);
-// }
+if(localStorage.token){
+  setAuthToken(localStorage.token);
+}
 
 const App = () => {
   return (

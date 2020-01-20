@@ -9,7 +9,7 @@ import AdminContext from '../../context/admin/adminContext';
 const UserItem = ({ user }) => {
     const adminContext = useContext(AdminContext);
 
-    const { deleteUser } = adminContext
+    const { deleteUser, resetPassword } = adminContext
     const { id, username, firstname, lastname, department, role } = user
 
     const handleDelete = () => {

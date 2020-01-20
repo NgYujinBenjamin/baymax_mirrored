@@ -3,7 +3,7 @@ import UploadContext from './uploadContext';
 import UploadReducer from './uploadReducer';
 import XLSX from 'xlsx';
 import { SET_BASELINE, SET_LINEARIZE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_LINEARIZE, CREATE_RESULT, EXPORT_RESULT, CLEAR_ALL } from '../types';
-const { ipcRenderer } = window.require("electron")
+// const { ipcRenderer } = window.require("electron")
 
 const UploadState = (props) => {
     const initialState = {
@@ -51,25 +51,26 @@ const UploadState = (props) => {
 
         const preResult = { bay: bay, data: [...objs] }
         // const preResult = [{bay: bay}, ...objs];
-        ipcRenderer.send('getResult:send', JSON.stringify(preResult));
-        ipcRenderer.once('getResult:received', (event, res) => {
-            const response = JSON.parse(res);
+        // ipcRenderer.send('getResult:send', JSON.stringify(preResult));
+        // ipcRenderer.once('getResult:received', (event, res) => {
+        //     const response = JSON.parse(res);
             
-            if(response.type === 'SUCCESS'){
-                // console.log(response.data)
-                dispatch({
-                    type: CREATE_RESULT,
-                    payload: response.data
-                })
-            }
-        })
+        //     if(response.type === 'SUCCESS'){
+        //         // console.log(response.data)
+        //         dispatch({
+        //             type: CREATE_RESULT,
+        //             payload: response.data
+        //         })
+        //     }
+        // })
     }
 
     const setLinearize = async (file) => {
         setLoading();
 
         let data = await convertExcelToJSON(file);
-        data.forEach(obj => {
+        let filtered = data.filter(obj => obj['Plan Product Type'] === 'Tool');
+        filtered.forEach(obj => {
             obj['MRP Date'] = obj['MRP Date'] === undefined ? '' : obj['MRP Date'].toLocaleDateString('en-GB');
             obj['Created On'] = obj['Created On'] === undefined ? '' : obj['Created On'].toLocaleDateString('en-GB');
             obj['Created Time'] = obj['Created Time'] === undefined ? '' : obj['Created Time'].toLocaleString('en-GB', { timeZone: 'UTC' });
@@ -78,11 +79,11 @@ const UploadState = (props) => {
             obj['Slot Request Date'] = obj['Slot Request Date'] === undefined ? '' : obj['Slot Request Date'].toLocaleDateString('en-GB');
         });
 
-        data[data.length - 1]['Argo ID'] === undefined && data.pop();
+        filtered[filtered.length - 1]['Argo ID'] === undefined && filtered.pop();
 
         dispatch({
             type: SET_LINEARIZE,
-            payload: data
+            payload: filtered
         });
     }
 
