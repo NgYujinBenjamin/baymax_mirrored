@@ -20,3 +20,4 @@ export const GET_USERS = 'GET_USERS';
 export const DELETE_USER = 'DELETE_USER';
 export const USER_ERROR = 'USER_ERROR';
 export const RESET_PASSWORD = 'RESET_PASSWORD';
+export const NEW_PASSWORD = 'NEW_PASSWORD';
