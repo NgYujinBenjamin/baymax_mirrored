@@ -9,6 +9,7 @@ import Linearize from './components/linearization/Linearize';
 import Baseline from './components/linearization/Baseline';
 import Login from './components/auth/Login';
 import Admin from './components/pages/Admin';
+import Profile from './components/pages/Profile';
 import PrivateRoute from './components/routing/PrivateRoute';
 
 import UploadState from './context/upload/UploadState';
@@ -36,6 +37,7 @@ const App = () => {
                   <PrivateRoute exact path='/' component={Baseline} />
                   <PrivateRoute exact path='/linearize' component={Linearize} />
                   <PrivateRoute exact path='/admin' component={Admin} />
+                  <PrivateRoute exact path='/profile' component={Profile} />
                   <Route exact path='/login' component={Login} />
                 </Switch>
             </Container>
