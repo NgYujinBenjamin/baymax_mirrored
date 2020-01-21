@@ -1,7 +1,7 @@
 import React, { useReducer } from 'react';
 import AuthContext from './authContext';
 import AuthReducer from './authReducer';
-import { LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, USER_LOADED, CLEAR_ERRORS, AUTH_ERROR } from '../types';
+import { LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, USER_LOADED, CLEAR_ERRORS, AUTH_ERROR, NEW_PASSWORD } from '../types';
 import axios from 'axios';
 import setAuthToken from '../../utils/setAuthToken';
 // const { ipcRenderer } = window.require("electron");
@@ -104,6 +104,26 @@ const AuthState = (props) => {
     //clear errors
     const clearErrors = () => dispatch({ type: CLEAR_ERRORS })
 
+    // update password 
+    const updatePwd = (newpwd) => {
+        console.log(newpwd);
+        // const config = {
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     }
+        // }
+
+        // try {
+        //     await axios.post('localhost:8080', newpwd, config);
+        //     console.log(newpwd)
+        //     dispatch({
+        //         type: NEW_PASSWORD,
+        //     })
+        // } catch (err) {
+            
+        // }
+    }
+
     return <AuthContext.Provider
         value={{
             token: state.token,
@@ -114,7 +134,8 @@ const AuthState = (props) => {
             loadUser,
             login,
             logout,
-            clearErrors
+            clearErrors,
+            updatePwd
         }}>
         {props.children}
     </AuthContext.Provider>
