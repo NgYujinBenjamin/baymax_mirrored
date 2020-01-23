@@ -3,7 +3,7 @@ package main.java.authentication;
 import java.util.*;
 import java.text.*;
 
-public class LoginDetails{
+public class LoginDetails implements JsonObject{
     private String username;
     private String password;
 

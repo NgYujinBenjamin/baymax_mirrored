@@ -13,12 +13,13 @@ import java.text.SimpleDateFormat;
 
 import connection.*;
 import main.java.authentication.Algorithm;
+import main.java.authentication.JsonObject;
 import main.java.authentication.LoginDetails;
 import main.java.authentication.PseudoToken;
 import main.java.authentication.User;
-import authentication.*;
+import main.java.authentication.Error;
 
-import com.google.gson.Gson;
+import authentication.*;
 
 @CrossOrigin
 @RestController
@@ -82,51 +83,43 @@ public class Controller {
         }
     }
     
-    //changing
+    //to be completed
     @RequestMapping(path = "/login", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
-    public PseudoToken login(@RequestBody LoginDetails inputDetails) throws Exception{        
+    public JsonObject login(@RequestBody LoginDetails inputDetails) throws Exception{        
+        if (inputDetails.getUsername() == null || inputDetails.getPassword() == null){
+            return new Error("Username or password cannot be empty");
+        }
         mysqlcon conn = new mysqlcon();
         try {
-            // String user = conn.getUser(inputDetails.getUsername());
-            // String pass = 
-
-            PseudoToken rv = new PseudoToken(inputDetails.getUsername() + " " + inputDetails.getPassword());
-
-            return rv;
-
-            // Gson gson = new Gson();
-            // LoginDetails ld = gson.fromJson(inputDetails, LoginDetails.class);
-            // LoginDetails ld = gson.fromJson("{'username' : 'helloworld', 'password' : '123456'}", LoginDetails.class);
+            String username = inputDetails.getUsername();
+            String user = conn.getUser(username);
             
-            // getting the username from json string
-            // return ld.getUsername();
+            String pass = user.split(" ")[1];
             
-            // String user = conn.getUser(ld.getUsername());
-            // String pass = user.split(" ")[1];
-            // String pseudotoken = user;
-            // if (ld.getPassword().equals(pass)){
-            //     return "{'token' : " + pseudotoken + "}";
-            // }
-            // return "400";   
+            if (inputDetails.getPassword().equals(pass)){
+                // Pseudo Token here should be changed into a JWT token instead when details are correct
+                PseudoToken rv = new PseudoToken(inputDetails.getUsername() + " " + inputDetails.getPassword());
+      
+                return rv;
+            }
+            return new Error("Username or password is incorrect");
+            
         } catch(Exception e) {
-            PseudoToken rv = new PseudoToken(inputDetails.getUsername() + " " + inputDetails.getPassword());
-
+            Error rv = new Error("Exception occured during login");
             return rv;
         }   
     }
     
     // to be completed
     @RequestMapping(path = "/verify", method = RequestMethod.GET, produces = "application/json")
-    public User verifyToken(@RequestParam(value="token") String user_token) throws Exception{
+    public JsonObject verifyToken(@RequestParam(value="token") String user_token) throws Exception{
         //should be using JWT
         String input_name = user_token.split(" ")[0];
         String input_pass = user_token.split(" ")[1];    
         try {    
             return new User(input_name);
-
-            // return is_valid;
         } catch(Exception e) {
-            return new User(input_name);
+            return new Error("Token is invalid");
         }
            
     }

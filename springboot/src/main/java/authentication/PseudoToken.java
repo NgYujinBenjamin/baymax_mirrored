@@ -3,7 +3,7 @@ package main.java.authentication;
 import java.util.*;
 import java.text.*;
 
-public class PseudoToken{
+public class PseudoToken implements JsonObject{
     private String token;
 
     public PseudoToken(String token){
