@@ -31,12 +31,12 @@ const Baseline = (props) => {
     }
 
     const handleSubmit = (event) => {
-        props.history.push('/linearize');
+        props.history.push('/schedule');
     }
 
     const handleCollapseSubmit = (event) => {
         setBaseline(file);
-        props.history.push('/linearize');
+        props.history.push('/schedule');
     }
 
     return (

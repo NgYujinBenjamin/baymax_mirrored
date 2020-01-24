@@ -26,7 +26,7 @@ const AuthState = (props) => {
         }
 
         try {
-            const res = await axios.get(`http://localhost:8080/verify?token=${localStorage.token}`);
+            const res = await axios.get(`http://localhost:8080/verify`);
             console.log(res.data);
             dispatch({
                 type: USER_LOADED,
@@ -38,6 +38,7 @@ const AuthState = (props) => {
             })
         }
 
+        // /* ELECTRON CODE */
         // ipcRenderer.send('loadUser:send', JSON.stringify({ token: state.token }));
         // ipcRenderer.once('loadUser:received', (event, res) => {
         //     const response = JSON.parse(res);
@@ -68,20 +69,22 @@ const AuthState = (props) => {
             console.log(res);
             dispatch({
                 type: LOGIN_SUCCESS,
-                payload: res.data.token
+                payload: res.data
             });
             loadUser();
         } catch (err) {
             console.log(err);
             dispatch({
                 type: LOGIN_FAIL,
-                payload: err
+                payload: err.response
             });
         }
 
+        // // /* ELECTRON CODE */
         // ipcRenderer.send('login:send', JSON.stringify(formData));
         // ipcRenderer.once('login:received', (event, res) => {
         //     const response = JSON.parse(res);
+        //     console.log(response);
             
         //     if(response.type === 'ERROR'){
         //         dispatch({

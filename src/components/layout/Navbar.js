@@ -37,7 +37,7 @@ const Navbar = () => {
             <Link to='/profile' style={{color:'white', textDecoration:'none'}}>
                 <Avatar className={classes.orange}>{ user && user.username.substring(0, 1).toUpperCase() }</Avatar>
             </Link>
-            <Button disabled style={{color:'white'}}>Hello, { user && user.username }</Button>
+            <Button disabled style={{color:'white'}}>{ user && user.username }</Button>
             {/* <Button style={{color:'white'}}>
                 <Link to='/admin' style={{color:'white', textDecoration:'none'}}>Users</Link>
             </Button> */}

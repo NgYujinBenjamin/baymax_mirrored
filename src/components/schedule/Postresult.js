@@ -1,11 +1,12 @@
 import React, { Fragment, useContext } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box, Grid } from '@material-ui/core'
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box, Grid, Typography, Card, CardActions } from '@material-ui/core'
 import PostresultItem from './PostresultItem'
 import UploadContext from '../../context/upload/uploadContext'
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
 import GetAppIcon from '@material-ui/icons/GetApp';
+import DoneIcon from '@material-ui/icons/Done';
 
 const Postresult = () => {
     const classes = useStyles();
@@ -27,7 +28,8 @@ const Postresult = () => {
 
     return (
         <Fragment>
-            <TableContainer component={Paper}>
+            {postResult.unfulfilled.length > 0 ? (
+                <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
                         <TableRow>
@@ -35,16 +37,24 @@ const Postresult = () => {
                             <TableCell>UTID</TableCell>
                             <TableCell>Product Name</TableCell>
                             <TableCell>Derived Tool Completion</TableCell>
-                            <TableCell>Delta</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {postResult.map((result, index) => (
+                        {postResult.unfulfilled.map((result, index) => (
                             <PostresultItem result={result} key={index} />
                         ))}
                     </TableBody>
                 </Table>
-            </TableContainer>
+                </TableContainer>
+            ) : (
+                <Card variant='outlined' style={{backgroundColor: 'green'}}>
+                    <CardActions disableSpacing style={{padding: 8}}>
+                        <DoneIcon style={{marginRight:8, color:'white'}} />
+                        <Typography component='span' variant='body2' style={{color:'white'}}>All Orders Fulfilled</Typography>
+                    </CardActions>
+                </Card>
+            )}
+            
             <Box className={classes.marginTop}>
                 <Grid container spacing={1}>
                     <Grid item xs>

@@ -9,18 +9,18 @@ import AlertContext from '../../context/alert/alertContext'
 import AuthContext from '../../context/auth/authContext'
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 
-const Linearize = () => {
+const Schedule = () => {
     const uploadContext = useContext(UploadContext);
     const alertContext = useContext(AlertContext);
     const authContext = useContext(AuthContext);
     const classes = useStyles();
 
-    const { setLinearize, setBays, clearPreresult, linearize, bays, loading, linearizeDone, postResult } = uploadContext;
+    const { setSchedule, setBays, clearPreresult, schedule, bays, loading, scheduleDone, postResult } = uploadContext;
 
     useEffect(() => {
         authContext.loadUser();
 
-        if(linearizeDone){
+        if(scheduleDone){
             setUserInput({
                 bayComponent: '',
                 bayFile: null,
@@ -28,7 +28,7 @@ const Linearize = () => {
             })
         }
         //eslint-disable-next-line
-    }, [linearizeDone])
+    }, [scheduleDone])
 
     const [userInput, setUserInput] = useState({
         bayComponent: '',
@@ -62,7 +62,7 @@ const Linearize = () => {
             alertContext.setAlert('Please enter the number of available bays and upload an excel file');
         } else {
             setBays(userInput.bayComponent);
-            setLinearize(userInput.bayFile);
+            setSchedule(userInput.bayFile);
         }
     }
 
@@ -90,12 +90,12 @@ const Linearize = () => {
                                 type='file' 
                                 onChange={handleFileChange}
                                 accept=".xlsx, .xlsm" 
-                                id='linearize-file' 
+                                id='schedule-file' 
                                 style={{ display: 'none' }} 
                                 name='bayFile'
                             />
-                            <label htmlFor='linearize-file'>
-                                <Button variant='contained' color='primary' component='span' disabled={linearizeDone} startIcon={<CloudUploadIcon />}>
+                            <label htmlFor='schedule-file'>
+                                <Button variant='contained' color='primary' component='span' disabled={scheduleDone} startIcon={<CloudUploadIcon />}>
                                     Upload
                                 </Button>
                             </label>
@@ -104,12 +104,12 @@ const Linearize = () => {
                             </Typography>
                         </Box>
                         {(userInput.bayFile && userInput.fileName !== '') && <Button color='primary' variant='contained' fullWidth onClick={handleConfirm}>Confirm</Button>}
-                        {(linearize !== null && bays !== '' && !linearizeDone) && <Button fullWidth color='default' variant='contained' className={classes.marginTop} onClick={handleClearPreresult}>Clear</Button>}
+                        {(schedule !== null && bays !== '' && !scheduleDone) && <Button fullWidth color='default' variant='contained' className={classes.marginTop} onClick={handleClearPreresult}>Clear</Button>}
                     </Box>
                     <Box>
                         {loading && <Spinner />}
-                        {(linearize !== null && bays !== '' && !linearizeDone && !loading) && <Preresult fileName={userInput.fileName} /> }
-                        {(postResult !== null && linearizeDone && !loading) && <Postresult />}
+                        {(schedule !== null && bays !== '' && !scheduleDone && !loading) && <Preresult fileName={userInput.fileName} /> }
+                        {(postResult !== null && scheduleDone && !loading) && <Postresult />}
                     </Box>
                 </CardContent>
             </Card>
@@ -129,4 +129,4 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export default Linearize
+export default Schedule

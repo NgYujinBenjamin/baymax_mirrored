@@ -9,34 +9,35 @@ const Users = () => {
     
     const { users, getUsers, loading } = adminContext
 
-    // useEffect(() => {
-    //     getUsers();
-    //     //eslint-disable-next-line
-    // }, [])
+    useEffect(() => {
+        getUsers();
+        //eslint-disable-next-line
+    }, [])
 
-    // if(users !== null && users.length === 0 && !loading){
-    //     return (
-    //         <Typography component='p' variant='body2'>
-    //             Please add a User
-    //         </Typography>
-    //     )
-    // }
+    if(users !== null && users.length === 0 && !loading){
+        return (
+            <Typography component='p' variant='body2'>
+                Please add a User
+            </Typography>
+        )
+    }
     return (
-        // users !== null && !loading ? (
-        //     <Fragment>
-        //         {users.map(user => (
-        //             <UserItem user={user} key={user.id} />
-        //         ))}
-        //     </Fragment>
-        // ) : (
-        //     <Spinner />
-        // )
+        users !== null && !loading ? (
+            <Fragment>
+                {users.map(user => (
+                    <UserItem user={user} key={user.id} />
+                ))}
+            </Fragment>
+        ) : (
+            <Spinner />
+        )
 
-        <Fragment>
-            {users.map(user => (
-                <UserItem user={user} key={user.id} />
-            ))}
-        </Fragment>
+        // /*----ELECTRON CODE----*/
+        // <Fragment>
+        //     {users.map(user => (
+        //         <UserItem user={user} key={user.id} />
+        //     ))}
+        // </Fragment>
     )
 }
 

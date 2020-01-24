@@ -10,7 +10,7 @@ export default (state, action) => {
                 user: action.payload
             }
         case LOGIN_SUCCESS:
-            localStorage.setItem('token', action.payload)
+            localStorage.setItem('token', action.payload.token)
             return {
                 ...state,
                 ...action.payload,

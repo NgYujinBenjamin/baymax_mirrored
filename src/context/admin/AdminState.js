@@ -3,36 +3,38 @@ import AdminReducer from './adminReducer';
 import AdminContext from './adminContext';
 import uuid from 'uuid'
 import axios from 'axios';
-import { ADD_USER, GET_USERS, DELETE_USER, USER_ERROR, RESET_PASSWORD } from '../types';
+import { ADD_USER, GET_USERS, DELETE_USER, USER_ERROR, RESET_PASSWORD, ADMIN_CLEAR_ERROR } from '../types';
 
 const AdminState = (props) => {
     const initialState = {
-        users: [
-            {
-                id: 1,
-                username: 'johndoe-user',
-                firstname: 'John',
-                lastname: 'Doe',
-                department: 'Marketing',
-                role: 'admin'
-            },
-            {
-                id: 2,
-                username: 'marysmith-user',
-                firstname: 'Mary',
-                lastname: 'Smith',
-                department: 'Supply',
-                role: 'user'
-            },
-            {
-                id: 3,
-                username: 'barrywhite-user',
-                firstname: 'Barry',
-                lastname: 'White',
-                department: 'IT',
-                role: 'user'
-            }
-        ],
+        // /*----ELECTRON CODE----*/
+        // users: [
+        //     {
+        //         id: 1,
+        //         username: 'johndoe-user',
+        //         firstname: 'John',
+        //         lastname: 'Doe',
+        //         department: 'Marketing',
+        //         role: 'admin'
+        //     },
+        //     {
+        //         id: 2,
+        //         username: 'marysmith-user',
+        //         firstname: 'Mary',
+        //         lastname: 'Smith',
+        //         department: 'Supply',
+        //         role: 'user'
+        //     },
+        //     {
+        //         id: 3,
+        //         username: 'barrywhite-user',
+        //         firstname: 'Barry',
+        //         lastname: 'White',
+        //         department: 'IT',
+        //         role: 'user'
+        //     }
+        // ],
+        users: null,
         error: null
     }
 
@@ -41,90 +43,85 @@ const AdminState = (props) => {
     //all actions here
 
     //get all users
-    const getUsers = () => {
-        // try {
-        //     const res = await axios.get('<IP-ADDRESS>:<PORT>/<PATH>');
-        //     console.log(res)
-        //     dispatch({
-        //         type: GET_USERS,
-        //         payload: res.data
-        //     }) 
-        // } catch (err) {
-        //     dispatch({
-        //         type: USER_ERROR,
-        //         payload: err.response.data
-        //     })
-        // }
-
-        console.log();
+    const getUsers = async () => {
+        try {
+            const res = await axios.get('http://localhost:8080/<PATH>');
+            console.log(res)
+            dispatch({
+                type: GET_USERS,
+                payload: res.data
+            }) 
+        } catch (err) {
+            dispatch({
+                type: USER_ERROR,
+                payload: err.response
+            })
+        }
     }
 
     //create user
-    const addUser = (user) => {
-        // const config = {
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     }
-        // }
+    const addUser = async (user) => {
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
 
-        // try {
-        //     const res = await axios.post('<IP-ADDRESS>:<PORT>/<PATH>', user, config);
-        //     console.log(res);
-        //     dispatch({
-        //         type: ADD_USER,
-        //         payload: res.data
-        //     });
-        // } catch (err) {
-        //     dispatch({
-        //         type: USER_ERROR,
-        //         payload: err.response.data
-        //     })
-        // }
+        try {
+            const res = await axios.post('http://localhost:8080/<PATH>', user, config);
+            console.log(res);
+            dispatch({
+                type: ADD_USER,
+                payload: res.data
+            });
+        } catch (err) {
+            dispatch({
+                type: USER_ERROR,
+                payload: err.response
+            })
+        }
         
-        user.id = uuid.v4();
-        console.log(user)
-        dispatch({
-            type: ADD_USER,
-            payload: user
-        })
+        // user.id = uuid.v4();
+        // console.log(user)
+        // dispatch({
+        //     type: ADD_USER,
+        //     payload: user
+        // })
     }
 
     //delete user
-    const deleteUser = (id) => {
-        // try {
-        //     await axios.delete(`<IP-ADDRESS>:<PORT>/<PATH>/${id}`)
-        //     dispatch({
-        //         type: DELETE_USER,
-        //         payload: id
-        //     })
-        // } catch (err) {
-        //     dispatch({
-        //         type: USER_ERROR,
-        //         payload: err.response.data
-        //     })
-        // }
-
-        dispatch({
-            type: DELETE_USER,
-            payload: id
-        })
+    const deleteUser = async (id) => {
+        try {
+            await axios.delete(`http://localhost:8080/<PATH>/${id}`)
+            dispatch({
+                type: DELETE_USER,
+                payload: id
+            })
+        } catch (err) {
+            dispatch({
+                type: USER_ERROR,
+                payload: err.response
+            })
+        }
     }
 
-    const resetPassword = (id) => {
-        // try {
-        //     await axios.get(`<IP-ADDRESS>:<PORT>/<PATH>/${id}`)
-        //     dispatch({
-        //         type: RESET_PASSWORD
-        //     })
-        // } catch (err) {
-        //     dispatch({
-        //         type: USER_ERROR,
-        //         payload: err.response.data
-        //     })
-        // }
-
-        console.log();
+    //reset user password
+    const resetPassword = async (id) => {
+        try {
+            await axios.get(`http://localhost:8080/<PATH>/${id}`)
+            dispatch({
+                type: RESET_PASSWORD
+            })
+        } catch (err) {
+            dispatch({
+                type: USER_ERROR,
+                payload: err.response
+            })
+        }
     }
+
+    //clear error
+    const adminClearError = () => dispatch({ type: ADMIN_CLEAR_ERROR })
 
     return <AdminContext.Provider 
         value={{
@@ -133,7 +130,8 @@ const AdminState = (props) => {
             getUsers,
             addUser,
             deleteUser,
-            resetPassword
+            resetPassword,
+            adminClearError
         }}>
         { props.children }        
     </AdminContext.Provider>

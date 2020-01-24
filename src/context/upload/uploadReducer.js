@@ -1,7 +1,8 @@
-import { SET_BASELINE, SET_LINEARIZE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_LINEARIZE, CREATE_RESULT, EXPORT_RESULT, CLEAR_ALL } from '../types';
+import { SET_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, CLEAR_ALL, SAVE_RESULT } from '../types';
 
 export default (state, action) => {
     switch(action.type) {
+        case SAVE_RESULT:
         case EXPORT_RESULT:
             return {
                 ...state,
@@ -12,7 +13,7 @@ export default (state, action) => {
                 ...state,
                 postResult: action.payload,
                 loading: false,
-                linearizeDone: true
+                scheduleDone: true
             }
         case SET_BAYS:
             return {
@@ -20,11 +21,11 @@ export default (state, action) => {
                 bays: action.payload,
                 loading: false
             }
-        case SET_LINEARIZE:
-        case UPDATE_LINEARIZE:
+        case SET_SCHEDULE:
+        case UPDATE_SCHEDULE:
             return {
                 ...state,
-                linearize: action.payload,
+                schedule: action.payload,
                 loading: false
             }
         case SET_BASELINE:
@@ -40,16 +41,16 @@ export default (state, action) => {
         case CLEAR_ALL:
             return {
                 ...state,
-                linearize: null,
+                schedule: null,
                 bays: '',
                 loading: false,
                 postResult: null,
-                linearizeDone: false
+                scheduleDone: false
             }
         case CLEAR_PRERESULT:
             return {
                 ...state,
-                linearize: null,
+                schedule: null,
                 bays: '',
                 loading: false
             }

@@ -2,30 +2,34 @@ import React, { useReducer } from 'react';
 import UploadContext from './uploadContext';
 import UploadReducer from './uploadReducer';
 import XLSX from 'xlsx';
-import { SET_BASELINE, SET_LINEARIZE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_LINEARIZE, CREATE_RESULT, EXPORT_RESULT, CLEAR_ALL } from '../types';
+import axios from 'axios';
+import { SET_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, CLEAR_ALL, SAVE_RESULT } from '../types';
 // const { ipcRenderer } = window.require("electron")
 
 const UploadState = (props) => {
     const initialState = {
         baseline: null,
-        linearize: null,
+        schedule: null,
         bays: '',
         loading: false,
         postResult: null,
-        linearizeDone: false
+        scheduleDone: false
     }
 
     const [state, dispatch] = useReducer(UploadReducer, initialState);
 
     //methods all over here
+    //export file
     const createExport = (file) => {
         setLoading();
+
+        const scheduleResult = file.schedule;
 
         //create new workbook
         const massWB = XLSX.utils.book_new(); 
 
         //create new worksheet
-        const massWsOne = XLSX.utils.json_to_sheet(file);
+        const massWsOne = XLSX.utils.json_to_sheet(scheduleResult);
 
         //parse in a worksheet into the workbook
         //1st arg: workbook, 2nd arg: worksheet, 3rd: name of worksheet
@@ -40,21 +44,81 @@ const UploadState = (props) => {
         })
     }
 
-    const saveFile = (file) => {
-        console.log();
-    }
-
-    const clearAll = () => dispatch({ type: CLEAR_ALL })
-
-    const createResult = (objs, bay) => {
+    //save file
+    const saveFile = async (file) => {
         setLoading();
 
-        const preResult = { bay: bay, data: [...objs] }
-        // const preResult = [{bay: bay}, ...objs];
+        const output = file.schedule;
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+
+        try {
+            await axios.post('http://localhost:8080/<PATH>', output, config)
+            dispatch({
+                type: SAVE_RESULT
+            })
+        } catch (err) {
+            //prompt error
+
+        }
+    }
+
+    //clear all - back to default state
+    const clearAll = () => dispatch({ type: CLEAR_ALL })
+
+    //create result - mass slot upload
+    const createResult = async (objs, bay, baseline) => {
+        setLoading();
+        let preResult = null;
+        baseline !== null ? preResult = { bay: bay, data: [...objs], baseline: baseline } : preResult = { bay: bay, data: [...objs] }
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+
+        try {
+            const res = await axios.post('http://localhost:8080/<PATH>', preResult, config);
+            console.log(res)
+            const output = [];
+            res.data.schedule.forEach(arr => {
+                arr.schedule.forEach(val => {
+                    output.push(val);
+                })
+            })
+            res.data.schedule = output;
+
+            dispatch({
+                type: CREATE_RESULT,
+                payload: res.data
+            })
+        } catch (err) {
+            //prompt error
+
+        }
+
+        // /* ELECTRON CODE */
         // ipcRenderer.send('getResult:send', JSON.stringify(preResult));
         // ipcRenderer.once('getResult:received', (event, res) => {
         //     const response = JSON.parse(res);
+        //     const output = [];
+
+        //     // response.data.schedule = [];
+        //     response.data.schedule.forEach(arr => {
+        //         arr.schedule.forEach(val => {
+        //             output.push(val);
+        //         })
+        //     })
+
+        //     response.data.schedule = output;
             
+        //     console.log(response);
+
         //     if(response.type === 'SUCCESS'){
         //         // console.log(response.data)
         //         dispatch({
@@ -65,7 +129,8 @@ const UploadState = (props) => {
         // })
     }
 
-    const setLinearize = async (file) => {
+    //import masterops
+    const setSchedule = async (file) => {
         setLoading();
 
         let data = await convertExcelToJSON(file);
@@ -82,17 +147,21 @@ const UploadState = (props) => {
         filtered[filtered.length - 1]['Argo ID'] === undefined && filtered.pop();
 
         dispatch({
-            type: SET_LINEARIZE,
+            type: SET_SCHEDULE,
             payload: filtered
         });
     }
 
-    const updateLinearize = (data) => dispatch({ type: UPDATE_LINEARIZE, payload: data })
+    //update masterops
+    const updateSchedule = (data) => dispatch({ type: UPDATE_SCHEDULE, payload: data })
 
+    //set bays
     const setBays = (num) => dispatch({ type: SET_BAYS, payload: num })
 
+    //clear preresult
     const clearPreresult = () => dispatch({ type: CLEAR_PRERESULT })
 
+    //set baseline
     const setBaseline = async (file) => {
         const data = await convertExcelToJSON(file);
         console.log(data);
@@ -102,6 +171,7 @@ const UploadState = (props) => {
         })
     }
 
+    //convert excel to json
     const convertExcelToJSON = async (file) => {
         return new Promise((resolve, reject) => {
             let reader = new FileReader();
@@ -117,20 +187,21 @@ const UploadState = (props) => {
         });
     }
 
+    //set loading
     const setLoading = () => dispatch({ type: SET_LOADING })
 
     return <UploadContext.Provider
         value={{
             baseline: state.baseline,
-            linearize: state.linearize,
+            schedule: state.schedule,
             bays: state.bays,
             loading: state.loading,
-            linearizeDone: state.linearizeDone,
+            scheduleDone: state.scheduleDone,
             postResult: state.postResult,
             setBaseline,
-            setLinearize,
+            setSchedule,
             setBays,
-            updateLinearize,
+            updateSchedule,
             createResult,
             clearPreresult,
             setLoading,

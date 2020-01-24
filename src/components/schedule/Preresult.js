@@ -8,9 +8,9 @@ const Preresult = ({ fileName }) => {
     const uploadContext = useContext(UploadContext);
     const classes = useStyles();
 
-    const { linearize, updateLinearize, createResult, bays } = uploadContext;
+    const { schedule, updateSchedule, createResult, bays, baseline } = uploadContext;
 
-    const [objs, setObjects] = useState(linearize);
+    const [objs, setObjects] = useState(schedule);
 
     const handleChange = (obj) => {
         return (event) => {
@@ -31,10 +31,10 @@ const Preresult = ({ fileName }) => {
         }
     }
 
-    const handleLinearize = (event) => {
+    const handleSchedule = (event) => {
         event.preventDefault();
-        updateLinearize(objs);
-        createResult(objs, bays);
+        updateSchedule(objs);
+        createResult(objs, bays, baseline);
     }
     
     return (
@@ -68,9 +68,9 @@ const Preresult = ({ fileName }) => {
                 className={classes.marginTop} 
                 fullWidth color='primary' 
                 variant='contained' 
-                onClick={handleLinearize}
+                onClick={handleSchedule}
             >
-                Begin Linearization
+                Begin Schedule Creation
             </Button>
         </Fragment>
     )

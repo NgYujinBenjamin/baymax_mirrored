@@ -47,7 +47,8 @@
     "react-build": "react-scripts build",
     "react-test": "react-scripts test",
     "react-eject": "react-scripts eject",
-    "start": "concurrently \"npm run react-start\" \"wait-on http://localhost:3000 && npm run electron\""
+    "electron-start": "concurrently \"npm run react-start\" \"wait-on http://localhost:3000 && npm run electron\"",
+    "start": "npm run react"
   },
   "eslintConfig": {
     "extends": "react-app"
