@@ -30,7 +30,8 @@ const Schedule = () => {
             setUserInput({
                 bayComponent: '',
                 bayFile: null,
-                fileName: ''
+                fileName: '',
+                bayFileValue: ''
             })
         }
         //eslint-disable-next-line
@@ -39,7 +40,8 @@ const Schedule = () => {
     const [userInput, setUserInput] = useState({
         bayComponent: '',
         bayFile: null,
-        fileName: ''
+        fileName: '',
+        bayFileValue: ''
     })
 
     const handleChange = (event) => {
@@ -53,8 +55,9 @@ const Schedule = () => {
     const handleFileChange = (event) => {
         setUserInput({
             ...userInput,
-            [event.target.name]: event.target.files[0],
-            fileName: event.target.files[0].name
+            bayFile: event.target.files[0],
+            fileName: event.target.files[0].name,
+            bayFileValue: event.target.value
         });
     }
     
@@ -77,7 +80,8 @@ const Schedule = () => {
         setUserInput({
             bayComponent: '',
             bayFile: null,
-            fileName: ''
+            fileName: '',
+            bayFileValue: ''
         })
     }
 
@@ -99,6 +103,7 @@ const Schedule = () => {
                                 id='schedule-file' 
                                 style={{ display: 'none' }} 
                                 name='bayFile'
+                                value={userInput.bayFileValue}
                             />
                             <label htmlFor='schedule-file'>
                                 <Button variant='contained' color='primary' component='span' disabled={scheduleDone} startIcon={<CloudUploadIcon />}>
