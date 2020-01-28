@@ -65,6 +65,58 @@ ipcMain.on('getResult:send', (event, preResult) => {
     // console.log(res.data[1]);
     // console.log(res.data[2]);
     let data = {
+        "allProduct": [
+          {
+            "argoID": 12185,
+            "plant": 3008,
+            "buildComplete": "No",
+            "slotStatus": "Approved - Loaded",
+            "planProductType": "Tool",
+            "buildCategory": "Build Plan",
+            "shipRevenueType": "Revenue",
+            "salesOrder": 95754,
+            "forecastID": "4073364",
+            "slotID_UTID": "CY19Q4TOOL30",
+            "fabName": "SUMO NARITA FAB1",
+            "buildProduct": "AUDI TT",
+            "productPN": "0729127-000",
+            "MRPDate": "Oct 1, 2019, 12:00:00 AM",
+            "intOpsShipReadinessDate": "Nov 10, 2019, 12:00:00 AM",
+            "MFGCommitDate": "Nov 10, 2019, 12:00:00 AM",
+            "shipRecogDate": "Nov 10, 2019, 12:00:00 AM",
+            "cycleTimeDays": 120,
+            "quantity": 1,
+            "RMATool": "No",
+            "new_Used": "New",
+            "fabID": "605440",
+            "toolStartDate": "Jun 3, 2019, 12:00:00 AM"
+          },
+          {
+            "argoID": 12136,
+            "plant": 3008,
+            "buildComplete": "No",
+            "slotStatus": "Approved - Loaded",
+            "planProductType": "Tool",
+            "buildCategory": "NPL",
+            "shipRevenueType": "Revenue",
+            "salesOrder": 104243,
+            "forecastID": "4079225",
+            "slotID_UTID": "CY19TOOL22",
+            "fabName": "BOTTEGA VENETA",
+            "buildProduct": "HONDA VEZEL",
+            "productPN": "0756781-000",
+            "MRPDate": "Nov 8, 2019, 12:00:00 AM",
+            "intOpsShipReadinessDate": "Dec 19, 2019, 12:00:00 AM",
+            "MFGCommitDate": "Dec 19, 2019, 12:00:00 AM",
+            "shipRecogDate": "Jan 2, 2020, 12:00:00 AM",
+            "cycleTimeDays": 150,
+            "quantity": 1,
+            "RMATool": "No",
+            "new_Used": "New",
+            "fabID": "613750",
+            "toolStartDate": "Jun 11, 2019, 12:00:00 AM"
+          }
+        ],
         "schedule": [
             {
               "schedule": [

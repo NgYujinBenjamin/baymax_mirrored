@@ -15,10 +15,16 @@ const Schedule = () => {
     const authContext = useContext(AuthContext);
     const classes = useStyles();
 
-    const { setSchedule, setBays, clearPreresult, schedule, bays, loading, scheduleDone, postResult } = uploadContext;
+    const { setAlert } = alertContext;
+    const { setSchedule, setBays, clearPreresult, schedule, bays, loading, scheduleDone, postResult, error, uploadClearError } = uploadContext;
 
     useEffect(() => {
         authContext.loadUser();
+
+        if(error !== null){
+            setAlert(error);
+            uploadClearError();
+        }
 
         if(scheduleDone){
             setUserInput({
@@ -28,7 +34,7 @@ const Schedule = () => {
             })
         }
         //eslint-disable-next-line
-    }, [scheduleDone])
+    }, [scheduleDone, error])
 
     const [userInput, setUserInput] = useState({
         bayComponent: '',
@@ -57,9 +63,9 @@ const Schedule = () => {
         const regx = /^[0-9]+$/;
         
         if(!regx.test(userInput.bayComponent)){
-            alertContext.setAlert('Please enter a number in the available bay field');
+            setAlert('Please enter a number in the available bay field');
         } else if(userInput.bayComponent === '' || userInput.bayFile === null) {
-            alertContext.setAlert('Please enter the number of available bays and upload an excel file');
+            setAlert('Please enter the number of available bays and upload an excel file');
         } else {
             setBays(userInput.bayComponent);
             setSchedule(userInput.bayFile);
