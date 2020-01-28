@@ -3,6 +3,8 @@ import java.text.*;
 
 import org.apache.commons.lang3.time.DateUtils;
 
+import com.google.gson.Gson;
+
 public class Product implements Comparable<Product>{
     private Integer argoID;
     private Integer plant;
@@ -197,8 +199,6 @@ public class Product implements Comparable<Product>{
      * 
      */
     public void calculateToolStart(){
-        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-
         toolStartDate = DateUtils.addDays(MRPDate, -cycleTimeDays);
     }
 
@@ -221,5 +221,11 @@ public class Product implements Comparable<Product>{
 
     public Date getMRPDate(){
         return MRPDate;
+    }
+
+    public static String toJSONString(Product p){
+        Gson gson = new Gson();
+        String json = gson.toJson(p);
+        return json;
     }
 }

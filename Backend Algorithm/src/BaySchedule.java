@@ -1,5 +1,7 @@
 import java.util.*;
 
+import com.google.gson.Gson;
+
 public class BaySchedule{
     private List<Product> allProduct;
     private List<Bay> schedule;
@@ -81,6 +83,27 @@ public class BaySchedule{
     }
 
     /**
+     * Get the earliest tool start date for the set of products
+     * @return Earliest Tool Start Date
+     */
+    public Date getEarliestToolStart(){
+        return allProduct.get(0).getToolStartDate();
+    }
+
+    /**
+     * Get the latest MRP completion date for the set of products
+     * @return Latest MRP Date
+     */
+    public Date getLatestMRP(){
+        int lastPosition = allProduct.size() - 1;
+        return allProduct.get(lastPosition).getMRPDate();
+    }
+
+    public List<Product> getAllProduct(){
+        return allProduct;
+    }
+
+    /**
      * Helper method to determine which Bay object to assign the product to, based on the Product's Tool Start Date. Tool Start Date is compared against Bay Available Date (Bay Attribute) to determine if bay is suitable to take on the new product.
      * @param toolStartDate Tool Start Date of the product to be assigned to the Bay.
      * @return Integer representing the index position of the Bay to be Assigned in Production Schedule (SchedulerUtils attribute).
@@ -94,5 +117,11 @@ public class BaySchedule{
             }
         }
         return null;
+    }
+
+    public static String toJSONString(BaySchedule bs){
+        Gson gson = new Gson();
+        String json = gson.toJson(bs);
+        return json;
     }
 }

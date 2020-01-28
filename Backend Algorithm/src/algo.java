@@ -10,7 +10,6 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.xssf.usermodel.XSSFSheet;  
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-
 public class algo{
     public static void main(String[] args){
         // 1. Read the Data from the XLSX file (not needed once integrate w frontend)
@@ -25,7 +24,7 @@ public class algo{
             Product p = new Product(allData.get(i));
             p.calculateToolStart();
             allProduct.add(p);
-            
+            // System.out.println(Product.toJSONString(p));
         }
         // System.out.println(allData.size() + " vs " + allProduct.size());  // Check: Check that the number of rows matches the number of elements in the ArrayList
 
@@ -39,13 +38,20 @@ public class algo{
         // baySchedule.size() gives us the miniumum number of Bays required for 100% fulfillment
         BaySchedule baySchedule = new BaySchedule(allProduct);
         baySchedule.generateSchedule();
-        System.out.println(baySchedule.getSchedule().size());
-
+        // System.out.println(BaySchedule.toJSONString(baySchedule));
+        // System.out.println();
+        // System.out.println();
+        // System.out.println();
+        // System.out.println();
+        
         // 4b. Generate Schedule with Cap
         // generateSchedule(int maxBays) will try to fulfill as many products as possible, while ensuring that the total number of bays used < max bays specified
         baySchedule.generateSchedule(26);
-        System.out.println(baySchedule.getSchedule().size());
+        // System.out.println(BaySchedule.toJSONString(baySchedule));
 
+        // 5. Generate the Bay Requirements
+        BayRequirement bayReq = new BayRequirement(baySchedule);
+        System.out.println(BayRequirement.toJSONString(bayReq));
     }
 
 
@@ -74,7 +80,7 @@ public class algo{
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
             
-            for (int rowNum = 1; rowNum < rowCount; rowNum++){  // For each subsequent row
+            for (int rowNum = 1; rowNum <= rowCount; rowNum++){  // For each subsequent row
                 Map<String, Object> rowData = new HashMap<String, Object>();
                 Row r = sheet.getRow(rowNum);
 

@@ -1,5 +1,7 @@
 import java.util.*;
 
+import com.google.gson.Gson;
+
 public class Bay {
     private ArrayList<Product> schedule;
     private Date availableDate;
@@ -19,5 +21,11 @@ public class Bay {
 
     public ArrayList<Product> getBaySchedule (){
         return schedule;
+    }
+
+    public static String toJSONString(Bay b){
+        Gson gson = new Gson();
+        String json = gson.toJson(b);
+        return json;
     }
 }
