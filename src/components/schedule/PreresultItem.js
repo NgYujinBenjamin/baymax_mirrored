@@ -18,10 +18,10 @@ const PreresultItem = memo (({ obj, onChange }) => {
                 <TableCell>{utID}</TableCell>
                 <TableCell>{productName}</TableCell>
                 <TableCell>
-                    <Input type='text' name={cycleName} value={cycleTime} onChange={onChange} />
+                    <Input type='text' name={cycleName} value={cycleTime} onChange={onChange} required />
                 </TableCell>
                 <TableCell>
-                    <Input type='text' name={mrpName} value={mrpDate} onChange={onChange} />
+                    <Input type='text' name={mrpName} value={mrpDate} onChange={onChange} required />
                 </TableCell>
             </TableRow>
         </Fragment>

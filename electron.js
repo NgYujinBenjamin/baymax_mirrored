@@ -62,8 +62,9 @@ ipcMain.on('getResult:send', (event, preResult) => {
     // console.log(res.bay);
     // console.log(typeof res.data[0]['Delta Days']);
     // console.log(typeof res.data[0]['Cycle Time Days']);
-    // console.log(res.data[1]);
-    // console.log(res.data[2]);
+    console.log(res.data[0]);
+    console.log(res.data[1]);
+    console.log(res.data[2]);
     let data = {
         "allProduct": [
           {

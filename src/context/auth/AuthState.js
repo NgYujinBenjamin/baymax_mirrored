@@ -4,7 +4,7 @@ import AuthReducer from './authReducer';
 import { LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, USER_LOADED, CLEAR_ERRORS, AUTH_ERROR, NEW_PASSWORD } from '../types';
 import axios from 'axios';
 import setAuthToken from '../../utils/setAuthToken';
-const { ipcRenderer } = window.require("electron");
+// const { ipcRenderer } = window.require("electron");
 
 const AuthState = (props) => {
     const initialState = {
@@ -21,84 +21,84 @@ const AuthState = (props) => {
     
     //load user
     const loadUser = async () => {
-        // if(localStorage.token){
-        //     setAuthToken(localStorage.token);
-        // }
+        if(localStorage.token){
+            setAuthToken(localStorage.token);
+        }
 
-        // try {
-        //     const res = await axios.get(`http://localhost:8080/verify`);
-        //     console.log(res.data);
-        //     dispatch({
-        //         type: USER_LOADED,
-        //         payload: res.data
-        //     })
-        // } catch (err) {
-        //     dispatch({
-        //         type: AUTH_ERROR
-        //     })
-        // }
+        try {
+            const res = await axios.get(`http://localhost:8080/verify`);
+            console.log(res.data);
+            dispatch({
+                type: USER_LOADED,
+                payload: res.data
+            })
+        } catch (err) {
+            dispatch({
+                type: AUTH_ERROR
+            })
+        }
 
         // /* ELECTRON CODE */
-        ipcRenderer.send('loadUser:send', JSON.stringify({ token: state.token }));
-        ipcRenderer.once('loadUser:received', (event, res) => {
-            const response = JSON.parse(res);
+        // ipcRenderer.send('loadUser:send', JSON.stringify({ token: state.token }));
+        // ipcRenderer.once('loadUser:received', (event, res) => {
+        //     const response = JSON.parse(res);
             
-            if(response.type === 'SUCCESS'){
-                dispatch({
-                    type: USER_LOADED,
-                    payload: response.user
-                })
-            } else if(response.type === 'ERROR'){
-                dispatch({
-                    type: AUTH_ERROR
-                })
-            }
-        })
+        //     if(response.type === 'SUCCESS'){
+        //         dispatch({
+        //             type: USER_LOADED,
+        //             payload: response.user
+        //         })
+        //     } else if(response.type === 'ERROR'){
+        //         dispatch({
+        //             type: AUTH_ERROR
+        //         })
+        //     }
+        // })
     }
 
     //login user
     const login = async (formData) => {
-        // const config = {
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     }
-        // }
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
 
-        // try {
-        //     const res = await axios.post('http://localhost:8080/login', formData, config);
-        //     console.log(res);
-        //     dispatch({
-        //         type: LOGIN_SUCCESS,
-        //         payload: res.data
-        //     });
-        //     loadUser();
-        // } catch (err) {
-        //     console.log(err);
-        //     dispatch({
-        //         type: LOGIN_FAIL,
-        //         payload: err.response
-        //     });
-        // }
+        try {
+            const res = await axios.post('http://localhost:8080/login', formData, config);
+            console.log(res);
+            dispatch({
+                type: LOGIN_SUCCESS,
+                payload: res.data
+            });
+            loadUser();
+        } catch (err) {
+            console.log(err);
+            dispatch({
+                type: LOGIN_FAIL,
+                payload: err.response
+            });
+        }
 
         // // /* ELECTRON CODE */
-        ipcRenderer.send('login:send', JSON.stringify(formData));
-        ipcRenderer.once('login:received', (event, res) => {
-            const response = JSON.parse(res);
-            console.log(response);
+        // ipcRenderer.send('login:send', JSON.stringify(formData));
+        // ipcRenderer.once('login:received', (event, res) => {
+        //     const response = JSON.parse(res);
+        //     console.log(response);
             
-            if(response.type === 'ERROR'){
-                dispatch({
-                    type: LOGIN_FAIL,
-                    payload: response.data.msg
-                })
-            } else if(response.type === 'SUCCESS') {
-                dispatch({
-                    type: LOGIN_SUCCESS,
-                    payload: response.data
-                })
-                loadUser();
-            }
-        })
+        //     if(response.type === 'ERROR'){
+        //         dispatch({
+        //             type: LOGIN_FAIL,
+        //             payload: response.data.msg
+        //         })
+        //     } else if(response.type === 'SUCCESS') {
+        //         dispatch({
+        //             type: LOGIN_SUCCESS,
+        //             payload: response.data
+        //         })
+        //         loadUser();
+        //     }
+        // })
     } 
 
     //logout user
