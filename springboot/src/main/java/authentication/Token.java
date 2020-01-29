@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import com.auth0.jwt.JWT;
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 
-import connection.mysqlcon;
+import connection.*;
 
 public class Token {
     
@@ -32,8 +32,8 @@ public class Token {
                     .getSubject();
 
         String userObject = conn.getUser(username);
-
-        if (userObject.split(" ")[0].equals(username)){
+        String dbusername = userObject.split(" ")[0];
+        if (dbusername.equals(username)){
             return true;
         }
         return false;        

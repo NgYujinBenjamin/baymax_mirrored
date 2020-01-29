@@ -17,7 +17,8 @@ import org.apache.poi.ss.usermodel.DateUtil;
 
 // import org.apache.poi.xssf.usermodel.XSSFSheet;  
 // import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
+import com.google.gson.*;
+import com.google.gson.reflect.*;
 
 @CrossOrigin
 @RestController
@@ -36,10 +37,15 @@ public class AlgoController {
     
     }
 
-    @RequestMapping(path = "/algo", method = RequestMethod.GET, consumes="application/json")
-    public String algo(@RequestParam(value="data", required=false) List<Map<String, Object>> data) throws Exception{
+    @RequestMapping(path = "/algo", method = RequestMethod.GET)
+    public String algo(@RequestParam(value="data", required=false) String data) throws Exception{
     
-        List<Map<String, Object>> allData = data;
+        JsonElement jsonElement = new JsonParser().parse(data);
+        List<Map<String, Object>> allData= new ArrayList<Map<String, Object>>();
+        allData = new Gson().fromJson(data, new TypeToken<List<Map<String, Object>>>() {}.getType());
+
+        
+        // List<Map<String, Object>> allData = data;
     
         List<Product> allProduct = new ArrayList<>();
         

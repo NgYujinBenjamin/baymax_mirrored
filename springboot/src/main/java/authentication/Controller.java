@@ -128,7 +128,7 @@ public class Controller {
             return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Token is invalid"), HttpStatus.OK);
 
         } catch(Exception e) {
-            return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Backend Issue: Exception occured at verify method in Controller.java"), HttpStatus.OK);
+            return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Backend Issue: Exception occured at verify method in Controller.java, token might be missing"), HttpStatus.OK);
         }
            
     }

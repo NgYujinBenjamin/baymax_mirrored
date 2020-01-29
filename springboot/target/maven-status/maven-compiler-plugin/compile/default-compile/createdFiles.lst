@@ -2,6 +2,7 @@ main\java\authentication\json\JsonResponse.class
 main\java\algorithm\Bay.class
 main\java\algorithm\BayRequirement.class
 connection\mysqlcon.class
+main\java\algorithm\JSONProduct.class
 main\java\authentication\json\LoginDetails.class
 main\java\authentication\json\JsonObject.class
 authentication\Token.class
@@ -11,5 +12,6 @@ main\java\Application.class
 main\java\authentication\Controller.class
 main\java\authentication\json\JsonError.class
 main\java\authentication\json\JsonSuccess.class
+main\java\algorithm\AlgoController$1.class
 main\java\algorithm\Product.class
 main\java\authentication\json\User.class
