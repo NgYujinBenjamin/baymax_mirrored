@@ -1,4 +1,4 @@
-import { SET_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, CLEAR_ALL, SAVE_RESULT } from '../types';
+import { SET_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR } from '../types';
 
 export default (state, action) => {
     switch(action.type) {
@@ -38,6 +38,18 @@ export default (state, action) => {
                 ...state,
                 loading: true
             }
+        case UPLOAD_ERROR:
+            return {
+                ...state,
+                error: action.payload,
+                loading: false
+            }
+        case UPLOAD_CLEAR_ERROR:
+            return {
+                ...state,
+                error: null,
+                loading: false
+            }
         case CLEAR_ALL:
             return {
                 ...state,
@@ -45,14 +57,16 @@ export default (state, action) => {
                 bays: '',
                 loading: false,
                 postResult: null,
-                scheduleDone: false
+                scheduleDone: false,
+                error: null
             }
         case CLEAR_PRERESULT:
             return {
                 ...state,
                 schedule: null,
                 bays: '',
-                loading: false
+                loading: false,
+                error: null
             }
         default:
             return state;

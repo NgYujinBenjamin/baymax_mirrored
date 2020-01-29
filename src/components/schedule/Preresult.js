@@ -3,11 +3,14 @@ import { makeStyles } from '@material-ui/core/styles'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@material-ui/core'
 import PreresultItem from './PreresultItem'
 import UploadContext from '../../context/upload/uploadContext'
+import AlertContext from '../../context/alert/alertContext'
 
 const Preresult = ({ fileName }) => {
     const uploadContext = useContext(UploadContext);
+    const alertContext = useContext(AlertContext);
     const classes = useStyles();
 
+    const { setAlert } = alertContext;
     const { schedule, updateSchedule, createResult, bays, baseline } = uploadContext;
 
     const [objs, setObjects] = useState(schedule);
@@ -19,12 +22,13 @@ const Preresult = ({ fileName }) => {
             console.log(event.target);
             setObjects(prevObjs => (prevObjs.map((o) => {
                 if (o === obj) {
-                    if (name === 'Cycle Time Days'){
-                        return {...obj, 'Cycle Time Days': value }
-                    }
-                    if (name === 'MRP Date'){
-                        return {...obj, 'MRP Date': value}
-                    }
+                    return {...obj, [name]: value}
+                    // if (name === 'Cycle Time Days'){
+                    //     return {...obj, 'Cycle Time Days': value }
+                    // }
+                    // if (name === 'MRP Date'){
+                    //     return {...obj, 'MRP Date': value}
+                    // }
                 }
                 return o;
             })))
@@ -33,8 +37,25 @@ const Preresult = ({ fileName }) => {
 
     const handleSchedule = (event) => {
         event.preventDefault();
-        updateSchedule(objs);
-        createResult(objs, bays, baseline);
+        //test regx
+        const regxDate = /^\d\d\/\d\d\/\d\d\d\d$/;
+        const regxNum = /^[0-9]+$/;
+        let preCounter = false;
+
+        //check if Cycle Time Days and MRP Date are NOT in the right format
+        objs.forEach(obj => {
+            if(!regxNum.test(obj['Cycle Time Days']) || !regxDate.test(obj['MRP Date'])){
+                setAlert(`ArgoID: ${obj['Argo ID']}. Please enter a valid number in Cycle Time Days and valid date format (DD/MM/YYYY) in MRP Date`)
+                preCounter = true;
+            }
+        })
+
+        if(!preCounter) {
+            updateSchedule(objs);
+            createResult(objs, bays, baseline);
+        } else {
+            window.scrollTo(0,0);
+        }
     }
     
     return (

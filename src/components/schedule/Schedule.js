@@ -15,25 +15,33 @@ const Schedule = () => {
     const authContext = useContext(AuthContext);
     const classes = useStyles();
 
-    const { setSchedule, setBays, clearPreresult, schedule, bays, loading, scheduleDone, postResult } = uploadContext;
+    const { setAlert } = alertContext;
+    const { setSchedule, setBays, clearPreresult, schedule, bays, loading, scheduleDone, postResult, error, uploadClearError } = uploadContext;
 
     useEffect(() => {
         authContext.loadUser();
+
+        if(error !== null){
+            setAlert(error);
+            uploadClearError();
+        }
 
         if(scheduleDone){
             setUserInput({
                 bayComponent: '',
                 bayFile: null,
-                fileName: ''
+                fileName: '',
+                bayFileValue: ''
             })
         }
         //eslint-disable-next-line
-    }, [scheduleDone])
+    }, [scheduleDone, error])
 
     const [userInput, setUserInput] = useState({
         bayComponent: '',
         bayFile: null,
-        fileName: ''
+        fileName: '',
+        bayFileValue: ''
     })
 
     const handleChange = (event) => {
@@ -47,8 +55,9 @@ const Schedule = () => {
     const handleFileChange = (event) => {
         setUserInput({
             ...userInput,
-            [event.target.name]: event.target.files[0],
-            fileName: event.target.files[0].name
+            bayFile: event.target.files[0],
+            fileName: event.target.files[0].name,
+            bayFileValue: event.target.value
         });
     }
     
@@ -57,9 +66,9 @@ const Schedule = () => {
         const regx = /^[0-9]+$/;
         
         if(!regx.test(userInput.bayComponent)){
-            alertContext.setAlert('Please enter a number in the available bay field');
+            setAlert('Please enter a number in the available bay field');
         } else if(userInput.bayComponent === '' || userInput.bayFile === null) {
-            alertContext.setAlert('Please enter the number of available bays and upload an excel file');
+            setAlert('Please enter the number of available bays and upload an excel file');
         } else {
             setBays(userInput.bayComponent);
             setSchedule(userInput.bayFile);
@@ -71,7 +80,8 @@ const Schedule = () => {
         setUserInput({
             bayComponent: '',
             bayFile: null,
-            fileName: ''
+            fileName: '',
+            bayFileValue: ''
         })
     }
 
@@ -93,6 +103,7 @@ const Schedule = () => {
                                 id='schedule-file' 
                                 style={{ display: 'none' }} 
                                 name='bayFile'
+                                value={userInput.bayFileValue}
                             />
                             <label htmlFor='schedule-file'>
                                 <Button variant='contained' color='primary' component='span' disabled={scheduleDone} startIcon={<CloudUploadIcon />}>
