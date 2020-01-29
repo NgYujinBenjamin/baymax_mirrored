@@ -1,7 +1,13 @@
 package authentication;
 
+import com.auth0.jwt.JWT;
+import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
+
+import org.springframework.http.*;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,11 +19,14 @@ import java.text.SimpleDateFormat;
 
 import connection.*;
 import main.java.authentication.Algorithm;
-import main.java.authentication.JsonObject;
-import main.java.authentication.LoginDetails;
-import main.java.authentication.PseudoToken;
-import main.java.authentication.User;
-import main.java.authentication.Error;
+
+import main.java.authentication.json.JsonObject;
+import main.java.authentication.json.LoginDetails;
+import main.java.authentication.json.User;
+import main.java.authentication.json.JsonError;
+import main.java.authentication.json.JsonResponse;
+import main.java.authentication.json.JsonSuccess;
+import authentication.Token;
 
 import authentication.*;
 
@@ -25,7 +34,7 @@ import authentication.*;
 @RestController
 public class Controller {
 
-    private static final Token token = new Token();
+    private static final Token TOKEN = new Token();
     private static final Algorithm algorithm = new Algorithm();
 
     // done
@@ -41,7 +50,7 @@ public class Controller {
         } else {         
             mysqlcon conn = new mysqlcon();
             try {
-                conn.addUser(username, password, firstname, lastname, department, role);
+                conn.addUser(username, TOKEN.generateMD5Hash(password), firstname, lastname, department, role);
                 return "200";   
             } catch(Exception e) {
                 return "400";
@@ -83,63 +92,47 @@ public class Controller {
         }
     }
     
-    //to be completed
+    //done
     @RequestMapping(path = "/login", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
-    public JsonObject login(@RequestBody LoginDetails inputDetails) throws Exception{        
+    public ResponseEntity<JsonObject> login(@RequestBody LoginDetails inputDetails) throws Exception{        
         if (inputDetails.getUsername() == null || inputDetails.getPassword() == null){
-            return new Error("Username or password cannot be empty");
+            return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Username or password cannot be empty"),HttpStatus.INTERNAL_SERVER_ERROR);
         }
         mysqlcon conn = new mysqlcon();
         try {
             String username = inputDetails.getUsername();
-            String user = conn.getUser(username);
+            String userObject = conn.getUser(username);
             
-            String pass = user.split(" ")[1];
+            String pass = userObject.split(" ")[1];
             
-            if (inputDetails.getPassword().equals(pass)){
-                // Pseudo Token here should be changed into a JWT token instead when details are correct
-                PseudoToken rv = new PseudoToken(inputDetails.getUsername() + " " + inputDetails.getPassword());
-      
-                return rv;
+            if (TOKEN.generateMD5Hash(inputDetails.getPassword()).equals(pass)){
+                String token = TOKEN.createToken(inputDetails.getUsername());
+
+                HttpHeaders responseHeaders = new HttpHeaders();
+                responseHeaders.set("x-auth-token", token);
+                return new ResponseEntity<JsonObject>(new JsonResponse("SUCCESS", new JsonSuccess("200")), responseHeaders, HttpStatus.CREATED);
             }
-            return new Error("Username or password is incorrect");
+            return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Username or password is invalid"),HttpStatus.INTERNAL_SERVER_ERROR);
             
         } catch(Exception e) {
-            Error rv = new Error("Exception occured during login");
-            return rv;
+            return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Exception occured at backend's login method in Controller.java"),HttpStatus.INTERNAL_SERVER_ERROR);
         }   
     }
     
-    // to be completed
-    @RequestMapping(path = "/verify", method = RequestMethod.GET, produces = "application/json")
-    public JsonObject verifyToken(@RequestParam(value="token") String user_token) throws Exception{
-        //should be using JWT
-        String input_name = user_token.split(" ")[0];
-        String input_pass = user_token.split(" ")[1];    
-        try {    
-            return new User(input_name);
+    // done
+    @RequestMapping(path = "/verify", method = RequestMethod.GET) //, method = RequestMethod.GET, produces = "application/json" 
+    public ResponseEntity<JsonObject> verifyToken(@RequestHeader("x-auth-token") String token) throws Exception{   
+        try {
+            if (TOKEN.isTokenValid(token)){
+                return new ResponseEntity<JsonObject>(new JsonResponse("SUCCESS", new User(TOKEN.retrieveUsername(token))),HttpStatus.OK);
+            }
+            return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Token is invalid"),HttpStatus.INTERNAL_SERVER_ERROR);
+
         } catch(Exception e) {
-            return new Error("Token is invalid");
+            return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Exception occured at line 131 in Controller.java"),HttpStatus.INTERNAL_SERVER_ERROR);
         }
            
     }
-
-    // to be completed
-    // @RequestMapping(path = "/generate", method = RequestMethod.GET)
-    // public String generateToken(@RequestParam(value="username") String username) throws Exception{
-    //     mysqlcon conn = new mysqlcon();
-    //     try {
-    //         String user = conn.getUser(username);
-    //         String name = user.split(" ")[0];
-    //         String pass = user.split(" ")[1];
-    //         String return_token = token.createToken(username, pass);
-    //         return return_token;   
-    //     } catch(Exception e) {
-    //         return "500";
-    //     }
-    // }
-
-    
 
     // to be ported over, data test
     @RequestMapping(path= "/algorithm", method = RequestMethod.GET)
@@ -201,5 +194,24 @@ public class Controller {
             return "Error";
         }
     }
+
+    //testing method
+    @RequestMapping(path = "/hello", method = RequestMethod.GET)
+    public JsonObject hello() throws Exception{
+        
+        try {
+            return new JsonResponse("SUCCESS", new User("Ben"));   
+        } catch(Exception e) {
+            return new JsonResponse("ERROR", new User("Ben"));
+        }   
+    
+    }
+
+    // testing method
+    // public ResponseEntity<String> handle(String name, String value) {
+    //     HttpHeaders responseHeaders = new HttpHeaders();
+    //     responseHeaders.set(name, value);
+    //     return new ResponseEntity<String>("Hello World", responseHeaders, HttpStatus.CREATED);
+    // }
 
 }

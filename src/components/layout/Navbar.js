@@ -35,7 +35,7 @@ const Navbar = () => {
         <Fragment>
             <Typography variant="h6" color="inherit" style={styles.title}>Baymax</Typography>
             <Link to='/profile' style={{color:'white', textDecoration:'none'}}>
-                <Avatar className={classes.orange}>{ user && user.username.substring(0, 1).toUpperCase() }</Avatar>
+                {/* <Avatar className={classes.orange}>{ user && user.username.substring(0, 1).toUpperCase() }</Avatar> */}
             </Link>
             <Button disabled style={{color:'white'}}>{ user && user.username }</Button>
             {/* <Button style={{color:'white'}}>

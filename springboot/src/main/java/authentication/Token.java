@@ -5,30 +5,48 @@ import java.security.*;
 import java.math.BigInteger;
 import java.time.LocalDate;
 
+import com.auth0.jwt.JWT;
+import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
+
+import connection.mysqlcon;
+
 public class Token {
     
-    public String createToken(String username, String password){
-        String credentials = username + password + getDate();
-        String encoded = base64encode(credentials);
-        String token = generateMD5Hash(encoded);
+    private static final String SECRET = "baymax";
+    private static final mysqlcon conn = new mysqlcon();
+
+    public String createToken(String username){
+        long EXPIRATION_TIME = 5 * 60 * 60 * 1000;
+        String token = JWT.create()
+                .withSubject((username))
+                .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .sign(HMAC512(SECRET.getBytes()));
+            
         return token;
     }
 
-    public boolean authenticateToken(String user_token, String username, String password){
-        String credentials = username + password + getDate();
-        String encoded = base64encode(credentials);
-        String hashed = generateMD5Hash(encoded);
-        
-        if (user_token.equals(hashed)){
-            // user is authenticated successfully
+    public boolean isTokenValid(String user_token){
+        String username = JWT.require(HMAC512(SECRET.getBytes()))
+                    .build()
+                    .verify(user_token)
+                    .getSubject();
+
+        String userObject = conn.getUser(username);
+
+        if (userObject.split(" ")[0].equals(username)){
             return true;
-        } else {
-            // user is not authenticated successfully
-            return false;
         }
+        return false;        
     }
 
-    private static String generateMD5Hash(String input){
+    public String retrieveUsername(String user_token){
+        return JWT.require(HMAC512(SECRET.getBytes()))
+        .build()
+        .verify(user_token)
+        .getSubject();
+    }
+
+    public String generateMD5Hash(String input){
         try{
             MessageDigest md = MessageDigest.getInstance("MD5");
 
@@ -47,18 +65,18 @@ public class Token {
         }
     }
 
-    private static String base64encode(String to_encode){
+    public static String base64encode(String to_encode){
         String encodedString = Base64.getEncoder().encodeToString(to_encode.getBytes());
         return encodedString;
     }
 
-    private static String base64decode(String to_decode){
+    public static String base64decode(String to_decode){
         byte[] decodedStringByte = Base64.getDecoder().decode(to_decode);
         String decodedString = new String(decodedStringByte);
         return decodedString;
     }
 
-    private static String getDate(){
+    public static String getDate(){
         String date = (java.time.LocalDate.now().toString());
         return date;
     }
