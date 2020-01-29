@@ -21,10 +21,12 @@ import connection.*;
 
 import main.java.authentication.json.JsonObject;
 import main.java.authentication.json.LoginDetails;
+import main.java.authentication.json.TokenSuccess;
 import main.java.authentication.json.User;
 import main.java.authentication.json.JsonError;
 import main.java.authentication.json.JsonResponse;
 import main.java.authentication.json.JsonSuccess;
+import main.java.authentication.json.TokenSuccess;
 import authentication.Token;
 
 import authentication.*;
@@ -91,10 +93,36 @@ public class Controller {
     }
     
     //done
+    // @RequestMapping(path = "/login", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
+    // public ResponseEntity<JsonObject> login(@RequestBody LoginDetails inputDetails) throws Exception{        
+    //     if (inputDetails.getUsername() == null || inputDetails.getPassword() == null){
+    //         return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Username or password cannot be empty"), HttpStatus.INTERNAL_SERVER_ERROR);
+    //     }
+    //     mysqlcon conn = new mysqlcon();
+    //     try {
+    //         String username = inputDetails.getUsername();
+    //         String userObject = conn.getUser(username);
+            
+    //         String pass = userObject.split(" ")[1];
+            
+    //         if (TOKEN.generateMD5Hash(inputDetails.getPassword()).equals(pass)){
+    //             String token = TOKEN.createToken(inputDetails.getUsername());
+
+    //             HttpHeaders responseHeaders = new HttpHeaders();
+    //             responseHeaders.set("x-auth-token", token);
+    //             return new ResponseEntity<JsonObject>(new JsonResponse("SUCCESS", new JsonSuccess("200")), responseHeaders, HttpStatus.CREATED);
+    //         }
+    //         return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Username or password is invalid"), HttpStatus.OK);
+            
+    //     } catch(Exception e) {
+    //         return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Backend Issue: Exception occured at login method in Controller.java"), HttpStatus.OK);
+    //     }   
+    // }
+    
     @RequestMapping(path = "/login", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
-    public ResponseEntity<JsonObject> login(@RequestBody LoginDetails inputDetails) throws Exception{        
+    public JsonObject login(@RequestBody LoginDetails inputDetails) throws Exception{        
         if (inputDetails.getUsername() == null || inputDetails.getPassword() == null){
-            return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Username or password cannot be empty"), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new JsonError("ERROR", "Username or password cannot be empty");
         }
         mysqlcon conn = new mysqlcon();
         try {
@@ -106,21 +134,20 @@ public class Controller {
             if (TOKEN.generateMD5Hash(inputDetails.getPassword()).equals(pass)){
                 String token = TOKEN.createToken(inputDetails.getUsername());
 
-                HttpHeaders responseHeaders = new HttpHeaders();
-                responseHeaders.set("x-auth-token", token);
-                return new ResponseEntity<JsonObject>(new JsonResponse("SUCCESS", new JsonSuccess("200")), responseHeaders, HttpStatus.CREATED);
+                return new JsonResponse("SUCCESS", new TokenSuccess(token));
+            } else {
+                return new JsonError("ERROR", "Username or password is invalid");
             }
-            return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Username or password is invalid"), HttpStatus.OK);
-            
         } catch(Exception e) {
-            return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Backend Issue: Exception occured at login method in Controller.java"), HttpStatus.OK);
+            return new JsonError("ERROR", "Backend Issue: Exception occured at login method in Controller.java");
         }   
     }
-    
+
     // done
     @RequestMapping(path = "/verify", method = RequestMethod.GET) //, method = RequestMethod.GET, produces = "application/json" 
     public ResponseEntity<JsonObject> verifyToken(@RequestHeader("x-auth-token") String token) throws Exception{   
         try {
+            
             if (TOKEN.isTokenValid(token)){
 
                 return new ResponseEntity<JsonObject>(new JsonResponse("SUCCESS", new User(TOKEN.retrieveUsername(token))), HttpStatus.OK);

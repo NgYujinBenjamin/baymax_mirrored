@@ -4,6 +4,7 @@ main\java\algorithm\BayRequirement.class
 connection\mysqlcon.class
 main\java\algorithm\JSONProduct.class
 main\java\authentication\json\LoginDetails.class
+main\java\authentication\json\TokenSuccess.class
 main\java\authentication\json\JsonObject.class
 authentication\Token.class
 main\java\algorithm\AlgoController.class
