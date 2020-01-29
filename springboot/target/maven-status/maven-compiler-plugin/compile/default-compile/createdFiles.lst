@@ -12,6 +12,5 @@ main\java\Application.class
 main\java\authentication\Controller.class
 main\java\authentication\json\JsonError.class
 main\java\authentication\json\JsonSuccess.class
-main\java\algorithm\AlgoController$1.class
 main\java\algorithm\Product.class
 main\java\authentication\json\User.class

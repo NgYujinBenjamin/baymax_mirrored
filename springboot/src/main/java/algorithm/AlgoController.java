@@ -2,6 +2,7 @@ package main.java.algorithm;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,15 +39,14 @@ public class AlgoController {
     }
 
     @RequestMapping(path = "/algo", method = RequestMethod.GET)
-    public String algo(@RequestParam(value="data", required=false) String data) throws Exception{
-    
-        JsonElement jsonElement = new JsonParser().parse(data);
-        List<Map<String, Object>> allData= new ArrayList<Map<String, Object>>();
-        allData = new Gson().fromJson(data, new TypeToken<List<Map<String, Object>>>() {}.getType());
+    public String algo(@RequestBody List<Map<String, Object>> data) throws Exception{
+        // JsonElement jsonElement = new JsonParser().parse(data);
+        // List<Map<String, Object>> allData= new ArrayList<Map<String, Object>>();
+        // allData = new Gson().fromJson(data, new TypeToken<List<Map<String, Object>>>() {}.getType());
 
         
-        // List<Map<String, Object>> allData = data;
-    
+        List<Map<String, Object>> allData = data;
+        
         List<Product> allProduct = new ArrayList<>();
         
         for (int i = 0; i < allData.size(); i++){
@@ -57,7 +57,7 @@ public class AlgoController {
         Collections.sort(allProduct);
 
         BaySchedule baySchedule = new BaySchedule(allProduct);
-        baySchedule.generateSchedule();
+        baySchedule.generateSchedule(26);
         String jsonToReturn = BaySchedule.toJSONString(baySchedule);
         return jsonToReturn;
     }
