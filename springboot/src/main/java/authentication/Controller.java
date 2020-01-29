@@ -96,7 +96,7 @@ public class Controller {
     @RequestMapping(path = "/login", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
     public ResponseEntity<JsonObject> login(@RequestBody LoginDetails inputDetails) throws Exception{        
         if (inputDetails.getUsername() == null || inputDetails.getPassword() == null){
-            return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Username or password cannot be empty"),HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Username or password cannot be empty"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         mysqlcon conn = new mysqlcon();
         try {
@@ -112,10 +112,10 @@ public class Controller {
                 responseHeaders.set("x-auth-token", token);
                 return new ResponseEntity<JsonObject>(new JsonResponse("SUCCESS", new JsonSuccess("200")), responseHeaders, HttpStatus.CREATED);
             }
-            return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Username or password is invalid"),HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Username or password is invalid"), HttpStatus.OK);
             
         } catch(Exception e) {
-            return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Exception occured at backend's login method in Controller.java"),HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Backend Issue: Exception occured at login method in Controller.java"), HttpStatus.OK);
         }   
     }
     
@@ -124,12 +124,13 @@ public class Controller {
     public ResponseEntity<JsonObject> verifyToken(@RequestHeader("x-auth-token") String token) throws Exception{   
         try {
             if (TOKEN.isTokenValid(token)){
-                return new ResponseEntity<JsonObject>(new JsonResponse("SUCCESS", new User(TOKEN.retrieveUsername(token))),HttpStatus.OK);
+
+                return new ResponseEntity<JsonObject>(new JsonResponse("SUCCESS", new User(TOKEN.retrieveUsername(token))), HttpStatus.OK);
             }
-            return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Token is invalid"),HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Token is invalid"), HttpStatus.OK);
 
         } catch(Exception e) {
-            return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Exception occured at line 131 in Controller.java"),HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Backend Issue: Exception occured at verify method in Controller.java"), HttpStatus.OK);
         }
            
     }
