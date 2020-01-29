@@ -5,6 +5,8 @@ import java.security.*;
 import java.math.BigInteger;
 import java.time.LocalDate;
 
+import main.java.authentication.json.User;
+
 import com.auth0.jwt.JWT;
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 
@@ -39,11 +41,20 @@ public class Token {
         return false;        
     }
 
-    public String retrieveUsername(String user_token){
-        return JWT.require(HMAC512(SECRET.getBytes()))
+    public User retrieveUserObject(String user_token){
+        String username = JWT.require(HMAC512(SECRET.getBytes()))
         .build()
         .verify(user_token)
         .getSubject();
+
+        String userObject = conn.getUser(username);
+        String[] userArray = userObject.split(" ");
+        String dbusername = userArray[0];
+        String firstname = userArray[2];
+        String lastname = userArray[3];
+        String department = userArray[4];
+        String role = userArray[5];
+        return new User(dbusername, firstname, lastname, department, role);
     }
 
     public String generateMD5Hash(String input){

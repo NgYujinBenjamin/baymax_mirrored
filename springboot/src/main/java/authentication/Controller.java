@@ -150,7 +150,7 @@ public class Controller {
             
             if (TOKEN.isTokenValid(token)){
 
-                return new ResponseEntity<JsonObject>(new JsonResponse("SUCCESS", new User(TOKEN.retrieveUsername(token))), HttpStatus.OK);
+                return new ResponseEntity<JsonObject>(new JsonResponse("SUCCESS", TOKEN.retrieveUserObject(token)), HttpStatus.OK);
             }
             return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Token is invalid"), HttpStatus.OK);
 
@@ -222,16 +222,16 @@ public class Controller {
     // }
 
     //testing method
-    @RequestMapping(path = "/hello", method = RequestMethod.GET)
-    public JsonObject hello() throws Exception{
+    // @RequestMapping(path = "/hello", method = RequestMethod.GET)
+    // public JsonObject hello() throws Exception{
         
-        try {
-            return new JsonResponse("SUCCESS", new User("Ben"));   
-        } catch(Exception e) {
-            return new JsonResponse("ERROR", new User("Ben"));
-        }   
+    //     try {
+    //         return new JsonResponse("SUCCESS", new User("Ben"));   
+    //     } catch(Exception e) {
+    //         return new JsonResponse("ERROR", new User("Ben"));
+    //     }   
     
-    }
+    // }
 
     // testing method
     // public ResponseEntity<String> handle(String name, String value) {

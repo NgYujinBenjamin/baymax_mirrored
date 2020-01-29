@@ -4,13 +4,23 @@ import java.util.*;
 import java.text.*;
 
 public class User implements JsonObject{
-    private String username;
+    public String username;
+    public String firstname;
+    public String lastname;
+    public String department;
+    public String role;
 
-    public User(String username){
-        this.username = username;
-    }
-
-    public String getUsername(){
-        return username;
+    public User(
+        String username,
+        String firstname,
+        String lastname,
+        String department,
+        String role
+        ){
+            this.username = username;
+            this.firstname = firstname;
+            this.lastname = lastname;
+            this.department = department;
+            this.role = role;
     }
 }
