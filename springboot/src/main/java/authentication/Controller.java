@@ -1,4 +1,4 @@
-package authentication;
+package main.java.authentication;
 
 import com.auth0.jwt.JWT;
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
@@ -18,7 +18,6 @@ import java.util.*;
 import java.text.SimpleDateFormat;
 
 import connection.*;
-import main.java.authentication.Algorithm;
 
 import main.java.authentication.json.JsonObject;
 import main.java.authentication.json.LoginDetails;
@@ -35,7 +34,6 @@ import authentication.*;
 public class Controller {
 
     private static final Token TOKEN = new Token();
-    private static final Algorithm algorithm = new Algorithm();
 
     // done
     @RequestMapping(path = "/register", method = RequestMethod.GET)
@@ -136,65 +134,65 @@ public class Controller {
     }
 
     // to be ported over, data test
-    @RequestMapping(path= "/algorithm", method = RequestMethod.GET)
-    public String algorithm(@RequestParam(value="data") Object[][] data) throws Exception{
-        try {
-            SimpleDateFormat formatter = new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy");
-            Date today = new Date();
+    // @RequestMapping(path= "/algorithm", method = RequestMethod.GET)
+    // public String algorithm(@RequestParam(value="data") Object[][] data) throws Exception{
+    //     try {
+    //         SimpleDateFormat formatter = new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy");
+    //         Date today = new Date();
 
-            int max_bays = 26, num_rows = data.length, num_cols = data[0].length;
-            ArrayList<Object[]>[] bay_usage = new ArrayList[max_bays];
-            for (int i = 0; i < max_bays; i++) {
-                bay_usage[i] = new ArrayList<Object[]>();
-            }
+    //         int max_bays = 26, num_rows = data.length, num_cols = data[0].length;
+    //         ArrayList<Object[]>[] bay_usage = new ArrayList[max_bays];
+    //         for (int i = 0; i < max_bays; i++) {
+    //             bay_usage[i] = new ArrayList<Object[]>();
+    //         }
 
-            String cols = "";
-            for (int i = 0; i < num_cols; i++) {
-                if (i < num_cols - 1) {
-                    cols += data[0][i] + ", ";
-                } else {
-                    cols += data[0][i];
-                }
-            }
-            System.out.println(cols);
+    //         String cols = "";
+    //         for (int i = 0; i < num_cols; i++) {
+    //             if (i < num_cols - 1) {
+    //                 cols += data[0][i] + ", ";
+    //             } else {
+    //                 cols += data[0][i];
+    //             }
+    //         }
+    //         System.out.println(cols);
 
-            int numToolsAllocated = 0;
+    //         int numToolsAllocated = 0;
 
-            for (int i = 0; i < max_bays; i++) {
-                Object[] earliestTool = algorithm.getEarliestTool(data);
-                if (earliestTool[1] == null) {
-                    break;
-                }
-                algorithm.reset(data, (int) earliestTool[3]);
-                numToolsAllocated += 1;
-                bay_usage[i].add(earliestTool);
-                ArrayList<Object[]> toolsToBeQueuedAfterEarliest = new ArrayList<>();
-                algorithm.updateToolsToBeQueuedAfterEarliest(earliestTool, data, toolsToBeQueuedAfterEarliest);
-                numToolsAllocated += toolsToBeQueuedAfterEarliest.size();
-                for (int j = 0; j < toolsToBeQueuedAfterEarliest.size(); j++) {
-                    bay_usage[i].add(toolsToBeQueuedAfterEarliest.get(j));
-                }
-            }
+    //         for (int i = 0; i < max_bays; i++) {
+    //             Object[] earliestTool = algorithm.getEarliestTool(data);
+    //             if (earliestTool[1] == null) {
+    //                 break;
+    //             }
+    //             algorithm.reset(data, (int) earliestTool[3]);
+    //             numToolsAllocated += 1;
+    //             bay_usage[i].add(earliestTool);
+    //             ArrayList<Object[]> toolsToBeQueuedAfterEarliest = new ArrayList<>();
+    //             algorithm.updateToolsToBeQueuedAfterEarliest(earliestTool, data, toolsToBeQueuedAfterEarliest);
+    //             numToolsAllocated += toolsToBeQueuedAfterEarliest.size();
+    //             for (int j = 0; j < toolsToBeQueuedAfterEarliest.size(); j++) {
+    //                 bay_usage[i].add(toolsToBeQueuedAfterEarliest.get(j));
+    //             }
+    //         }
 
-            System.out.println(numToolsAllocated);
-            int bay_num = 0;
-            String out = "";
-            for (int i = 0; i < max_bays; i++) {
-                ArrayList<Object[]> objects = bay_usage[i];
-                out += "Bay: "+(bay_num+1)+" ";
-                for (int j = 0; j < objects.size(); j++) {
-                    out+=objects.get(j)[0]+":::";
+    //         System.out.println(numToolsAllocated);
+    //         int bay_num = 0;
+    //         String out = "";
+    //         for (int i = 0; i < max_bays; i++) {
+    //             ArrayList<Object[]> objects = bay_usage[i];
+    //             out += "Bay: "+(bay_num+1)+" ";
+    //             for (int j = 0; j < objects.size(); j++) {
+    //                 out+=objects.get(j)[0]+":::";
 
-                }
-                System.out.println(out);
-                out = "";
-                bay_num+=1;
-            }
-            return "";
-        } catch(Exception e){
-            return "Error";
-        }
-    }
+    //             }
+    //             System.out.println(out);
+    //             out = "";
+    //             bay_num+=1;
+    //         }
+    //         return "";
+    //     } catch(Exception e){
+    //         return "Error";
+    //     }
+    // }
 
     //testing method
     @RequestMapping(path = "/hello", method = RequestMethod.GET)
