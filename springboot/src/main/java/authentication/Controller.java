@@ -134,7 +134,7 @@ public class Controller {
             if (TOKEN.generateMD5Hash(inputDetails.getPassword()).equals(pass)){
                 String token = TOKEN.createToken(inputDetails.getUsername());
 
-                return new JsonResponse("SUCCESS", new TokenSuccess(token));
+                return new TokenSuccess(token);
             } else {
                 return new JsonError("ERROR", "Username or password is invalid");
             }
