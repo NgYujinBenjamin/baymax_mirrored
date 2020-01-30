@@ -12,6 +12,8 @@ import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 
 import connection.*;
 
+// Token class in charge of creating and verifying JWTs.
+
 public class Token {
     
     private static final String SECRET = "baymax";

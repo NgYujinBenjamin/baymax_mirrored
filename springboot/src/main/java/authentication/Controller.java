@@ -118,7 +118,8 @@ public class Controller {
     //         return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Backend Issue: Exception occured at login method in Controller.java"), HttpStatus.OK);
     //     }   
     // }
-    
+
+    // done    
     @RequestMapping(path = "/login", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
     public JsonObject login(@RequestBody LoginDetails inputDetails) throws Exception{        
         if (inputDetails.getUsername() == null || inputDetails.getPassword() == null){
