@@ -10,7 +10,7 @@ import com.google.gson.Gson;
 public class Product implements Comparable<Product>{
     private Integer argoID;
     private Integer plant;
-    private String buildComplete;
+    private Integer buildComplete;
     private String slotStatus;
     private String planProductType;
     private String buildCategory;
@@ -50,7 +50,7 @@ public class Product implements Comparable<Product>{
     private String dropShip;
     private String MFGStatus;
     private Integer quantity;
-    private String RMATool;
+    private Integer RMATool;
     private String new_Used;
     private Date coreNeedDate;
     private Date coreArrivalDate;
@@ -101,7 +101,7 @@ public class Product implements Comparable<Product>{
     public Product (Map<String, Object> rowData){
         argoID = (rowData.get("Argo ID") == null) ? null : Integer.parseInt((String) rowData.get("Argo ID"));
         plant = (rowData.get("Plant") == null) ? null : Integer.parseInt((String) rowData.get("Plant"));
-        buildComplete = (String) rowData.get("Build Complete");
+        buildComplete = (Integer) rowData.get("Build Complete");
         slotStatus = (String) rowData.get("Slot Status");
         planProductType = (String) rowData.get("Plan Product Type");
         buildCategory = (String) rowData.get("Build Category");
@@ -131,7 +131,7 @@ public class Product implements Comparable<Product>{
         dropShip = (String) rowData.get("Drop Ship");
         MFGStatus = (String) rowData.get("MFG Status");
         quantity = (Integer) rowData.get("Quantity");
-        RMATool = (String) rowData.get("RMA Tool");
+        RMATool = (Integer) rowData.get("RMA Tool");
         new_Used = (String) rowData.get("New/Used");
         donorStatus = (String) rowData.get("Donor Status");
         coreUTID = (String) rowData.get("Core UTID");
@@ -169,7 +169,7 @@ public class Product implements Comparable<Product>{
         // createdBy = (String) rowData.get("Created By");
         // changedBy = (String) rowData.get("Changed By");
         
-        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
         try {
             MRPDate = (rowData.get("MRP Date") == null) ? null : dateFormat.parse((String) rowData.get("MRP Date"));

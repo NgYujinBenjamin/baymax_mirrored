@@ -38,7 +38,7 @@ public class AlgoController {
     
     }
 
-    @RequestMapping(path = "/algo", method = RequestMethod.GET)
+    @RequestMapping(path = "/algo", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
     public String algo(@RequestBody List<Map<String, Object>> data) throws Exception{
         // JsonElement jsonElement = new JsonParser().parse(data);
         // List<Map<String, Object>> allData= new ArrayList<Map<String, Object>>();

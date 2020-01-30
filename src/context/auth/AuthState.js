@@ -27,12 +27,13 @@ const AuthState = (props) => {
 
         try {
             const res = await axios.get(`http://localhost:8080/verify`);
-            console.log(res.data);
+            // console.log(res.data.data);
             dispatch({
                 type: USER_LOADED,
-                payload: res.data
+                payload: res.data.data
             })
         } catch (err) {
+            // console.log(err.response)
             dispatch({
                 type: AUTH_ERROR
             })
@@ -64,21 +65,37 @@ const AuthState = (props) => {
             }
         }
 
-        try {
-            const res = await axios.post('http://localhost:8080/login', formData, config);
-            console.log(res);
+        const res = await axios.post('http://localhost:8080/login', formData, config);
+        // console.log(res);
+
+        if(res.data.type === 'ERROR'){
+            dispatch({
+                type: LOGIN_FAIL,
+                payload: res.data.message
+            });
+        } else {
             dispatch({
                 type: LOGIN_SUCCESS,
                 payload: res.data
             });
             loadUser();
-        } catch (err) {
-            console.log(err);
-            dispatch({
-                type: LOGIN_FAIL,
-                payload: err.response
-            });
         }
+
+        // try {
+        //     const res = await axios.post('http://localhost:8080/login', formData, config);
+        //     // console.log(res);
+        //     dispatch({
+        //         type: LOGIN_SUCCESS,
+        //         payload: res.data
+        //     });
+        //     loadUser();
+        // } catch (err) {
+        //     // console.log(err.response.data.message);
+        //     dispatch({
+        //         type: LOGIN_FAIL,
+        //         payload: err.response.data.message
+        //     });
+        // }
 
         // // /* ELECTRON CODE */
         // ipcRenderer.send('login:send', JSON.stringify(formData));

@@ -74,8 +74,14 @@ const UploadState = (props) => {
     //create result - mass slot upload
     const createResult = async (objs, bay, baseline) => {
         setLoading();
+
+        objs.forEach(obj => {
+            obj['Cycle Time Days'] = parseInt(obj['Cycle Time Days'])
+        })
+
         let preResult = null;
-        baseline !== null ? preResult = { bay: bay, data: [...objs], baseline: baseline } : preResult = { bay: bay, data: [...objs] }
+        // baseline !== null ? preResult = { bay: bay, data: [...objs], baseline: baseline } : preResult = { bay: bay, data: [...objs] }
+        preResult =  [...objs];
 
         const config = {
             headers: {
@@ -84,7 +90,7 @@ const UploadState = (props) => {
         }
 
         try {
-            const res = await axios.post('http://localhost:8080/<PATH>', preResult, config);
+            const res = await axios.post('http://localhost:8080/algo', preResult, config);
             console.log(res)
 
             //change schedule formatting

@@ -7,24 +7,8 @@ import { deepOrange } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
 
 const Navbar = () => {
-
-    const useStyles = makeStyles(theme => ({
-        root: {
-          display: 'flex',
-          '& > *': {
-            margin: theme.spacing(1),
-          },
-        },
-        orange: {
-          color: theme.palette.getContrastText(deepOrange[500]),
-          backgroundColor: deepOrange[500],
-        },
-    }));
-
     const classes = useStyles();
-
     const authContext = useContext(AuthContext);
-
     const { isAuthenticated, logout, user } = authContext;
 
     const handleLogout = () => {
@@ -35,12 +19,11 @@ const Navbar = () => {
         <Fragment>
             <Typography variant="h6" color="inherit" style={styles.title}>Baymax</Typography>
             <Link to='/profile' style={{color:'white', textDecoration:'none'}}>
-                {/* <Avatar className={classes.orange}>{ user && user.username.substring(0, 1).toUpperCase() }</Avatar> */}
+                <Avatar className={classes.orange}>
+                    { user !== null && user.username.charAt(0).toUpperCase() }
+                </Avatar>
             </Link>
-            <Button disabled style={{color:'white'}}>{ user && user.username }</Button>
-            {/* <Button style={{color:'white'}}>
-                <Link to='/admin' style={{color:'white', textDecoration:'none'}}>Users</Link>
-            </Button> */}
+            <Button disabled style={{color:'white', paddingLeft:0}}>{ user !== null && user.username }</Button>
             <Button style={{color:'white'}} onClick={handleLogout}>
                 Logout
                 <ExitToAppRoundedIcon style={{marginLeft:3}}/>
@@ -72,5 +55,18 @@ const styles = {
     menu: { backgroundColor: '#E8C73F', marginBottom: 24},
     title: { flexGrow: 1 }
 }
+
+const useStyles = makeStyles(theme => ({
+    root: {
+      display: 'flex',
+      '& > *': {
+        margin: theme.spacing(1),
+      },
+    },
+    orange: {
+      color: theme.palette.getContrastText(deepOrange[500]),
+      backgroundColor: deepOrange[500],
+    },
+}));
 
 export default Navbar

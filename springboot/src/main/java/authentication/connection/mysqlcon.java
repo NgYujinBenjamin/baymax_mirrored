@@ -8,7 +8,7 @@ public class mysqlcon{
         try{
             Class.forName("com.mysql.jdbc.Driver");
 
-            Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/baymaxdb?useSSL=false","root","");
+            Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/baymaxdb?useSSL=false","root","root");
             Statement stmt=con.createStatement();
             String my_string = "select * from users WHERE username = '" + username + "'";
             ResultSet rs=stmt.executeQuery(my_string);
@@ -29,7 +29,7 @@ public class mysqlcon{
         try{
             Class.forName("com.mysql.jdbc.Driver");
             
-            Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/baymaxdb?useSSL=false","root","");
+            Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/baymaxdb?useSSL=false","root","root");
             Statement stmt=con.createStatement();
             String my_string = "insert into users (username, password, firstname, lastname, department, role) values ('" + username + "', '" + password + "', '" + firstname + "', '" + lastname + "', '" + department + "', '" + role + "')";
             stmt.executeUpdate(my_string);
@@ -45,7 +45,7 @@ public class mysqlcon{
         try{
             Class.forName("com.mysql.jdbc.Driver");
             
-            Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/baymaxdb?useSSL=false","root","");
+            Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/baymaxdb?useSSL=false","root","root");
             Statement stmt=con.createStatement();
             String my_string = "update users set password = '" + newpassword + "' where username = '" + username + "' and password = '" + oldpassword + "';";
             stmt.executeUpdate(my_string);
@@ -62,7 +62,7 @@ public class mysqlcon{
         try{
             Class.forName("com.mysql.jdbc.Driver");
             
-            Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/baymaxdb?useSSL=false","root","");
+            Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/baymaxdb?useSSL=false","root","root");
             Statement stmt=con.createStatement();
             String my_string = "update users set password = 'password' where username = '" + username + "';";
             stmt.executeUpdate(my_string);
