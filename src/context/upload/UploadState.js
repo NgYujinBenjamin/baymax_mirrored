@@ -49,7 +49,7 @@ const UploadState = (props) => {
     const saveFile = async (file) => {
         setLoading();
 
-        const output = file.schedule;
+        const output = file.allProduct;
 
         const config = {
             headers: {
@@ -58,7 +58,7 @@ const UploadState = (props) => {
         }
 
         try {
-            await axios.post('http://localhost:8080/<PATH>', output, config)
+            await axios.post('http://localhost:8080/save', output, config)
             dispatch({
                 type: SAVE_RESULT
             })
@@ -82,6 +82,7 @@ const UploadState = (props) => {
         let preResult = null;
         // baseline !== null ? preResult = { bay: bay, data: [...objs], baseline: baseline } : preResult = { bay: bay, data: [...objs] }
         preResult =  [...objs];
+        // console.log(preResult)
 
         const config = {
             headers: {
@@ -91,7 +92,7 @@ const UploadState = (props) => {
 
         try {
             const res = await axios.post('http://localhost:8080/algo', preResult, config);
-            console.log(res)
+            console.log(res.data)
 
             //change schedule formatting
             const output = [];
@@ -220,13 +221,21 @@ const UploadState = (props) => {
             filtered.forEach(obj => {
                 obj['MRP Date'] = obj['MRP Date'] === undefined ? '' : obj['MRP Date'].toLocaleDateString('en-GB');
                 obj['Created On'] = obj['Created On'] === undefined ? '' : obj['Created On'].toLocaleDateString('en-GB');
-                obj['Created Time'] = obj['Created Time'] === undefined ? '' : obj['Created Time'].toLocaleString('en-GB', { timeZone: 'UTC' });
+                obj['Created Time'] = obj['Created Time'] === undefined ? '' : obj['Created Time'].toLocaleDateString('en-GB');
                 obj['SAP Customer Req Date'] = obj['SAP Customer Req Date'] === undefined ? '' : obj['SAP Customer Req Date'].toLocaleDateString('en-GB');
                 obj['Ship Recog Date'] = obj['Ship Recog Date'] === undefined ? '' : obj['Ship Recog Date'].toLocaleDateString('en-GB');
                 obj['Slot Request Date'] = obj['Slot Request Date'] === undefined ? '' : obj['Slot Request Date'].toLocaleDateString('en-GB');
+                obj['Int. Ops Ship Readiness Date'] = obj['Int. Ops Ship Readiness Date'] === undefined ? '' : obj['Int. Ops Ship Readiness Date'].toLocaleDateString('en-GB');
+                obj['MFG Commit Date'] = obj['MFG Commit Date'] === undefined ? '' : obj['MFG Commit Date'].toLocaleDateString('en-GB');
+                obj['Div Commit Date'] = obj['Div Commit Date'] === undefined ? '' : obj['Div Commit Date'].toLocaleDateString('en-GB');
+                obj['Changed On'] = obj['Changed On'] === undefined ? '' : obj['Changed On'].toLocaleDateString('en-GB');
+                obj['Last Changed Time'] = obj['Last Changed Time'] === undefined ? '' : obj['Last Changed Time'].toLocaleDateString('en-GB');
+
             });
 
             filtered[filtered.length - 1]['Argo ID'] === undefined && filtered.pop();
+
+            console.log(JSON.stringify(filtered))
 
             dispatch({
                 type: SET_SCHEDULE,
@@ -236,7 +245,13 @@ const UploadState = (props) => {
     }
 
     //update masterops
-    const updateSchedule = (data) => dispatch({ type: UPDATE_SCHEDULE, payload: data })
+    const updateSchedule = (objs) => {
+        //convert cycle time days to integer
+        objs.forEach(obj => {
+            obj['Cycle Time Days'] = parseInt(obj['Cycle Time Days'])
+        })
+        dispatch({ type: UPDATE_SCHEDULE, payload: objs })
+    }
 
     //set bays
     const setBays = (num) => dispatch({ type: SET_BAYS, payload: num })

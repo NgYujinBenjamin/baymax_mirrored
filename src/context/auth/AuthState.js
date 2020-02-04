@@ -27,7 +27,7 @@ const AuthState = (props) => {
 
         try {
             const res = await axios.get(`http://localhost:8080/verify`);
-            // console.log(res.data.data);
+            // console.log(res);
             dispatch({
                 type: USER_LOADED,
                 payload: res.data.data
@@ -125,23 +125,22 @@ const AuthState = (props) => {
     const clearErrors = () => dispatch({ type: CLEAR_ERRORS })
 
     // update password 
-    const updatePwd = (newpwd) => {
-        console.log(newpwd);
-        // const config = {
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     }
-        // }
+    const updatePwd = async (newpwd) => {
+        // console.log(newpwd);
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
 
-        // try {
-        //     await axios.post('localhost:8080', newpwd, config);
-        //     console.log(newpwd)
-        //     dispatch({
-        //         type: NEW_PASSWORD,
-        //     })
-        // } catch (err) {
+        try {
+            await axios.post('http://localhost:8080', newpwd, config);
+            dispatch({
+                type: NEW_PASSWORD,
+            })
+        } catch (err) {
             
-        // }
+        }
     }
 
     return <AuthContext.Provider

@@ -45,7 +45,7 @@ const AdminState = (props) => {
     //get all users
     const getUsers = async () => {
         try {
-            const res = await axios.get('http://localhost:8080/<PATH>');
+            const res = await axios.get('http://localhost:8080/getusers');
             console.log(res)
             dispatch({
                 type: GET_USERS,
@@ -68,7 +68,7 @@ const AdminState = (props) => {
         }
 
         try {
-            const res = await axios.post('http://localhost:8080/<PATH>', user, config);
+            const res = await axios.post('http://localhost:8080/adduser', user, config);
             console.log(res);
             dispatch({
                 type: ADD_USER,
@@ -92,7 +92,7 @@ const AdminState = (props) => {
     //delete user
     const deleteUser = async (id) => {
         try {
-            await axios.delete(`http://localhost:8080/<PATH>/${id}`)
+            await axios.delete(`http://localhost:8080/deleteuser/${id}`)
             dispatch({
                 type: DELETE_USER,
                 payload: id
@@ -108,7 +108,7 @@ const AdminState = (props) => {
     //reset user password
     const resetPassword = async (id) => {
         try {
-            await axios.get(`http://localhost:8080/<PATH>/${id}`)
+            await axios.get(`http://localhost:8080/resetpassword/${id}`)
             dispatch({
                 type: RESET_PASSWORD
             })

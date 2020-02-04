@@ -44,7 +44,7 @@ const Baseline = (props) => {
             <Card>
                 <CardContent>
                     <CardActions disableSpacing style={{ paddingLeft: '0' }}>
-                        <Typography component='span' variant='h5'>Import baseline excel file?</Typography>
+                        <Typography component='span' variant='h5'>Import bay requirement excel file?</Typography>
                         <Box component='span' className={classes.box}>
                             <Button 
                                 className={classes.button} 
