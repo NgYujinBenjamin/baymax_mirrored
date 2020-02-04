@@ -23,4 +23,20 @@ public class User implements JsonObject{
             this.department = department;
             this.role = role;
     }
+    
+    public String getUsername(){
+        return username;
+    }
+    public String getFirstName(){
+        return firstname;
+    }
+    public String getLastName(){
+        return lastname;
+    }
+    public String getDepartment(){
+        return department;
+    }
+    public String getRole(){
+        return role;
+    }
 }

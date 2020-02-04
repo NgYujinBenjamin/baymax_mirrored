@@ -18,4 +18,11 @@ For mac users:
 1. Open cmd prompt in springboot folder.
 2. Run "./mvnw spring-boot:run"
 
-If an error occurs and you are sure there is no error, run "mvnw clean" for windows and "./mvnw clean" for mac.
+If an error occurs and you are sure there is no error in your code, run "mvnw clean" for windows and "./mvnw clean" for mac.
+
+## Final exports
+For final export of backend server into client's computer:
+1. Run "mvvnw package" in springboot folder
+2. After packaged, go to the target folder in springboot's folder.
+3. There will be a compiled .jar file inside which is the backend server in an executable file.
+4. Run "java -jar <name_of_file>.jar" command to start up the server once file is in client's computer.

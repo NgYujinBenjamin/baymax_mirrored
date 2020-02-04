@@ -31,7 +31,8 @@ public class AlgoController {
     public String testing() throws Exception{
         
         try {
-            return "hello world";   
+            Integer hello = 123;
+            return hello.toString();   
         } catch(Exception e) {
             return "error";
         }   

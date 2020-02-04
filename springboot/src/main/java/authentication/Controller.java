@@ -38,24 +38,25 @@ public class Controller {
     private static final Token TOKEN = new Token();
 
     // done
-    @RequestMapping(path = "/register", method = RequestMethod.GET)
-    public String register(@RequestParam(value="username") String username,
-                         @RequestParam(value="password") String password,
-                         @RequestParam(value="firstname") String firstname,
-                         @RequestParam(value="lastname") String lastname,
-                         @RequestParam(value="department") String department,
-                         @RequestParam(value="role") String role) throws Exception{
-        if (role == null || department == null || lastname == null || firstname == null || password == null || username == null){
-            return "400";
-        } else {         
-            mysqlcon conn = new mysqlcon();
-            try {
-                conn.addUser(username, TOKEN.generateMD5Hash(password), firstname, lastname, department, role);
-                return "200";   
-            } catch(Exception e) {
-                return "400";
-            }   
-        }
+    // @RequestParam(value="username") String username,
+    //                      @RequestParam(value="password") String password,
+    //                      @RequestParam(value="firstname") String firstname,
+    //                      @RequestParam(value="lastname") String lastname,
+    //                      @RequestParam(value="department") String department,
+    //                      @RequestParam(value="role") String role
+    @RequestMapping(path = "/register", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
+    public JsonObject register(@RequestBody User userDetails) throws Exception{
+        // if (role == null || department == null || lastname == null || firstname == null || password == null || username == null){
+        //     return "400";
+        // } else {         
+        mysqlcon conn = new mysqlcon();
+        try {
+            conn.addUser(userDetails.getUsername(), TOKEN.generateMD5Hash("password"), userDetails.getFirstName(), userDetails.getLastName(), userDetails.getDepartment(), userDetails.getRole());
+            return new JsonSuccess("200");   
+        } catch(Exception e) {
+            return new JsonError("ERROR", "Backend Issue: Exception occured at register method in Controller.java");
+        }   
+        // }
     }
     
     // done
@@ -92,32 +93,6 @@ public class Controller {
         }
     }
     
-    //done
-    // @RequestMapping(path = "/login", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
-    // public ResponseEntity<JsonObject> login(@RequestBody LoginDetails inputDetails) throws Exception{        
-    //     if (inputDetails.getUsername() == null || inputDetails.getPassword() == null){
-    //         return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Username or password cannot be empty"), HttpStatus.INTERNAL_SERVER_ERROR);
-    //     }
-    //     mysqlcon conn = new mysqlcon();
-    //     try {
-    //         String username = inputDetails.getUsername();
-    //         String userObject = conn.getUser(username);
-            
-    //         String pass = userObject.split(" ")[1];
-            
-    //         if (TOKEN.generateMD5Hash(inputDetails.getPassword()).equals(pass)){
-    //             String token = TOKEN.createToken(inputDetails.getUsername());
-
-    //             HttpHeaders responseHeaders = new HttpHeaders();
-    //             responseHeaders.set("x-auth-token", token);
-    //             return new ResponseEntity<JsonObject>(new JsonResponse("SUCCESS", new JsonSuccess("200")), responseHeaders, HttpStatus.CREATED);
-    //         }
-    //         return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Username or password is invalid"), HttpStatus.OK);
-            
-    //     } catch(Exception e) {
-    //         return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Backend Issue: Exception occured at login method in Controller.java"), HttpStatus.OK);
-    //     }   
-    // }
 
     // done    
     @RequestMapping(path = "/login", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
@@ -161,66 +136,6 @@ public class Controller {
            
     }
 
-    // to be ported over, data test
-    // @RequestMapping(path= "/algorithm", method = RequestMethod.GET)
-    // public String algorithm(@RequestParam(value="data") Object[][] data) throws Exception{
-    //     try {
-    //         SimpleDateFormat formatter = new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy");
-    //         Date today = new Date();
-
-    //         int max_bays = 26, num_rows = data.length, num_cols = data[0].length;
-    //         ArrayList<Object[]>[] bay_usage = new ArrayList[max_bays];
-    //         for (int i = 0; i < max_bays; i++) {
-    //             bay_usage[i] = new ArrayList<Object[]>();
-    //         }
-
-    //         String cols = "";
-    //         for (int i = 0; i < num_cols; i++) {
-    //             if (i < num_cols - 1) {
-    //                 cols += data[0][i] + ", ";
-    //             } else {
-    //                 cols += data[0][i];
-    //             }
-    //         }
-    //         System.out.println(cols);
-
-    //         int numToolsAllocated = 0;
-
-    //         for (int i = 0; i < max_bays; i++) {
-    //             Object[] earliestTool = algorithm.getEarliestTool(data);
-    //             if (earliestTool[1] == null) {
-    //                 break;
-    //             }
-    //             algorithm.reset(data, (int) earliestTool[3]);
-    //             numToolsAllocated += 1;
-    //             bay_usage[i].add(earliestTool);
-    //             ArrayList<Object[]> toolsToBeQueuedAfterEarliest = new ArrayList<>();
-    //             algorithm.updateToolsToBeQueuedAfterEarliest(earliestTool, data, toolsToBeQueuedAfterEarliest);
-    //             numToolsAllocated += toolsToBeQueuedAfterEarliest.size();
-    //             for (int j = 0; j < toolsToBeQueuedAfterEarliest.size(); j++) {
-    //                 bay_usage[i].add(toolsToBeQueuedAfterEarliest.get(j));
-    //             }
-    //         }
-
-    //         System.out.println(numToolsAllocated);
-    //         int bay_num = 0;
-    //         String out = "";
-    //         for (int i = 0; i < max_bays; i++) {
-    //             ArrayList<Object[]> objects = bay_usage[i];
-    //             out += "Bay: "+(bay_num+1)+" ";
-    //             for (int j = 0; j < objects.size(); j++) {
-    //                 out+=objects.get(j)[0]+":::";
-
-    //             }
-    //             System.out.println(out);
-    //             out = "";
-    //             bay_num+=1;
-    //         }
-    //         return "";
-    //     } catch(Exception e){
-    //         return "Error";
-    //     }
-    // }
 
     //testing method
     // @RequestMapping(path = "/hello", method = RequestMethod.GET)
