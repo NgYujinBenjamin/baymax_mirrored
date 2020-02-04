@@ -58,6 +58,16 @@ public class Controller {
         }   
         // }
     }
+
+    @RequestMapping(path = "/getusers", method = RequestMethod.GET, produces= "application/json")
+    public List<User> getUsers() throws Exception{
+        mysqlcon conn = new mysqlcon();
+        try {
+            return conn.getAllUsers();
+        } catch(Exception e) {
+            return new ArrayList<User>();
+        }
+    }
     
     // done
     @RequestMapping(path = "/changepassword", method = RequestMethod.GET)
