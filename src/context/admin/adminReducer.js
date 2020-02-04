@@ -17,7 +17,7 @@ export default (state, action) => {
         case DELETE_USER:
             return {
                 ...state,
-                users: state.users.filter(user => user.id !== action.payload),
+                users: state.users.filter(user => user.staff_id !== action.payload),
                 loading: false
             }
         case USER_ERROR:

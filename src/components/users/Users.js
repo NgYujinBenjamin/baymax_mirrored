@@ -25,7 +25,7 @@ const Users = () => {
         users !== null && !loading ? (
             <Fragment>
                 {users.map(user => (
-                    <UserItem user={user} key={user.id} />
+                    <UserItem user={user} key={user.staff_id} />
                 ))}
             </Fragment>
         ) : (

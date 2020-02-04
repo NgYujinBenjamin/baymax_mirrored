@@ -10,14 +10,14 @@ const UserItem = ({ user }) => {
     const adminContext = useContext(AdminContext);
 
     const { deleteUser, resetPassword } = adminContext
-    const { id, username, firstname, lastname, department, role } = user
+    const { staff_id, username, firstname, lastname, department, role } = user
 
     const handleDelete = () => {
-        deleteUser(id);
+        deleteUser(staff_id);
     }
 
     const handleReset = () => {
-        resetPassword(id);
+        resetPassword(staff_id);
     }
 
     return (
@@ -38,7 +38,7 @@ const UserItem = ({ user }) => {
                                     fontWeight: 'bold'
                                 }}
                             >
-                                {role.charAt(0).toUpperCase() + role.slice(1)}
+                                {role}
                             </Button>
                         </Box>
                     </Typography>

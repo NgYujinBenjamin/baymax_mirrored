@@ -68,7 +68,7 @@ const AdminState = (props) => {
         }
 
         try {
-            const res = await axios.post('http://localhost:8080/adduser', user, config);
+            const res = await axios.post('http://localhost:8080/register', user, config);
             console.log(res);
             dispatch({
                 type: ADD_USER,
