@@ -41,7 +41,7 @@ public class mysqlcon{
 
             List<User> rv = new ArrayList<User>();
             while(rs.next())
-            rv.add(new User(rs.getString(2),rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(7)));
+            rv.add(new User(rs.getString(1),rs.getString(2),rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(7)));
 
             con.close();
             return rv;
