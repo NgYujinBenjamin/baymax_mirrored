@@ -8,12 +8,16 @@ import main.java.authentication.json.User;
 public class mysqlcon{
     
     private final String connectionPassword = "";
+    private final String port = "3306";
+    private final String databaseName = "baymaxdb";
+    private final String connection = "jdbc:mysql://localhost:"+port+"/"+databaseName+"?useSSL=false";
+    private final String driverName = "com.mysql.jdbc.Driver";
 
     public User getUser(String username){
         try{
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName(driverName);
 
-            Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/baymaxdb?useSSL=false","root",connectionPassword);
+            Connection con=DriverManager.getConnection(connection,"root",connectionPassword);
             Statement stmt=con.createStatement();
             String my_string = "select * from users WHERE username = '" + username + "'";
             ResultSet rs=stmt.executeQuery(my_string);
@@ -34,9 +38,9 @@ public class mysqlcon{
 
     public ArrayList<User> getAllUsers(){
         try{
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName(driverName);
 
-            Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/baymaxdb?useSSL=false","root",connectionPassword);
+            Connection con=DriverManager.getConnection(connection,"root",connectionPassword);
             Statement stmt=con.createStatement();
             String my_string = "select * from users";
             ResultSet rs=stmt.executeQuery(my_string);
@@ -55,9 +59,9 @@ public class mysqlcon{
     
     public String addUser(String username, String password, String firstname, String lastname, String department, String role){
         try{
-            Class.forName("com.mysql.jdbc.Driver");
-            
-            Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/baymaxdb?useSSL=false","root",connectionPassword);
+            Class.forName(driverName);
+
+            Connection con=DriverManager.getConnection(connection,"root",connectionPassword);
             Statement stmt=con.createStatement();
             String my_string = "insert into users (username, password, firstname, lastname, department, role) values ('" + username + "', '" + password + "', '" + firstname + "', '" + lastname + "', '" + department + "', '" + role + "')";
             stmt.executeUpdate(my_string);
@@ -71,9 +75,9 @@ public class mysqlcon{
 
     public String changePassword(String username, String oldpassword, String newpassword){
         try{
-            Class.forName("com.mysql.jdbc.Driver");
-            
-            Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/baymaxdb?useSSL=false","root",connectionPassword);
+            Class.forName(driverName);
+
+            Connection con=DriverManager.getConnection(connection,"root",connectionPassword);
             Statement stmt=con.createStatement();
             String my_string = "update users set password = '" + newpassword + "' where username = '" + username + "' and password = '" + oldpassword + "';";
             stmt.executeUpdate(my_string);
@@ -88,9 +92,9 @@ public class mysqlcon{
 
     public String resetPassword(String username){
         try{
-            Class.forName("com.mysql.jdbc.Driver");
-            
-            Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/baymaxdb?useSSL=false","root",connectionPassword);
+            Class.forName(driverName);
+
+            Connection con=DriverManager.getConnection(connection,"root",connectionPassword);
             Statement stmt=con.createStatement();
             String my_string = "update users set password = 'password' where username = '" + username + "';";
             stmt.executeUpdate(my_string);
