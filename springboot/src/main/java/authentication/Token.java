@@ -35,8 +35,8 @@ public class Token {
                     .verify(user_token)
                     .getSubject();
 
-        String userObject = conn.getUser(username);
-        String dbusername = userObject.split(" ")[0];
+        User userObject = conn.getUser(username);
+        String dbusername = userObject.getUsername();
         if (dbusername.equals(username)){
             return true;
         }
@@ -49,13 +49,12 @@ public class Token {
         .verify(user_token)
         .getSubject();
 
-        String userObject = conn.getUser(username);
-        String[] userArray = userObject.split(" ");
-        String dbusername = userArray[0];
-        String firstname = userArray[2];
-        String lastname = userArray[3];
-        String department = userArray[4];
-        String role = userArray[5];
+        User userObject = conn.getUser(username);
+        String dbusername = userObject.getUsername();
+        String firstname = userObject.getFirstname();
+        String lastname = userObject.getLastname();
+        String department = userObject.getDepartment();
+        String role = userObject.getRole();
         return new User(dbusername, firstname, lastname, department, role);
     }
 

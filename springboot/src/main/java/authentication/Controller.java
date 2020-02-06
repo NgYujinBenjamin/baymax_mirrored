@@ -21,6 +21,7 @@ import connection.*;
 
 import main.java.authentication.json.JsonObject;
 import main.java.authentication.json.LoginDetails;
+import main.java.authentication.json.RegistrationDetails;
 import main.java.authentication.json.TokenSuccess;
 import main.java.authentication.json.User;
 import main.java.authentication.json.JsonError;
@@ -38,29 +39,26 @@ public class Controller {
     private static final Token TOKEN = new Token();
 
     // done
-    // @RequestParam(value="username") String username,
-    //                      @RequestParam(value="password") String password,
-    //                      @RequestParam(value="firstname") String firstname,
-    //                      @RequestParam(value="lastname") String lastname,
-    //                      @RequestParam(value="department") String department,
-    //                      @RequestParam(value="role") String role
     @RequestMapping(path = "/register", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
-    public JsonObject register(@RequestBody User userDetails) throws Exception{
-        // if (role == null || department == null || lastname == null || firstname == null || password == null || username == null){
-        //     return "400";
-        // } else {         
+    public JsonObject register(@RequestBody RegistrationDetails userDetails) throws Exception{
         mysqlcon conn = new mysqlcon();
         try {
-            conn.addUser(userDetails.getUsername(), TOKEN.generateMD5Hash("password"), userDetails.getFirstName(), userDetails.getLastName(), userDetails.getDepartment(), userDetails.getRole());
-            return new JsonSuccess("200");   
+            conn.addUser(userDetails.getUsername(), 
+                        TOKEN.generateMD5Hash("password"), 
+                        userDetails.getFirstname(), 
+                        userDetails.getLastname(), 
+                        userDetails.getDepartment(), 
+                        userDetails.getRole());
+
+            User userObject = conn.getUser(userDetails.getUsername());
+            return userObject;   
         } catch(Exception e) {
             return new JsonError("ERROR", "Backend Issue: Exception occured at register method in Controller.java");
         }   
-        // }
     }
 
     @RequestMapping(path = "/getusers", method = RequestMethod.GET, produces= "application/json")
-    public List<User> getUsers() throws Exception{
+    public ArrayList<User> getUsers() throws Exception{
         mysqlcon conn = new mysqlcon();
         try {
             return conn.getAllUsers();
@@ -113,9 +111,9 @@ public class Controller {
         mysqlcon conn = new mysqlcon();
         try {
             String username = inputDetails.getUsername();
-            String userObject = conn.getUser(username);
+            User userObject = conn.getUser(username);
             
-            String pass = userObject.split(" ")[1];
+            String pass = userObject.getPassword();
             
             if (TOKEN.generateMD5Hash(inputDetails.getPassword()).equals(pass)){
                 String token = TOKEN.createToken(inputDetails.getUsername());

@@ -9,7 +9,7 @@ public class mysqlcon{
     
     private final String connectionPassword = "";
 
-    public String getUser(String username){
+    public User getUser(String username){
         try{
             Class.forName("com.mysql.jdbc.Driver");
 
@@ -18,19 +18,21 @@ public class mysqlcon{
             String my_string = "select * from users WHERE username = '" + username + "'";
             ResultSet rs=stmt.executeQuery(my_string);
 
-            String rv = "";
-            while(rs.next())
-            rv += (rs.getString(2)+" "+rs.getString(3)+" "+rs.getString(4)+" "+rs.getString(5)+" "+rs.getString(6)+" "+rs.getString(7));
+            User rv = null;
 
+            while(rs.next()){
+                rv = new User(rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(7));
+            }
             con.close();
             return rv;
         } catch(Exception e){ 
             System.out.println(e);
-            return "Error";
+            //to be changed
+            return new User("error","error","error","error","error");
         }
     }
 
-    public List<User> getAllUsers(){
+    public ArrayList<User> getAllUsers(){
         try{
             Class.forName("com.mysql.jdbc.Driver");
 
@@ -39,10 +41,10 @@ public class mysqlcon{
             String my_string = "select * from users";
             ResultSet rs=stmt.executeQuery(my_string);
 
-            List<User> rv = new ArrayList<User>();
-            while(rs.next())
-            rv.add(new User(rs.getString(1),rs.getString(2),rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(7)));
-
+            ArrayList<User> rv = new ArrayList<User>();
+            while(rs.next()){
+                rv.add(new User(rs.getString(1),rs.getString(2),rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(7)));
+            }
             con.close();
             return rv;
         } catch(Exception e){ 
