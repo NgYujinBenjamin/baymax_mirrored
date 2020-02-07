@@ -59,7 +59,7 @@ const HistoryDetails = () => {
                         <TableCell style={{minWidth: "200px"}}>MRP Date</TableCell>
                     </TableHead>
                     <TableBody>
-                        {historyItems.map(item => (item.msuID === id) ?
+                        {objs.map(item => (item.msuID === id) ?
                             <HistoryDetailsItems record={item} onChange={handleChange(item)} key={item.argoID}/> :
                             null
                         )}
