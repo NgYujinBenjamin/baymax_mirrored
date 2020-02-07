@@ -12,7 +12,7 @@ import main.java.authentication.json.GetMassSlotUploadResult;
 public class mysqlcon {
 
     private final String connectionPassword = "";
-    private final String port = "3307";
+    private final String port = "3306";
     private final String databaseName = "baymaxdb";
     private final String connection = "jdbc:mysql://localhost:" + port + "/" + databaseName + "?useSSL=false&allowPublicKeyRetrieval=true";
     private final String driverName = "com.mysql.jdbc.Driver";
