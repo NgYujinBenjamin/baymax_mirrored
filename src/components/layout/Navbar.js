@@ -18,6 +18,11 @@ const Navbar = () => {
     const authLinks = (
         <Fragment>
             <Typography variant="h6" color="inherit" style={styles.title}>Baymax</Typography>
+            <Button style={{color:'white'}}>
+                <Link to='/' style={{color:'white', textDecoration:'none'}}>
+                    Schedule
+                </Link>
+            </Button>
             <Link to='/profile' style={{color:'white', textDecoration:'none'}}>
                 <Avatar className={classes.orange}>
                     { user !== null && user.username.charAt(0).toUpperCase() }
