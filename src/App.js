@@ -10,9 +10,12 @@ import Baseline from './components/schedule/Baseline';
 import Login from './components/auth/Login';
 import Admin from './components/pages/Admin';
 import Profile from './components/pages/Profile';
+import History from './components/history/History';
+import HistoryDetails from './components/history/HistoryDetails';
 import PrivateRoute from './components/routing/PrivateRoute';
 
 import UploadState from './context/upload/UploadState';
+import HistState from './context/history/HistState';
 import AlertState from './context/alert/AlertState';
 import AuthState from './context/auth/AuthState';
 import AdminState from './context/admin/AdminState';
@@ -27,6 +30,7 @@ const App = () => {
     <AuthState>
     <UploadState>
     <AdminState>
+    <HistState>
     <AlertState>
       <Router>
         <Fragment>
@@ -38,12 +42,15 @@ const App = () => {
                   <PrivateRoute exact path='/schedule' component={Schedule} />
                   <PrivateRoute exact path='/admin' component={Admin} />
                   <PrivateRoute exact path='/profile' component={Profile} />
+                  <PrivateRoute exact path='/history' component={History} />
+                  <PrivateRoute exact path='/history/:id' component={HistoryDetails} />
                   <Route exact path='/login' component={Login} />
                 </Switch>
             </Container>
         </Fragment>
       </Router>
-    </AlertState>  
+    </AlertState>
+    </HistState>
     </AdminState>
     </UploadState>
     </AuthState>

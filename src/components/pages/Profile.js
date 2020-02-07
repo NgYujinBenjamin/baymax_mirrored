@@ -1,7 +1,7 @@
-import React, { Fragment, useState, useContext } from 'react'
+import React, { Fragment, useState, useContext, useEffect } from 'react';
 import { Grid, TextField, DialogContent, DialogContentText, DialogActions, DialogTitle, Dialog , Avatar, Typography, Button } from '@material-ui/core';
-import AuthContext from '../../context/auth/authContext'
-import { Link } from 'react-router-dom'
+import AuthContext from '../../context/auth/authContext';
+import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 
 const Profile = () => {
@@ -20,6 +20,10 @@ const Profile = () => {
     }));
 
     const classes = useStyles();
+
+    useEffect(() => {
+        authContext.loadUser();
+    },)
 
     // initialize
     const authContext = useContext(AuthContext);
@@ -91,7 +95,7 @@ const Profile = () => {
                     
                     <Typography gutterBottom>
                         <Button variant="contained" color="primary" style={{ width: '25%' }}>
-                            View History
+                            <Link to='/history' style={{ color: 'white', textDecoration:'none' }}> View History </Link>
                         </Button>
                     </Typography>
                     
