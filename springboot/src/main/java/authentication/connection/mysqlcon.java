@@ -8,6 +8,8 @@ import main.java.authentication.json.HistoryDetails;
 import main.java.authentication.json.JsonObject;
 import main.java.authentication.json.MassSlotUploadDetails;
 import main.java.authentication.json.GetMassSlotUploadResult;
+import main.java.authentication.json.FacilityUtil;
+import main.java.authentication.json.GetFacilityUtilResult;
 
 public class mysqlcon {
 
@@ -162,10 +164,10 @@ public class mysqlcon {
 
             Connection con = DriverManager.getConnection(connection, "root", connectionPassword);
             Statement stmt = con.createStatement();
-            String sqlStr = "delete from history where msu_id = '"+msuId+"'";
+            String sqlStr = "delete from history where msu_id = '" + msuId + "'";
             stmt.executeUpdate(sqlStr);
 
-            sqlStr = "delete from mass_slot_upload where msu_id = '"+msuId+"'";
+            sqlStr = "delete from mass_slot_upload where msu_id = '" + msuId + "'";
             stmt.executeUpdate(sqlStr);
 
             con.close();
@@ -177,26 +179,26 @@ public class mysqlcon {
         }
     }
 
-    public ArrayList<JsonObject> getMassSlotUpload(String msuId){
+    public ArrayList<JsonObject> getMassSlotUpload(String msuId) {
         try {
             Class.forName(driverName);
 
             Connection con = DriverManager.getConnection(connection, "root", connectionPassword);
             Statement stmt = con.createStatement();
-            String my_string = "select * from mass_slot_upload where msu_id = '"+msuId+"'";
+            String my_string = "select * from mass_slot_upload where msu_id = '" + msuId + "'";
             ResultSet rs = stmt.executeQuery(my_string);
 
             ArrayList<JsonObject> rv = new ArrayList<>();
             while (rs.next()) {
                 rv.add(new GetMassSlotUploadResult(
-                        rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4),rs.getString(5),
-                        rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9),rs.getString(10),
-                        rs.getString(11), rs.getString(12), rs.getString(13), rs.getString(14),rs.getString(15),
-                        rs.getString(16), rs.getString(17), rs.getString(18), rs.getString(19),rs.getString(20),
-                        rs.getString(21), rs.getString(22), rs.getString(23), rs.getString(24),rs.getString(25),
-                        rs.getString(26), rs.getString(27), rs.getString(28), rs.getString(29),rs.getString(30),
-                        rs.getString(31), rs.getString(32), rs.getString(33), rs.getString(34),rs.getString(35),
-                        rs.getString(36), rs.getString(37), rs.getString(38), rs.getString(39),rs.getString(40),
+                        rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5),
+                        rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10),
+                        rs.getString(11), rs.getString(12), rs.getString(13), rs.getString(14), rs.getString(15),
+                        rs.getString(16), rs.getString(17), rs.getString(18), rs.getString(19), rs.getString(20),
+                        rs.getString(21), rs.getString(22), rs.getString(23), rs.getString(24), rs.getString(25),
+                        rs.getString(26), rs.getString(27), rs.getString(28), rs.getString(29), rs.getString(30),
+                        rs.getString(31), rs.getString(32), rs.getString(33), rs.getString(34), rs.getString(35),
+                        rs.getString(36), rs.getString(37), rs.getString(38), rs.getString(39), rs.getString(40),
                         rs.getString(41), rs.getString(42), rs.getString(43)
 
                 ));
@@ -274,6 +276,161 @@ public class mysqlcon {
         }
     }
 
+    public ArrayList<GetFacilityUtilResult> readFacilityUtil(String staffId) {
+        try {
+            Class.forName(driverName);
+
+            Connection con = DriverManager.getConnection(connection, "root", connectionPassword);
+            Statement stmt = con.createStatement();
+            String my_string = "select * from facility_util where staff_id = '" + staffId + "'";
+            ResultSet rs = stmt.executeQuery(my_string);
+
+            ArrayList<GetFacilityUtilResult> rv = new ArrayList<>();
+            while (rs.next()) {
+                rv.add(new GetFacilityUtilResult(
+                        rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5),
+                        rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10),
+                        rs.getString(11)
+                ));
+            }
+            con.close();
+
+            if (rv.size() == 0) {
+                return new ArrayList<GetFacilityUtilResult>();
+            }
+
+            return rv;
+        } catch (Exception e) {
+            return new ArrayList<GetFacilityUtilResult>();
+        }
+    }
+
+    /**
+     * @return -1 if there is an error
+     */
+    public int getNextFaciId() {
+        try {
+            Class.forName(driverName);
+
+            Connection con = DriverManager.getConnection(connection, "root", connectionPassword);
+            Statement stmt = con.createStatement();
+            String my_string = "select max(faci_id) from facility_util";
+            ResultSet rs = stmt.executeQuery(my_string);
+
+            if (rs.next()) {
+                return rs.getInt(1) + 1;
+            }
+
+            return 1;
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+//    public String createFacilityUtil(ArrayList<FacilityUtil> data, String staff_id, int faci_id) {
+//        String defSql = "";
+//        try {
+//            Class.forName(driverName);
+//            Connection con = DriverManager.getConnection(connection, "root", connectionPassword);
+//
+//            for (FacilityUtil row : data) {
+//                Statement stmt = con.createStatement();
+//                defSql = "insert into facility_util (faci_id, staff_id, slot_id_utid, sales_order, customer, configuration, model, tool_start, mfg_commit_ship_date, bay, week_of_friday) ";
+//                defSql += "values (";
+//                defSql += "'" + faci_id + "',";
+//                defSql += "'" + staff_id + "',";
+//                defSql += row.getSlot_id_utid().equals("") ? "null ," : "'" + row.getSlot_id_utid() + "',";
+//                defSql += "'" + row.getSales_order() + "',";
+//                defSql += "'" + row.getCustomer() + "',";
+//                defSql += row.getConfiguration().equals("") ? "null ," : "'" + row.getConfiguration() + "',";
+//                defSql += "'" + row.getModel() + "',";
+//                defSql += "'" + row.getTool_start() + "',";
+//                defSql += "'" + row.getMfg_commit_ship_date() + "',";
+//                defSql += "'" + row.getBay() + "',";
+//                defSql += "'" + row.getWeek_of_friday() + "'";
+//                defSql += ")";
+//                stmt.executeUpdate(defSql);
+//            }
+//
+//            con.close();
+//            return "Successfully added facility usage";
+//        } catch (Exception e) {
+//            return "Failed adding facility usage";
+//        }
+//    }
+
+    public String createFacilityUtil(ArrayList<FacilityUtil> data, String staff_id, int faci_id) {
+        try {
+            Class.forName(driverName);
+            Connection con = DriverManager.getConnection(connection, "root", connectionPassword);
+            con.setAutoCommit(false);
+            Statement stmt = con.createStatement();
+            String sql = "insert into facility_util (faci_id, staff_id, slot_id_utid, sales_order, customer, configuration, model, tool_start, mfg_commit_ship_date, bay, week_of_friday) ";
+            sql += "values (?,?,?,?,?,?,?,?,?,?,?)";
+            PreparedStatement pstmt = con.prepareStatement(sql);
+
+            for (FacilityUtil row : data) {
+                pstmt.setString(1, Integer.toString(faci_id));
+                pstmt.setString(2, staff_id);
+                pstmt.setString(3, row.getSlot_id_utid().equals("") ? null : row.getSlot_id_utid());
+                pstmt.setString(4, row.getSales_order());
+                pstmt.setString(5, row.getCustomer());
+                pstmt.setString(6, row.getConfiguration().equals("") ? null : row.getConfiguration());
+                pstmt.setString(7, row.getModel());
+                pstmt.setString(8, row.getTool_start());
+                pstmt.setString(9, row.getMfg_commit_ship_date());
+                pstmt.setString(10, row.getBay());
+                pstmt.setString(11, row.getWeek_of_friday());
+                pstmt.addBatch();
+            }
+
+            // execute the batch
+            int[] updateCounts = pstmt.executeBatch();
+            int status = checkUpdateCounts(updateCounts);
+
+            pstmt.close();
+            con.close();
+            if (status == -1){
+                return "Failed adding facility usage";
+            }
+            return "Successfully added facility usage";
+        } catch (Exception e) {
+            return "Failed adding facility usage";
+        }
+    }
+
+    public int checkUpdateCounts(int[] updateCounts) {
+        for (int i = 0; i < updateCounts.length; i++) {
+//            if (updateCounts[i] >= 0) {
+//                System.out.println("OK; updateCount=" + updateCounts[i]);
+//            } else if (updateCounts[i] == Statement.SUCCESS_NO_INFO) {
+//                System.out.println("OK; updateCount=Statement.SUCCESS_NO_INFO");
+//            } else if (updateCounts[i] == Statement.EXECUTE_FAILED) {
+//                return -1;
+//            }
+            if (updateCounts[i] == Statement.EXECUTE_FAILED) {
+                return -1;
+            }
+        }
+        return 1;
+    }
+
+    public String removeUsage(String staff_id) {
+        try {
+            Class.forName(driverName);
+
+            Connection con = DriverManager.getConnection(connection, "root", connectionPassword);
+            Statement stmt = con.createStatement();
+            String sqlStr = "delete from facility_util where staff_id = '" + staff_id + "'";
+            stmt.executeUpdate(sqlStr);
+            con.close();
+
+            return "Successfully deleted facility usage";
+        } catch (Exception e) {
+            System.out.println(e);
+            return "Failed deleting facility usage";
+        }
+    }
 
 
 }

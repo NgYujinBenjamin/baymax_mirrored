@@ -33,6 +33,8 @@ import main.java.authentication.json.TokenSuccess;
 import main.java.authentication.json.HistoryDetails;
 import main.java.authentication.json.JsonResponses;
 import main.java.authentication.json.MassSlotUploadDetails;
+import main.java.authentication.json.FacilityUtil;
+import main.java.authentication.json.GetFacilityUtilResult;
 import authentication.Token;
 
 import authentication.*;
@@ -199,7 +201,7 @@ public class Controller {
 
     @RequestMapping(path = "/msu/{staffId}", method = RequestMethod.POST, produces = "application/json")
     public String addMassSlotUpload(@RequestBody ArrayList<MassSlotUploadDetails> data,
-                                     @PathVariable("staffId") String staffId) {
+                                    @PathVariable("staffId") String staffId) {
         mysqlcon conn = new mysqlcon();
         try {
             int newHistoryId = conn.addHistory(staffId);
@@ -209,15 +211,55 @@ public class Controller {
         }
     }
 
-//    @RequestMapping(path = "/history/{staffId}", method = RequestMethod.POST, produces = "application/json")
-//    public ResponseEntity getHistory(@PathVariable("staffId") String staffId) {
-//        mysqlcon conn = new mysqlcon();
-//        try {
-//            ArrayList<JsonObject> result = conn.getHistory(staffId);
-//            return new ResponseEntity(new JsonResponses("SUCCESS", result), HttpStatus.OK);
-//        } catch (Exception e) {
-//            return new ResponseEntity(new JsonError("ERROR", "Backend Issue: Exception occured at verify method in Controller.java, token might be missing"), HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
+    @RequestMapping(path = "/facility/{staffId}", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity getFacilityUtil(@PathVariable("staffId") String staffId) {
+        mysqlcon conn = new mysqlcon();
+        try {
+            ArrayList<GetFacilityUtilResult> staffUsage = conn.readFacilityUtil(staffId);
+            ArrayList<JsonObject> result = new ArrayList<JsonObject>();
+            for (JsonObject row : staffUsage) {
+                result.add(row);
+            }
+
+            return new ResponseEntity(new JsonResponses("SUCCESS", result), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity(new JsonError("ERROR", "Backend Issue: Exception occured at getFacilityUtil method in Controller.java. Database connection may be lost."), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(path = "/facility/{staffId}", method = RequestMethod.POST, produces = "application/json")
+    public String updateFacilityUtil(@RequestBody ArrayList<FacilityUtil> data,
+                                     @PathVariable("staffId") String staffId) {
+        mysqlcon conn = new mysqlcon();
+        int faci_id = 0; // default faci_id
+        try {
+            ArrayList<GetFacilityUtilResult> staffUsage = conn.readFacilityUtil(staffId);
+
+            if (staffUsage.size() == 0) { // no usage exist for specific user
+                faci_id = conn.getNextFaciId();
+                String out = conn.createFacilityUtil(data, staffId, faci_id);
+                return "created facility, next faci_id => " + faci_id;
+            } else if (staffUsage.size() > 0) {
+                faci_id = Integer.parseInt(staffUsage.get(0).getFaci_id());
+                conn.removeUsage(staffId);
+//                String out = conn.createFacilityUtil(data, staffId, faci_id);
+                return conn.createFacilityUtil(data, staffId, faci_id);
+            }
+            return "x";
+        } catch (Exception e) {
+            return "y";
+        }
+    }
+
+    @RequestMapping(path = "/facility/{staffId}", method = RequestMethod.DELETE, produces = "application/json")
+    public String removeUsage(@PathVariable("staffId") String staffId) {
+        mysqlcon conn = new mysqlcon();
+        try {
+            return conn.removeHistory(staffId);
+        } catch (Exception e) {
+            return "Fail";
+        }
+    }
+
 
 }
