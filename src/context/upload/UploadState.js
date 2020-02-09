@@ -23258,6 +23258,7 @@ const UploadState = (props) => {
             scheduleDone: state.scheduleDone,
             postResult: state.postResult,
             error: state.error,
+            scheduletest: state.scheduletest,
             setBaseline,
             setSchedule,
             setBays,
