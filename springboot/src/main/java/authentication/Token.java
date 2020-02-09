@@ -43,6 +43,8 @@ public class Token {
         return false;        
     }
 
+    //modify code - inform Ben
+    //@MODIFY - add staffid
     public User retrieveUserObject(String user_token){
         String username = JWT.require(HMAC512(SECRET.getBytes()))
         .build()
@@ -50,12 +52,13 @@ public class Token {
         .getSubject();
 
         User userObject = conn.getUser(username);
+        String staffid = userObject.getStaff_id();
         String dbusername = userObject.getUsername();
         String firstname = userObject.getFirstname();
         String lastname = userObject.getLastname();
         String department = userObject.getDepartment();
         String role = userObject.getRole();
-        return new User(dbusername, firstname, lastname, department, role);
+        return new User(staffid, dbusername, firstname, lastname, department, role);
     }
 
     public String generateMD5Hash(String input){

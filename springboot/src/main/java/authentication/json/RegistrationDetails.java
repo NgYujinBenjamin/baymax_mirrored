@@ -3,8 +3,11 @@ package main.java.authentication.json;
 import java.util.*;
 import java.text.*;
 
+//modify code - inform Ben
+//@MODIFY - password, getPassword method
 public class RegistrationDetails implements JsonObject{
     public String username;
+    public String password;
     public String firstname;
     public String lastname;
     public String department;
@@ -12,12 +15,14 @@ public class RegistrationDetails implements JsonObject{
 
     public RegistrationDetails(
         String username,
+        String password,
         String firstname,
         String lastname,
         String department,
         String role
         ){
             this.username = username;
+            this.password = password;
             this.firstname = firstname;
             this.lastname = lastname;
             this.department = department;
@@ -26,6 +31,10 @@ public class RegistrationDetails implements JsonObject{
 
     public String getUsername(){
         return username;
+    }
+
+    public String getPassword(){
+        return password;
     }
 
     public String getFirstname(){

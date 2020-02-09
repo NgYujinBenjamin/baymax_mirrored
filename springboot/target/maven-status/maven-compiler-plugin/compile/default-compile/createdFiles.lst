@@ -1,0 +1,6 @@
+main/java/authentication/json/HistoryDetails.class
+main/java/authentication/json/JsonResponses.class
+main/java/authentication/json/GetMassSlotUploadResult.class
+main/java/authentication/json/FacilityUtil.class
+main/java/authentication/json/GetFacilityUtilResult.class
+main/java/authentication/json/MassSlotUploadDetails.class

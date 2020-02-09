@@ -46,19 +46,24 @@ public class Controller {
     private static final Token TOKEN = new Token();
 
     // done
+    // modify code - inform Ben
+    // @MODIFY - return token, hashed password
     @RequestMapping(path = "/register", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
     public JsonObject register(@RequestBody RegistrationDetails userDetails) throws Exception {
         mysqlcon conn = new mysqlcon();
         try {
             conn.addUser(userDetails.getUsername(),
-                    TOKEN.generateMD5Hash("password"),
+                    TOKEN.generateMD5Hash(userDetails.getPassword()),
                     userDetails.getFirstname(),
                     userDetails.getLastname(),
                     userDetails.getDepartment(),
                     userDetails.getRole());
 
             User userObject = conn.getUser(userDetails.getUsername());
-            return userObject;
+
+            String token = TOKEN.createToken(userObject.getUsername());
+            return new TokenSuccess(token);
+            // return userObject;
         } catch (Exception e) {
             return new JsonError("ERROR", "Backend Issue: Exception occured at register method in Controller.java");
         }
