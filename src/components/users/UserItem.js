@@ -4,12 +4,13 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import WorkIcon from '@material-ui/icons/Work';
 import PersonIcon from '@material-ui/icons/Person';
+import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import AdminContext from '../../context/admin/adminContext';
 
 const UserItem = ({ user }) => {
     const adminContext = useContext(AdminContext);
 
-    const { deleteUser, resetPassword } = adminContext
+    const { deleteUser, resetPassword, convertAdmin } = adminContext
     const { staff_id, username, firstname, lastname, department, role } = user
 
     const handleDelete = () => {
@@ -18,6 +19,10 @@ const UserItem = ({ user }) => {
 
     const handleReset = () => {
         resetPassword(staff_id);
+    }
+
+    const handleAdmin = () => {
+        convertAdmin(staff_id);
     }
 
     return (
@@ -35,40 +40,50 @@ const UserItem = ({ user }) => {
                                     backgroundColor: (role === 'admin' ? 'orange' : 'blue'),
                                     color: 'white',
                                     textTransform: 'none',
-                                    fontWeight: 'bold'
                                 }}
                             >
-                                {role}
+                                {role.charAt(0).toUpperCase() + role.slice(1)}
                             </Button>
                         </Box>
                     </Typography>
-                    <Typography variant='body2' component='p' style={{ display: 'flex', alignItems: 'center'}}>
-                        <PersonIcon style={{ marginRight: '6px', marginBottom: '6px'}} />
+                    <Typography variant='body2' component='p' style={{ display: 'flex', alignItems: 'center' }}>
+                        <PersonIcon style={{ marginRight: '6px', marginBottom: '6px' }} />
                         {username}
                     </Typography>
-                    <Typography variant='body2' component='p' style={{ display: 'flex', alignItems: 'center'}}>
-                        <WorkIcon style={{ marginRight: '6px'}} />
+                    <Typography variant='body2' component='p' style={{ display: 'flex', alignItems: 'center' }}>
+                        <WorkIcon style={{ marginRight: '6px' }} />
                         {department}
                     </Typography>
                 </CardContent>
                 <CardActions>
-                    <Button 
-                        startIcon={<DeleteIcon />} 
-                        variant='contained' 
-                        color='secondary' 
-                        style={{ margin: '4px' }}
-                        onClick={handleDelete}
-                    >
-                        Delete
-                    </Button>
-                    <Button 
-                        startIcon={<RefreshIcon />} 
-                        variant='contained' 
-                        style={{ margin: '4px'}}
-                        onClick={handleReset}
-                    >
-                        Reset Password
-                    </Button>
+                    {role !== 'admin' && 
+                    <Fragment>
+                        <Button 
+                            startIcon={<DeleteIcon />} 
+                            variant='contained' 
+                            color='secondary' 
+                            style={{ margin: '4px' }}
+                            onClick={handleDelete}
+                        >
+                            Delete
+                        </Button>
+                        <Button 
+                            startIcon={<RefreshIcon />} 
+                            variant='contained' 
+                            style={{ margin: '4px'}}
+                            onClick={handleReset}
+                        >
+                            Reset Password
+                        </Button>
+                        <Button 
+                            startIcon={<SupervisorAccountIcon />} 
+                            variant='contained' 
+                            style={{ margin: '4px'}}
+                            onClick={handleAdmin}
+                        >
+                            Admin Convert
+                        </Button>
+                    </Fragment>}
                 </CardActions>
             </Card>
         </Fragment>

@@ -3,7 +3,7 @@ import UploadContext from './uploadContext';
 import UploadReducer from './uploadReducer';
 import XLSX from 'xlsx';
 import axios from 'axios';
-import { SET_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR } from '../types';
+import { SET_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO } from '../types';
 // const { ipcRenderer } = window.require("electron")
 
 const UploadState = (props) => {
@@ -291,6 +291,9 @@ const UploadState = (props) => {
     //set loading
     const setLoading = () => dispatch({ type: SET_LOADING })
 
+    //back to default - for logout purpose
+    const clearZero = () => dispatch({ type: CLEAR_ZERO })
+
     return <UploadContext.Provider
         value={{
             baseline: state.baseline,
@@ -310,7 +313,8 @@ const UploadState = (props) => {
             createExport,
             saveFile,
             clearAll,
-            uploadClearError
+            uploadClearError,
+            clearZero
         }}>
         {props.children}
     </UploadContext.Provider>

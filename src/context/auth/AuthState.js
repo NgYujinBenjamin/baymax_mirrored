@@ -1,7 +1,7 @@
 import React, { useReducer } from 'react';
 import AuthContext from './authContext';
 import AuthReducer from './authReducer';
-import { LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, USER_LOADED, CLEAR_ERRORS, AUTH_ERROR, NEW_PASSWORD } from '../types';
+import { REGISTER_SUCCESS, REGISTER_FAIL, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, USER_LOADED, CLEAR_ERRORS, AUTH_ERROR, NEW_PASSWORD, UPDATE_NAV } from '../types';
 import axios from 'axios';
 import setAuthToken from '../../utils/setAuthToken';
 // const { ipcRenderer } = window.require("electron");
@@ -12,7 +12,8 @@ const AuthState = (props) => {
         isAuthenticated: null,
         user: null,
         error: null,
-        loading: true
+        loading: true,
+        currentNavItem: -1
     };
 
     const [state, dispatch] = useReducer(AuthReducer, initialState);
@@ -38,23 +39,6 @@ const AuthState = (props) => {
                 type: AUTH_ERROR
             })
         }
-
-        // /* ELECTRON CODE */
-        // ipcRenderer.send('loadUser:send', JSON.stringify({ token: state.token }));
-        // ipcRenderer.once('loadUser:received', (event, res) => {
-        //     const response = JSON.parse(res);
-            
-        //     if(response.type === 'SUCCESS'){
-        //         dispatch({
-        //             type: USER_LOADED,
-        //             payload: response.user
-        //         })
-        //     } else if(response.type === 'ERROR'){
-        //         dispatch({
-        //             type: AUTH_ERROR
-        //         })
-        //     }
-        // })
     }
 
     //login user
@@ -96,27 +80,33 @@ const AuthState = (props) => {
         //         payload: err.response.data.message
         //     });
         // }
+    }
+    
+    //register user
+    const register = async (user) => {
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
 
-        // // /* ELECTRON CODE */
-        // ipcRenderer.send('login:send', JSON.stringify(formData));
-        // ipcRenderer.once('login:received', (event, res) => {
-        //     const response = JSON.parse(res);
-        //     console.log(response);
-            
-        //     if(response.type === 'ERROR'){
-        //         dispatch({
-        //             type: LOGIN_FAIL,
-        //             payload: response.data.msg
-        //         })
-        //     } else if(response.type === 'SUCCESS') {
-        //         dispatch({
-        //             type: LOGIN_SUCCESS,
-        //             payload: response.data
-        //         })
-        //         loadUser();
-        //     }
-        // })
-    } 
+        user.firstname = user.firstname.charAt(0).toUpperCase() + user.firstname.slice(1);
+        user.lastname = user.lastname.charAt(0).toUpperCase() + user.lastname.slice(1);
+
+        try {
+            const res = await axios.post('http://localhost:8080/register', user, config);
+            dispatch({
+                type: REGISTER_SUCCESS,
+                payload: res.data
+            });
+            loadUser();
+        } catch (err) {
+            dispatch({
+                type: REGISTER_FAIL,
+                payload: err.response
+            })
+        }
+    }
 
     //logout user
     const logout = () => dispatch({ type: LOGOUT })
@@ -143,6 +133,14 @@ const AuthState = (props) => {
         }
     }
 
+    //update nav item
+    const updateNavItem = (index) => {
+        dispatch({
+            type: UPDATE_NAV,
+            payload: index
+        })
+    }
+
     return <AuthContext.Provider
         value={{
             token: state.token,
@@ -150,11 +148,14 @@ const AuthState = (props) => {
             user: state.user,
             error: state.error,
             loading: state.loading,
+            currentNavItem: state.currentNavItem,
             loadUser,
             login,
             logout,
+            register,
             clearErrors,
-            updatePwd
+            updatePwd,
+            updateNavItem
         }}>
         {props.children}
     </AuthContext.Provider>

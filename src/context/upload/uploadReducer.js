@@ -1,4 +1,4 @@
-import { SET_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR } from '../types';
+import { SET_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO } from '../types';
 
 export default (state, action) => {
     switch(action.type) {
@@ -66,6 +66,17 @@ export default (state, action) => {
                 schedule: null,
                 bays: '',
                 loading: false,
+                error: null
+            }
+        case CLEAR_ZERO:
+            return {
+                ...state,
+                baseline: null,
+                schedule: null,
+                bays: '',
+                loading: false,
+                postResult: null,
+                scheduleDone: false,
                 error: null
             }
         default:

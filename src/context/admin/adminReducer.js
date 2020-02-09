@@ -1,4 +1,4 @@
-import { ADD_USER, GET_USERS, DELETE_USER, USER_ERROR, RESET_PASSWORD, ADMIN_CLEAR_ERROR } from '../types';
+import { GET_USERS, DELETE_USER, USER_ERROR, RESET_PASSWORD, ADMIN_CLEAR_ERROR, CONVERT_ADMIN } from '../types';
 
 export default (state, action) => {
     switch(action.type){
@@ -8,16 +8,16 @@ export default (state, action) => {
                 users: action.payload,
                 loading: false
             }
-        case ADD_USER:
-            return {
-                ...state,
-                users: [action.payload, ...state.users],
-                loading: false
-            }
         case DELETE_USER:
             return {
                 ...state,
                 users: state.users.filter(user => user.staff_id !== action.payload),
+                loading: false
+            }
+        case CONVERT_ADMIN:
+            return {
+                ...state,
+                users: state.users.map(user => user.staff_id === action.payload.staff_id ? action.payload : user),
                 loading: false
             }
         case USER_ERROR:

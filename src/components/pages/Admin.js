@@ -1,7 +1,6 @@
 import React, { Fragment, useEffect, useContext } from 'react'
-import { Grid } from '@material-ui/core'
+import { Typography } from '@material-ui/core'
 import Users from '../users/Users'
-import UserForm from '../users/UserForm'
 import AuthContext from '../../context/auth/authContext'
 import AdminContext from '../../context/admin/adminContext'
 import AlertContext from '../../context/alert/alertContext'
@@ -13,9 +12,10 @@ const Admin = () => {
 
     const { setAlert } = alertContext;
     const { error, adminClearError } = adminContext;
+    const { loadUser } = authContext;
 
     useEffect(() => {
-        authContext.loadUser();
+        loadUser();
 
         if(error !== null){
             setAlert(error)
@@ -27,14 +27,8 @@ const Admin = () => {
 
     return (
         <Fragment>
-            <Grid container spacing={2}>
-                <Grid item xs>
-                    <UserForm />
-                </Grid>
-                <Grid item xs>
-                    <Users />
-                </Grid>
-            </Grid>
+            <Typography variant='h4' gutterBottom style={{ fontWeight: 'bold' }}>User List</Typography>
+            <Users />
         </Fragment>
     )
 }

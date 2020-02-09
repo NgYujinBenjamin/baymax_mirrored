@@ -23,7 +23,8 @@ const Profile = () => {
 
     useEffect(() => {
         authContext.loadUser();
-    },)
+        //eslint-disable-next-line
+    },[])
 
     // initialize
     const authContext = useContext(AuthContext);

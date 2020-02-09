@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Avatar, Button, Typography, TextField, Container } from '@material-ui/core'
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
+import { Avatar, Button, Typography, TextField, Container, Card } from '@material-ui/core'
+import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 import AlertContext from '../../context/alert/alertContext'
 import AuthContext from '../../context/auth/authContext'
 
@@ -52,13 +52,13 @@ const Login = (props) => {
     }
 
     return (
-        <Container maxWidth='xs'>
-            <div className={classes.paper}>
-                <Avatar className={classes.avatar}>
-                    <LockOutlinedIcon />
+        <Container maxWidth='sm'>
+            <Card style={{padding: '12px 28px'}}>
+                <Avatar className={classes.avatar} style={{ margin: '8px auto' }}>
+                    <VerifiedUserIcon style={{ margin: '0 auto' }} />
                 </Avatar>
-                <Typography component='h1' variant='h5'>
-                    Sign In
+                <Typography variant='h5' align='center' style={{ fontWeight: 'bold' }}>
+                    Login
                 </Typography>
                 <form className={classes.form} onSubmit={handleSubmit}>
                     <TextField 
@@ -94,25 +94,18 @@ const Login = (props) => {
                         Login
                     </Button>
                 </form>
-            </div>
+            </Card>
         </Container>
     )
 }
 
 const useStyles = makeStyles(theme => ({
-    paper: {
-        marginTop: theme.spacing(8),
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center'
-    },
     form: {
         width: '100%',
         marginTop: theme.spacing(1)
     },
     avatar: {
-        margin: theme.spacing(1),
-        backgroundColor: theme.palette.secondary.main
+        backgroundColor: 'blue'
     },
     submit: {
         margin: theme.spacing(3, 0, 2)

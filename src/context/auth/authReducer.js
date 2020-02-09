@@ -1,4 +1,4 @@
-import { LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, USER_LOADED, CLEAR_ERRORS, AUTH_ERROR, NEW_PASSWORD } from '../types';
+import { REGISTER_SUCCESS, REGISTER_FAIL, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, USER_LOADED, CLEAR_ERRORS, AUTH_ERROR, NEW_PASSWORD, UPDATE_NAV } from '../types';
 
 export default (state, action) => {
     switch(action.type){
@@ -9,6 +9,7 @@ export default (state, action) => {
                 loading: false,
                 user: action.payload
             }
+        case REGISTER_SUCCESS:
         case LOGIN_SUCCESS:
             localStorage.setItem('token', action.payload.token)
             return {
@@ -28,6 +29,7 @@ export default (state, action) => {
                 loading: false,
                 error: null
             }
+        case REGISTER_FAIL:
         case LOGIN_FAIL:
             localStorage.removeItem('token')
             return {
@@ -42,6 +44,11 @@ export default (state, action) => {
             return {
                 ...state, 
                 error: null
+            }
+        case UPDATE_NAV:
+            return {
+                ...state,
+                currentNavItem: action.payload
             }
         case NEW_PASSWORD:
         default:
