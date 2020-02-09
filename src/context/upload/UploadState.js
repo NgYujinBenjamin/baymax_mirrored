@@ -3,8 +3,7 @@ import UploadContext from './uploadContext';
 import UploadReducer from './uploadReducer';
 import XLSX from 'xlsx';
 import axios from 'axios';
-import { SET_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO } from '../types';
-// const { ipcRenderer } = window.require("electron")
+import { SET_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO } from '../types';
 
 const UploadState = (props) => {
     const initialState = {
@@ -23093,61 +23092,6 @@ const UploadState = (props) => {
             //prompt error
 
         }
-
-        // /* ELECTRON CODE */
-        // ipcRenderer.send('getResult:send', JSON.stringify(preResult));
-        // ipcRenderer.once('getResult:received', (event, res) => {
-        //     let response = JSON.parse(res);
-        //     console.log(response)
-        //     const output = [];
-        //     response.data.schedule = [];
-        //     response.data.schedule.forEach(arr => {
-        //         arr.schedule.forEach(val => {
-        //             output.push(val);
-        //         })
-        //     })
-        //     response.data.schedule = output;
-
-            // console.log(new Date(response.data.allProduct[0].MRPDate).toLocaleDateString('en-GB'))
-            // console.log(typeof Date.parse(response.data.allProduct[0].MRPDate))
-            
-            // console.log(response);
-
-            //change date formatting - allProduct
-            // response.data.allProduct.forEach(val => {
-            //     val['MRPDate'] = val['MRPDate'] === undefined ? '' : new Date(val['MRPDate']).toLocaleDateString('en-GB')
-            //     val['intOpsShipReadinessDate'] = val['intOpsShipReadinessDate'] === undefined ? '' : new Date(val['intOpsShipReadinessDate']).toLocaleDateString('en-GB')
-            //     val['MFGCommitDate'] = val['MFGCommitDate'] === undefined ? '' : new Date(val['MFGCommitDate']).toLocaleDateString('en-GB')
-            //     val['shipRecogDate'] = val['shipRecogDate'] === undefined ? '' : new Date(val['shipRecogDate']).toLocaleDateString('en-GB')
-            //     val['toolStartDate'] = val['toolStartDate'] === undefined ? '' : new Date(val['toolStartDate']).toLocaleDateString('en-GB')
-            // })
-
-            //change date formatting - schedule
-            // response.data.schedule.forEach(val => {
-            //     val['MRPDate'] = val['MRPDate'] === undefined ? '' : new Date(val['MRPDate']).toLocaleDateString('en-GB')
-            //     val['intOpsShipReadinessDate'] = val['intOpsShipReadinessDate'] === undefined ? '' : new Date(val['intOpsShipReadinessDate']).toLocaleDateString('en-GB')
-            //     val['MFGCommitDate'] = val['MFGCommitDate'] === undefined ? '' : new Date(val['MFGCommitDate']).toLocaleDateString('en-GB')
-            //     val['shipRecogDate'] = val['shipRecogDate'] === undefined ? '' : new Date(val['shipRecogDate']).toLocaleDateString('en-GB')
-            //     val['toolStartDate'] = val['toolStartDate'] === undefined ? '' : new Date(val['toolStartDate']).toLocaleDateString('en-GB')   
-            // })
-
-            //change date formatting - unfulfilled
-            // response.data.unfulfilled.forEach(val => {
-            //     val['MRPDate'] = val['MRPDate'] === undefined ? '' : new Date(val['MRPDate']).toLocaleDateString('en-GB')
-            //     val['intOpsShipReadinessDate'] = val['intOpsShipReadinessDate'] === undefined ? '' : new Date(val['intOpsShipReadinessDate']).toLocaleDateString('en-GB')
-            //     val['MFGCommitDate'] = val['MFGCommitDate'] === undefined ? '' : new Date(val['MFGCommitDate']).toLocaleDateString('en-GB')
-            //     val['shipRecogDate'] = val['shipRecogDate'] === undefined ? '' : new Date(val['shipRecogDate']).toLocaleDateString('en-GB')
-            //     val['toolStartDate'] = val['toolStartDate'] === undefined ? '' : new Date(val['toolStartDate']).toLocaleDateString('en-GB')   
-            // })
-
-            // if(response.type === 'SUCCESS'){
-            //     // console.log(response.data)
-            //     dispatch({
-            //         type: CREATE_RESULT,
-            //         payload: response.data
-            //     })
-            // }
-        // })
     }
 
     //import masterops
@@ -23190,7 +23134,7 @@ const UploadState = (props) => {
 
             filtered[filtered.length - 1]['Argo ID'] === undefined && filtered.pop();
 
-            console.log(JSON.stringify(filtered))
+            // console.log(JSON.stringify(filtered))
 
             dispatch({
                 type: SET_SCHEDULE,

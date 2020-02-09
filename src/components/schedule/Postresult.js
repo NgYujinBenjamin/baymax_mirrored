@@ -12,7 +12,7 @@ const Postresult = () => {
     const classes = useStyles();
     const uploadContext = useContext(UploadContext);
 
-    const { postResult, createExport, saveFile, clearAll } = uploadContext;
+    const { postResult, createExport, createExportSchedule, saveFile, clearAll, scheduletest } = uploadContext;
 
     const handleClearAll = () => {
         clearAll();
@@ -24,6 +24,7 @@ const Postresult = () => {
 
     const handleExport = () => {
         createExport(postResult);
+        createExportSchedule(scheduletest);
     }
 
     return (

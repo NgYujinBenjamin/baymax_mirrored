@@ -4,7 +4,6 @@ import AuthReducer from './authReducer';
 import { REGISTER_SUCCESS, REGISTER_FAIL, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, USER_LOADED, CLEAR_ERRORS, AUTH_ERROR, NEW_PASSWORD, UPDATE_NAV } from '../types';
 import axios from 'axios';
 import setAuthToken from '../../utils/setAuthToken';
-// const { ipcRenderer } = window.require("electron");
 
 const AuthState = (props) => {
     const initialState = {

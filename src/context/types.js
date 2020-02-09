@@ -4,6 +4,7 @@ export const SET_BAYS = 'SET_BAYS';
 export const CLEAR_PRERESULT = 'CLEAR_PRERESULT';
 export const CREATE_RESULT = 'CREATE_RESULT';
 export const EXPORT_RESULT = 'EXPORT_RESULT';
+export const EXPORT_SCHEDULE = 'EXPORT_SCHEDULE';
 export const CLEAR_ALL = 'CLEAR_ALL'
 export const SET_ALERT = 'SET_ALERT';
 export const REMOVE_ALERT = 'REMOVE_ALERT';
