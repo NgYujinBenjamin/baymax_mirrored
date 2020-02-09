@@ -16,7 +16,7 @@ public class mysqlcon {
     private final String connectionPassword = "";
     private final String port = "3306";
     private final String databaseName = "baymaxdb";
-    private final String connection = "jdbc:mysql://localhost:" + port + "/" + databaseName + "?useSSL=false&allowPublicKeyRetrieval=true";
+    private final String connection = "jdbc:mysql://localhost:" + port + "/" + databaseName + "?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
     private final String driverName = "com.mysql.jdbc.Driver";
 
     public User getUser(String username) {
