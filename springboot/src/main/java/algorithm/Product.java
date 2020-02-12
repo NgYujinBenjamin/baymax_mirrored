@@ -65,7 +65,7 @@ public class Product implements Comparable<Product>{
     private String flex02;
     private String flex03;
     private String flex04;
-    // private String buildQtr;
+    private String buildQtr;
     // private String shipQtr;
     // private String shipRecogQtr;
     // private String MFGSite;
@@ -141,7 +141,7 @@ public class Product implements Comparable<Product>{
         flex02 = (String) rowData.get("Flex 02");
         flex03 = (String) rowData.get("Flex 03");
         flex04 = (String) rowData.get("Flex 04");
-        // buildQtr = (String) rowData.get("Build Qtr");
+        buildQtr = (String) rowData.get("Build Qtr");
         // shipQtr = (String) rowData.get("Ship Qtr");
         // shipRecogQtr = (String) rowData.get("Ship Recog Qtr");
         // MFGSite = (String) rowData.get("MFG Site");
@@ -168,7 +168,7 @@ public class Product implements Comparable<Product>{
         // standardCOGS = (String) rowData.get("Standard COGS");
         // createdBy = (String) rowData.get("Created By");
         // changedBy = (String) rowData.get("Changed By");
-        
+
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
         try {
@@ -194,34 +194,395 @@ public class Product implements Comparable<Product>{
         } catch (ParseException e){
             e.printStackTrace();
         }
-    }
 
-    /**
-     * To calculate the ToolStartDate for a product , based on 1 pair of mrpDate and cycleTimeDays
-     * 
-     */
-    public void calculateToolStart(){
-        toolStartDate = DateUtils.addDays(MRPDate, -cycleTimeDays);
+        toolStartDate = DateUtils.addDays(MFGCommitDate, -cycleTimeDays);
     }
-
 
     public int compareTo(Product other){
         Date thisToolStart = toolStartDate;
-        Date otherToolStart = other.getToolStartDate();
+        Date thisMFGCommit = MFGCommitDate;
+        Date otherToolStart = other.toolStartDate;
+        Date otherMFGCommit = other.MFGCommitDate;
 
+        if (thisToolStart.compareTo(otherToolStart) == 0){
+            return thisMFGCommit.compareTo(otherMFGCommit);
+        }
         return thisToolStart.compareTo(otherToolStart);
-        
     }
 
-    /**
-     * Getters & Setters
-     * @return
-     */
-    public Date getToolStartDate(){
+    public Integer getArgoID() {
+        return argoID;
+    }
+
+    public Integer getPlant() {
+        return plant;
+    }
+
+    public Integer getBuildComplete() {
+        return buildComplete;
+    }
+
+    public String getSlotStatus() {
+        return slotStatus;
+    }
+
+    public String getPlanProductType() {
+        return planProductType;
+    }
+
+    public String getBuildCategory() {
+        return buildCategory;
+    }
+
+    public String getShipRevenueType() {
+        return shipRevenueType;
+    }
+
+    public Integer getSalesOrder() {
+        return salesOrder;
+    }
+
+    public String getForecastID() {
+        return forecastID;
+    }
+
+    public String getSlotID_UTID() {
+        return slotID_UTID;
+    }
+
+    public String getFabName() {
+        return fabName;
+    }
+
+    public String getSecondaryCustomerName() {
+        return secondaryCustomerName;
+    }
+
+    public String getBuildProduct() {
+        return buildProduct;
+    }
+
+    public String getProductPN() {
+        return productPN;
+    }
+
+    public String getCommittedShip$() {
+        return committedShip$;
+    }
+
+    public String getShipRisk_Upside() {
+        return shipRisk_Upside;
+    }
+
+    public String getShipRiskReason() {
+        return shipRiskReason;
+    }
+
+    public Date getMRPDate() {
+        return MRPDate;
+    }
+
+    public Date getIntOpsShipReadinessDate() {
+        return intOpsShipReadinessDate;
+    }
+
+    public Date getMFGCommitDate() {
+        return MFGCommitDate;
+    }
+
+    public Date getShipRecogDate() {
+        return shipRecogDate;
+    }
+
+    public Date getHandOffDateToDE() {
+        return handOffDateToDE;
+    }
+
+    public Date getHandOffDateBackToMFG() {
+        return handOffDateBackToMFG;
+    }
+
+    public Date getInstallStartDate() {
+        return installStartDate;
+    }
+
+    public Integer getCycleTimeDays() {
+        return cycleTimeDays;
+    }
+
+    public String getSlotPlanNote() {
+        return slotPlanNote;
+    }
+
+    public String getCommentFor$Change() {
+        return commentFor$Change;
+    }
+
+    public String getConfigurationNote() {
+        return configurationNote;
+    }
+
+    public String getDropShip() {
+        return dropShip;
+    }
+
+    public String getMFGStatus() {
+        return MFGStatus;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public Integer getRMATool() {
+        return RMATool;
+    }
+
+    public String getNew_Used() {
+        return new_Used;
+    }
+
+    public Date getCoreNeedDate() {
+        return coreNeedDate;
+    }
+
+    public Date getCoreArrivalDate() {
+        return coreArrivalDate;
+    }
+
+    public Date getRefurbStartDate() {
+        return refurbStartDate;
+    }
+
+    public Date getRefurbCompleteDate() {
+        return refurbCompleteDate;
+    }
+
+    public String getDonorStatus() {
+        return donorStatus;
+    }
+
+    public String getCoreUTID() {
+        return coreUTID;
+    }
+
+    public String getCoreNotes() {
+        return coreNotes;
+    }
+
+    public String getFabID() {
+        return fabID;
+    }
+
+    public String getFlex01() {
+        return flex01;
+    }
+
+    public String getFlex02() {
+        return flex02;
+    }
+
+    public String getFlex03() {
+        return flex03;
+    }
+
+    public String getFlex04() {
+        return flex04;
+    }
+
+    public String getBuildQtr() {
+        return buildQtr;
+    }
+
+    public Date getToolStartDate() {
         return toolStartDate;
     }
 
-    public Date getMRPDate(){
-        return MRPDate;
+    /**
+     * Setters
+     */
+    public void setArgoID(Integer argoID) {
+        this.argoID = argoID;
     }
+
+    public void setPlant(Integer plant) {
+        this.plant = plant;
+    }
+
+    public void setBuildComplete(Integer buildComplete) {
+        this.buildComplete = buildComplete;
+    }
+
+    public void setSlotStatus(String slotStatus) {
+        this.slotStatus = slotStatus;
+    }
+
+    public void setPlanProductType(String planProductType) {
+        this.planProductType = planProductType;
+    }
+
+    public void setBuildCategory(String buildCategory) {
+        this.buildCategory = buildCategory;
+    }
+
+    public void setShipRevenueType(String shipRevenueType) {
+        this.shipRevenueType = shipRevenueType;
+    }
+
+    public void setSalesOrder(Integer salesOrder) {
+        this.salesOrder = salesOrder;
+    }
+
+    public void setForecastID(String forecastID) {
+        this.forecastID = forecastID;
+    }
+
+    public void setSlotID_UTID(String slotID_UTID) {
+        this.slotID_UTID = slotID_UTID;
+    }
+
+    public void setFabName(String fabName) {
+        this.fabName = fabName;
+    }
+
+    public void setSecondaryCustomerName(String secondaryCustomerName) {
+        this.secondaryCustomerName = secondaryCustomerName;
+    }
+
+    public void setBuildProduct(String buildProduct) {
+        this.buildProduct = buildProduct;
+    }
+
+    public void setProductPN(String productPN) {
+        this.productPN = productPN;
+    }
+
+    public void setCommittedShip$(String committedShip$) {
+        this.committedShip$ = committedShip$;
+    }
+
+    public void setShipRisk_Upside(String shipRisk_Upside) {
+        this.shipRisk_Upside = shipRisk_Upside;
+    }
+
+    public void setShipRiskReason(String shipRiskReason) {
+        this.shipRiskReason = shipRiskReason;
+    }
+
+    public void setMRPDate(Date MRPDate) {
+        this.MRPDate = MRPDate;
+    }
+
+    public void setIntOpsShipReadinessDate(Date intOpsShipReadinessDate) {
+        this.intOpsShipReadinessDate = intOpsShipReadinessDate;
+    }
+
+    public void setMFGCommitDate(Date MFGCommitDate) {
+        this.MFGCommitDate = MFGCommitDate;
+    }
+
+    public void setShipRecogDate(Date shipRecogDate) {
+        this.shipRecogDate = shipRecogDate;
+    }
+
+    public void setHandOffDateToDE(Date handOffDateToDE) {
+        this.handOffDateToDE = handOffDateToDE;
+    }
+
+    public void setHandOffDateBackToMFG(Date handOffDateBackToMFG) {
+        this.handOffDateBackToMFG = handOffDateBackToMFG;
+    }
+
+    public void setInstallStartDate(Date installStartDate) {
+        this.installStartDate = installStartDate;
+    }
+
+    public void setCycleTimeDays(Integer cycleTimeDays) {
+        this.cycleTimeDays = cycleTimeDays;
+    }
+
+    public void setSlotPlanNote(String slotPlanNote) {
+        this.slotPlanNote = slotPlanNote;
+    }
+
+    public void setCommentFor$Change(String commentFor$Change) {
+        this.commentFor$Change = commentFor$Change;
+    }
+
+    public void setConfigurationNote(String configurationNote) {
+        this.configurationNote = configurationNote;
+    }
+
+    public void setDropShip(String dropShip) {
+        this.dropShip = dropShip;
+    }
+
+    public void setMFGStatus(String MFGStatus) {
+        this.MFGStatus = MFGStatus;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setRMATool(Integer RMATool) {
+        this.RMATool = RMATool;
+    }
+
+    public void setNew_Used(String new_Used) {
+        this.new_Used = new_Used;
+    }
+
+    public void setCoreNeedDate(Date coreNeedDate) {
+        this.coreNeedDate = coreNeedDate;
+    }
+
+    public void setCoreArrivalDate(Date coreArrivalDate) {
+        this.coreArrivalDate = coreArrivalDate;
+    }
+
+    public void setRefurbStartDate(Date refurbStartDate) {
+        this.refurbStartDate = refurbStartDate;
+    }
+
+    public void setRefurbCompleteDate(Date refurbCompleteDate) {
+        this.refurbCompleteDate = refurbCompleteDate;
+    }
+
+    public void setDonorStatus(String donorStatus) {
+        this.donorStatus = donorStatus;
+    }
+
+    public void setCoreUTID(String coreUTID) {
+        this.coreUTID = coreUTID;
+    }
+
+    public void setCoreNotes(String coreNotes) {
+        this.coreNotes = coreNotes;
+    }
+
+    public void setFabID(String fabID) {
+        this.fabID = fabID;
+    }
+
+    public void setFlex01(String flex01) {
+        this.flex01 = flex01;
+    }
+
+    public void setFlex02(String flex02) {
+        this.flex02 = flex02;
+    }
+
+    public void setFlex03(String flex03) {
+        this.flex03 = flex03;
+    }
+
+    public void setFlex04(String flex04) {
+        this.flex04 = flex04;
+    }
+
+    public void setToolStartDate(Date toolStartDate) {
+        this.toolStartDate = toolStartDate;
+    }
+
 }
