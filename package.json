@@ -48,7 +48,9 @@
     "react-test": "react-scripts test",
     "react-eject": "react-scripts eject",
     "electron-start": "concurrently \"npm run react-start\" \"wait-on http://localhost:3000 && npm run electron\"",
-    "start": "npm run react"
+    "start": "npm run react",
+    "server": "cd springboot && mvn spring-boot:run",
+    "dev": "concurrently \"npm run server\" \"npm start\""
   },
   "eslintConfig": {
     "extends": "react-app"
