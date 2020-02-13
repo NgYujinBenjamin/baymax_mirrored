@@ -114,7 +114,7 @@ const Schedule = () => {
                                 {userInput.fileName !== '' && userInput.fileName}
                             </Typography>
                         </Box>
-                        {(userInput.bayFile && userInput.fileName !== '') && <Button color='primary' variant='contained' fullWidth onClick={handleConfirm}>Confirm</Button>}
+                        {(userInput.bayFile && userInput.fileName !== '') && schedule == null && <Button color='primary' variant='contained' fullWidth onClick={handleConfirm}>Confirm</Button>}
                         {(schedule !== null && bays !== '' && !scheduleDone) && <Button fullWidth color='default' variant='contained' className={classes.marginTop} onClick={handleClearPreresult}>Clear</Button>}
                     </Box>
                     <Box>

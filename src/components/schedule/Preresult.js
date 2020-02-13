@@ -13,7 +13,16 @@ const Preresult = ({ fileName }) => {
     const { setAlert } = alertContext;
     const { schedule, updateSchedule, createResult, bays, baseline } = uploadContext;
 
+    // To create the "End Date" field
+    schedule.forEach(function(item) {
+        {item.slotStatus == "OPEN" ? 
+            item['End Date'] = item['Int. Ops Ship Readiness Date'] :  item['End Date'] = item['MFG Commit Date'];
+        }
+    })
+
     const [objs, setObjects] = useState(schedule);
+
+    // console.log(objs);
 
     const handleChange = (obj) => {
         return (event) => {
@@ -44,7 +53,7 @@ const Preresult = ({ fileName }) => {
 
         //check if Cycle Time Days and MRP Date are NOT in the right format
         objs.forEach(obj => {
-            if(!regxNum.test(obj['Cycle Time Days']) || !regxDate.test(obj['MRP Date'])){
+            if(!regxNum.test(obj['Cycle Time Days']) || !regxDate.test(obj['MFG Commit Date']) || !regxDate.test(obj['Int. Ops Ship Readiness Date'])){
                 setAlert(`ArgoID: ${obj['Argo ID']}. Please enter a valid number in Cycle Time Days and valid date format (DD/MM/YYYY) in MRP Date`)
                 preCounter = true;
             }
@@ -69,13 +78,16 @@ const Preresult = ({ fileName }) => {
                             <TableCell></TableCell>
                             <TableCell></TableCell>
                             <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell>Argo ID</TableCell>
-                            <TableCell>UTID</TableCell>
+                            <TableCell>Slot ID/UTID</TableCell>
                             <TableCell>Product Name</TableCell>
-                            <TableCell>Cycle Time Days</TableCell>
                             <TableCell>MRP Date</TableCell>
+                            <TableCell>End Date</TableCell>
+                            <TableCell>Cycle Time Days</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

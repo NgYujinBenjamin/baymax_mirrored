@@ -5,11 +5,13 @@ const PreresultItem = memo (({ obj, onChange }) => {
     const argoID = obj['Argo ID'];
     const utID = obj['Slot ID/UTID'];
     const productName = obj['Build Product'];
-    let cycleTime = obj['Cycle Time Days'];
-    let mrpDate = obj['MRP Date'];
+    const mrpDate = obj['MRP Date'];
 
+    let cycleTime = obj['Cycle Time Days'];
+    let endDate = obj['End Date'];
+    
     const cycleName = 'Cycle Time Days';
-    const mrpName = 'MRP Date';
+    const endDateName = 'End Date';
 
     return (
         <Fragment>
@@ -17,15 +19,16 @@ const PreresultItem = memo (({ obj, onChange }) => {
                 <TableCell>{argoID}</TableCell>
                 <TableCell>{utID}</TableCell>
                 <TableCell>{productName}</TableCell>
+                <TableCell>{mrpDate}</TableCell>
                 <TableCell>
-                    <Input type='text' name={cycleName} value={cycleTime} onChange={onChange} required />
+                    <Input type='text' name={endDateName} value={endDate} onChange={onChange} required /> 
                 </TableCell>
                 <TableCell>
-                    <Input type='text' name={mrpName} value={mrpDate} onChange={onChange} required />
+                    <Input type='text' name={cycleName} value={cycleTime} onChange={onChange} required />
                 </TableCell>
             </TableRow>
         </Fragment>
     )
-}, (prevProps, nextProps) => prevProps.obj['Cycle Time Days'] === nextProps.obj['Cycle Time Days'] && prevProps.obj['MRP Date'] === nextProps.obj['MRP Date']);
+}, (prevProps, nextProps) => prevProps.obj['Cycle Time Days'] === nextProps.obj['Cycle Time Days'] && prevProps.obj['End Date'] === nextProps.obj['End Date']);
 
 export default PreresultItem
