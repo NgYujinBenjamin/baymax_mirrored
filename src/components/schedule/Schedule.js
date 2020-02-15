@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useContext, useEffect } from 'react'
-import { Button, Box, Card, CardContent, Input, InputLabel, Typography } from '@material-ui/core'
+import { Button, Box, Card, CardContent, Input, InputLabel, Typography, Grid } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import Preresult from './Preresult'
 import Postresult from './Postresult'
@@ -31,7 +31,9 @@ const Schedule = () => {
                 bayComponent: '',
                 bayFile: null,
                 fileName: '',
-                bayFileValue: ''
+                bayFileValue: '',
+                minGapTime: '',
+                maxGapTime: ''
             })
         }
         //eslint-disable-next-line
@@ -41,7 +43,9 @@ const Schedule = () => {
         bayComponent: '',
         bayFile: null,
         fileName: '',
-        bayFileValue: ''
+        bayFileValue: '',
+        minGapTime: '',
+        maxGapTime: ''
     })
 
     const handleChange = (event) => {
@@ -81,7 +85,9 @@ const Schedule = () => {
             bayComponent: '',
             bayFile: null,
             fileName: '',
-            bayFileValue: ''
+            bayFileValue: '',
+            minGapTime: '',
+            maxGapTime: ''
         })
     }
 
@@ -90,8 +96,20 @@ const Schedule = () => {
             <Card>
                 <CardContent>
                     <Box className={classes.box}>
-                        <InputLabel htmlFor='bays'>No of Available Bays</InputLabel>
-                        <Input fullWidth type='text' id='bays' name='bayComponent' value={userInput.bayComponent} onChange={handleChange} required />
+                        <Grid container spacing={3}>
+                            <Grid item xs>
+                                <InputLabel htmlFor='bays'>No of Available Bays</InputLabel>
+                                <Input fullWidth type='text' id='bays' name='bayComponent' value={userInput.bayComponent} onChange={handleChange} required />
+                            </Grid>
+                            <Grid item xs>
+                                <InputLabel htmlFor='minGap'>Minimum Gap Time</InputLabel>
+                                <Input fullWidth type='text' id='minGap' name='minGapTime' value={userInput.minGapTime} onChange={handleChange} required />
+                            </Grid>
+                            <Grid item xs>
+                                <InputLabel htmlFor='maxGap'>Maximum Gap Time</InputLabel>
+                                <Input fullWidth type='text' id='maxGap' name='maxGapTime' value={userInput.maxGapTime} onChange={handleChange} required />
+                            </Grid>
+                        </Grid>
                     </Box>
                     <Box className={classes.box}>
                         <InputLabel className={classes.marginBottom}>Upload excel file:</InputLabel>
