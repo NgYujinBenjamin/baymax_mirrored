@@ -48,19 +48,33 @@ public class AlgoController {
         
         List<Map<String, Object>> allData = data;
         
-        List<Product> allProduct = new ArrayList<>();
+        HashMap<String, ArrayList<Product>> allProduct = new  HashMap<String, ArrayList<Product>>();
         
         for (int i = 0; i < allData.size(); i++){
             Product p = new Product(allData.get(i));
-            p.calculateToolStart();
-            allProduct.add(p);
-        }
-        Collections.sort(allProduct);
+            String buildQtr = p.getBuildQtr();
 
-        BaySchedule baySchedule = new BaySchedule(allProduct);
-        baySchedule.generateSchedule(26);
-        String jsonToReturn = BaySchedule.toJSONString(baySchedule);
-        return jsonToReturn;
+            if (allProduct.containsKey(buildQtr)){
+                ArrayList<Product> qtrProducts = allProduct.get(buildQtr);
+                qtrProducts.add(p);
+            } else {
+                ArrayList<Product> qtrProducts = new ArrayList<Product>();
+                qtrProducts.add(p);
+                allProduct.put(buildQtr, qtrProducts);
+            }
+        }
+
+        Set<String> allProductionQtr = allProduct.keySet();
+        for (String qtrKey: allProductionQtr){
+            ArrayList<Product> qtrProducts = allProduct.get(qtrKey);
+            Collections.sort(qtrProducts);
+        }
+
+        HashMap<String, Integer> quarterHC = new HeadCount(allProduct).getQuarterHC();
+
+        BaySchedule baySchedule = new BaySchedule(allProduct, quarterHC, 26, 90);
+
+        return BaySchedule.toJSONString(baySchedule);
     }
 
 }

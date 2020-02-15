@@ -4,17 +4,20 @@ import java.util.*;
 
 import com.google.gson.Gson;
 
-public class Bay {
-    private ArrayList<Product> schedule;
+public class Bay implements Comparable<Bay>{
+    private ArrayList<Product> baySchedule;
+    
+    @Exclude
     private Date availableDate;
 
     public Bay (){
-        schedule = new ArrayList<Product>();
+        baySchedule = new ArrayList<Product>();
+        availableDate = new Date(0);
     }
 
-    public void addToSchedule (Product p){
-        schedule.add(p);
-        availableDate = p.getMRPDate();
+    public void addToBaySchedule (Product p){
+        baySchedule.add(p);
+        availableDate = p.getEndDate();
     }
 
     public Date getAvailableDate(){
@@ -22,7 +25,14 @@ public class Bay {
     }
 
     public ArrayList<Product> getBaySchedule (){
-        return schedule;
+        return baySchedule;
+    }
+
+    public int compareTo(Bay other){
+        Date thisAvailDate = availableDate;
+        Date otherAvailDate = other.availableDate;
+        
+        return thisAvailDate.compareTo(otherAvailDate);
     }
 
     public static String toJSONString(Bay b){

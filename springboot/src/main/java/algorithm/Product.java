@@ -25,7 +25,7 @@ public class Product implements Comparable<Product>{
     private String buildProduct;
     // private String forecastProduct;
     private String productPN;
-    private String committedShip$;
+    private Integer committedShip$;
     // private String shipRevenueInt$;
     private String shipRisk_Upside;
     private String shipRiskReason;
@@ -97,6 +97,8 @@ public class Product implements Comparable<Product>{
     // private String changedBy;
     // private Date lastChangedTime;
     private Date toolStartDate;
+    private Date endDate;
+
 
     public Product (Map<String, Object> rowData){
         argoID = (rowData.get("Argo ID") == null) ? null : Integer.parseInt((String) rowData.get("Argo ID"));
@@ -116,7 +118,7 @@ public class Product implements Comparable<Product>{
         buildProduct = (String) rowData.get("Build Product");
         // forecastProduct = (String) rowData.get("Forecast Product");
         productPN = (String) rowData.get("Product PN");
-        committedShip$ = (String) rowData.get("Committed Ship $");
+        committedShip$ = (Integer) rowData.get("Committed Ship $");
         // shipRevenueInt$ = (String) rowData.get("Ship Revenue (Int $)");
         shipRisk_Upside = (String) rowData.get("Ship Risk/Upside");
         shipRiskReason = (String) rowData.get("Ship Risk Reason");
@@ -191,21 +193,22 @@ public class Product implements Comparable<Product>{
             // changedOn = (rowData.get("Changed On") == null) ? null : dateFormat.parse((String) rowData.get("Changed On"));
             // createdTime = (rowData.get("Created Time") == null) ? null : dateFormat.parse((String) rowData.get("Created Time"));
             // lastChangedTime = (rowData.get("Last Changed Time") == null) ? null : dateFormat.parse((String) rowData.get("Last Changed Time"));
+            endDate = (rowData.get("End Date") == null) ? null : dateFormat.parse((String) rowData.get("End Date"));
         } catch (ParseException e){
             e.printStackTrace();
         }
 
-        toolStartDate = DateUtils.addDays(MFGCommitDate, -cycleTimeDays);
+        toolStartDate = DateUtils.addDays(endDate, -cycleTimeDays);
     }
 
     public int compareTo(Product other){
         Date thisToolStart = toolStartDate;
-        Date thisMFGCommit = MFGCommitDate;
+        Integer thisCommittedShip$ = committedShip$;
         Date otherToolStart = other.toolStartDate;
-        Date otherMFGCommit = other.MFGCommitDate;
+        Integer otherCommittedShip$ = other.committedShip$;
 
         if (thisToolStart.compareTo(otherToolStart) == 0){
-            return thisMFGCommit.compareTo(otherMFGCommit);
+            return - thisCommittedShip$.compareTo(otherCommittedShip$);
         }
         return thisToolStart.compareTo(otherToolStart);
     }
@@ -266,7 +269,7 @@ public class Product implements Comparable<Product>{
         return productPN;
     }
 
-    public String getCommittedShip$() {
+    public Integer getCommittedShip$() {
         return committedShip$;
     }
 
@@ -398,6 +401,10 @@ public class Product implements Comparable<Product>{
         return toolStartDate;
     }
 
+    public Date getEndDate() {
+        return endDate;
+    }
+
     /**
      * Setters
      */
@@ -457,7 +464,7 @@ public class Product implements Comparable<Product>{
         this.productPN = productPN;
     }
 
-    public void setCommittedShip$(String committedShip$) {
+    public void setCommittedShip$(Integer committedShip$) {
         this.committedShip$ = committedShip$;
     }
 
@@ -585,4 +592,7 @@ public class Product implements Comparable<Product>{
         this.toolStartDate = toolStartDate;
     }
 
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 }
