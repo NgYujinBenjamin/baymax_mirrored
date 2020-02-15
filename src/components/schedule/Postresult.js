@@ -1,18 +1,29 @@
 import React, { Fragment, useContext } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box, Grid, Typography, Card, CardActions } from '@material-ui/core'
-import PostresultItem from './PostresultItem'
+import { Button, Box, Grid, Typography } from '@material-ui/core'
+import { AppBar, Tabs, Tab } from '@material-ui/core';
 import UploadContext from '../../context/upload/uploadContext'
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import DoneIcon from '@material-ui/icons/Done';
+import Postresultqtr from './Postresultqtr';
 
 const Postresult = () => {
     const classes = useStyles();
     const uploadContext = useContext(UploadContext);
+    const [value, setValue] = React.useState(0); // this is for tab panel to display quarters
 
     const { postResult, createExport, createExportSchedule, saveFile, clearAll, scheduletest } = uploadContext;
+
+    const quarters = new Set(); // remove duplicates from baseline and predicted
+    Object.keys(scheduletest.baseline).map(quarterName => 
+        quarters.add(quarterName)
+    )
+    Object.keys(scheduletest.predicted).map(quarterName => 
+        quarters.add(quarterName)
+    )
+    let qtrs = Array.from(quarters);
 
     const handleClearAll = () => {
         clearAll();
@@ -27,34 +38,41 @@ const Postresult = () => {
         createExportSchedule(scheduletest);
     }
 
+    const a11yProps = (index) => {
+        return {
+          id: `scrollable-force-tab-${index}`,
+          'aria-controls': `scrollable-force-tabpanel-${index}`,
+        }
+    }
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
+
     return (
         <Fragment>
-            {postResult.unfulfilled.length > 0 ? (
-                <TableContainer component={Paper}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Argo ID</TableCell>
-                            <TableCell>UTID</TableCell>
-                            <TableCell>Product Name</TableCell>
-                            <TableCell>Derived Tool Completion</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {postResult.unfulfilled.map((result, index) => (
-                            <PostresultItem result={result} key={index} />
-                        ))}
-                    </TableBody>
-                </Table>
-                </TableContainer>
-            ) : (
-                <Card variant='outlined' style={{backgroundColor: 'green'}}>
-                    <CardActions disableSpacing style={{padding: 8}}>
-                        <DoneIcon style={{marginRight:8, color:'white'}} />
-                        <Typography component='span' variant='body2' style={{color:'white'}}>All Orders Fulfilled</Typography>
-                    </CardActions>
-                </Card>
-            )}
+            <div>
+                <AppBar position="static" color="default">
+                    <Tabs
+                        value={value}
+                        onChange={handleChange}
+                        variant="scrollable"
+                        scrollButtons="on"
+                        indicatorColor="primary"
+                        textColor="primary"
+                        aria-label="scrollable force tabs example"
+                    >
+                        {/* This will create the tab headers */}
+                        { qtrs.map((key, i) => 
+                            <Tab label={key} {...a11yProps({i})} />
+                        )}
+                    </Tabs>
+                </AppBar>
+
+                {qtrs.map((qtr, index) =>
+                    <Postresultqtr schedule={scheduletest} value={value} num={index} quarter={qtr} />
+                )}                
+            </div>
             
             <Box className={classes.marginTop}>
                 <Grid container spacing={1}>
