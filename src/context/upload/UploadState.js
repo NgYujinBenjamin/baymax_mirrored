@@ -3,7 +3,7 @@ import UploadContext from './uploadContext';
 import UploadReducer from './uploadReducer';
 import XLSX from 'xlsx';
 import axios from 'axios';
-import { SET_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO } from '../types';
+import { SET_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS } from '../types';
 
 const UploadState = (props) => {
     const initialState = {
@@ -780,7 +780,9 @@ const UploadState = (props) => {
                 ]
               ], 
             }
-        }
+        },
+        stepcount: 0,
+        steps: ['Upload Bay Requirement', 'Input guidelines & upload MasterOpsPlan', 'Edit MasterOpsPlan', 'Schedule Generated'],
     }
 
     const [state, dispatch] = useReducer(UploadReducer, initialState);
@@ -1046,6 +1048,9 @@ const UploadState = (props) => {
         dispatch({ type: UPDATE_SCHEDULE, payload: objs })
     }
 
+    //set step counter
+    const setStepCount = (num) => dispatch({ type: SET_STEPS, payload: num })
+
     //set bays
     const setBays = (num) => dispatch({ type: SET_BAYS, payload: num })
 
@@ -1097,6 +1102,8 @@ const UploadState = (props) => {
             postResult: state.postResult,
             error: state.error,
             scheduletest: state.scheduletest,
+            stepcount : state.stepcount,
+            steps: state.steps,
             setBaseline,
             setSchedule,
             setBays,
@@ -1109,7 +1116,8 @@ const UploadState = (props) => {
             saveFile,
             clearAll,
             uploadClearError,
-            clearZero
+            clearZero,
+            setStepCount
         }}>
         {props.children}
     </UploadContext.Provider>

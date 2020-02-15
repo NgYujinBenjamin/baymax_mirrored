@@ -4,16 +4,18 @@ import { makeStyles } from '@material-ui/core/styles'
 import UploadContext from '../../context/upload/uploadContext'
 import AuthContext from '../../context/auth/authContext'
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import ScheduleStep from '../layout/ScheduleStep.js';
 
 const Baseline = (props) => {
     const uploadContext = useContext(UploadContext);
     const authContext = useContext(AuthContext);
     const classes = useStyles();
 
-    const { setBaseline } = uploadContext;
+    const { setBaseline, stepcount, setStepCount } = uploadContext;
 
     useEffect(() => {
         authContext.loadUser();
+        setStepCount(0); // force stepper count to 0 once redirected to baseline page
         //eslint-disable-next-line
     }, [])
 
@@ -31,16 +33,19 @@ const Baseline = (props) => {
     }
 
     const handleSubmit = (event) => {
+        setStepCount(stepcount + 1);
         props.history.push('/schedule');
     }
 
     const handleCollapseSubmit = (event) => {
         setBaseline(file);
+        setStepCount(stepcount + 1);
         props.history.push('/schedule');
     }
 
     return (
         <Fragment>
+            <ScheduleStep/>
             <Card>
                 <CardContent>
                     <CardActions disableSpacing style={{ paddingLeft: '0' }}>

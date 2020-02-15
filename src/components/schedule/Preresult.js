@@ -11,8 +11,8 @@ const Preresult = ({ fileName }) => {
     const classes = useStyles();
 
     const { setAlert } = alertContext;
-    const { schedule, updateSchedule, createResult, bays, baseline } = uploadContext;
-
+    const { schedule, updateSchedule, createResult, bays, baseline, stepcount, setStepCount } = uploadContext;
+    
     // To create the "End Date" field
     schedule.forEach(function(item) {
         {item.slotStatus == "OPEN" ? 
@@ -21,8 +21,6 @@ const Preresult = ({ fileName }) => {
     })
 
     const [objs, setObjects] = useState(schedule);
-
-    // console.log(objs);
 
     const handleChange = (obj) => {
         return (event) => {
@@ -62,6 +60,7 @@ const Preresult = ({ fileName }) => {
         if(!preCounter) {
             updateSchedule(objs);
             createResult(objs, bays, baseline);
+            setStepCount(stepcount + 2); // add 2 since it will be the end of the step
         } else {
             window.scrollTo(0,0);
         }

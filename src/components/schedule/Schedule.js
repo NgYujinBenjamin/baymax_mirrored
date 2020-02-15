@@ -8,6 +8,7 @@ import UploadContext from '../../context/upload/uploadContext'
 import AlertContext from '../../context/alert/alertContext'
 import AuthContext from '../../context/auth/authContext'
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import ScheduleStep from '../layout/ScheduleStep.js';
 
 const Schedule = () => {
     const uploadContext = useContext(UploadContext);
@@ -16,7 +17,7 @@ const Schedule = () => {
     const classes = useStyles();
 
     const { setAlert } = alertContext;
-    const { setSchedule, setBays, clearPreresult, schedule, bays, loading, scheduleDone, postResult, error, uploadClearError } = uploadContext;
+    const { setSchedule, setBays, clearPreresult, schedule, bays, loading, scheduleDone, postResult, error, uploadClearError, stepcount, setStepCount } = uploadContext;
 
     useEffect(() => {
         authContext.loadUser();
@@ -74,6 +75,7 @@ const Schedule = () => {
         } else if(userInput.bayComponent === '' || userInput.bayFile === null) {
             setAlert('Please enter the number of available bays and upload an excel file');
         } else {
+            setStepCount(stepcount + 1);
             setBays(userInput.bayComponent);
             setSchedule(userInput.bayFile);
         }
@@ -93,6 +95,7 @@ const Schedule = () => {
 
     return (
         <Fragment>
+            <ScheduleStep/>
             <Card>
                 <CardContent>
                     <Box className={classes.box}>
