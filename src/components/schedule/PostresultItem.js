@@ -22,12 +22,12 @@ const PostresultItem = memo(({ result, id, onChange }) => {
                         cycleTime : <Input type='text' name={cycleName} value={cycleTime} onChange={onChange} required />
                     }
                 </TableCell>
-                { result.map(obj => (typeof(obj) === "object") ?
-                    null : <TableCell> {obj} </TableCell>
+                { result.map((obj, index) => (typeof(obj) === "object") ?
+                    null : <TableCell key={index}> {obj} </TableCell>
                 )}
             </TableRow>
         </Fragment>
     )
-}, (prevProps, nextProps) => prevProps[0].obj['Cycle Time Days'] === nextProps[0].obj['Cycle Time Days'])
+}, (prevProps, nextProps) => prevProps[0].cycleTimeDays === nextProps[0].cycleTimeDays)
 
 export default PostresultItem

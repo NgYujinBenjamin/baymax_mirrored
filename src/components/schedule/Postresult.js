@@ -64,13 +64,13 @@ const Postresult = () => {
                     >
                         {/* This will create the tab headers */}
                         { qtrs.map((key, i) => 
-                            <Tab label={key} {...a11yProps({i})} />
+                            <Tab label={key} {...a11yProps({i})} key={i}/>
                         )}
                     </Tabs>
                 </AppBar>
 
                 {qtrs.map((qtr, index) =>
-                    <Postresultqtr schedule={scheduletest} value={value} num={index} quarter={qtr} />
+                    <Postresultqtr schedule={scheduletest} value={value} num={index} quarter={qtr} key={index}/>
                 )}                
             </div>
             

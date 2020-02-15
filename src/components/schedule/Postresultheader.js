@@ -16,8 +16,8 @@ const Postresultheader = ({ result }) => {
                     <TableCell>MFG Commit Date</TableCell>
                     <TableCell>Gap</TableCell>
                     <TableCell>Cycle Time Days</TableCell>
-                    { result.map(date =>
-                        <TableCell>{date.split(",")[0].split(" ")[1] + " " + date.split(",")[0].split(" ")[0] + " " + date.split(",")[1]}</TableCell>
+                    { result.map((date, index) =>
+                        <TableCell key={index}>{date.split(",")[0].split(" ")[1] + " " + date.split(",")[0].split(" ")[0] + " " + date.split(",")[1]}</TableCell>
                     )}
                 </TableRow>
             </TableHead>
