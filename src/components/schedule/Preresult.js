@@ -83,8 +83,8 @@ const Preresult = ({ fileName }) => {
                         </TableRow>
                         <TableRow>
                             <TableCell>Argo ID</TableCell>
-                            <TableCell>Slot ID/UTID</TableCell>
-                            <TableCell>Product Name</TableCell>
+                            <TableCell>Slot/UTID</TableCell>
+                            <TableCell>Build Product</TableCell>
                             <TableCell>MRP Date</TableCell>
                             <TableCell>End Date</TableCell>
                             <TableCell>Cycle Time Days</TableCell>
