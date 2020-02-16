@@ -3,8 +3,7 @@ import { TableBody } from '@material-ui/core'
 import PostresultItem from './PostresultItem'
 
 const Postresultbody = ({ result, id}) => {
-    console.log(result[1])
-    const [ objs, setObjects ] = useState(result[1]);
+    const [ objs, setObjects ] = useState(result);
     // console.log(objs);
 
     const handleChange = (obj) => {
@@ -17,7 +16,7 @@ const Postresultbody = ({ result, id}) => {
                 if (o === obj) {
                     return {...obj, [name]: value}
                 }
-                // return o;
+                return o;
             })))
         }
     }

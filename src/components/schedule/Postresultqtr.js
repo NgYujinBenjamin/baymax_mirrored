@@ -35,16 +35,16 @@ const Postresultqtr = ({ schedule, value, num, quarter}) => {
             <TabPanel value={value} index={num}>
                 <TableContainer component={Paper}>
                     <Table style={{tableLayout: "auto"}}>
-                        {/* TableHeader; Dates from baseline and predicted are the same hence no diff if we use baseline / predicted */}
-                        { Object.keys(schedule.baseline).map((quarterName, index) => (quarterName === quarter) ?
-                            <Postresultheader result={schedule.baseline[quarterName][0]} key={index} /> : null
+                        {/* TableHeader */}
+                        { Object.keys(schedule).map((quarterName, index) => (quarterName === quarter) ?
+                            <Postresultheader result={schedule[quarterName][0]} key={index} /> : null
                         )}
                         {/* TableRow */}
-                        { Object.keys(schedule.baseline).map((quarterName, index) => (quarterName === quarter) ?
+                        {/* { Object.keys(schedule.baseline).map((quarterName, index) => (quarterName === quarter) ?
                             <Postresultbody result={schedule.baseline[quarterName]} id='baseline' key={index}/> : null
-                        )}
-                        { Object.keys(schedule.predicted).map((quarterName, index) => (quarterName === quarter) ?
-                            <Postresultbody result={schedule.predicted[quarterName]} id='predicted' key={index}/> : null
+                        )} */}
+                        { Object.keys(schedule).map((quarterName, index) => (quarterName === quarter) ?
+                            <Postresultbody result={schedule[quarterName].slice(1)} id='predicted' key={index}/> : null
                         )}
                     </Table>
                 </TableContainer>
