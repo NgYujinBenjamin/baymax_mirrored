@@ -77,7 +77,7 @@ public class BaySchedule{
             for (Product p : qtrProducts){
                 Date endDate = p.getEndDate();
 
-                if (endDate.compareTo(latestEnd) > 0){
+                if (endDate.after(latestEnd)){
                     latestEnd = endDate;
                 }
 
@@ -134,6 +134,11 @@ public class BaySchedule{
     public HashMap<String, ArrayList<Product>> getAllProduct(){
         return allProduct;
     }
+
+    public HashMap<String, HashMap<String, Date>> getEarliestStartLatestEnd(){
+        return earliestStartLatestEnd;
+    }
+
 
     public static String toJSONString(BaySchedule bs){
         Gson gson = new GsonBuilder().setExclusionStrategies(new JSONExclusionStrategy()).create();

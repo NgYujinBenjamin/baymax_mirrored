@@ -98,6 +98,7 @@ public class Product implements Comparable<Product>{
     // private Date lastChangedTime;
     private Date toolStartDate;
     private Date endDate;
+    private Date leaveBayDate;
 
 
     public Product (Map<String, Object> rowData){
@@ -199,6 +200,12 @@ public class Product implements Comparable<Product>{
         }
 
         toolStartDate = DateUtils.addDays(endDate, -cycleTimeDays);
+        if (fabName.equals("Open")){
+            leaveBayDate = intOpsShipReadinessDate;
+        } else {
+            leaveBayDate = MFGCommitDate;
+        }
+        
     }
 
     public int compareTo(Product other){
@@ -403,6 +410,10 @@ public class Product implements Comparable<Product>{
 
     public Date getEndDate() {
         return endDate;
+    }
+
+    public Date getLeaveBayDate() {
+        return leaveBayDate;
     }
 
     /**

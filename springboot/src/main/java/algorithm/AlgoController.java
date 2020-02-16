@@ -73,8 +73,9 @@ public class AlgoController {
         HashMap<String, Integer> quarterHC = new HeadCount(allProduct).getQuarterHC();
 
         BaySchedule baySchedule = new BaySchedule(allProduct, quarterHC, 26, 90);
-
-        return BaySchedule.toJSONString(baySchedule);
+        BayRequirement bayReq = new BayRequirement(baySchedule);
+        return BayRequirement.toJSONString(bayReq);
+        
     }
 
 }

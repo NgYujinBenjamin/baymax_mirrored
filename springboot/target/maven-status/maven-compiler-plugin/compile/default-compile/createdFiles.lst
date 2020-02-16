@@ -9,6 +9,7 @@ main\java\authentication\json\JsonError.class
 main\java\algorithm\JSONExclusionStrategy.class
 main\java\algorithm\Bay.class
 main\java\authentication\json\HistoryDetails.class
+main\java\algorithm\BayRequirement.class
 main\java\authentication\json\FacilityUtil.class
 connection\mysqlcon.class
 main\java\algorithm\HeadCount.class
