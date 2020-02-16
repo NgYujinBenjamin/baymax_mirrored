@@ -17,13 +17,15 @@ const Postresult = () => {
     const { postResult, createExport, createExportSchedule, saveFile, clearAll, scheduletest } = uploadContext;
 
     const quarters = new Set(); // remove duplicates from baseline and predicted
-    Object.keys(scheduletest.baseline).map(quarterName => 
-        quarters.add(quarterName)
-    )
-    Object.keys(scheduletest.predicted).map(quarterName => 
+    // Object.keys(scheduletest.baseline).map(quarterName => 
+    //     quarters.add(quarterName)
+    // )
+    Object.keys(scheduletest.bayOccupancy).map(quarterName => 
         quarters.add(quarterName)
     )
     let qtrs = Array.from(quarters);
+    
+    // console.log(qtrs);
 
     const handleClearAll = () => {
         clearAll();
@@ -70,7 +72,7 @@ const Postresult = () => {
                 </AppBar>
 
                 {qtrs.map((qtr, index) =>
-                    <Postresultqtr schedule={scheduletest} value={value} num={index} quarter={qtr} key={index}/>
+                    <Postresultqtr schedule={scheduletest.bayOccupancy} value={value} num={index} quarter={qtr} key={index}/>
                 )}                
             </div>
             
