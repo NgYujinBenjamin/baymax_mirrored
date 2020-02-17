@@ -16,28 +16,20 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.sql.*;
 import java.util.*;
 import java.text.SimpleDateFormat;
 
 import connection.*;
 
-import main.java.authentication.json.JsonObject;
-import main.java.authentication.json.LoginDetails;
-import main.java.authentication.json.RegistrationDetails;
-import main.java.authentication.json.TokenSuccess;
-import main.java.authentication.json.User;
-import main.java.authentication.json.JsonError;
-import main.java.authentication.json.JsonResponse;
-import main.java.authentication.json.JsonSuccess;
-import main.java.authentication.json.TokenSuccess;
-import main.java.authentication.json.HistoryDetails;
-import main.java.authentication.json.JsonResponses;
-import main.java.authentication.json.MassSlotUploadDetails;
-import main.java.authentication.json.FacilityUtil;
-import main.java.authentication.json.GetFacilityUtilResult;
+import main.java.authentication.json.users.*;
+import main.java.authentication.json.*;
 import authentication.Token;
 
 import authentication.*;
+
+import main.java.exceptions.*;
+
 
 @CrossOrigin
 @RestController
@@ -46,10 +38,8 @@ public class Controller {
     private static final Token TOKEN = new Token();
 
     // done
-    // modify code - inform Ben
-    // @MODIFY - return token, hashed password
     @RequestMapping(path = "/register", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-    public JsonObject register(@RequestBody RegistrationDetails userDetails) throws Exception {
+    public JsonObject register(@RequestBody RegistrationDetails userDetails) throws SQLException, ClassNotFoundException{
         mysqlcon conn = new mysqlcon();
         try {
             conn.addUser(userDetails.getUsername(),
@@ -59,85 +49,74 @@ public class Controller {
                     userDetails.getDepartment(),
                     userDetails.getRole());
 
-            User userObject = conn.getUser(userDetails.getUsername());
-
-            String token = TOKEN.createToken(userObject.getUsername());
+            String token = TOKEN.createToken(userDetails.getUsername());
             return new TokenSuccess(token);
-            // return userObject;
-        } catch (Exception e) {
-            return new JsonError("ERROR", "Backend Issue: Exception occured at register method in Controller.java");
+        } catch (SQLException e) {
+            throw e;
+        } catch (ClassNotFoundException e){
+            throw new ClassNotFoundException("Backend Issue: ClassNotFound Exception at register method in Controller.java");
         }
     }
 
     // original by Ben
     @RequestMapping(path = "/getusers", method = RequestMethod.GET, produces = "application/json")
-    public ArrayList<User> getUsers() throws Exception {
+    public ArrayList<User> getUsers() throws SQLException, ClassNotFoundException{
         mysqlcon conn = new mysqlcon();
         try {
             return conn.getAllUsers();
-        } catch (Exception e) {
-            return new ArrayList<User>();
+
+        } catch (SQLException e) {
+            throw e;
+        } catch (ClassNotFoundException e) {
+            throw new ClassNotFoundException("Backend Issue: ClassNotFound Exception at getUsers method in Controller.java");
         }
     }
 
-    // alternative by naj to return list of users with the success message
-//    @RequestMapping(path = "/getusers", method = RequestMethod.GET, produces = "application/json")
-//    public ResponseEntity getUsers() throws Exception {
-//        mysqlcon conn = new mysqlcon();
-//        try {
-//            ArrayList<JsonObject> result = conn.getAllUsers();
-//            return new ResponseEntity(new JsonResponses("SUCCESS", result), HttpStatus.OK);
-//        } catch (Exception e) {
-//            return new ResponseEntity(new JsonError("ERROR", "Backend Issue: Exception occured at getusers method in Controller.java. Database connection may be lost."), HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
-
-
     // done
-    @RequestMapping(path = "/changepassword", method = RequestMethod.GET)
-    public String changePass(@RequestParam(value = "username") String username,
-                             @RequestParam(value = "oldpassword") String oldpassword,
-                             @RequestParam(value = "newpassword") String newpassword) throws Exception {
-        if (oldpassword == null || newpassword == null || username == null) {
-            return "400";
-        } else {
-            mysqlcon conn = new mysqlcon();
-            try {
-                conn.changePassword(username, oldpassword, newpassword);
-                return "200";
-            } catch (Exception e) {
-                return "400";
-            }
+    @RequestMapping(path = "/changepassword", method = RequestMethod.POST)
+    public JsonObject changePass(@RequestBody NewPassword details) throws SQLException, ClassNotFoundException {
+        if (details.getOldPassword() == null || details.getNewPassword() == null || details.getUsername() == null) {
+            throw new NullPointerException("Username or password cannot be empty.");
+        }
+        mysqlcon conn = new mysqlcon();
+        try {
+            conn.changePassword(details.getUsername(), TOKEN.generateMD5Hash(details.getOldPassword()), TOKEN.generateMD5Hash(details.getNewPassword()));
+            return new JsonSuccess("Password has been updated successfully.");
+        } catch (SQLException e) {
+            throw e;
+        } catch (ClassNotFoundException e){
+            throw new ClassNotFoundException("Backend Issue: ClassNotFound Exception at changePassword method in Controller.java");
         }
     }
 
     // done
     @RequestMapping(path = "/resetpassword", method = RequestMethod.GET)
-    public String resetPass(@RequestParam(value = "username") String username) throws Exception {
+    public JsonObject resetPass(@RequestParam(value = "username") String username) throws SQLException, ClassNotFoundException {
         if (username == null) {
-            return "400";
-        } else {
-            mysqlcon conn = new mysqlcon();
-            try {
-                conn.resetPassword(username);
-                return "200";
-            } catch (Exception e) {
-                return "400";
-            }
+            throw new NullPointerException("Username cannot be empty.");
+        } 
+        mysqlcon conn = new mysqlcon();
+        try {
+            conn.resetPassword(username);
+            return new JsonSuccess("Password has been reset successfully");
+        } catch (SQLException e) {
+            throw e;
+        } catch (ClassNotFoundException e){
+            throw new ClassNotFoundException("Backend Issue: ClassNotFound Exception at changePassword method in Controller.java");
         }
     }
 
 
     // done    
     @RequestMapping(path = "/login", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-    public JsonObject login(@RequestBody LoginDetails inputDetails) throws Exception {
+    public JsonObject login(@RequestBody LoginDetails inputDetails) throws SQLException, ClassNotFoundException, NullPointerException, InvalidTokenException{
         if (inputDetails.getUsername() == null || inputDetails.getPassword() == null) {
-            return new JsonError("ERROR", "Username or password cannot be empty");
+            throw new NullPointerException("Username or password cannot be empty.");
         }
         mysqlcon conn = new mysqlcon();
         try {
             String username = inputDetails.getUsername();
-            User userObject = conn.getUser(username);
+            RegistrationDetails userObject = conn.getUser(username);
 
             String pass = userObject.getPassword();
 
@@ -146,27 +125,34 @@ public class Controller {
 
                 return new TokenSuccess(token);
             } else {
-                return new JsonError("ERROR", "Username or password is invalid");
+                throw new InvalidTokenException("Username or password is invalid");
             }
-        } catch (Exception e) {
-            return new JsonError("ERROR", "Backend Issue: Exception occured at login method in Controller.java");
+        } catch (SQLException e) {
+            throw e;
+        } catch (ClassNotFoundException e){
+            throw new ClassNotFoundException("Backend Issue: ClassNotFound Exception at login method in Controller.java");
+        } catch (NullPointerException e){
+            throw new NullPointerException("Username or password is invalid.");
         }
     }
 
     // done
     @RequestMapping(path = "/verify", method = RequestMethod.GET)
-    //, method = RequestMethod.GET, produces = "application/json"
-    public ResponseEntity<JsonObject> verifyToken(@RequestHeader("x-auth-token") String token) throws Exception {
+    public ResponseEntity<JsonObject> verifyToken(@RequestHeader("x-auth-token") String token)  throws Exception {
         try {
 
             if (TOKEN.isTokenValid(token)) {
 
                 return new ResponseEntity<JsonObject>(new JsonResponse("SUCCESS", TOKEN.retrieveUserObject(token)), HttpStatus.OK);
             }
-            return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Token is invalid"), HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new InvalidTokenException("Token is invalid");
 
-        } catch (Exception e) {
-            return new ResponseEntity<JsonObject>(new JsonError("ERROR", "Backend Issue: Exception occured at verify method in Controller.java, token might be missing"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }  catch (SQLException e) {
+            throw e;
+        } catch (ClassNotFoundException e){
+            throw new ClassNotFoundException("Backend Issue: ClassNotFound Exception at verify method in Controller.java");
+        } catch (NullPointerException e){
+            throw new NullPointerException("Token is invalid");
         }
 
     }

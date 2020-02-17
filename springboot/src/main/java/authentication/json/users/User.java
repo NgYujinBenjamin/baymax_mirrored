@@ -1,40 +1,32 @@
-package main.java.authentication.json;
+package main.java.authentication.json.users;
 
 import java.util.*;
 import java.text.*;
 
-//modify code - inform Ben
-//@MODIFY - password, getPassword method
-public class RegistrationDetails implements JsonObject{
+import main.java.authentication.json.JsonObject;
+public class User implements JsonObject{
     public String username;
-    public String password;
     public String firstname;
     public String lastname;
     public String department;
     public String role;
-
-    public RegistrationDetails(
+        
+    public User(
         String username,
-        String password,
         String firstname,
         String lastname,
         String department,
         String role
         ){
             this.username = username;
-            this.password = password;
             this.firstname = firstname;
             this.lastname = lastname;
             this.department = department;
             this.role = role;
     }
-
+    
     public String getUsername(){
         return username;
-    }
-
-    public String getPassword(){
-        return password;
     }
 
     public String getFirstname(){
