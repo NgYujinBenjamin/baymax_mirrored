@@ -1,11 +1,13 @@
 package authentication;
 
+import java.sql.SQLException;
 import java.util.*;
 import java.security.*;
 import java.math.BigInteger;
 import java.time.LocalDate;
 
-import main.java.authentication.json.User;
+import main.java.authentication.json.JsonObject;
+import main.java.authentication.json.users.*;
 
 import com.auth0.jwt.JWT;
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
@@ -29,36 +31,37 @@ public class Token {
         return token;
     }
 
-    public boolean isTokenValid(String user_token){
+    public boolean isTokenValid(String user_token) throws SQLException, ClassNotFoundException, NullPointerException{
         String username = JWT.require(HMAC512(SECRET.getBytes()))
                     .build()
                     .verify(user_token)
                     .getSubject();
-
         User userObject = conn.getUser(username);
+        if (userObject == null){
+            throw new NullPointerException();
+        }
         String dbusername = userObject.getUsername();
         if (dbusername.equals(username)){
             return true;
         }
-        return false;        
+        return false;
     }
 
     //modify code - inform Ben
     //@MODIFY - add staffid
-    public User retrieveUserObject(String user_token){
+    public User retrieveUserObject(String user_token) throws Exception{
         String username = JWT.require(HMAC512(SECRET.getBytes()))
         .build()
         .verify(user_token)
         .getSubject();
-
-        User userObject = conn.getUser(username);
-        String staffid = userObject.getStaff_id();
-        String dbusername = userObject.getUsername();
-        String firstname = userObject.getFirstname();
-        String lastname = userObject.getLastname();
-        String department = userObject.getDepartment();
-        String role = userObject.getRole();
-        return new User(staffid, dbusername, firstname, lastname, department, role);
+        try{
+            User userObject = conn.getUser(username);
+        return userObject;
+        }  catch (SQLException e) {
+            throw e;
+        } catch (ClassNotFoundException e){
+            throw e;
+        }
     }
 
     public String generateMD5Hash(String input){
