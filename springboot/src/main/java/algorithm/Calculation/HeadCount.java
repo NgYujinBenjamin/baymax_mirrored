@@ -1,4 +1,6 @@
-package main.java.algorithm;
+package main.java.algorithm.Calculation;
+
+import main.java.algorithm.Objects.*;
 
 import java.util.*;
 

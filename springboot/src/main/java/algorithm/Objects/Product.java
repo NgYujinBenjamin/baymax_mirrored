@@ -1,4 +1,4 @@
-package main.java.algorithm;
+package main.java.algorithm.Objects;
 
 import java.util.*;
 import java.text.*;
@@ -99,6 +99,7 @@ public class Product implements Comparable<Product>{
     private Date toolStartDate;
     private Date endDate;
     private Date leaveBayDate;
+    private Integer gapDays;
 
 
     public Product (Map<String, Object> rowData){
@@ -200,11 +201,15 @@ public class Product implements Comparable<Product>{
         }
 
         toolStartDate = DateUtils.addDays(endDate, -cycleTimeDays);
+        
         if (fabName.equals("Open")){
             leaveBayDate = intOpsShipReadinessDate;
         } else {
             leaveBayDate = MFGCommitDate;
         }
+
+        gapDays = (int) (MRPDate.getTime() - MFGCommitDate.getTime())/ (24 * 60 * 60 * 1000);
+
         
     }
 
@@ -601,6 +606,9 @@ public class Product implements Comparable<Product>{
 
     public void setToolStartDate(Date toolStartDate) {
         this.toolStartDate = toolStartDate;
+        MRPDate = DateUtils.addDays(toolStartDate, cycleTimeDays);
+        gapDays = (int) (MRPDate.getTime() - MFGCommitDate.getTime())/ (24 * 60 * 60 * 1000);
+
     }
 
     public void setEndDate(Date endDate) {

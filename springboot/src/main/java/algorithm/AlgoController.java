@@ -1,5 +1,8 @@
 package main.java.algorithm;
 
+import main.java.algorithm.Calculation.*;
+import main.java.algorithm.Objects.*;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestBody;

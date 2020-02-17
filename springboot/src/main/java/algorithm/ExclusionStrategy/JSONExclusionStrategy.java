@@ -1,4 +1,4 @@
-package main.java.algorithm;
+package main.java.algorithm.ExclusionStrategy;
 
 import com.google.gson.*;
 
