@@ -6,10 +6,13 @@
 .pnp.js
 
 # testing
-/coverage
+/springboot/src/test
 
 # production
 /build
+
+# output
+/springboot/target
 
 # misc
 .DS_Store
