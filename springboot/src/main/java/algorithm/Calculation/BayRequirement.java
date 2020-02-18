@@ -10,7 +10,7 @@ import com.google.gson.*;
 import org.apache.commons.lang3.time.DateUtils;
 
 public class BayRequirement{
-    private HashMap<String, ArrayList<ArrayList<Object>>> bayOccupancy;
+    private TreeMap<String, ArrayList<ArrayList<Object>>> bayOccupancy;
 
     public BayRequirement(BaySchedule bS){
       
@@ -18,7 +18,7 @@ public class BayRequirement{
         HashMap<String, HashMap<String, Date>> earliestStartLatestEnd = bS.getEarliestStartLatestEnd();
         Set<String> allProductionQtr = allProduct.keySet();
 
-        bayOccupancy = new HashMap<String, ArrayList<ArrayList<Object>>>();
+        bayOccupancy = new TreeMap<String, ArrayList<ArrayList<Object>>>();
 
         for (String qtr: allProductionQtr){
             
