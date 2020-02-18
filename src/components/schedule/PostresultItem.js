@@ -2,7 +2,7 @@ import React, { Fragment, memo } from 'react'
 import { TableCell, TableRow, Input } from '@material-ui/core'
 
 const PostresultItem = memo(({ result, id, onChange }) => {
-    // console.log(result)
+    // console.log(result[0].cycleTimeDays)
     let cycleTime = result[0].cycleTimeDays;
     const cycleName = 'Cycle Time Days';
 

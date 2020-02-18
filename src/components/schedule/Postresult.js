@@ -14,13 +14,13 @@ const Postresult = () => {
     const uploadContext = useContext(UploadContext);
     const [value, setValue] = React.useState(0); // this is for tab panel to display quarters
 
-    const { postResult, createExport, createExportSchedule, saveFile, clearAll, scheduletest } = uploadContext;
+    const { postResult, createExport, createExportSchedule, saveFile, clearAll } = uploadContext;
 
     const quarters = new Set(); // remove duplicates from baseline and predicted
     // Object.keys(scheduletest.baseline).map(quarterName => 
     //     quarters.add(quarterName)
     // )
-    Object.keys(scheduletest.bayOccupancy).map(quarterName => 
+    Object.keys(postResult.bayOccupancy).map(quarterName => 
         quarters.add(quarterName)
     )
     let qtrs = Array.from(quarters);
@@ -37,7 +37,7 @@ const Postresult = () => {
 
     const handleExport = () => {
         createExport(postResult);
-        createExportSchedule(scheduletest);
+        // createExportSchedule(scheduletest);
     }
 
     const a11yProps = (index) => {
@@ -72,7 +72,7 @@ const Postresult = () => {
                 </AppBar>
 
                 {qtrs.map((qtr, index) =>
-                    <Postresultqtr schedule={scheduletest.bayOccupancy} value={value} num={index} quarter={qtr} key={index}/>
+                    <Postresultqtr schedule={postResult.bayOccupancy} value={value} num={index} quarter={qtr} key={index}/>
                 )}                
             </div>
             
