@@ -3,7 +3,7 @@ import UploadContext from './uploadContext';
 import UploadReducer from './uploadReducer';
 import XLSX from 'xlsx';
 import axios from 'axios';
-import { SET_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS } from '../types';
+import { SET_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS, UPDATE_POST_RESULT, UPDATE_QUARTER, UPDATE_DATA } from '../types';
 
 const UploadState = (props) => {
     const initialState = {
@@ -17402,6 +17402,8 @@ const UploadState = (props) => {
         },
         stepcount: 0,
         steps: ['Upload Bay Requirement', 'Input guidelines & upload MasterOpsPlan', 'Edit MasterOpsPlan', 'Schedule Generated'],
+        currentQuarter: null,
+        currentData: []
     }
 
     const [state, dispatch] = useReducer(UploadReducer, initialState);
@@ -17540,14 +17542,26 @@ const UploadState = (props) => {
     //clear all - back to default state
     const clearAll = () => dispatch({ type: CLEAR_ALL })
 
+    //update current quarter
+    const updateCurrentQuarter = (result) => dispatch({ type: UPDATE_QUARTER, payload: result })
+
+    //update data
+    const updateCurrentData = (result) => {
+      dispatch({ 
+        type: UPDATE_DATA, 
+        payload: result 
+      })
+    }
+
+    //update post result data
+    const updatePostResult = (postRes) => dispatch({ type: UPDATE_POST_RESULT, payload: postRes })
+
     //create result - mass slot upload
     const createResult = async (objs, bay, baseline) => {
         setLoading();
 
         objs.forEach(obj => {
             obj['Cycle Time Days'] = parseInt(obj['Cycle Time Days'])
-            // obj['Committed Ship $'] = obj['Committed Ship $'].toString()
-            // obj['Ship Revenue (Int $)'] = obj['Ship Revenue (Int $)'].toString()
         })
 
         let preResult = null;
@@ -17599,13 +17613,7 @@ const UploadState = (props) => {
             //     val['MFGCommitDate'] = val['MFGCommitDate'] === undefined ? '' : new Date(val['MFGCommitDate']).toLocaleDateString('en-GB')
             //     val['shipRecogDate'] = val['shipRecogDate'] === undefined ? '' : new Date(val['shipRecogDate']).toLocaleDateString('en-GB')
             //     val['toolStartDate'] = val['toolStartDate'] === undefined ? '' : new Date(val['toolStartDate']).toLocaleDateString('en-GB')  
-            // })
-
-            // console.log(res.data)
-            
-            // res.data.forEach(val => console.log(val))
-
-            res.data.bayOccupancy(value => console.log(value))
+            // })                
 
             dispatch({
                 type: CREATE_RESULT,
@@ -17731,6 +17739,8 @@ const UploadState = (props) => {
             scheduletest: state.scheduletest,
             stepcount : state.stepcount,
             steps: state.steps,
+            currentQuarter: state.currentQuarter,
+            currentData: state.currentData,
             setBaseline,
             setSchedule,
             setBays,
@@ -17744,7 +17754,10 @@ const UploadState = (props) => {
             clearAll,
             uploadClearError,
             clearZero,
-            setStepCount
+            setStepCount,
+            updatePostResult,
+            updateCurrentQuarter,
+            updateCurrentData
         }}>
         {props.children}
     </UploadContext.Provider>

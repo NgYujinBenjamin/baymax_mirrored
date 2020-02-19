@@ -21,13 +21,16 @@ const Preresult = ({ fileName }) => {
     })
 
     const [objs, setObjects] = useState(schedule);
+    // console.log(objs)
 
     const handleChange = (obj) => {
         return (event) => {
             const value = event.target.value;
             const name = event.target.name;
-            console.log(event.target);
+            // console.log(event.target);
             setObjects(prevObjs => (prevObjs.map((o) => {
+                // console.log(obj)
+                // console.log(o)
                 if (o === obj) {
                     return {...obj, [name]: value}
                     // if (name === 'Cycle Time Days'){

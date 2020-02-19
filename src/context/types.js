@@ -32,3 +32,6 @@ export const CONVERT_ADMIN = 'CONVERT_ADMIN';
 export const UPDATE_NAV = 'UPDATE_NAV';
 export const CLEAR_ZERO = 'CLEAR_ZERO';
 export const SET_STEPS = 'SET_STEPS';
+export const UPDATE_POST_RESULT = 'UPDATE_POST_RESULT'; 
+export const UPDATE_QUARTER = 'UPDATE_QUARTER'; 
+export const UPDATE_DATA = 'UPDATE_DATA'; 
