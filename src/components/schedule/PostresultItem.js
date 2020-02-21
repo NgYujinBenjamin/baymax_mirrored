@@ -2,9 +2,9 @@ import React, { Fragment, memo } from 'react'
 import { TableCell, TableRow, Input } from '@material-ui/core'
 
 const PostresultItem = memo(({ result, id, onChange }) => {
-    // console.log(result[0].cycleTimeDays)
+    // console.log(result[0])
     let cycleTime = result[0].cycleTimeDays;
-    const cycleName = 'Cycle Time Days';
+    const cycleName = 'cycleTimeDays';
 
     return (
         <Fragment>
@@ -18,8 +18,8 @@ const PostresultItem = memo(({ result, id, onChange }) => {
                 <TableCell style={result[0].fabID==='OPEN' ? {backgroundColor: 'yellow'} : null}> { new Date(result[0].MFGCommitDate).toLocaleDateString('en-GB') } </TableCell>
                 <TableCell>  </TableCell>
                 <TableCell> 
-                    {id==='baseline' ?
-                        cycleTime : <Input type='text' name={cycleName} value={cycleTime} onChange={onChange} required />
+                    { id === 'predicted' ?
+                        <Input type='text' name={cycleName} value={result[0]['cycleTimeDays']} onChange={onChange} required /> : result[0]['cycleTimeDays']
                     }
                 </TableCell>
                 { result.map((obj, index) => (typeof(obj) === "object") ?
@@ -28,6 +28,8 @@ const PostresultItem = memo(({ result, id, onChange }) => {
             </TableRow>
         </Fragment>
     )
-}, (prevProps, nextProps) => prevProps[0].cycleTimeDays === nextProps[0].cycleTimeDays)
+}, (prevProps, nextProps) => prevProps.result[0].cycleTimeDays === nextProps.result[0].cycleTimeDays)
+
+// prevProps, nextProps) => prevProps.obj['Cycle Time Days'] === nextProps.obj['Cycle Time Days'] && prevProps.obj['End Date'] === nextProps.obj['End Date'])
 
 export default PostresultItem

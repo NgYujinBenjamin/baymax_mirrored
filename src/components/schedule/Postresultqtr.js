@@ -1,11 +1,11 @@
-import React, { Fragment } from 'react'
-import { TableContainer, Paper, Typography, Box, Table } from '@material-ui/core'
+import React, { Fragment, useState } from 'react'
+import { TableContainer, Paper, Typography, Box, Table, Button } from '@material-ui/core'
 import Postresultheader from './Postresultheader';
 import Postresultbody from './Postresultbody';
 import PropTypes from 'prop-types';
 
-const Postresultqtr = ({ schedule, value, num, quarter}) => {
-    // console.log(result[0]);
+const Postresultqtr = ({ schedule, value, num, quarter }) => {
+    // console.log(schedule);
     
     const TabPanel = (props) => {
         const { children, value, index, ...other } = props;
@@ -30,6 +30,25 @@ const Postresultqtr = ({ schedule, value, num, quarter}) => {
         value: PropTypes.any.isRequired,
     };
 
+    // return (
+    //     <Fragment>
+    //         <TabPanel value={value} index={num}>
+    //             { Object.keys(schedule).map((quarterName, index) => (quarterName === quarter) ?
+    //                 <Postresultbody sendData={sendData} result={schedule[quarterName].slice(1)} id='predicted' key={index} quarter={quarterName}/> : null
+    //             )}
+    //         </TabPanel>
+    //     </Fragment>
+    // )
+
+    const handletest = () => {
+        
+    }
+
+    const [arr, setarr] = useState([])
+    const givemedata = (res) => {
+        setarr(res)
+    }
+
     return (
         <Fragment>
             <TabPanel value={value} index={num}>
@@ -44,10 +63,11 @@ const Postresultqtr = ({ schedule, value, num, quarter}) => {
                             <Postresultbody result={schedule.baseline[quarterName]} id='baseline' key={index}/> : null
                         )} */}
                         { Object.keys(schedule).map((quarterName, index) => (quarterName === quarter) ?
-                            <Postresultbody result={schedule[quarterName].slice(1)} id='predicted' key={index}/> : null
+                            <Postresultbody sendhere={givemedata} result={schedule[quarterName].slice(1)} id='predicted' key={index} quarter={quarterName}/> : null
                         )}
                     </Table>
                 </TableContainer>
+                <Button variant='contained' onClick={handletest} color='primary'>test</Button>
             </TabPanel>
         </Fragment>
     )
