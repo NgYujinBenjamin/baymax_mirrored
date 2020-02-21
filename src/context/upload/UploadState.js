@@ -14721,27 +14721,28 @@ const UploadState = (props) => {
         for(const property in file.bayOccupancy){
           file.bayOccupancy[property].slice(1).forEach(arr => {
 
-            arr[0].hasOwnProperty('argoID') && delete arr[0].argoID
-            arr[0].hasOwnProperty('plant') && delete arr[0].plant
-            arr[0].hasOwnProperty('buildComplete') && delete arr[0].buildComplete
-            arr[0].hasOwnProperty('slotStatus') && delete arr[0].slotStatus
-            arr[0].hasOwnProperty('planProductType') && delete arr[0].planProductType
-            arr[0].hasOwnProperty('buildCategory') && delete arr[0].buildCategory
-            arr[0].hasOwnProperty('shipRevenueType') && delete arr[0].shipRevenueType
-            arr[0].hasOwnProperty('salesOrder') && delete arr[0].salesOrder
-            arr[0].hasOwnProperty('forecastID') && delete arr[0].forecastID
-            arr[0].hasOwnProperty('productPN') && delete arr[0].productPN
-            arr[0].hasOwnProperty('committedShip$') && delete arr[0].committedShip$
-            arr[0].hasOwnProperty('intOpsShipReadinessDate') && delete arr[0].intOpsShipReadinessDate
-            arr[0].hasOwnProperty('shipRecogDate') && delete arr[0].shipRecogDate
-            arr[0].hasOwnProperty('quantity') && delete arr[0].quantity
-            arr[0].hasOwnProperty('RMATool') && delete arr[0].RMATool
-            arr[0].hasOwnProperty('RMATool') && delete arr[0].RMATool
-            arr[0].hasOwnProperty('new_Used') && delete arr[0].new_Used
-            arr[0].hasOwnProperty('fabID') && delete arr[0].fabID
-            arr[0].hasOwnProperty('buildQtr') && delete arr[0].buildQtr
-            arr[0].hasOwnProperty('endDate') && delete arr[0].endDate
-            arr[0].hasOwnProperty('leaveBayDate') && delete arr[0].leaveBayDate
+            checkDeleteProperty(arr[0],[
+              'argoID',
+              'plant',
+              'buildComplete',
+              'slotStatus',
+              'planProductType',
+              'buildCategory',
+              'shipRevenueType',
+              'salesOrder',
+              'forecastID',
+              'productPN',
+              'committedShip$',
+              'intOpsShipReadinessDate',
+              'shipRecogDate',
+              'quantity',
+              'RMATool',
+              'new_Used',
+              'fabID',
+              'buildQtr',
+              'endDate',
+              'leaveBayDate'
+            ])
             
             //add into the format XLSX needs
             excelFormat.push({
@@ -14763,9 +14764,8 @@ const UploadState = (props) => {
 
         //format date
         excelFormat.forEach(val => {
-          val.toolStartDate = new Date(val.toolStartDate).toLocaleDateString('en-GB')
-          val.MRPDate = new Date(val.MRPDate).toLocaleDateString('en-GB')
-          val.MFGCommitDate = new Date(val.MFGCommitDate).toLocaleDateString('en-GB')
+          changeDateFormat(val, ['toolStartDate','MRPDate','MFGCommitDate'])
+
         })
 
         //count the number of O
@@ -14828,23 +14828,10 @@ const UploadState = (props) => {
           })
         }
 
-        // console.log(output)
-
         output.forEach(val => {
-          val.hasOwnProperty('committedShip$') && delete val.committedShip$
-          val.hasOwnProperty('buildQtr') && delete val.buildQtr
-          val.hasOwnProperty('endDate') && delete val.endDate
-          val.hasOwnProperty('leaveBayDate') && delete val.leaveBayDate
-          val.hasOwnProperty('gapDays') && delete val.gapDays
-
-          val.MRPDate = new Date(val.MRPDate).toLocaleDateString('en-GB')
-          val.intOpsShipReadinessDate = new Date(val.intOpsShipReadinessDate).toLocaleDateString('en-GB')
-          val.MFGCommitDate = new Date(val.MFGCommitDate).toLocaleDateString('en-GB')
-          val.shipRecogDate = new Date(val.shipRecogDate).toLocaleDateString('en-GB')
-          val.toolStartDate = new Date(val.toolStartDate).toLocaleDateString('en-GB')
+          checkDeleteProperty(val, ['committedShip$','buildQtr','endDate','leaveBayDate','gapDays'])
+          changeDateFormat(val, ['MRPDate','intOpsShipReadinessDate','MFGCommitDate','shipRecogDate','toolStartDate'])
         })
-
-        // console.log(output)
 
         //create new workbook
         const massWB = XLSX.utils.book_new(); 
@@ -14896,35 +14883,18 @@ const UploadState = (props) => {
         dispatch({
             type: EXPORT_RESULT
         })
+    }
 
+    //submethod - check and delete property
+    //1st arg: obj, 2nd arg: array of property names inside obj (string)
+    const checkDeleteProperty = (obj, arr) => {
+      arr.forEach(val => obj.hasOwnProperty(val) && delete obj[val])
+    }
 
-
-
-
-
-
-
-
-
-        // const allProductResult = file.allProduct;
-
-        // //create new workbook
-        // const massWB = XLSX.utils.book_new(); 
-
-        // //create new worksheet
-        // const massWsOne = XLSX.utils.json_to_sheet(allProductResult);
-
-        // //parse in a worksheet into the workbook
-        // //1st arg: workbook, 2nd arg: worksheet, 3rd: name of worksheet
-        // XLSX.utils.book_append_sheet(massWB, massWsOne, 'SAP Document Export');
-
-        // //write workbook to file
-        // //1st arg: workbook, 2nd arg: name of file
-        // XLSX.writeFile(massWB, 'Mass_Slot_Upload.xlsx');
-
-        // dispatch({
-        //     type: EXPORT_RESULT
-        // })
+    //submethod - change date format
+    //1st arg: obj, 2nd arg: array of property names inside obj (string)
+    const changeDateFormat = (obj, arr) => {
+      arr.forEach(val => obj[val] = new Date(obj[val]).toLocaleDateString('en-GB'))
     }
 
     //save file

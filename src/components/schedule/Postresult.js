@@ -63,7 +63,7 @@ const Postresult = () => {
     const handleExport = (event) => {
         event.preventDefault();
         createExport(scheduletest);
-        // createExportSchedule(scheduletest);
+        createExportSchedule(scheduletest);
     }
 
     // const [ objs, setObjects ] = useState(postResult);
