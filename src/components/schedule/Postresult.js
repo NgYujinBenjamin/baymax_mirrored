@@ -13,7 +13,7 @@ const Postresult = () => {
     const uploadContext = useContext(UploadContext);
     const [value, setValue] = useState(0); // this is for tab panel to display quarters
 
-    const { postResult, createExport, createExportSchedule, saveFile, clearAll, currentQuarter, currentData } = uploadContext;
+    const { postResult, createExport, createExportSchedule, saveFile, clearAll, currentQuarter, currentData, scheduletest } = uploadContext;
 
     // if(currentQuarter !== null){
     //     console.log(currentQuarter)
@@ -60,8 +60,9 @@ const Postresult = () => {
         console.log(arr)
     }
 
-    const handleExport = () => {
-        createExport(postResult);
+    const handleExport = (event) => {
+        event.preventDefault();
+        createExport(scheduletest);
         // createExportSchedule(scheduletest);
     }
 

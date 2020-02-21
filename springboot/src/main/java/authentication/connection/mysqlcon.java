@@ -21,7 +21,7 @@ public class mysqlcon {
     // @Value("${port}")
     // private String port;
 
-    private final String connectionPassword = "";
+    private final String connectionPassword = "root";
     private final String port = "3306";
     private final String databaseName = "baymaxdb";
     private final String connection = "jdbc:mysql://localhost:" + port + "/" + databaseName + "?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
