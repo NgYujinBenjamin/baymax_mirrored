@@ -14682,8 +14682,6 @@ const UploadState = (props) => {
         //now the date is inside each quarter
         //value => E, O, E, O, follow each quarter 
         //insert the value accordingly to each quarter
-        // console.log(quarterIdArr)
-
         //CY19Q4 -> CY20Q1 -> CY20Q2 -> CY20Q3 -> CY20Q4
         let tempindex = 1;
         for(const property in file.bayOccupancy){
@@ -14745,7 +14743,7 @@ const UploadState = (props) => {
             arr[0].hasOwnProperty('endDate') && delete arr[0].endDate
             arr[0].hasOwnProperty('leaveBayDate') && delete arr[0].leaveBayDate
             
-
+            //add into the format XLSX needs
             excelFormat.push({
               'slotID_UTID': arr[0].slotID_UTID,
               'fabName': arr[0].fabName,
@@ -14763,12 +14761,14 @@ const UploadState = (props) => {
           })
         }
 
+        //format date
         excelFormat.forEach(val => {
           val.toolStartDate = new Date(val.toolStartDate).toLocaleDateString('en-GB')
           val.MRPDate = new Date(val.MRPDate).toLocaleDateString('en-GB')
           val.MFGCommitDate = new Date(val.MFGCommitDate).toLocaleDateString('en-GB')
         })
 
+        //count the number of O
         let bayAllCount = {};
         bayAllCount = headerDatesArr.reduce((ac, ci) => (ac[ci] = 0, ac), {})
         excelFormat.forEach(val => {
@@ -14818,6 +14818,93 @@ const UploadState = (props) => {
     //export file - mass_slot_upload
     const createExport = file => {
         // setLoading();
+        const output = []
+
+        for(const property in file.bayOccupancy){
+          file.bayOccupancy[property].slice(1).forEach(arr => {
+            output.push({
+              ...arr[0]
+            })
+          })
+        }
+
+        // console.log(output)
+
+        output.forEach(val => {
+          val.hasOwnProperty('committedShip$') && delete val.committedShip$
+          val.hasOwnProperty('buildQtr') && delete val.buildQtr
+          val.hasOwnProperty('endDate') && delete val.endDate
+          val.hasOwnProperty('leaveBayDate') && delete val.leaveBayDate
+          val.hasOwnProperty('gapDays') && delete val.gapDays
+
+          val.MRPDate = new Date(val.MRPDate).toLocaleDateString('en-GB')
+          val.intOpsShipReadinessDate = new Date(val.intOpsShipReadinessDate).toLocaleDateString('en-GB')
+          val.MFGCommitDate = new Date(val.MFGCommitDate).toLocaleDateString('en-GB')
+          val.shipRecogDate = new Date(val.shipRecogDate).toLocaleDateString('en-GB')
+          val.toolStartDate = new Date(val.toolStartDate).toLocaleDateString('en-GB')
+        })
+
+        // console.log(output)
+
+        //create new workbook
+        const massWB = XLSX.utils.book_new(); 
+
+        //create new worksheet
+        const massWS = XLSX.utils.json_to_sheet(output, {
+          skipHeader: true,
+          origin: 1
+        });
+
+        const massHeader = [ [
+          'Argo ID',
+          'Plant',
+          'Build Complete',
+          'Slot Status',
+          'Plan Product Type',
+          'Build Category',
+          'Ship Revenue Type',
+          'Sales Order',
+          'Forecast ID',
+          'Slot ID/UTID',
+          'Fab Name',
+          'Build Product',
+          'Product PN',
+          'MRP Date',
+          'Int. Ops Ship Readiness Date',
+          'MFG Commit Date',
+          'Ship Recog Date',
+          'Cycle Time Days',
+          'Quantity',
+          'RMA Tool',
+          'New Used',
+          'Fab ID',
+          'Tool Start Date'
+        ] ]
+
+        XLSX.utils.sheet_add_aoa(massWS, massHeader, {
+          origin: 0
+        })
+
+        //parse in a worksheet into the workbook
+        //1st arg: workbook, 2nd arg: worksheet, 3rd: name of worksheet
+        XLSX.utils.book_append_sheet(massWB, massWS, 'SAP Document Export');
+
+        //write workbook to file
+        //1st arg: workbook, 2nd arg: name of file
+        XLSX.writeFile(massWB, 'Mass_Slot_Upload.xlsx');
+
+        dispatch({
+            type: EXPORT_RESULT
+        })
+
+
+
+
+
+
+
+
+
 
         // const allProductResult = file.allProduct;
 
