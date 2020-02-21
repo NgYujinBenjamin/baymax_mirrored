@@ -17,9 +17,14 @@ public class Bay implements Comparable<Bay>{
         availableDate = new Date(0);
     }
 
+    public Bay (Date availableDate){
+        baySchedule = new ArrayList<Product>();
+        this.availableDate = availableDate;
+    }
+
     public void addToBaySchedule (Product p){
         baySchedule.add(p);
-        availableDate = p.getEndDate();
+        availableDate = p.getLeaveBayDate();
     }
 
     public Date getAvailableDate(){

@@ -9,15 +9,25 @@ import com.google.gson.Gson;
 public class HeadCount{
     private HashMap<String, Integer> quarterHC;
     
-    public HeadCount(HashMap<String, ArrayList<Product>> allProduct){
-        
-        Set<String> allProductKey = allProduct.keySet();
+    public HeadCount(ArrayList<Product> allProduct){
+        HashMap<String, Integer> quarterJobs = new HashMap<String, Integer>();
         quarterHC = new HashMap<String, Integer>();
-        
-        for (String qtrKey: allProductKey){
-            Integer numQtrJobs = allProduct.get(qtrKey).size(); 
-            Integer headCount = (int) Math.ceil((double) numQtrJobs/12);
-            quarterHC.put(qtrKey, headCount);
+        Integer newBuildCount;
+        for (Product p: allProduct){
+            String buildQtr = p.getBuildQtr();
+            if (quarterJobs.containsKey(buildQtr)){
+                newBuildCount = quarterJobs.get(buildQtr) + 1;
+            } else {
+                newBuildCount = 1;
+            }
+            quarterJobs.put(buildQtr, newBuildCount);
+        }
+
+        Set<String> quarters = quarterJobs.keySet();
+        for(String q: quarters){
+            Integer numQtrJobs = quarterJobs.get(q); 
+            Integer numHeadCount = (int) Math.ceil((double) numQtrJobs/12);
+            quarterHC.put(q, numHeadCount);
         }
     }
 

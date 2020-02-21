@@ -12,13 +12,15 @@ import org.apache.commons.lang3.time.DateUtils;
 public class BayRequirement{
     private TreeMap<String, ArrayList<ArrayList<Object>>> bayOccupancy;
 
-    public BayRequirement(BaySchedule bS){
+    public BayRequirement(BaySchedule BS){
       
-        HashMap<String, ArrayList<Product>> allProduct = bS.getAllProduct();
-        HashMap<String, HashMap<String, Date>> earliestStartLatestEnd = bS.getEarliestStartLatestEnd();
-        Set<String> allProductionQtr = allProduct.keySet();
-
+        ArrayList<Product> allProduct = BS.getAllProduct();
+        HashMap<String, HashMap<String, Date>> earliestStartLatestEnd = findEarliestStartLatestEnd(allProduct);
+        
         bayOccupancy = new TreeMap<String, ArrayList<ArrayList<Object>>>();
+        // {Q1: [ (weekOf)[Date1, Date2...], (Product1)[Product1, E, E, E, O...], (Product2)[Product2, E, O, O, E...], ...], Q2:...}
+        
+        Set<String> allProductionQtr = earliestStartLatestEnd.keySet();
 
         for (String qtr: allProductionQtr){
             
@@ -31,17 +33,52 @@ public class BayRequirement{
 
             qtrBayOccupancy.add(qtrWeekOf);
 
-            ArrayList<Product> qtrProducts = allProduct.get(qtr);
-            
-            
-            for (Product p: qtrProducts){
-                ArrayList<Object> requirement = generateRequirement(p, qtrWeekOf);
-                qtrBayOccupancy.add(requirement);
-            }
-
             bayOccupancy.put(qtr, qtrBayOccupancy);
         }
-        
+
+        for (Product p: allProduct){
+            String buildQtr = p.getBuildQtr();
+            ArrayList<ArrayList<Object>> qtrBayOccupancy = bayOccupancy.get(buildQtr);
+            ArrayList<Object> qtrWeekOf = qtrBayOccupancy.get(0);
+            
+            ArrayList<Object> productRequirement = generateRequirement(p, qtrWeekOf);
+            qtrBayOccupancy.add(productRequirement);
+
+            bayOccupancy.put(buildQtr, qtrBayOccupancy);
+        }
+    }
+
+    private HashMap<String, HashMap<String, Date>> findEarliestStartLatestEnd(ArrayList<Product> allProduct){
+        Collections.sort(allProduct);
+        HashMap<String, HashMap<String, Date>> earliestStartLatestEnd = new HashMap<String, HashMap<String, Date>>();
+
+        for (Product p : allProduct){
+            String buildQtr = p.getBuildQtr();
+            Date toolStartDate = p.getToolStartDate();
+            Date endDate = p.getEndDate();
+
+            if (earliestStartLatestEnd.containsKey(buildQtr)){
+                HashMap<String, Date> qtrEarliestStartLatestEnd = earliestStartLatestEnd.get(buildQtr);
+                Date qtrEarliestStart = qtrEarliestStartLatestEnd.get("Earliest Start");
+                Date qtrLatestEnd = qtrEarliestStartLatestEnd.get("Latest End");
+                if (toolStartDate.before(qtrEarliestStart)){
+                    qtrEarliestStart = toolStartDate;
+                }
+                if (endDate.after(qtrLatestEnd)){
+                    qtrLatestEnd = endDate;
+                }
+                qtrEarliestStartLatestEnd.put("Earliest Start", qtrEarliestStart);
+                qtrEarliestStartLatestEnd.put("Latest End", qtrLatestEnd);
+                earliestStartLatestEnd.put(buildQtr, qtrEarliestStartLatestEnd);
+            } 
+            else {
+                HashMap<String, Date> qtrEarliestStartLatestEnd = new HashMap<String, Date>();
+                qtrEarliestStartLatestEnd.put("Earliest Start", toolStartDate);
+                qtrEarliestStartLatestEnd.put("Latest End", endDate);
+                earliestStartLatestEnd.put(buildQtr, qtrEarliestStartLatestEnd);
+            }
+        }
+        return earliestStartLatestEnd;
     }
 
     private ArrayList<Object> generateRequirement(Product p, ArrayList<Object> qtrWeekOf){
@@ -64,7 +101,6 @@ public class BayRequirement{
     }  
 
     private ArrayList<Object> generateWeekOf (Date earliestStart, Date latestEnd){
-        
         ArrayList<Object> weekOf = new ArrayList<>();
         Date friday = earliestStart;
 

@@ -47,36 +47,27 @@ public class AlgoController {
         // JsonElement jsonElement = new JsonParser().parse(data);
         // List<Map<String, Object>> allData= new ArrayList<Map<String, Object>>();
         // allData = new Gson().fromJson(data, new TypeToken<List<Map<String, Object>>>() {}.getType());
-
         
         List<Map<String, Object>> allData = data;
         
-        HashMap<String, ArrayList<Product>> allProduct = new  HashMap<String, ArrayList<Product>>();
+        ArrayList<Product> allProduct = new ArrayList<Product>();
         
         for (int i = 0; i < allData.size(); i++){
             Product p = new Product(allData.get(i));
-            String buildQtr = p.getBuildQtr();
-
-            if (allProduct.containsKey(buildQtr)){
-                ArrayList<Product> qtrProducts = allProduct.get(buildQtr);
-                qtrProducts.add(p);
-            } else {
-                ArrayList<Product> qtrProducts = new ArrayList<Product>();
-                qtrProducts.add(p);
-                allProduct.put(buildQtr, qtrProducts);
-            }
+            allProduct.add(p);
         }
 
-        Set<String> allProductionQtr = allProduct.keySet();
-        for (String qtrKey: allProductionQtr){
-            ArrayList<Product> qtrProducts = allProduct.get(qtrKey);
-            Collections.sort(qtrProducts);
+        BayRequirement bayReq = null;
+
+        for (int i = 0; i < 10; i++){
+            HashMap<String, Integer> quarterHC = new HeadCount(allProduct).getQuarterHC();
+
+            BaySchedule baySchedule = new BaySchedule(allProduct, quarterHC, 26, 90);
+
+            bayReq = new BayRequirement(baySchedule);
+    
+            allProduct = baySchedule.getAllProduct();
         }
-
-        HashMap<String, Integer> quarterHC = new HeadCount(allProduct).getQuarterHC();
-
-        BaySchedule baySchedule = new BaySchedule(allProduct, quarterHC, 26, 90);
-        BayRequirement bayReq = new BayRequirement(baySchedule);
         return BayRequirement.toJSONString(bayReq);
         
     }
