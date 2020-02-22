@@ -1,5 +1,7 @@
 package main.java.algorithm.Objects;
 
+import main.java.algorithm.ExclusionStrategy.*;
+
 import java.util.*;
 import java.text.*;
 
@@ -96,6 +98,8 @@ public class Product implements Comparable<Product>{
     // private Date createdTime;
     // private String changedBy;
     // private Date lastChangedTime;
+    @Exclude
+    private Date latestToolStartDate;
     private Date toolStartDate;
     private Date endDate;
     private Date leaveBayDate;
@@ -200,15 +204,16 @@ public class Product implements Comparable<Product>{
             e.printStackTrace();
         }
 
-        toolStartDate = DateUtils.addDays(endDate, -cycleTimeDays);
-        
+        latestToolStartDate = DateUtils.addDays(endDate, -cycleTimeDays);
+        toolStartDate = latestToolStartDate;
+
         if (fabName.equals("Open")){
             leaveBayDate = intOpsShipReadinessDate;
         } else {
-            leaveBayDate = MFGCommitDate;
+            leaveBayDate = endDate;
         }
 
-        gapDays = (int) (MRPDate.getTime() - MFGCommitDate.getTime())/ (24 * 60 * 60 * 1000);
+        gapDays = (int) ((MRPDate.getTime() - MFGCommitDate.getTime())/ (24 * 60 * 60 * 1000));
 
         
     }
@@ -413,12 +418,20 @@ public class Product implements Comparable<Product>{
         return toolStartDate;
     }
 
+    public Date getLatestToolStartDate() {
+        return latestToolStartDate;
+    }
+
     public Date getEndDate() {
         return endDate;
     }
 
     public Date getLeaveBayDate() {
         return leaveBayDate;
+    }
+
+    public Integer getGapDays() {
+        return gapDays;
     }
 
     /**
@@ -607,8 +620,26 @@ public class Product implements Comparable<Product>{
     public void setToolStartDate(Date toolStartDate) {
         this.toolStartDate = toolStartDate;
         MRPDate = DateUtils.addDays(toolStartDate, cycleTimeDays);
-        gapDays = (int) (MRPDate.getTime() - MFGCommitDate.getTime())/ (24 * 60 * 60 * 1000);
+        gapDays = (int) ((MFGCommitDate.getTime() - MRPDate.getTime())/ (24 * 60 * 60 * 1000));
+        
+        Integer MRPYear = MRPDate.getYear() - 100;
+        Integer MRPMonth = MRPDate.getMonth();
+        String MRPQuarter;
+        if (MRPMonth < 3){
+            MRPQuarter = "Q1";
+        } else if (MRPMonth < 6){
+            MRPQuarter = "Q2";
+        } else if (MRPMonth < 9){
+            MRPQuarter = "Q3";
+        } else {
+            MRPQuarter = "Q4";
+        }
 
+        String buildQtr = "CY" + MRPYear.toString() + MRPQuarter;
+    }
+
+    public void setLeaveBayDate(Date leaveBayDate) {
+        this.leaveBayDate = leaveBayDate;
     }
 
     public void setEndDate(Date endDate) {
