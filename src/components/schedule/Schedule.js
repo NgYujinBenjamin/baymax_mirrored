@@ -29,18 +29,10 @@ const Schedule = () => {
             uploadClearError();
         }
 
-        if(scheduleDone){
-            setUserInput({
-                bayComponent: '',
-                bayFile: null,
-                fileName: '',
-                bayFileValue: '',
-                minGapTime: '',
-                maxGapTime: ''
-            })
-        }
+        console.log(scheduleDone)
+
         //eslint-disable-next-line
-    }, [scheduleDone, error])
+    }, [error])
 
     const [userInput, setUserInput] = useState({
         bayComponent: '',
@@ -123,30 +115,33 @@ const Schedule = () => {
                             </Grid>
                         </Grid>
                     </Box>
-                    <Box className={classes.box}>
-                        <InputLabel className={classes.marginBottom}>Upload excel file:</InputLabel>
-                        <Box className={classes.marginBottom}>
-                            <input 
-                                type='file' 
-                                onChange={handleFileChange}
-                                accept=".xlsx, .xlsm" 
-                                id='schedule-file' 
-                                style={{ display: 'none' }} 
-                                name='bayFile'
-                                value={userInput.bayFileValue}
-                            />
-                            <label htmlFor='schedule-file'>
-                                <Button variant='contained' color='primary' component='span' disabled={scheduleDone} startIcon={<CloudUploadIcon />}>
-                                    Upload
-                                </Button>
-                            </label>
-                            <Typography component='span' variant='body2' style={{ marginLeft: '12px'}}>
-                                {userInput.fileName !== '' && userInput.fileName}
-                            </Typography>
+                    {!scheduleDone && 
+                        <Box className={classes.box}>
+                            <InputLabel className={classes.marginBottom}>Upload excel file:</InputLabel>
+                            
+                            <Box className={classes.marginBottom}>
+                                <input 
+                                    type='file' 
+                                    onChange={handleFileChange}
+                                    accept=".xlsx, .xlsm" 
+                                    id='schedule-file' 
+                                    style={{ display: 'none' }} 
+                                    name='bayFile'
+                                    value={userInput.bayFileValue}
+                                />
+                                <label htmlFor='schedule-file'>
+                                    <Button variant='contained' color='primary' component='span' disabled={schedule !== null} startIcon={<CloudUploadIcon />}>
+                                        Upload
+                                    </Button>
+                                </label>
+                                <Typography component='span' variant='body2' style={{ marginLeft: '12px'}}>
+                                    {userInput.fileName !== '' && userInput.fileName}
+                                </Typography>
+                            </Box>
+                            {(userInput.bayFile && userInput.fileName !== '' && schedule === null) && <Button color='primary' variant='contained' fullWidth onClick={handleConfirm}>Confirm</Button>}
+                            {(schedule !== null && bays !== '' && !scheduleDone) && <Button fullWidth color='default' variant='contained' className={classes.marginTop} onClick={handleClearPreresult}>Clear</Button>}
                         </Box>
-                        {(userInput.bayFile && userInput.fileName !== '' && schedule == null) && <Button color='primary' variant='contained' fullWidth onClick={handleConfirm}>Confirm</Button>}
-                        {(schedule !== null && bays !== '' && !scheduleDone) && <Button fullWidth color='default' variant='contained' className={classes.marginTop} onClick={handleClearPreresult}>Clear</Button>}
-                    </Box>
+                    }  
                     <Box>
                         {loading && <Spinner />}
                         {(schedule !== null && bays !== '' && !scheduleDone && !loading) && <Preresult fileName={userInput.fileName} /> }
