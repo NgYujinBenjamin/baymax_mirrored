@@ -15042,11 +15042,28 @@ const UploadState = (props) => {
     //set baseline
     const setBaseline = async (file) => {
         const data = await convertExcelToJSON(file);
-        //console.log(data);
-        dispatch({
+        // console.log(data.slice(0, data.length));
+
+        let baselineChecker = false;
+        data.slice(0, data.length - 1).forEach(obj => {
+          if(!(obj.hasOwnProperty('Slot/UTID'))){
+            baselineChecker = true;
+          }
+        })
+
+        if(baselineChecker){
+          dispatch({
+            type: UPLOAD_ERROR,
+            payload: 'Please upload a proper bay requirement file'
+          })
+        } else {
+          dispatch({
             type: SET_BASELINE,
             payload: data
-        })
+          })
+        }
+
+        
     }
 
     //convert excel to json

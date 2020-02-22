@@ -13,7 +13,7 @@ const Baseline = (props) => {
     const alertContext = useContext(AlertContext);
     const classes = useStyles();
 
-    const { setBaseline, stepcount, setStepCount } = uploadContext;
+    const { setBaseline, stepcount, setStepCount, error, uploadClearError, baseline } = uploadContext;
     const { loadUser, updateNavItem } = authContext;
     const { setAlert } = alertContext;
 
@@ -21,8 +21,18 @@ const Baseline = (props) => {
         loadUser()
         updateNavItem(0)
         setStepCount(0); // force stepper count to 0 once redirected to baseline page
+
+        if(error !== null){
+            setAlert(error)
+            uploadClearError()
+        }
+
+        if(baseline !== null){
+            setStepCount(stepcount + 1);
+            props.history.push('/schedule');
+        }
         //eslint-disable-next-line
-    }, [])
+    }, [error, props.history, baseline])
 
     const [expanded, setExpanded] = useState(false);
     const [file, setFile] = useState(null);
@@ -49,8 +59,6 @@ const Baseline = (props) => {
             setAlert('Please upload a .xlsx or .xlsm excel file')
         } else {
             setBaseline(file);
-            setStepCount(stepcount + 1);
-            props.history.push('/schedule');
         }
     }
 
@@ -59,7 +67,7 @@ const Baseline = (props) => {
             <ScheduleStep/>
             <Card>
                 <CardContent>
-                    <CardActions disableSpacing style={{ paddingLeft: '0' }}>
+                    <CardActions disableSpacing style={{}}>
                         <Typography component='span' variant='h5'>Import bay requirement excel file?</Typography>
                         <Box component='span' className={classes.box}>
                             <Button 
@@ -101,8 +109,8 @@ const Baseline = (props) => {
                             <Typography component='span' variant='body2' style={{ marginLeft: '12px'}}>
                                 {name !== null && name}
                             </Typography>
+                            {(file && name) && <Button className={classes.collapseButton} fullWidth variant='contained' color='primary' className={classes.collapseButton} onClick={handleCollapseSubmit}>Submit</Button>}
                         </Box>
-                        {(file && name) && <Button fullWidth variant='contained' color='primary' onClick={handleCollapseSubmit}>Submit</Button>}
                     </Collapse>
                 </CardContent>
             </Card>
@@ -120,7 +128,11 @@ const useStyles = makeStyles(theme => ({
     },
     collapseBox: {
         marginBottom: 16,
-        marginTop: 8
+        marginTop: 8,
+        marginLeft: 8
+    },
+    collapseButton: {
+        marginTop: '12px'
     }
 }));
 
