@@ -12,10 +12,11 @@ const Admin = () => {
 
     const { setAlert } = alertContext;
     const { error, adminClearError } = adminContext;
-    const { loadUser } = authContext;
+    const { loadUser, updateNavItem } = authContext;
 
     useEffect(() => {
         loadUser();
+        updateNavItem(1);
 
         if(error !== null){
             setAlert(error)

@@ -1,17 +1,25 @@
-import React, { Fragment, useContext, useState } from 'react'
+import React, { Fragment, useContext, useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@material-ui/core'
 import PreresultItem from './PreresultItem'
+import AuthContext from '../../context/auth/authContext'
 import UploadContext from '../../context/upload/uploadContext'
 import AlertContext from '../../context/alert/alertContext'
 
 const Preresult = ({ fileName }) => {
     const uploadContext = useContext(UploadContext);
     const alertContext = useContext(AlertContext);
+    const authContext = useContext(AuthContext);
     const classes = useStyles();
 
+    const { updateNavItem } = authContext;
     const { setAlert } = alertContext;
     const { schedule, updateSchedule, createResult, bays, baseline, stepcount, setStepCount } = uploadContext;
+
+    useEffect(() => {
+        updateNavItem(0)
+        //eslint-disable-next-line
+    }, [])
     
     // To create the "End Date" field
     schedule.forEach(function(item) {

@@ -14,6 +14,7 @@ const Landing = () => {
 
     useEffect(() => {
         loadUser();
+        updateNavItem(-1)
         //eslint-disable-next-line
     }, [])
 

@@ -5,31 +5,16 @@ import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 
 const Profile = () => {
-
-    const useStyles = makeStyles(theme => ({
-        root: {
-            display: 'flex',
-            '& > *': {
-                margin: theme.spacing(1),
-            },
-        },
-        large: {
-            width: theme.spacing(20),
-            height: theme.spacing(20),
-        },
-    }));
-
     const classes = useStyles();
+    const authContext = useContext(AuthContext);
+
+    const { user, updatePwd, loadUser, updateNavItem } = authContext;
 
     useEffect(() => {
-        authContext.loadUser();
+        loadUser();
+        updateNavItem(1);
         //eslint-disable-next-line
-    },[])
-
-    // initialize
-    const authContext = useContext(AuthContext);
-    // method name inside auth state
-    const { user, updatePwd } = authContext;
+    }, [])
 
     // form
     const [form, setForm] = useState({
@@ -154,5 +139,18 @@ const Profile = () => {
         </Fragment>
     )
 }
+
+const useStyles = makeStyles(theme => ({
+    root: {
+        display: 'flex',
+        '& > *': {
+            margin: theme.spacing(1),
+        },
+    },
+    large: {
+        width: theme.spacing(20),
+        height: theme.spacing(20),
+    },
+}));
 
 export default Profile

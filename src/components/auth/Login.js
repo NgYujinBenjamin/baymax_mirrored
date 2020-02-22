@@ -11,7 +11,7 @@ const Login = (props) => {
     const authContext = useContext(AuthContext);
 
     const { setAlert } = alertContext;
-    const { login, isAuthenticated, clearErrors, error } = authContext;
+    const { login, isAuthenticated, clearErrors, error, updateNavItem } = authContext;
 
     useEffect(() => {
         if(isAuthenticated){
@@ -22,6 +22,8 @@ const Login = (props) => {
             setAlert(error);
             clearErrors();
         }
+
+        updateNavItem(0)
         //eslint-disable-next-line
     }, [isAuthenticated, props.history, error])
 

@@ -24,7 +24,7 @@ const Users = () => {
             <Card variant='outlined' style={{backgroundColor: '#5bc0de'}}>
                 <CardActions disableSpacing style={{padding: 8}}>
                     <PersonAddIcon style={{ marginRight: '8px', color: 'white' }} />
-                    <Typography component='span' variant='body1' style={{ color: 'white' }}>Please add a user!</Typography>
+                    <Typography component='span' variant='body1' style={{ color: 'white' }}>Currently there are no users</Typography>
                 </CardActions>
             </Card>
         )

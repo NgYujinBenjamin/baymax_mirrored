@@ -12,9 +12,11 @@ const Baseline = (props) => {
     const classes = useStyles();
 
     const { setBaseline, stepcount, setStepCount } = uploadContext;
+    const { loadUser, updateNavItem } = authContext;
 
     useEffect(() => {
-        authContext.loadUser();
+        loadUser()
+        updateNavItem(0)
         setStepCount(0); // force stepper count to 0 once redirected to baseline page
         //eslint-disable-next-line
     }, [])

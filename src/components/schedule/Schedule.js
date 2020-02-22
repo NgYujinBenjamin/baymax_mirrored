@@ -17,10 +17,12 @@ const Schedule = () => {
     const classes = useStyles();
 
     const { setAlert } = alertContext;
+    const { loadUser, updateNavItem } = authContext
     const { setSchedule, setBays, clearPreresult, schedule, bays, loading, scheduleDone, postResult, error, uploadClearError, stepcount, setStepCount } = uploadContext;
 
     useEffect(() => {
-        authContext.loadUser();
+        loadUser();
+        updateNavItem(0);
 
         if(error !== null){
             setAlert(error);

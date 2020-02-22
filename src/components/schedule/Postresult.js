@@ -2,7 +2,8 @@ import React, { Fragment, useContext, useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Button, Box, Grid, Typography } from '@material-ui/core'
 import { AppBar, Tabs, Tab } from '@material-ui/core';
-import UploadContext from '../../context/upload/uploadContext'
+import UploadContext from '../../context/upload/uploadContext';
+import AuthContext from '../../context/auth/authContext';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
 import GetAppIcon from '@material-ui/icons/GetApp';
@@ -11,9 +12,15 @@ import Postresultqtr from './Postresultqtr';
 const Postresult = () => {
     const classes = useStyles();
     const uploadContext = useContext(UploadContext);
+    const authContext = useContext(AuthContext);
     const [value, setValue] = useState(0); // this is for tab panel to display quarters
 
+    const { loadUser, updateNavItem } = authContext
     const { postResult, createExport, createExportSchedule, saveFile, clearAll, currentQuarter, currentData, scheduletest } = uploadContext;
+
+    useEffect(() => {
+        updateNavItem(0)
+    }, [])
 
     // if(currentQuarter !== null){
     //     console.log(currentQuarter)

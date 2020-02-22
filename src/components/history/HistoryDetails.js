@@ -12,13 +12,16 @@ const HistoryDetails = () => {
     const authContext = useContext(AuthContext);
 
     const { historyItems } = histContext;
+    const { loadUser, updateNavItem } = authContext;
 
     // Setting objs = historyItems and use setItems to update objs value
     const [ objs, setItems ] = useState(historyItems);
 
     useEffect(() => {
-        authContext.loadUser();
-    },)
+        loadUser();
+        updateNavItem(1);
+        //eslint-disable-next-line
+    }, [])
 
     // retrieve msuID from href
     const id = parseInt(window.location.pathname.split("/")[2]);

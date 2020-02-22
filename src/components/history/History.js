@@ -10,11 +10,13 @@ const History = () => {
     const authContext = useContext(AuthContext);
 
     const { historyData } = histContext;
-    const { user, loadUser } = authContext;
+    const { user, loadUser, updateNavItem } = authContext;
     
     useEffect(() => {
         loadUser();
-    })
+        updateNavItem(1);
+        //eslint-disable-next-line
+    }, [])
 
     // console.log(user);
 

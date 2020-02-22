@@ -27,13 +27,11 @@ const AuthState = (props) => {
 
         try {
             const res = await axios.get(`http://localhost:8080/verify`);
-            // console.log(res);
             dispatch({
                 type: USER_LOADED,
                 payload: res.data.data
             })
         } catch (err) {
-            // console.log(err.response)
             dispatch({
                 type: AUTH_ERROR
             })
@@ -48,37 +46,21 @@ const AuthState = (props) => {
             }
         }
 
-        const res = await axios.post('http://localhost:8080/login', formData, config);
-        // console.log(res);
-
-        if(res.data.type === 'ERROR'){
-            dispatch({
-                type: LOGIN_FAIL,
-                payload: res.data.message
-            });
-        } else {
+        try {
+            const res = await axios.post('http://localhost:8080/login', formData, config);
+            // console.log(res);
             dispatch({
                 type: LOGIN_SUCCESS,
                 payload: res.data
             });
             loadUser();
+        } catch (err) {
+            // console.log(err.response.data);
+            dispatch({
+                type: LOGIN_FAIL,
+                payload: err.response.data.message
+            });
         }
-
-        // try {
-        //     const res = await axios.post('http://localhost:8080/login', formData, config);
-        //     // console.log(res);
-        //     dispatch({
-        //         type: LOGIN_SUCCESS,
-        //         payload: res.data
-        //     });
-        //     loadUser();
-        // } catch (err) {
-        //     // console.log(err.response.data.message);
-        //     dispatch({
-        //         type: LOGIN_FAIL,
-        //         payload: err.response.data.message
-        //     });
-        // }
     }
     
     //register user
@@ -94,15 +76,17 @@ const AuthState = (props) => {
 
         try {
             const res = await axios.post('http://localhost:8080/register', user, config);
+            // console.log(res)
             dispatch({
                 type: REGISTER_SUCCESS,
                 payload: res.data
             });
             loadUser();
         } catch (err) {
+            // console.log(err.response.data)
             dispatch({
                 type: REGISTER_FAIL,
-                payload: err.response
+                payload: err.response.data.message
             })
         }
     }
