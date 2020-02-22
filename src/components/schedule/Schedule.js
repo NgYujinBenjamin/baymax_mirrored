@@ -71,11 +71,18 @@ const Schedule = () => {
     const handleConfirm = (event) => {
         event.preventDefault();
         const regx = /^[0-9]+$/;
+        const splitFilename = userInput.fileName.split('.')
         
         if(!regx.test(userInput.bayComponent)){
-            setAlert('Please enter a number in the available bay field');
+            setAlert('Please enter a number in the Available Bay field');
+        } else if(!regx.test(userInput.minGapTime)) {
+            setAlert('Please enter a number in the Minimum Gap field')
+        } else if(!regx.test(userInput.maxGapTime)) {
+            setAlert('Please enter a number in the Maximum Gap field')
         } else if(userInput.bayComponent === '' || userInput.bayFile === null) {
-            setAlert('Please enter the number of available bays and upload an excel file');
+            setAlert('Please upload an excel file');
+        } else if(splitFilename[splitFilename.length - 1] !== 'xlsx' && splitFilename[splitFilename.length - 1] !== 'xlsm') {
+            setAlert('Please upload a .xlsx or .xlsm excel file');
         } else {
             setStepCount(stepcount + 1);
             setBays(userInput.bayComponent);
@@ -137,7 +144,7 @@ const Schedule = () => {
                                 {userInput.fileName !== '' && userInput.fileName}
                             </Typography>
                         </Box>
-                        {(userInput.bayFile && userInput.fileName !== '') && schedule == null && <Button color='primary' variant='contained' fullWidth onClick={handleConfirm}>Confirm</Button>}
+                        {(userInput.bayFile && userInput.fileName !== '' && schedule == null) && <Button color='primary' variant='contained' fullWidth onClick={handleConfirm}>Confirm</Button>}
                         {(schedule !== null && bays !== '' && !scheduleDone) && <Button fullWidth color='default' variant='contained' className={classes.marginTop} onClick={handleClearPreresult}>Clear</Button>}
                     </Box>
                     <Box>

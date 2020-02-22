@@ -3,16 +3,19 @@ import { Typography, Button, Box, Collapse, Card, CardContent, CardActions } fro
 import { makeStyles } from '@material-ui/core/styles'
 import UploadContext from '../../context/upload/uploadContext'
 import AuthContext from '../../context/auth/authContext'
+import AlertContext from '../../context/alert/alertContext'
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import ScheduleStep from '../layout/ScheduleStep.js';
 
 const Baseline = (props) => {
     const uploadContext = useContext(UploadContext);
     const authContext = useContext(AuthContext);
+    const alertContext = useContext(AlertContext);
     const classes = useStyles();
 
     const { setBaseline, stepcount, setStepCount } = uploadContext;
     const { loadUser, updateNavItem } = authContext;
+    const { setAlert } = alertContext;
 
     useEffect(() => {
         loadUser()
@@ -40,9 +43,15 @@ const Baseline = (props) => {
     }
 
     const handleCollapseSubmit = (event) => {
-        setBaseline(file);
-        setStepCount(stepcount + 1);
-        props.history.push('/schedule');
+        const splitFilename = name.split('.')
+
+        if(splitFilename[splitFilename.length - 1] !== 'xlsx' && splitFilename[splitFilename.length -1] !== 'xlsm'){
+            setAlert('Please upload a .xlsx or .xlsm excel file')
+        } else {
+            setBaseline(file);
+            setStepCount(stepcount + 1);
+            props.history.push('/schedule');
+        }
     }
 
     return (
