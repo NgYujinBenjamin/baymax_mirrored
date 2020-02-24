@@ -14980,7 +14980,7 @@ const UploadState = (props) => {
     }
 
     //import masterops
-    const setSchedule = async (file) => {
+    const setSchedule = async (file, minGap) => {
         setLoading();
 
         let data = await convertExcelToJSON(file);
@@ -15003,29 +15003,31 @@ const UploadState = (props) => {
             //else (masterops data/excel file)
             let filtered = data.filter(obj => obj['Plan Product Type'] === 'Tool');
             filtered.forEach(obj => {
-                obj['MRP Date'] = obj['MRP Date'] === undefined ? '' : obj['MRP Date'].toLocaleDateString('en-GB');
-                obj['Created On'] = obj['Created On'] === undefined ? '' : obj['Created On'].toLocaleDateString('en-GB');
-                obj['Created Time'] = obj['Created Time'] === undefined ? '' : obj['Created Time'].toLocaleDateString('en-GB');
-                obj['SAP Customer Req Date'] = obj['SAP Customer Req Date'] === undefined ? '' : obj['SAP Customer Req Date'].toLocaleDateString('en-GB');
-                obj['Ship Recog Date'] = obj['Ship Recog Date'] === undefined ? '' : obj['Ship Recog Date'].toLocaleDateString('en-GB');
-                obj['Slot Request Date'] = obj['Slot Request Date'] === undefined ? '' : obj['Slot Request Date'].toLocaleDateString('en-GB');
-                obj['Int. Ops Ship Readiness Date'] = obj['Int. Ops Ship Readiness Date'] === undefined ? '' : obj['Int. Ops Ship Readiness Date'].toLocaleDateString('en-GB');
-                obj['MFG Commit Date'] = obj['MFG Commit Date'] === undefined ? '' : obj['MFG Commit Date'].toLocaleDateString('en-GB');
-                obj['Div Commit Date'] = obj['Div Commit Date'] === undefined ? '' : obj['Div Commit Date'].toLocaleDateString('en-GB');
-                obj['Changed On'] = obj['Changed On'] === undefined ? '' : obj['Changed On'].toLocaleDateString('en-GB');
-                obj['Last Changed Time'] = obj['Last Changed Time'] === undefined ? '' : obj['Last Changed Time'].toLocaleDateString('en-GB');
-
+                checkDatesValue(obj, ['MRP Date','Created On','Created Time','SAP Customer Req Date','Ship Recog Date','Slot Request Date','Int. Ops Ship Readiness Date','MFG Commit Date','Div Commit Date','Changed On','Last Changed Time'])
             });
+            filtered.forEach(obj => {
+              obj['Lock MRP Date'] = obj['Lock MRP Date'] = false
+              let dates = obj['MRP Date'].split('/')
+              let year = parseInt(dates[2])
+              let month = parseInt(dates[1]) - 1
+              let day = parseInt(dates[0])
+              let currentDate = new Date(year, month, day)
+              currentDate.setDate(currentDate.getDate() - minGap)
+              obj['End Date'] = obj['Lock MRP Date'] === false ? currentDate.toLocaleDateString() : obj['MRP Date']
+            })
 
             filtered[filtered.length - 1]['Argo ID'] === undefined && filtered.pop();
-
-            // console.log(filtered)
 
             dispatch({
                 type: SET_SCHEDULE,
                 payload: filtered
             });
         }
+    }
+
+    //check date value if undefined
+    const checkDatesValue = (obj, arr) => {
+      arr.forEach(val => obj[val] = obj[val] === undefined ? '' : obj[val].toLocaleDateString('en-GB'))
     }
 
     //update masterops

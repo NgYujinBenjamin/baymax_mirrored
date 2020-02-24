@@ -6,7 +6,7 @@ import AuthContext from '../../context/auth/authContext'
 import UploadContext from '../../context/upload/uploadContext'
 import AlertContext from '../../context/alert/alertContext'
 
-const Preresult = ({ fileName }) => {
+const Preresult = ({ fileName, minGap, maxGap }) => {
     const uploadContext = useContext(UploadContext);
     const alertContext = useContext(AlertContext);
     const authContext = useContext(AuthContext);
@@ -16,37 +16,64 @@ const Preresult = ({ fileName }) => {
     const { setAlert } = alertContext;
     const { schedule, updateSchedule, createResult, bays, baseline, stepcount, setStepCount } = uploadContext;
 
+    const [objs, setObjects] = useState(schedule);
+
     useEffect(() => {
         updateNavItem(0)
         //eslint-disable-next-line
     }, [])
-    
-    // To create the "End Date" field
-    schedule.forEach(function(item) {
-        {item.slotStatus == "OPEN" ? 
-            item['End Date'] = item['Int. Ops Ship Readiness Date'] :  item['End Date'] = item['MFG Commit Date'];
-        }
-    })
-
-    const [objs, setObjects] = useState(schedule);
-    // console.log(objs)
 
     const handleChange = (obj) => {
         return (event) => {
-            const value = event.target.value;
+            const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
             const name = event.target.name;
-            // console.log(event.target);
+            // console.log(event.target)
             setObjects(prevObjs => (prevObjs.map((o) => {
-                // console.log(obj)
-                // console.log(o)
                 if (o === obj) {
+                    if(name === 'MRP Date'){
+                        if(obj['Lock MRP Date'] === false){
+                            let dates = value.split('/')
+                            let year = parseInt(dates[2])
+                            let month = parseInt(dates[1]) - 1
+                            let day = parseInt(dates[0])
+                            let currentDate = new Date(year, month, day)
+                            currentDate.setDate(currentDate.getDate() - minGap)
+                            return {
+                                ...obj,
+                                [name]: value,
+                                'End Date': currentDate.toLocaleDateString()
+                            }
+                        } else {
+                            return {
+                                ...obj,
+                                [name]: value,
+                                'End Date': value
+                            }
+                        }
+                    }
+
+                    if(name === 'Lock MRP Date'){
+                        if(value === false){
+                            let dates = obj['MRP Date'].split('/')
+                            let year = parseInt(dates[2])
+                            let month = parseInt(dates[1]) - 1
+                            let day = parseInt(dates[0])
+                            let currentDate = new Date(year, month, day)
+                            currentDate.setDate(currentDate.getDate() - minGap)
+                            return {
+                                ...obj, 
+                                'End Date': currentDate.toLocaleDateString(), 
+                                [name]: value
+                            }
+                        } else {
+                            return {
+                                ...obj, 
+                                'End Date': obj['MRP Date'], 
+                                [name]: value
+                            }
+                        }
+                    }
                     return {...obj, [name]: value}
-                    // if (name === 'Cycle Time Days'){
-                    //     return {...obj, 'Cycle Time Days': value }
-                    // }
-                    // if (name === 'MRP Date'){
-                    //     return {...obj, 'MRP Date': value}
-                    // }
                 }
                 return o;
             })))
@@ -62,13 +89,14 @@ const Preresult = ({ fileName }) => {
 
         //check if Cycle Time Days and MRP Date are NOT in the right format
         objs.forEach(obj => {
-            if(!regxNum.test(obj['Cycle Time Days']) || !regxDate.test(obj['MFG Commit Date']) || !regxDate.test(obj['Int. Ops Ship Readiness Date'])){
+            if(!regxNum.test(obj['Cycle Time Days']) || !regxDate.test(obj['MRP Date'])){
                 setAlert(`ArgoID: ${obj['Argo ID']}. Please enter a valid number in Cycle Time Days and valid date format (DD/MM/YYYY) in MRP Date`)
                 preCounter = true;
             }
         })
 
         if(!preCounter) {
+            // console.log(objs)
             updateSchedule(objs);
             createResult(objs, bays, baseline);
             setStepCount(stepcount + 2); // add 2 since it will be the end of the step
@@ -90,19 +118,24 @@ const Preresult = ({ fileName }) => {
                             <TableCell></TableCell>
                             <TableCell></TableCell>
                             <TableCell></TableCell>
+                            <TableCell></TableCell>
+                            <TableCell></TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell>Argo ID</TableCell>
                             <TableCell>Slot/UTID</TableCell>
-                            <TableCell>Build Product</TableCell>
+                            <TableCell>Product Name</TableCell>
                             <TableCell>MRP Date</TableCell>
+                            <TableCell>MFG Commit</TableCell>
+                            <TableCell>Internal Readiness Date</TableCell>
                             <TableCell>End Date</TableCell>
-                            <TableCell>Cycle Time Days</TableCell>
+                            <TableCell>Cycle Time</TableCell>
+                            <TableCell>Lock MRP Date</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {objs.map((obj, index) => (
-                            <PreresultItem obj={obj} onChange={handleChange(obj)} key={index} />
+                            <PreresultItem obj={obj} onChange={handleChange(obj)} key={index} minGap={minGap} maxGap={maxGap} />
                         ))}
                     </TableBody>
                 </Table>

@@ -78,7 +78,12 @@ const Schedule = () => {
         } else {
             setStepCount(stepcount + 1);
             setBays(userInput.bayComponent);
-            setSchedule(userInput.bayFile);
+            setUserInput({
+                ...userInput,
+                minGapTime: parseInt(userInput.minGapTime),
+                maxGapTime: parseInt(userInput.maxGapTime)
+            })
+            setSchedule(userInput.bayFile, userInput.minGapTime);
         }
     }
 
@@ -144,7 +149,7 @@ const Schedule = () => {
                     }  
                     <Box>
                         {loading && <Spinner />}
-                        {(schedule !== null && bays !== '' && !scheduleDone && !loading) && <Preresult fileName={userInput.fileName} /> }
+                        {(schedule !== null && bays !== '' && !scheduleDone && !loading) && <Preresult fileName={userInput.fileName} minGap={userInput.minGapTime} maxGap={userInput.maxGapTime} /> }
                         {(postResult !== null && scheduleDone && !loading) && <Postresult />}
                     </Box>
                 </CardContent>
