@@ -4,31 +4,30 @@ import PostresultItem from './PostresultItem'
 import { TableContainer, Paper, Typography, Box, Table, Button } from '@material-ui/core'
 import UploadContext from '../../context/upload/uploadContext'
 
-const Postresultbody = ({ result, id, quarter, sendhere }) => {
+const Postresultbody = ({ result, id, quarter }) => {
     const [ objs, setObjects ] = useState(result);
     // const [ arr, setArr ] = useState([]);
-
+    
     const uploadContext = useContext(UploadContext);
-    const { currentQuarter, updateCurrentQuarter, currentData, updateCurrentData } = uploadContext;
-
+    const { currentQuarter, updateCurrentQuarter, updatePostResult, postResult, saved, updateSave } = uploadContext;
+    
+    console.log(postResult);
+    
     useEffect(() => {
         if(currentQuarter === null || currentQuarter !== quarter){
             updateCurrentQuarter(quarter)
         }
+
+        if(saved){
+            updatePostResult(postResult, localStorage.getItem('postResultEdit'), quarter);
+            localStorage.setItem('postResultEdit', null);
+            updateSave(!saved); // go back to false
+        }
+
+        localStorage.setItem('postResultEdit', JSON.stringify(objs));
         //eslint-disable-next-line
-    }, [currentQuarter])
-
-    // if(currentQuarter === null || currentQuarter !== quarter){
-    //     updateCurrentQuarter(quarter)
-    // }
-    // if(currentData === null){
-    //     updateCurrentData(objs)
-    // }
-
-    // if(currentData !== null){
-    //     // console.log(currentData)
-    // }
-
+    }, [currentQuarter, objs, saved])
+    
     const handleChange = (obj) => {
         return (event) => {
             const value = event.target.value;
@@ -48,8 +47,7 @@ const Postresultbody = ({ result, id, quarter, sendhere }) => {
                     //     })
                     // }
                     // sendData([ {...obj[0], [name]: value}, ...obj.slice(1) ])
-                    
-                    return [ {...obj[0], [name]: value}, ...obj.slice(1) ]
+                    return [ {...obj[0], [name]: parseInt(value)}, ...obj.slice(1) ]
                 }
                 return o;
             })))
@@ -58,9 +56,10 @@ const Postresultbody = ({ result, id, quarter, sendhere }) => {
 
     // const computeChange = useMemo(() => handleChange(objs), [objs, handleChange])
 
-    const handletest = () => {
-        console.log(objs)
-    }
+    // const handletest = () => {
+    //     // console.log(objs)
+    //     console.log(postResult)
+    // }
 
     // return (
     //     <Fragment>
@@ -88,9 +87,9 @@ const Postresultbody = ({ result, id, quarter, sendhere }) => {
                     )}
                 </TableBody>
             </Fragment>
-            <Fragment>
+            {/* <Fragment>
                 <Button variant='contained' onClick={handletest} color='primary'>test</Button>
-            </Fragment>
+            </Fragment> */}
         </Fragment>
     )
 }

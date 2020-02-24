@@ -3,7 +3,7 @@ import UploadContext from './uploadContext';
 import UploadReducer from './uploadReducer';
 import XLSX from 'xlsx';
 import axios from 'axios';
-import { SET_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS, UPDATE_POST_RESULT, UPDATE_QUARTER, UPDATE_DATA } from '../types';
+import { SET_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS, UPDATE_POST_RESULT, UPDATE_QUARTER, UPDATE_DATA, UPDATE_SAVE } from '../types';
 
 const UploadState = (props) => {
     const initialState = {
@@ -14622,7 +14622,8 @@ const UploadState = (props) => {
         stepcount: 0,
         steps: ['Upload Bay Requirement', 'Input guidelines & upload MasterOpsPlan', 'Edit MasterOpsPlan', 'Schedule Generated'],
         currentQuarter: null,
-        currentData: []
+        currentData: [],
+        saved: false
     }
 
     const [state, dispatch] = useReducer(UploadReducer, initialState);
@@ -14935,7 +14936,16 @@ const UploadState = (props) => {
     }
 
     //update post result data
-    const updatePostResult = (postRes) => dispatch({ type: UPDATE_POST_RESULT, payload: postRes })
+    const updatePostResult = (postResult, objs, quarter) => {
+      objs = JSON.parse(objs);
+      const dates = postResult.bayOccupancy[quarter][0];
+      objs.unshift(dates);
+      postResult.bayOccupancy[quarter] = objs;
+      
+      dispatch({ 
+        type: UPDATE_POST_RESULT, payload: postResult 
+      })
+    }
 
     //create result - mass slot upload
     const createResult = async (objs, bay, baseline) => {
@@ -15030,6 +15040,9 @@ const UploadState = (props) => {
     //set step counter
     const setStepCount = (num) => dispatch({ type: SET_STEPS, payload: num })
 
+    //update save
+    const updateSave = (res) => dispatch({ type: UPDATE_SAVE, payload: res })
+
     //set bays
     const setBays = (num) => dispatch({ type: SET_BAYS, payload: num })
 
@@ -15102,6 +15115,7 @@ const UploadState = (props) => {
             steps: state.steps,
             currentQuarter: state.currentQuarter,
             currentData: state.currentData,
+            saved: state.saved,
             setBaseline,
             setSchedule,
             setBays,
@@ -15118,7 +15132,8 @@ const UploadState = (props) => {
             setStepCount,
             updatePostResult,
             updateCurrentQuarter,
-            updateCurrentData
+            updateCurrentData,
+            updateSave
         }}>
         {props.children}
     </UploadContext.Provider>
