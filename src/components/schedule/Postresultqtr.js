@@ -40,14 +40,14 @@ const Postresultqtr = ({ schedule, value, num, quarter }) => {
     //     </Fragment>
     // )
 
-    const handletest = () => {
+    // const handletest = () => {
         
-    }
+    // }
 
-    const [arr, setarr] = useState([])
-    const givemedata = (res) => {
-        setarr(res)
-    }
+    // const [arr, setarr] = useState([])
+    // const givemedata = (res) => {
+    //     setarr(res)
+    // }
 
     return (
         <Fragment>
@@ -63,11 +63,11 @@ const Postresultqtr = ({ schedule, value, num, quarter }) => {
                             <Postresultbody result={schedule.baseline[quarterName]} id='baseline' key={index}/> : null
                         )} */}
                         { Object.keys(schedule).map((quarterName, index) => (quarterName === quarter) ?
-                            <Postresultbody sendhere={givemedata} result={schedule[quarterName].slice(1)} id='predicted' key={index} quarter={quarterName}/> : null
+                            <Postresultbody result={schedule[quarterName].slice(1)} id='predicted' key={index} quarter={quarterName}/> : null
                         )}
                     </Table>
                 </TableContainer>
-                <Button variant='contained' onClick={handletest} color='primary'>test</Button>
+                {/* <Button variant='contained' onClick={handletest} color='primary'>test</Button> */}
             </TabPanel>
         </Fragment>
     )

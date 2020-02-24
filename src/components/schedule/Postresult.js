@@ -16,7 +16,7 @@ const Postresult = () => {
     const [value, setValue] = useState(0); // this is for tab panel to display quarters
 
     const { loadUser, updateNavItem } = authContext
-    const { postResult, createExport, createExportSchedule, saveFile, clearAll, currentQuarter, currentData, scheduletest } = uploadContext;
+    const { postResult, createExport, createExportSchedule, saved, updateSave, saveFile, clearAll, currentQuarter, currentData, scheduletest } = uploadContext;
 
     useEffect(() => {
         updateNavItem(0)
@@ -60,11 +60,12 @@ const Postresult = () => {
     }
 
     const handleSave = () => {
+        updateSave(!saved);
         // if(currentData !== null){
         //     console.log(currentData)
         // }
         // saveFile(postResult);
-        console.log(arr)
+        // console.log(arr)
     }
 
     const handleExport = (event) => {
