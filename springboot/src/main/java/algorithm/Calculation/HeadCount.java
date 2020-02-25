@@ -12,6 +12,7 @@ public class HeadCount{
     public HeadCount(ArrayList<Product> allProduct){
         HashMap<String, Integer> quarterJobs = new HashMap<String, Integer>();
         quarterHC = new HashMap<String, Integer>();
+        
         Integer newBuildCount;
         for (Product p: allProduct){
             String buildQtr = p.getBuildQtr();
@@ -22,7 +23,7 @@ public class HeadCount{
             }
             quarterJobs.put(buildQtr, newBuildCount);
         }
-
+        
         Set<String> quarters = quarterJobs.keySet();
         for(String q: quarters){
             Integer numQtrJobs = quarterJobs.get(q); 

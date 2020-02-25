@@ -9,10 +9,10 @@ import com.google.gson.*;
 
 import org.apache.commons.lang3.time.DateUtils;
 
-public class BayRequirement{
+public class BayRequirement2{
     private TreeMap<String, ArrayList<ArrayList<Object>>> bayOccupancy;
 
-    public BayRequirement(BaySchedule BS){
+    public BayRequirement2(BaySchedule2 BS){
       
         ArrayList<Product> allProduct = BS.getAllProduct();
         HashMap<String, HashMap<String, Date>> earliestStartLatestEnd = findEarliestStartLatestEnd(allProduct);
@@ -134,11 +134,7 @@ public class BayRequirement{
         return weekOf;
     }
 
-    public TreeMap<String, ArrayList<ArrayList<Object>>> getBayOccupancy(){
-        return bayOccupancy;
-    }
-
-    public static String toJSONString(BayRequirement br){
+    public static String toJSONString(BayRequirement2 br){
         Gson gson = new GsonBuilder().setExclusionStrategies(new JSONExclusionStrategy()).create();
         String json = gson.toJson(br);
         return json;

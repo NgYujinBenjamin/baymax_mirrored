@@ -29,75 +29,106 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @CrossOrigin
 @RestController
 public class AlgoController {
-    
 
-
-    @RequestMapping(path = "/testing", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
-    public String testing(@RequestBody preTestingClass classObject) throws Exception{
+    @RequestMapping(path = "/firstScheduling", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
+    public String testing(@RequestBody firstSchedulingParam param) throws Exception{
+        List<Map<String, Object>> baseLineData;
+        List<Map<String, Object>> data;
+        Integer numBays;
+        Integer minGap;
+        Integer maxGap;
         
         try {
-            List<Map<String, Object>> baseline = classObject.baseline;
-            List<Map<String, Object>> data = classObject.data;
-            Integer numBays = classObject.numBays;
-            Integer minGap = classObject.minGap;
-            Integer maxGap = classObject.maxGap;
-
-            String to_print = (String) baseline.get(0).get("innerfirst");
-            String to_print_two = (String) data.get(0).get("innerfirst");
-
-            return to_print  + " " + to_print_two + " " + classObject.numBays + " " + classObject.minGap + " " + classObject.maxGap;
+            baseLineData = param.baseLineData;
+            data = param.data;
+            numBays = param.numBays;
+            minGap = param.minGap;
+            maxGap = param.maxGap;
         } catch(Exception e) {
-            return "error";
-        }   
-    }
+            return "JSON Reading Error";
+        }
 
-    @RequestMapping(path = "/testingtwo", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
-    public String testing(@RequestBody postTestingClass classObject) throws Exception{
-        
-        try {
-            Map<String, Map<String, List<List<Object>>>> preSchedule = classObject.preSchedule;
-            Integer numBays = classObject.numBays;
-            Integer minGap = classObject.minGap;
-            Integer maxGap = classObject.maxGap;
-
-            Object to_print = preSchedule.get("baseline").get("CY10Q1").get(1).get(0);
-            
-            Map <String,String> map = new ObjectMapper().convertValue(to_print, Map.class);
-
-            return map + " " + classObject.numBays + " " + classObject.minGap + " " + classObject.maxGap;
-        } catch(Exception e) {
-            return "error";
-        }   
-    }
-
-    @RequestMapping(path = "/algo", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
-    public String algo(@RequestBody List<Map<String, Object>> data) throws Exception{
-        // JsonElement jsonElement = new JsonParser().parse(data);
-        // List<Map<String, Object>> allData= new ArrayList<Map<String, Object>>();
-        // allData = new Gson().fromJson(data, new TypeToken<List<Map<String, Object>>>() {}.getType());
-        
-        List<Map<String, Object>> allData = data;
-        
         ArrayList<Product> allProduct = new ArrayList<Product>();
+        ArrayList<Product> baseLineProduct = new ArrayList<Product>();
         
-        for (int i = 0; i < allData.size(); i++){
-            Product p = new Product(allData.get(i));
+        for (int i = 0; i < data.size(); i++){
+            Product p = new Product(data.get(i));
             allProduct.add(p);
         }
 
+        for (int i = 0; i < baseLineData.size(); i++){
+            Product p = new Product(baseLineData.get(i));
+            baseLineProduct.add(p);
+        }
+
+        Collections.sort(allProduct);
+        Collections. sort(baseLineProduct);
+
         BayRequirement bayReq = null;
+        BaySchedule baySchedule = null;
 
-        for (int i = 0; i < 10; i++){
+        Integer gapDiff = maxGap - minGap; // End date alr considers the min gap; Can only pull forward by gapDiff more days
+
+        for (int i = 0; i < 3; i++){
             HashMap<String, Integer> quarterHC = new HeadCount(allProduct).getQuarterHC();
+            System.out.println(quarterHC);
 
-            BaySchedule baySchedule = new BaySchedule(allProduct, quarterHC, 26, 90);
+            baySchedule = new BaySchedule(baseLineProduct, allProduct, quarterHC, numBays, gapDiff);
 
             bayReq = new BayRequirement(baySchedule);
     
             allProduct = baySchedule.getAllProduct();
         }
         return BayRequirement.toJSONString(bayReq);
-        
     }
+
+    @RequestMapping(path = "/subseqScheduling", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
+    public String testing(@RequestBody subseqSchedulingParam param) throws Exception{
+        
+        try {
+            Map<String, Map<String, List<List<Object>>>> preSchedule = param.preSchedule;
+            Integer numBays = param.numBays;
+            Integer minGap = param.minGap;
+            Integer maxGap = param.maxGap;
+
+            Object to_print = preSchedule.get("baseline").get("CY10Q1").get(1).get(0);
+            
+            Map <String,String> map = new ObjectMapper().convertValue(to_print, Map.class);
+
+            return map + " " + param.numBays + " " + param.minGap + " " + param.maxGap;
+        } catch(Exception e) {
+            return "error";
+        }   
+    }
+
+    // @RequestMapping(path = "/algo", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
+    // public String algo(@RequestBody List<Map<String, Object>> data) throws Exception{
+    //     // JsonElement jsonElement = new JsonParser().parse(data);
+    //     // List<Map<String, Object>> allData= new ArrayList<Map<String, Object>>();
+    //     // allData = new Gson().fromJson(data, new TypeToken<List<Map<String, Object>>>() {}.getType());
+        
+    //     List<Map<String, Object>> allData = data;
+        
+    //     ArrayList<Product> allProduct = new ArrayList<Product>();
+        
+    //     for (int i = 0; i < allData.size(); i++){
+    //         Product p = new Product(allData.get(i));
+    //         allProduct.add(p);
+    //     }
+
+    //     BayRequirement bayReq = null;
+
+    //     for (int i = 0; i < 10; i++){
+    //         HashMap<String, Integer> quarterHC = new HeadCount(allProduct).getQuarterHC();
+
+    //         BaySchedule baySchedule = new BaySchedule(allProduct, quarterHC, 26, 90);
+
+    //         bayReq = new BayRequirement(baySchedule);
+    
+    //         allProduct = baySchedule.getAllProduct();
+    //     }
+    //     return BayRequirement.toJSONString(bayReq);
+        
+    // }
 
 }

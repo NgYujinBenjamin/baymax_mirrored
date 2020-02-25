@@ -102,8 +102,11 @@ public class Product implements Comparable<Product>{
     private Date latestToolStartDate;
     private Date toolStartDate;
     private Date endDate;
+    @Exclude
     private Date leaveBayDate;
     private Integer gapDays;
+    private Boolean lockMRP;
+    private Date sendToStorageDate;
 
 
     public Product (Map<String, Object> rowData){
@@ -176,6 +179,7 @@ public class Product implements Comparable<Product>{
         // standardCOGS = (String) rowData.get("Standard COGS");
         // createdBy = (String) rowData.get("Created By");
         // changedBy = (String) rowData.get("Changed By");
+        lockMRP = (Boolean) rowData.get("Lock MRP");
 
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -200,6 +204,7 @@ public class Product implements Comparable<Product>{
             // createdTime = (rowData.get("Created Time") == null) ? null : dateFormat.parse((String) rowData.get("Created Time"));
             // lastChangedTime = (rowData.get("Last Changed Time") == null) ? null : dateFormat.parse((String) rowData.get("Last Changed Time"));
             endDate = (rowData.get("End Date") == null) ? null : dateFormat.parse((String) rowData.get("End Date"));
+            sendToStorageDate = (rowData.get("Send To Storage Date") == null) ? null : dateFormat.parse((String) rowData.get("Send To Storage Date"));
         } catch (ParseException e){
             e.printStackTrace();
         }
@@ -207,7 +212,10 @@ public class Product implements Comparable<Product>{
         latestToolStartDate = DateUtils.addDays(endDate, -cycleTimeDays);
         toolStartDate = latestToolStartDate;
 
-        if (fabName.equals("Open")){
+        if (sendToStorageDate != null){
+            leaveBayDate = sendToStorageDate;
+        }
+        else if (fabName.equals("Open")){
             leaveBayDate = intOpsShipReadinessDate;
         } else {
             leaveBayDate = endDate;

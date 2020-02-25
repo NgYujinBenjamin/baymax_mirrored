@@ -27,17 +27,22 @@ public class BaySchedule{
     @Exclude
     private  HashMap<Date, Integer> weeklyNewBuild;
 
-
-
-    public BaySchedule(ArrayList<Product> allProduct, HashMap<String, Integer> quarterHC, Integer maxBays, Integer maxPreBuild){
+    public BaySchedule(ArrayList<Product> baseLineProduct, ArrayList<Product> allProduct, HashMap<String, Integer> quarterHC, Integer maxBays, Integer gapDiff){
         this.allProduct = allProduct;
         this.quarterHC = quarterHC;
         schedule = new ArrayList<Bay>();
+        
         for (int i = 0; i < maxBays; i++){
             schedule.add(new Bay());
         }
         
-        generateSchedule(maxBays, maxPreBuild);
+        for (int j=0; j < baseLineProduct.size(); j++){
+            Bay b = schedule.get(j);
+            Product p = baseLineProduct.get(j);
+            b.addToBaySchedule(p);
+        }
+
+        generateSchedule(maxBays, gapDiff);
     }
     
     /**
@@ -69,13 +74,13 @@ public class BaySchedule{
     /**
      * Attempt to fulfill as much of the manufacturing backlog as possible, without exceeding the maximum number of Bays available
      */
-    private void generateSchedule(Integer maxBays, Integer maxPreBuild){
+    private void generateSchedule(Integer maxBays, Integer gapDiff){
         weeklyNewBuild = new HashMap<Date,Integer>();
         ArrayList<Product> tempUnfulfilled = new ArrayList<Product>();
         
         for (Product p: allProduct){
             // Find if Product can be assigned to a bay
-            Boolean bayAssigned = bayAssignment(p, maxPreBuild);
+            Boolean bayAssigned = bayAssignment(p, gapDiff);
             
             // If product is unassigned and we cannot "create"/ utilize a new Bay, we mark the Product as unfulfilled
             if (!bayAssigned){
@@ -121,7 +126,7 @@ public class BaySchedule{
      * @param toolStartDate Tool Start Date of the product to be assigned to the Bay.
      * @return Integer representing the index position of the Bay to be Assigned in Production Schedule (SchedulerUtils attribute).
      */
-    private boolean bayAssignment (Product p, Integer maxPreBuild){
+    private boolean bayAssignment (Product p, Integer gapDiff){
         Collections.sort(schedule);
         
         Date toolStartDate = p.getLatestToolStartDate(); // Represents the latest date at which the tool must start
@@ -133,7 +138,7 @@ public class BaySchedule{
             // Pull forward the date as early as possible
             Long diff = toolStartDate.getTime() - b.getAvailableDate().getTime();
             Integer diffDays = (int) (diff / (24 * 60 * 60 * 1000));
-            Date newToolStartDate = DateUtils.addDays(toolStartDate, -Math.min(diffDays, maxPreBuild));
+            Date newToolStartDate = DateUtils.addDays(toolStartDate, -Math.min(diffDays, gapDiff));
             
             while (newToolStartDate.before(toolStartDate)){
                 // Get the week of the new tool start date
