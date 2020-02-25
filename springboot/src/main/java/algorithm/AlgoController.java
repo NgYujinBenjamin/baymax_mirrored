@@ -24,22 +24,50 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import com.google.gson.*;
 import com.google.gson.reflect.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @CrossOrigin
 @RestController
 public class AlgoController {
     
 
 
-    @RequestMapping(path = "/testing", method = RequestMethod.GET)
-    public String testing() throws Exception{
+    @RequestMapping(path = "/testing", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
+    public String testing(@RequestBody preTestingClass classObject) throws Exception{
         
         try {
-            Integer hello = 123;
-            return hello.toString();   
+            List<Map<String, Object>> baseline = classObject.baseline;
+            List<Map<String, Object>> data = classObject.data;
+            Integer numBays = classObject.numBays;
+            Integer minGap = classObject.minGap;
+            Integer maxGap = classObject.maxGap;
+
+            String to_print = (String) baseline.get(0).get("innerfirst");
+            String to_print_two = (String) data.get(0).get("innerfirst");
+
+            return to_print  + " " + to_print_two + " " + classObject.numBays + " " + classObject.minGap + " " + classObject.maxGap;
         } catch(Exception e) {
             return "error";
         }   
-    
+    }
+
+    @RequestMapping(path = "/testingtwo", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
+    public String testing(@RequestBody postTestingClass classObject) throws Exception{
+        
+        try {
+            Map<String, Map<String, List<List<Object>>>> preSchedule = classObject.preSchedule;
+            Integer numBays = classObject.numBays;
+            Integer minGap = classObject.minGap;
+            Integer maxGap = classObject.maxGap;
+
+            Object to_print = preSchedule.get("baseline").get("CY10Q1").get(1).get(0);
+            
+            Map <String,String> map = new ObjectMapper().convertValue(to_print, Map.class);
+
+            return map + " " + classObject.numBays + " " + classObject.minGap + " " + classObject.maxGap;
+        } catch(Exception e) {
+            return "error";
+        }   
     }
 
     @RequestMapping(path = "/algo", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
