@@ -107,6 +107,8 @@ public class Product implements Comparable<Product>{
     private Integer gapDays;
     private Boolean lockMRP;
     private Date sendToStorageDate;
+    @Exclude
+    private Integer assignedBayID;
 
 
     public Product (Map<String, Object> rowData){
@@ -441,6 +443,10 @@ public class Product implements Comparable<Product>{
     public Integer getGapDays() {
         return gapDays;
     }
+    
+    public Integer getAssignedBayID(){
+        return assignedBayID;
+    }
 
     /**
      * Setters
@@ -644,6 +650,10 @@ public class Product implements Comparable<Product>{
         }
 
         String buildQtr = "CY" + MRPYear.toString() + MRPQuarter;
+
+        if (MRPDate.after(leaveBayDate)){
+            leaveBayDate = MRPDate;
+        }
     }
 
     public void setLeaveBayDate(Date leaveBayDate) {
@@ -652,5 +662,9 @@ public class Product implements Comparable<Product>{
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public void setAssignedBayID(Integer bayID){
+        this.assignedBayID = bayID;
     }
 }

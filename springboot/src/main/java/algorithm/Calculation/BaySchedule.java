@@ -27,22 +27,30 @@ public class BaySchedule{
     @Exclude
     private  HashMap<Date, Integer> weeklyNewBuild;
 
-    public BaySchedule(ArrayList<Product> baseLineProduct, ArrayList<Product> allProduct, HashMap<String, Integer> quarterHC, Integer maxBays, Integer gapDiff){
+
+
+    public BaySchedule(ArrayList<Product> baseLineProduct, ArrayList<Product> allProduct, HashMap<String, Integer> quarterHC, Integer maxBays, Integer gapDiff) throws RuntimeException{
         this.allProduct = allProduct;
         this.quarterHC = quarterHC;
         schedule = new ArrayList<Bay>();
-        
+
+        // Create new bays, up to the maximum provided
         for (int i = 0; i < maxBays; i++){
-            schedule.add(new Bay());
-        }
-        
-        for (int j=0; j < baseLineProduct.size(); j++){
-            Bay b = schedule.get(j);
-            Product p = baseLineProduct.get(j);
-            b.addToBaySchedule(p);
+            schedule.add(new Bay(i));
         }
 
-        generateSchedule(maxBays, gapDiff);
+        // Add baseline product to the bays
+        if (baseLineProduct.size() <= maxBays){
+            for (int j=0; j < baseLineProduct.size(); j++){
+                Bay b = schedule.get(j);
+                Product p = baseLineProduct.get(j);
+                b.addToBaySchedule(p);
+            }
+        } else {
+            throw new RuntimeException("Number of Baseline Products exceed Number of Bays allocated");
+        }
+
+        generateSchedule(gapDiff);
     }
     
     /**
@@ -74,23 +82,11 @@ public class BaySchedule{
     /**
      * Attempt to fulfill as much of the manufacturing backlog as possible, without exceeding the maximum number of Bays available
      */
-    private void generateSchedule(Integer maxBays, Integer gapDiff){
+    private void generateSchedule(Integer gapDiff){
         weeklyNewBuild = new HashMap<Date,Integer>();
-        ArrayList<Product> tempUnfulfilled = new ArrayList<Product>();
         
         for (Product p: allProduct){
-            // Find if Product can be assigned to a bay
-            Boolean bayAssigned = bayAssignment(p, gapDiff);
-            
-            // If product is unassigned and we cannot "create"/ utilize a new Bay, we mark the Product as unfulfilled
-            if (!bayAssigned){
-                tempUnfulfilled.add(p);
-            }
-        }
-        
-        // 6. For the unfulfilled product, we just put it at the end of each earliest available Bay
-        for (Product p: tempUnfulfilled){
-            unfulfilledBayAssignment (p);
+            bayAssignment(p, gapDiff);
         }
     }
 
@@ -126,116 +122,56 @@ public class BaySchedule{
      * @param toolStartDate Tool Start Date of the product to be assigned to the Bay.
      * @return Integer representing the index position of the Bay to be Assigned in Production Schedule (SchedulerUtils attribute).
      */
-    private boolean bayAssignment (Product p, Integer gapDiff){
+    private void bayAssignment (Product p, Integer gapDiff){
         Collections.sort(schedule);
         
         Date toolStartDate = p.getLatestToolStartDate(); // Represents the latest date at which the tool must start
         
-        Bay b = schedule.get(0);
+        Bay b = schedule.get(0); // Earliest bay available
+        Integer bayID = b.getBayID();
+        p.setAssignedBayID(bayID);
         
-        // Check if the Bay available date is earlier than the tool start date. If true, it is a suitable bay and can return the index immediately.
-        if (b.getAvailableDate().before(toolStartDate)){
-            // Pull forward the date as early as possible
-            Long diff = toolStartDate.getTime() - b.getAvailableDate().getTime();
-            Integer diffDays = (int) (diff / (24 * 60 * 60 * 1000));
-            Date newToolStartDate = DateUtils.addDays(toolStartDate, -Math.min(diffDays, gapDiff));
-            
-            while (newToolStartDate.before(toolStartDate)){
-                // Get the week of the new tool start date
-                Date weekFriday = getFriday(newToolStartDate);
-
-                // Get the number of new builds in that week
-                Integer newBuildCount;
-                if (weeklyNewBuild.containsKey(weekFriday)){
-                    newBuildCount = weeklyNewBuild.get(weekFriday);
-                } else {
-                    newBuildCount = 0;
-                }
-                                
-                p.setToolStartDate(newToolStartDate); // Set the date will update the buildQtr as well
-                String buildQtr = p.getBuildQtr();
-                Integer currQtrHC = Integer.MAX_VALUE;
-                if (quarterHC.containsKey(buildQtr)){
-                    currQtrHC = quarterHC.get(buildQtr);
-                }
-
-                // Sufficient HC to start new job
-                if (newBuildCount < currQtrHC){
-                    weeklyNewBuild.put(weekFriday, newBuildCount++);
-                    b.addToBaySchedule(p);
-                    
-                    return true;
-                } else {
-                    // Delay tool start day to the earliest day of the next working week i.e. next friday
-                    newToolStartDate = DateUtils.addDays(weekFriday, 7);
-                }
-            }         
-        }
-        return false;
-    }
-
-    private void unfulfilledBayAssignment (Product p){
-        Collections.sort(schedule);     // Sort the bays in order of earliest available date first
-        Bay b = schedule.get(0);
+        // Pull forward the date as early as possible or push it back to the date when the bay is available
+        Long diff = toolStartDate.getTime() - b.getAvailableDate().getTime();
+        Integer diffDays = (int) (diff / (24 * 60 * 60 * 1000));
+            // diffDays +ve if toolStartDate is after bayAvailableDate
+            // diffDays -ve if toolStartDate is before bayAvailableDate
         
-        // Bay available date is the new tool start date
-        Date newToolStartDate = b.getAvailableDate();
+        Date newToolStartDate = DateUtils.addDays(toolStartDate, -Math.min(diffDays, gapDiff));
 
-        // Get the week of the new tool start date
-        Date weekFriday = getFriday(newToolStartDate);
-            
-        // Get the number of new builds in that week
-        Integer newBuildCount;
-        if (weeklyNewBuild.containsKey(weekFriday)){
-            newBuildCount = weeklyNewBuild.get(weekFriday);
-        } else {
-            newBuildCount = 0;
-        }
+        Boolean scheduled = false;
 
-        p.setToolStartDate(newToolStartDate); // Set the date will update the buildQtr as well
-        String buildQtr = p.getBuildQtr();
-        Integer currQtrHC = Integer.MAX_VALUE;
-        if (quarterHC.containsKey(buildQtr)){
-            currQtrHC = quarterHC.get(buildQtr);
-        }
+        while (!scheduled) {
+            // Get the week of the new tool start date
+            Date weekFriday = getFriday(newToolStartDate);
 
-        while (newBuildCount >= currQtrHC){
-            // Delay tool start day to the earliest day of the next working week i.e. next friday
-            newToolStartDate = DateUtils.addDays(weekFriday, 7);
-            weekFriday = getFriday(newToolStartDate);
+            // Get the number of new builds in that week
+            Integer newBuildCount;
             if (weeklyNewBuild.containsKey(weekFriday)){
                 newBuildCount = weeklyNewBuild.get(weekFriday);
             } else {
                 newBuildCount = 0;
             }
+                            
             p.setToolStartDate(newToolStartDate); // Set the date will update the buildQtr as well
-            buildQtr = p.getBuildQtr();
-            currQtrHC = Integer.MAX_VALUE;
+            String buildQtr = p.getBuildQtr(); // Get the buildQtr
+            Integer currQtrHC = Integer.MAX_VALUE; // Initialize to "unlimited" head count
             if (quarterHC.containsKey(buildQtr)){
                 currQtrHC = quarterHC.get(buildQtr);
             }
+
+            // Sufficient HC to start new job
+            if (newBuildCount < currQtrHC){
+                weeklyNewBuild.put(weekFriday, newBuildCount++); // Update the weekly new build
+                b.addToBaySchedule(p);
+                scheduled = true;
+            } else {
+                // Delay tool start day to the earliest day of the next working week i.e. next friday
+                newToolStartDate = DateUtils.addDays(weekFriday, 7);
+            }
         }
-        weeklyNewBuild.put(weekFriday, newBuildCount++);
-
-        Date newLeaveBayDate = DateUtils.addDays(newToolStartDate, p.getCycleTimeDays());
-        Date newEndDate = newLeaveBayDate;
-
-        p.setLeaveBayDate(newLeaveBayDate);
-        p.setEndDate(newEndDate);
-
-        b.addToBaySchedule(p);
     }
 
-    // private ArrayList<Date> generateWeekOf (Date earliestStart, Date latestEnd){
-    //     ArrayList<Date> weekOf = new ArrayList<>();
-    //     Date friday = getFriday(earliestStart);      
-
-    //     while (friday.before(latestEnd)){
-    //         weekOf.add(friday);
-    //         friday = DateUtils.addDays(friday, 7);
-    //     }
-    //     return weekOf;
-    // }
 
     private Date getFriday (Date earliestStart){
         Date friday = earliestStart;

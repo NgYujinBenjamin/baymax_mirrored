@@ -16,12 +16,14 @@ public class BayRequirement{
       
         ArrayList<Product> allProduct = BS.getAllProduct();
         HashMap<String, HashMap<String, Date>> earliestStartLatestEnd = findEarliestStartLatestEnd(allProduct);
-        
+        // {Q1: {"Earliest start": Date1, "Latest End": Date2}, Q2: ...}
+
         bayOccupancy = new TreeMap<String, ArrayList<ArrayList<Object>>>();
         // {Q1: [ (weekOf)[Date1, Date2...], (Product1)[Product1, E, E, E, O...], (Product2)[Product2, E, O, O, E...], ...], Q2:...}
         
         Set<String> allProductionQtr = earliestStartLatestEnd.keySet();
 
+        // Generate weekOf for each quarter
         for (String qtr: allProductionQtr){
             
             ArrayList<ArrayList<Object>> qtrBayOccupancy = new ArrayList<ArrayList<Object>>();
@@ -132,10 +134,6 @@ public class BayRequirement{
             weekOf.add(friday);
         }
         return weekOf;
-    }
-
-    public TreeMap<String, ArrayList<ArrayList<Object>>> getBayOccupancy(){
-        return bayOccupancy;
     }
 
     public static String toJSONString(BayRequirement br){

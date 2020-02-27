@@ -69,15 +69,22 @@ public class AlgoController {
 
         Integer gapDiff = maxGap - minGap; // End date alr considers the min gap; Can only pull forward by gapDiff more days
 
-        for (int i = 0; i < 3; i++){
-            HashMap<String, Integer> quarterHC = new HeadCount(allProduct).getQuarterHC();
-            System.out.println(quarterHC);
+        HashMap<String, Integer> quarterHC = new HeadCount(allProduct).getQuarterHC();
+        Boolean quarterHCChanged = true;
 
+        while (quarterHCChanged){
             baySchedule = new BaySchedule(baseLineProduct, allProduct, quarterHC, numBays, gapDiff);
 
             bayReq = new BayRequirement(baySchedule);
     
             allProduct = baySchedule.getAllProduct();
+
+            HashMap<String, Integer> newQuarterHC = new HeadCount(allProduct).getQuarterHC();
+            if (quarterHC.equals(newQuarterHC)){
+                quarterHCChanged = false;
+            } else {
+                quarterHC = newQuarterHC;
+            }
         }
         return BayRequirement.toJSONString(bayReq);
     }

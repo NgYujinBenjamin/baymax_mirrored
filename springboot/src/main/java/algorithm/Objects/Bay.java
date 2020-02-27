@@ -7,19 +7,18 @@ import java.util.*;
 import com.google.gson.Gson;
 
 public class Bay implements Comparable<Bay>{
+    @Exclude
+    private Integer bayID;
+    
     private ArrayList<Product> baySchedule;
     
     @Exclude
     private Date availableDate;
 
-    public Bay (){
+    public Bay(Integer bayID){
+        this.bayID = bayID;
         baySchedule = new ArrayList<Product>();
         availableDate = new Date(0);
-    }
-
-    public Bay (Date availableDate){
-        baySchedule = new ArrayList<Product>();
-        this.availableDate = availableDate;
     }
 
     public void addToBaySchedule (Product p){
@@ -42,9 +41,7 @@ public class Bay implements Comparable<Bay>{
         return thisAvailDate.compareTo(otherAvailDate);
     }
 
-    public static String toJSONString(Bay b){
-        Gson gson = new Gson();
-        String json = gson.toJson(b);
-        return json;
+    public Integer getBayID(){
+        return bayID;
     }
 }
