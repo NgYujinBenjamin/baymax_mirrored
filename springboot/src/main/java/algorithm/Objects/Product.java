@@ -100,13 +100,20 @@ public class Product implements Comparable<Product>{
     // private Date lastChangedTime;
     @Exclude
     private Date latestToolStartDate;
+    
     private Date toolStartDate;
+    
     private Date endDate;
+
     @Exclude
     private Date leaveBayDate;
+    
     private Integer gapDays;
+    
     private Boolean lockMRP;
+    
     private Date sendToStorageDate;
+    
     @Exclude
     private Integer assignedBayID;
 
@@ -223,9 +230,7 @@ public class Product implements Comparable<Product>{
             leaveBayDate = endDate;
         }
 
-        gapDays = (int) ((MRPDate.getTime() - MFGCommitDate.getTime())/ (24 * 60 * 60 * 1000));
-
-        
+        gapDays = (int) ((MRPDate.getTime() - MFGCommitDate.getTime())/ (24 * 60 * 60 * 1000));        
     }
 
     public int compareTo(Product other){

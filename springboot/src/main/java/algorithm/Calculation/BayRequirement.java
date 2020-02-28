@@ -10,26 +10,58 @@ import com.google.gson.*;
 import org.apache.commons.lang3.time.DateUtils;
 
 public class BayRequirement{
+    private TreeMap<String, ArrayList<ArrayList<Object>>> baseLineOccupancy;
     private TreeMap<String, ArrayList<ArrayList<Object>>> bayOccupancy;
 
     public BayRequirement(BaySchedule BS){
       
         ArrayList<Product> allProduct = BS.getAllProduct();
-        HashMap<String, HashMap<String, Date>> earliestStartLatestEnd = findEarliestStartLatestEnd(allProduct);
+        ArrayList<Product> baseLineProduct = BS.getBaseLineProduct();
+
+        HashMap<String, HashMap<String, Date>> baseLine_earliestStartLatestEnd = findEarliestStartLatestEnd(baseLineProduct);
+        HashMap<String, HashMap<String, Date>> bayOccupancy_earliestStartLatestEnd = findEarliestStartLatestEnd(allProduct);
         // {Q1: {"Earliest start": Date1, "Latest End": Date2}, Q2: ...}
 
+        baseLineOccupancy = new TreeMap<String, ArrayList<ArrayList<Object>>>();
         bayOccupancy = new TreeMap<String, ArrayList<ArrayList<Object>>>();
         // {Q1: [ (weekOf)[Date1, Date2...], (Product1)[Product1, E, E, E, O...], (Product2)[Product2, E, O, O, E...], ...], Q2:...}
         
-        Set<String> allProductionQtr = earliestStartLatestEnd.keySet();
+        Set<String> baseLineProductionQtr = baseLine_earliestStartLatestEnd.keySet();
+        Set<String> allProductionQtr = bayOccupancy_earliestStartLatestEnd.keySet();
 
-        // Generate weekOf for each quarter
+        // Generate weekOf for each quarter for baseLineOccupancy
+        for (String qtr: baseLineProductionQtr){
+            
+            ArrayList<ArrayList<Object>> baseLineQtrBayOccupancy = new ArrayList<ArrayList<Object>>();
+
+            Date earliestStart = baseLine_earliestStartLatestEnd.get(qtr).get("Earliest Start");
+            Date latestEnd = baseLine_earliestStartLatestEnd.get(qtr).get("Latest End");
+
+            ArrayList<Object> qtrWeekOf = generateWeekOf(earliestStart, latestEnd);
+
+            baseLineQtrBayOccupancy.add(qtrWeekOf);
+
+            baseLineOccupancy.put(qtr, baseLineQtrBayOccupancy);
+        }
+
+        for (Product p: baseLineProduct){
+            String buildQtr = p.getBuildQtr();
+            ArrayList<ArrayList<Object>> baseLineQtrBayOccupancy = baseLineOccupancy.get(buildQtr);
+            ArrayList<Object> qtrWeekOf = baseLineQtrBayOccupancy.get(0);
+            
+            ArrayList<Object> productRequirement = generateRequirement(p, qtrWeekOf);
+            baseLineQtrBayOccupancy.add(productRequirement);
+
+            baseLineOccupancy.put(buildQtr, baseLineQtrBayOccupancy);
+        }
+
+        // Generate weekOf for each quarter for bayOccupancy
         for (String qtr: allProductionQtr){
             
             ArrayList<ArrayList<Object>> qtrBayOccupancy = new ArrayList<ArrayList<Object>>();
 
-            Date earliestStart = earliestStartLatestEnd.get(qtr).get("Earliest Start");
-            Date latestEnd = earliestStartLatestEnd.get(qtr).get("Latest End");
+            Date earliestStart = bayOccupancy_earliestStartLatestEnd.get(qtr).get("Earliest Start");
+            Date latestEnd = bayOccupancy_earliestStartLatestEnd.get(qtr).get("Latest End");
 
             ArrayList<Object> qtrWeekOf = generateWeekOf(earliestStart, latestEnd);
 
@@ -137,7 +169,7 @@ public class BayRequirement{
     }
 
     public static String toJSONString(BayRequirement br){
-        Gson gson = new GsonBuilder().setExclusionStrategies(new JSONExclusionStrategy()).create();
+        Gson gson = new GsonBuilder().setExclusionStrategies(new JSONExclusionStrategy()).serializeNulls().create();
         String json = gson.toJson(br);
         return json;
     }

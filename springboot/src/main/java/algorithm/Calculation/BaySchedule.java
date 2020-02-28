@@ -12,25 +12,19 @@ import org.apache.commons.lang3.time.DateUtils;
 
 
 public class BaySchedule{
-    @Exclude
     private ArrayList<Product> allProduct;
 
-    @Exclude
+    private ArrayList<Product> baseLineProduct;
+
     private HashMap<String, Integer> quarterHC;
 
-    @Exclude
     private ArrayList<Bay> schedule;
-    
-    // @Exclude
-    // private HashMap<String, HashMap<String, Date>> earliestStartLatestEnd = new HashMap<String, HashMap<String, Date>>();
 
-    @Exclude
     private  HashMap<Date, Integer> weeklyNewBuild;
-
-
 
     public BaySchedule(ArrayList<Product> baseLineProduct, ArrayList<Product> allProduct, HashMap<String, Integer> quarterHC, Integer maxBays, Integer gapDiff) throws RuntimeException{
         this.allProduct = allProduct;
+        this.baseLineProduct = baseLineProduct;
         this.quarterHC = quarterHC;
         schedule = new ArrayList<Bay>();
 
@@ -52,32 +46,6 @@ public class BaySchedule{
 
         generateSchedule(gapDiff);
     }
-    
-    /**
-     * Assume 100% fulfillment of manufacturing backlog, while using the least number of Bays
-     */
-    // public void generateSchedule(){
-    //     // Every time we re-generate a schedule, we disregard prior calculation data
-    //     schedule = new ArrayList<Bay>();
-    //     unfulfilled = new ArrayList<Product>();
-        
-    //     for (Product p : allProduct){
-    //         Date toolStartDate = p.getToolStartDate();
-    //         // Find out which bay to assign the Product to
-    //         Integer bayAssigned = bayAssignment(toolStartDate);
-    //         // If null is returned, that means there is no suitable bay. For the product to be fulfilled, need to "create"/ utilize a new Bay.
-    //         if (bayAssigned == null){
-    //             Bay b = new Bay();
-    //             b.addToBaySchedule(p);
-    //             schedule.add(b);
-    //         }
-    //         // Suitable bay is found. We add the product to the existing Bay's schedule. 
-    //         else {
-    //             Bay b = schedule.get(bayAssigned);
-    //             b.addToBaySchedule(p);
-    //         }
-    //     }
-    // }
 
     /**
      * Attempt to fulfill as much of the manufacturing backlog as possible, without exceeding the maximum number of Bays available
@@ -104,6 +72,10 @@ public class BaySchedule{
      */
     public ArrayList<Product> getAllProduct(){
         return allProduct;
+    }
+
+    public ArrayList<Product> getBaseLineProduct(){
+        return baseLineProduct;
     }
 
     // public HashMap<String, HashMap<String, Date>> getEarliestStartLatestEnd(){
