@@ -16,24 +16,19 @@ const Postresult = () => {
     const [value, setValue] = useState(0); // this is for tab panel to display quarters
 
     const { loadUser, updateNavItem } = authContext
-    const { postResult, createExport, createExportSchedule, saved, updateSave, saveFile, clearAll, currentQuarter, currentData, scheduletest } = uploadContext;
+    const { postResult, createExport, createExportSchedule, saved, updateSave, saveFile, clearAll, scheduletest, updatePostResultEmpties } = uploadContext;
 
     useEffect(() => {
-        updateNavItem(0)
+        updateNavItem(0);
+        updatePostResultEmpties(scheduletest);
     }, [])
-
-    // if(currentQuarter !== null){
-    //     console.log(currentQuarter)
-    // }
     
-    const quarters = new Set(); // remove duplicates from baseline and predicted
-    // Object.keys(scheduletest.baseline).map(quarterName => 
-    //     quarters.add(quarterName)
-    // )
-    Object.keys(postResult.bayOccupancy).map(quarterName => 
-        quarters.add(quarterName)
+    // console.log(scheduletest);
+    
+    const qtrs = new Array();
+    Object.keys(scheduletest.bayOccupancy).map(quarterName => 
+        qtrs.push(quarterName)
     )
-    let qtrs = Array.from(quarters);
 
     const a11yProps = (index) => {
         return {
@@ -45,14 +40,6 @@ const Postresult = () => {
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
-
-    const [arr, setArr] = useState([])
-    const getData = (output) => {
-        // if(arr.length === 0){
-        // setArr([...arr, output])
-        // }
-        // setArr(prevState => prevState.map(val => val.argoID === output.argoID ? output : val))
-    }
 
     //-----HERE------
     const handleClearAll = () => {
@@ -74,41 +61,6 @@ const Postresult = () => {
         createExportSchedule(scheduletest);
     }
 
-    // const [ objs, setObjects ] = useState(postResult);
-    // if(currentQuarter !== null){
-    //     console.log(objs.bayOccupancy[currentQuarter])
-    // }
-    
-
-    // const hChange = (obj) => {
-    //     return (event) => {
-    //         const value = event.target.value;
-    //         const name = event.target.name;
-    //         // console.log(obj);
-    //         // console.log(objs)
-    //         if(currentQuarter !== null){
-    //             setObjects(prevObjs => (prevObjs.bayOccupancy[currentQuarter].slice(1).map((o) => {
-    //                 // console.log(o)
-    //                 if(o === obj){
-    //                     // console.log(obj)
-    //                     let temp = {...obj[0], [name]: value}
-    //                     obj.unshift()
-    //                     return [ temp, ...obj ]
-    //                 }
-    //             })))
-    //         }
-    //         // setObjects(prevObjs => (prevObjs.map((o) => {
-    //         //     console.log(o)
-    //         //     if (o === obj) {
-    //         //         // let temp = {...obj[0], [name]: value}
-    //         //         // obj.unshift()
-    //         //         // return [ temp, ...obj ]
-    //         //     }
-    //         //     return o;
-    //         // })))
-    //     }
-    // }
-
     return (
         <Fragment>
             <div>
@@ -124,14 +76,14 @@ const Postresult = () => {
                     >
                         {/* This will create the tab headers */}
                         { qtrs.map((key, i) => 
-                            <Tab label={key} {...a11yProps({i})} key={i}/>
+                            <Tab label={key} {...a11yProps({i})} key={i} />
                         )}
                     </Tabs>
                 </AppBar>
 
                 {qtrs.map((qtr, index) =>
-                    <Postresultqtr sendData={getData} schedule={postResult.bayOccupancy} value={value} num={index} quarter={qtr} key={index}/>
-                )}                
+                    <Postresultqtr schedule={scheduletest.bayOccupancy} baseline={scheduletest.baseLineOccupancy} value={value} num={index} quarter={qtr} key={index}/>
+                )}
             </div>
             
             <Box className={classes.marginTop}>
