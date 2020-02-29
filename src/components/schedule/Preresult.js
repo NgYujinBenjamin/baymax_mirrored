@@ -31,8 +31,15 @@ const Preresult = ({ fileName, minGap, maxGap }) => {
             setObjects(prevObjs => (prevObjs.map((o) => {
                 if (o === obj) {
                     if(name === 'MRP Date'){
-                        if(obj['Lock MRP Date'] === false){
-                            let dates = value.split('/')
+                        if(obj['Lock MRP Date'] === true){
+                            return {
+                                ...obj,
+                                [name]: value,
+                                'End Date': value
+                            }
+                        } else {
+                            let output = obj['Slot Status'] === 'OPEN' ? obj['Int. Ops Ship Readiness Date'] : obj['MFG Commit Date']
+                            let dates = output.split('/')
                             let year = parseInt(dates[2])
                             let month = parseInt(dates[1]) - 1
                             let day = parseInt(dates[0])
@@ -43,32 +50,27 @@ const Preresult = ({ fileName, minGap, maxGap }) => {
                                 [name]: value,
                                 'End Date': currentDate.toLocaleDateString()
                             }
-                        } else {
-                            return {
-                                ...obj,
-                                [name]: value,
-                                'End Date': value
-                            }
                         }
                     }
 
                     if(name === 'Lock MRP Date'){
-                        if(value === false){
-                            let dates = obj['MRP Date'].split('/')
+                        if(value === true){
+                            return {
+                                ...obj,
+                                'End Date': obj['MRP Date'],
+                                [name]: value
+                            }
+                        } else {
+                            let output = obj['Slot Status'] === 'OPEN' ? obj['Int. Ops Ship Readiness Date'] : obj['MFG Commit Date']
+                            let dates = output.split('/')
                             let year = parseInt(dates[2])
                             let month = parseInt(dates[1]) - 1
                             let day = parseInt(dates[0])
                             let currentDate = new Date(year, month, day)
                             currentDate.setDate(currentDate.getDate() - minGap)
                             return {
-                                ...obj, 
-                                'End Date': currentDate.toLocaleDateString(), 
-                                [name]: value
-                            }
-                        } else {
-                            return {
-                                ...obj, 
-                                'End Date': obj['MRP Date'], 
+                                ...obj,
+                                'End Date': currentDate.toLocaleDateString(),
                                 [name]: value
                             }
                         }
@@ -86,21 +88,23 @@ const Preresult = ({ fileName, minGap, maxGap }) => {
         const regxDate = /^\d\d\/\d\d\/\d\d\d\d$/;
         const regxNum = /^[0-9]+$/;
         let preCounter = false;
+        let errorArr = []
 
         //check if Cycle Time Days and MRP Date are NOT in the right format
         objs.forEach(obj => {
             if(!regxNum.test(obj['Cycle Time Days']) || !regxDate.test(obj['MRP Date'])){
-                setAlert(`ArgoID: ${obj['Argo ID']}. Please enter a valid number in Cycle Time Days and valid date format (DD/MM/YYYY) in MRP Date`)
+                errorArr.push(`ArgoID: ${obj['Argo ID']}. Please enter a valid number in Cycle Time Days and valid date format (DD/MM/YYYY) in MRP Date`)
                 preCounter = true;
             }
         })
 
         if(!preCounter) {
-            // console.log(objs)
             updateSchedule(objs);
-            createResult(objs, bays, baseline);
+            createResult(baseline, objs, bays, minGap, maxGap);
             setStepCount(stepcount + 2); // add 2 since it will be the end of the step
         } else {
+            errorArr.forEach(val => setAlert(val))
+            errorArr = [];
             window.scrollTo(0,0);
         }
     }

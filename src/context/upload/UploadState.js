@@ -3,7 +3,7 @@ import UploadContext from './uploadContext';
 import UploadReducer from './uploadReducer';
 import XLSX from 'xlsx';
 import axios from 'axios';
-import { SET_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS, UPDATE_POST_RESULT, UPDATE_QUARTER, UPDATE_DATA, UPDATE_SAVE } from '../types';
+import { SET_BASELINE, UPDATE_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS, UPDATE_POST_RESULT, UPDATE_QUARTER, UPDATE_DATA, UPDATE_SAVE } from '../types';
 
 const UploadState = (props) => {
     const initialState = {
@@ -14948,17 +14948,16 @@ const UploadState = (props) => {
     }
 
     //create result - mass slot upload
-    const createResult = async (objs, bay, baseline) => {
+    // baseline, objs, bays, minGap, maxGap
+    const createResult = async (baseline, masterops, bays, mingap, maxgap) => {
         setLoading();
 
-        objs.forEach(obj => {
+        masterops.forEach(obj => {
             obj['Cycle Time Days'] = parseInt(obj['Cycle Time Days'])
         })
 
-        let preResult = null;
-        // baseline !== null ? preResult = { bay: bay, data: [...objs], baseline: baseline } : preResult = { bay: bay, data: [...objs] }
-        preResult =  [...objs];
-        // console.log(preResult)
+        let preResult = { baseline: baseline,  masterOps: masterops, bay: bays, minGap: mingap, maxGap: maxgap}
+        console.log(preResult)
 
         const config = {
             headers: {
@@ -14967,7 +14966,7 @@ const UploadState = (props) => {
         }
 
         try {
-            const res = await axios.post('http://localhost:8080/algo', preResult, config);
+            const res = await axios.post('http://localhost:8080/firstScheduling', preResult, config);
 
             dispatch({
                 type: CREATE_RESULT,
@@ -14980,18 +14979,19 @@ const UploadState = (props) => {
     }
 
     //import masterops
-    const setSchedule = async (file, minGap) => {
+    const setSchedule = async (file, minGap, baseFile) => {
         setLoading();
 
         let data = await convertExcelToJSON(file);
         let scheduleCounter = false;
 
+        data[data.length - 1]['Argo ID'] === undefined && data.pop();
+
         //if excelfile is not masterops data/excel file
-        const firstTenData = data.slice(0,10);
-        firstTenData.forEach(val => {
-            if(!('Argo ID' in val) && !('Slot ID/UTID' in val) && !('Build Product' in val) && !('Cycle Time Days' in val) && !('MRP Date' in val)){
-                scheduleCounter = true
-            }
+        data.forEach(val => {
+          if( !(val.hasOwnProperty('Argo ID')) && !(val.hasOwnProperty('Slot ID/UTID')) && !(val.hasOwnProperty('Build Product')) && !(val.hasOwnProperty('Cycle Time Days')) && !(val.hasOwnProperty('MRP Date')) && !(val.hasOwnProperty('MFG Commit Date')) && !(val.hasOwnProperty('Int. Ops Ship Readiness Date'))){
+            scheduleCounter = true
+          }
         })
 
         if(scheduleCounter){
@@ -15000,29 +15000,91 @@ const UploadState = (props) => {
                 payload: 'Please upload a proper Masterops excel file'
             })
         } else {
-            //else (masterops data/excel file)
-            let filtered = data.filter(obj => obj['Plan Product Type'] === 'Tool');
+            //else (masterops data/excel file 
+            let filtered_one = data.filter(obj => obj['Plan Product Type'] === 'Tool');
+
+            //remove all the slotid/utid thats is the same as baseline inside masterops && put in inside baseline instead
+            let filtered_two = filterAndInsertToBaseline(filtered_one, baseFile)
+
+            //check of previously shipped products (today's date & mfg commit date)
+            let filtered = filtered_two.filter(obj => obj['MFG Commit Date'] >= new Date());
+
+            //check date in the right format
             filtered.forEach(obj => {
                 checkDatesValue(obj, ['MRP Date','Created On','Created Time','SAP Customer Req Date','Ship Recog Date','Slot Request Date','Int. Ops Ship Readiness Date','MFG Commit Date','Div Commit Date','Changed On','Last Changed Time'])
             });
+
+            //setup for end date
             filtered.forEach(obj => {
-              obj['Lock MRP Date'] = obj['Lock MRP Date'] = false
-              let dates = obj['MRP Date'].split('/')
-              let year = parseInt(dates[2])
-              let month = parseInt(dates[1]) - 1
-              let day = parseInt(dates[0])
-              let currentDate = new Date(year, month, day)
-              currentDate.setDate(currentDate.getDate() - minGap)
-              obj['End Date'] = obj['Lock MRP Date'] === false ? currentDate.toLocaleDateString() : obj['MRP Date']
+              obj['Lock MRP Date'] = false
+
+              let output = obj['Slot Status'] === 'OPEN' ? obj['Int. Ops Ship Readiness Date'] : obj['MFG Commit Date']
+              let outDates = output.split('/')
+              let outYear = parseInt(outDates[2])
+              let outMonth = parseInt(outDates[1]) - 1
+              let outDay = parseInt(outDates[0])
+              let outcurrentDate = new Date(outYear, outMonth, outDay)
+              outcurrentDate.setDate(outcurrentDate.getDate() - minGap)
+              
+              obj['End Date'] = obj['Lock MRP Date'] === false ? outcurrentDate.toLocaleDateString() : obj['MRP Date']
             })
 
-            filtered[filtered.length - 1]['Argo ID'] === undefined && filtered.pop();
+            // filtered[filtered.length - 1]['Argo ID'] === undefined && filtered.pop();
+
+            // console.log(filtered)
 
             dispatch({
                 type: SET_SCHEDULE,
                 payload: filtered
             });
         }
+    }
+
+    //get baseline
+    const getBaseline = async () => {
+      setLoading()
+
+      try {
+        // const res = await axios.get('http://localhost:8080/getBaseline')
+        dispatch({
+          type: SET_BASELINE,
+          payload: []
+        })
+      } catch (err) {
+        
+      }
+    }
+
+    //filter then insert/dispatch to baseline
+    const filterAndInsertToBaseline = (filtered, base) => {
+      let tempBase = [];
+      
+      filtered.forEach(obj => {
+        base.forEach(val => {
+          if(val['Slot ID/UTID'] === obj['Slot ID/UTID']){
+            tempBase.push(obj)
+          }
+        })
+      })
+
+      if(tempBase.length !== 0){
+        tempBase.forEach(val => {
+          filtered.forEach(obj => {
+            if(val === obj){
+              obj['emptyToDelete'] = ''
+            }
+          })
+        })
+
+        dispatch({
+          type: UPDATE_BASELINE,
+          payload: tempBase
+        })
+
+        return filtered.filter(obj => !(obj.hasOwnProperty('emptyToDelete')))
+      } else {
+        return filtered
+      }
     }
 
     //check date value if undefined
@@ -15046,7 +15108,7 @@ const UploadState = (props) => {
     const updateSave = (res) => dispatch({ type: UPDATE_SAVE, payload: res })
 
     //set bays
-    const setBays = (num) => dispatch({ type: SET_BAYS, payload: num })
+    const setBays = (bayNum) => dispatch({ type: SET_BAYS, payload: bayNum })
 
     //clear preresult
     const clearPreresult = () => dispatch({ type: CLEAR_PRERESULT })
@@ -15056,12 +15118,13 @@ const UploadState = (props) => {
 
     //set baseline
     const setBaseline = async (file) => {
+        setLoading();
+
         const data = await convertExcelToJSON(file);
-        // console.log(data.slice(0, data.length));
 
         let baselineChecker = false;
-        data.slice(0, data.length - 1).forEach(obj => {
-          if(!(obj.hasOwnProperty('Slot/UTID'))){
+        data.forEach(obj => {
+          if(Object.keys(obj).length !== 1 || !(obj.hasOwnProperty('Slot ID/UTID'))){
             baselineChecker = true;
           }
         })
@@ -15077,8 +15140,6 @@ const UploadState = (props) => {
             payload: data
           })
         }
-
-        
     }
 
     //convert excel to json
@@ -15135,7 +15196,8 @@ const UploadState = (props) => {
             updatePostResult,
             updateCurrentQuarter,
             updateCurrentData,
-            updateSave
+            updateSave,
+            getBaseline
         }}>
         {props.children}
     </UploadContext.Provider>

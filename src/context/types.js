@@ -1,4 +1,5 @@
 export const SET_BASELINE = 'SET_BASELINE';
+export const UPDATE_BASELINE = 'UPDATE_BASELINE';
 export const SET_SCHEDULE = 'SET_SCHEDULE';
 export const SET_BAYS = 'SET_BAYS';
 export const CLEAR_PRERESULT = 'CLEAR_PRERESULT';
@@ -36,3 +37,4 @@ export const UPDATE_POST_RESULT = 'UPDATE_POST_RESULT';
 export const UPDATE_QUARTER = 'UPDATE_QUARTER'; 
 export const UPDATE_DATA = 'UPDATE_DATA'; 
 export const UPDATE_SAVE = 'UPDATE_SAVE'; 
+export const CLEAR_ONE = 'CLEAR_ONE'; 
