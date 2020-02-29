@@ -13,7 +13,7 @@ public class HeadCount{
         HashMap<String, Integer> quarterJobs = new HashMap<String, Integer>();
         quarterHC = new HashMap<String, Integer>();
         
-        int newBuildCount;
+        Integer newBuildCount;
         for (Product p: allProduct){
             String buildQtr = p.getBuildQtr();
             if (quarterJobs.containsKey(buildQtr)){
