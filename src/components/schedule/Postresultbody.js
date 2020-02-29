@@ -8,8 +8,6 @@ const Postresultbody = ({ result, baseline, quarter }) => {
     
     const uploadContext = useContext(UploadContext);
     const { currentQuarter, updateCurrentQuarter, updatePostResult, postResult, scheduletest, saved, updateSave } = uploadContext;
-    
-    // console.log(objs);
 
     useEffect(() => {
         if(currentQuarter === null || currentQuarter !== quarter){
@@ -28,16 +26,24 @@ const Postresultbody = ({ result, baseline, quarter }) => {
         //eslint-disable-next-line
     }, [currentQuarter, objs, saved])
     
+    // console.log(objs);
+
     const handleChange = (obj) => {
         return (event) => {
             const value = event.target.value;
             const name = event.target.name;
-            console.log(obj);
-            console.log(event.target)
+            // console.log(obj);
+            // console.log(event.target)
             setObjects(prevObjs => (prevObjs.map((o) => {
                 // console.log(o)
                 if (o === obj) {
-                    return [ {...obj[0], [name]: parseInt(value)}, ...obj.slice(1) ]
+                    if (name === 'MRPDate'){
+                        return [ {...obj[0], 'MRPDate': value}, ...obj.slice(1) ]
+                    }
+                    if (name === 'cycleTimeDays'){
+                        return [ {...obj[0], 'cycleTimeDays': parseInt(value)}, ...obj.slice(1) ]
+                    }
+                    // return [ {...obj[0], [name]: parseInt(value)}, ...obj.slice(1) ]
                 }
                 return o;
             })))

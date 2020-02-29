@@ -41,7 +41,7 @@ const Postresultqtr = ({ schedule, baseline, value, num, quarter }) => {
     return (
         <Fragment>
             <TabPanel value={value} index={num}>
-                <TableContainer component={Paper}>
+                <TableContainer component={Paper} style={{maxHeight:440}}>
                     <Table style={{tableLayout: "auto"}}>
                         {/* TableHeader */}
                         <Postresultheader result={schedule[quarter][0]}/>

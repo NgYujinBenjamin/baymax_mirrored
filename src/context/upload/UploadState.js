@@ -3,7 +3,7 @@ import UploadContext from './uploadContext';
 import UploadReducer from './uploadReducer';
 import XLSX from 'xlsx';
 import axios from 'axios';
-import { SET_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS, UPDATE_POST_RESULT, UPDATE_QUARTER, UPDATE_DATA, UPDATE_SAVE, UPDATE_POST_RESULT_1 } from '../types';
+import { SET_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS, UPDATE_POST_RESULT, UPDATE_QUARTER, UPDATE_DATA, UPDATE_SAVE, UPDATE_POST_RESULT_1, UPDATE_POST_RESULT_2 } from '../types';
 
 const UploadState = (props) => {
     const initialState = {
@@ -15368,6 +15368,10 @@ const UploadState = (props) => {
       })
     }
 
+    // ##################################################################################################
+    // ######################################## POST RESULT START #######################################
+    // ##################################################################################################
+
     // get all quarters
     const getQtrs = (postResult) => {
       const qtrs = new Array();
@@ -15432,7 +15436,7 @@ const UploadState = (props) => {
       })
     }
 
-    //update post result data
+    //update post result data when user click "Save"
     const updatePostResult = (postResult, objs, quarter) => {      
       objs = JSON.parse(objs);
       const dates = postResult.bayOccupancy[quarter][0];
@@ -15442,9 +15446,58 @@ const UploadState = (props) => {
       // console.log(postResult);
 
       dispatch({ 
-        type: UPDATE_POST_RESULT, payload: postResult 
+        type: UPDATE_POST_RESULT,
+        payload: postResult 
       })
     }
+
+    const dateConversion = (dateString) => {
+      let output = dateString.split("/");
+      return new Date(output[2], output[1], output[0]); 
+    }
+
+    //set post result dates
+    const setPostResult = (postResult) => {
+      const minGap = (24*60*60*1000) * 3; // hardcoded for now to 3 days
+      const objItemsToChange = ["MRPDate", "intOpsShipReadinessDate", "MFGCommitDate", "shipRecogDate", "toolStartDate", 'endDate'];
+
+      Object.keys(postResult).map( occupancy => {
+        Object.keys(postResult[occupancy]).map( quarter => {
+          
+          let currentQtr = postResult[occupancy][quarter];
+
+          for(let i=0; i<currentQtr[0].length; i++){
+            currentQtr[0][i] = new Date(currentQtr[0][i]).toLocaleDateString('en-GB');
+            // console.log(currentQtr[0][i]);
+          }
+
+          for(let i=1; i<currentQtr.length; i++){
+            objItemsToChange.forEach(key => {
+              if(key !== "endDate"){
+                currentQtr[i][0][key] = new Date(currentQtr[i][0][key]).toLocaleDateString('en-GB');
+              } else{
+                let intRedDate = dateConversion(currentQtr[i][0].intOpsShipReadinessDate);
+                let MFGCommit = dateConversion(currentQtr[i][0].MFGCommitDate);
+                {currentQtr[i][0].fabID == "OPEN" ? 
+                  currentQtr[i][0][key] = new Date(intRedDate.setTime(intRedDate.getTime() - minGap)).toLocaleDateString('en-GB') : currentQtr[i][0][key] = new Date(MFGCommit.setTime(MFGCommit.getTime() - minGap)).toLocaleDateString('en-GB');
+                }
+              }
+            })
+          }
+
+        })
+      })
+
+      dispatch({ 
+        type: UPDATE_POST_RESULT_2,
+        payload: postResult 
+      })
+
+    }
+
+    // ##################################################################################################
+    // ######################################### POST RESULT END ########################################
+    // ##################################################################################################
 
     //create result - mass slot upload
     const createResult = async (objs, bay, baseline) => {
@@ -15633,7 +15686,8 @@ const UploadState = (props) => {
             updatePostResult,
             updateCurrentQuarter,
             updateCurrentData,
-            updateSave
+            updateSave,
+            setPostResult
         }}>
         {props.children}
     </UploadContext.Provider>

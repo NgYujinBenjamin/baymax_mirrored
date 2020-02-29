@@ -16,15 +16,16 @@ const Postresult = () => {
     const [value, setValue] = useState(0); // this is for tab panel to display quarters
 
     const { loadUser, updateNavItem } = authContext
-    const { postResult, createExport, createExportSchedule, saved, updateSave, saveFile, clearAll, scheduletest, updatePostResultEmpties } = uploadContext;
+    const { postResult, createExport, createExportSchedule, saved, updateSave, saveFile, clearAll, scheduletest, updatePostResultEmpties, setPostResult } = uploadContext;
 
     useEffect(() => {
         updateNavItem(0);
         updatePostResultEmpties(scheduletest);
+        setPostResult(scheduletest);
     }, [])
     
-    // console.log(scheduletest);
-    
+    console.log(scheduletest);
+
     const qtrs = new Array();
     Object.keys(scheduletest.bayOccupancy).map(quarterName => 
         qtrs.push(quarterName)
