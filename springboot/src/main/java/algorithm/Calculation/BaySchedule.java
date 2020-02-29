@@ -1,10 +1,10 @@
-package main.java.algorithm.Calculation;
-
-import main.java.algorithm.ExclusionStrategy.*;
-import main.java.algorithm.Objects.*;
+package algorithm.Calculation;
 
 import java.util.*;
 
+import algorithm.ExclusionStrategy.JSONExclusionStrategy;
+import algorithm.Objects.Bay;
+import algorithm.Objects.Product;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 

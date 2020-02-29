@@ -1,6 +1,6 @@
-package main.java.algorithm.Objects;
+package algorithm.Objects;
 
-import main.java.algorithm.ExclusionStrategy.*;
+import algorithm.ExclusionStrategy.Exclude;
 
 import java.util.*;
 import java.text.*;

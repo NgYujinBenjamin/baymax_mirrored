@@ -1,7 +1,6 @@
-package main.java.authentication.json;
+package authentication.json;
 
-import java.util.*;
-import java.text.*;
+import java.util.ArrayList;
 
 public class JsonResponses implements JsonObject {
 

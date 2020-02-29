@@ -1,9 +1,6 @@
-package main.java.authentication.json.users;
+package authentication.json.users;
 
-import java.util.*;
-import java.text.*;
-
-import main.java.authentication.json.JsonObject;
+import authentication.json.JsonObject;
 
 public class LoginDetails implements JsonObject{
     private String username;

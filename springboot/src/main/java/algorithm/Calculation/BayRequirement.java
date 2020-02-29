@@ -1,10 +1,10 @@
-package main.java.algorithm.Calculation;
+package algorithm.Calculation;
 
-import main.java.algorithm.ExclusionStrategy.*;
-import main.java.algorithm.Objects.*;
 
 import java.util.*;
 
+import algorithm.ExclusionStrategy.JSONExclusionStrategy;
+import algorithm.Objects.Product;
 import com.google.gson.*;
 
 import org.apache.commons.lang3.time.DateUtils;

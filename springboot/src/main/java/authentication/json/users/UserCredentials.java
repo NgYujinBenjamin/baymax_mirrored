@@ -1,7 +1,4 @@
-package main.java.authentication.json.users;
-
-import java.util.*;
-import java.text.*;
+package authentication.json.users;
 
 public class UserCredentials extends User{
     public String staff_id;

@@ -1,7 +1,4 @@
-package main.java.authentication.json;
-
-import java.util.*;
-import java.text.*;
+package authentication.json;
 
 public class GetMassSlotUploadResult implements JsonObject{
     private String msu_id;

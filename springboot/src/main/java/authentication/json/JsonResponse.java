@@ -1,23 +1,20 @@
-package main.java.authentication.json;
+package authentication.json;
 
-import java.util.*;
-import java.text.*;
-
-public class JsonResponse implements JsonObject{
+public class JsonResponse implements JsonObject {
 
     private String type;
     private JsonObject data;
-    
-    public JsonResponse(String type, JsonObject data){
+
+    public JsonResponse(String type, JsonObject data) {
         this.type = type;
         this.data = data;
     }
 
-    public String getType(){
+    public String getType() {
         return type;
     }
 
-    public JsonObject getData(){
+    public JsonObject getData() {
         return data;
     }
 

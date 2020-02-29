@@ -1,35 +1,19 @@
-package main.java.authentication;
+package authentication;
 
-import com.auth0.jwt.JWT;
 
-import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
+import authentication.connection.mysqlcon;
+import authentication.json.*;
+import authentication.json.users.LoginDetails;
+import authentication.json.users.NewPassword;
+import authentication.json.users.RegistrationDetails;
+import authentication.json.users.User;
+import exceptions.InvalidTokenException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.http.*;
-
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-
-import java.sql.*;
-import java.util.*;
-import java.text.SimpleDateFormat;
-
-import connection.*;
-
-import main.java.authentication.json.users.*;
-import main.java.authentication.json.*;
-import authentication.Token;
-
-import authentication.*;
-
-import main.java.exceptions.*;
-
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 @CrossOrigin
 @RestController
@@ -39,7 +23,7 @@ public class Controller {
 
     // done
     @RequestMapping(path = "/register", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-    public JsonObject register(@RequestBody RegistrationDetails userDetails) throws SQLException, ClassNotFoundException{
+    public JsonObject register(@RequestBody RegistrationDetails userDetails) throws SQLException, ClassNotFoundException {
         mysqlcon conn = new mysqlcon();
         try {
             conn.addUser(userDetails.getUsername(),
@@ -51,22 +35,17 @@ public class Controller {
 
             String token = TOKEN.createToken(userDetails.getUsername());
             return new TokenSuccess(token);
-        } catch (SQLException e) {
-            throw e;
-        } catch (ClassNotFoundException e){
+        } catch (ClassNotFoundException e) {
             throw new ClassNotFoundException("Backend Issue: ClassNotFound Exception at register method in Controller.java");
         }
     }
 
     // original by Ben
     @RequestMapping(path = "/getusers", method = RequestMethod.GET, produces = "application/json")
-    public ArrayList<User> getUsers() throws SQLException, ClassNotFoundException{
+    public ArrayList<User> getUsers() throws SQLException, ClassNotFoundException {
         mysqlcon conn = new mysqlcon();
         try {
             return conn.getAllUsers();
-
-        } catch (SQLException e) {
-            throw e;
         } catch (ClassNotFoundException e) {
             throw new ClassNotFoundException("Backend Issue: ClassNotFound Exception at getUsers method in Controller.java");
         }
@@ -82,9 +61,7 @@ public class Controller {
         try {
             conn.changePassword(details.getUsername(), TOKEN.generateMD5Hash(details.getOldPassword()), TOKEN.generateMD5Hash(details.getNewPassword()));
             return new JsonSuccess("Password has been updated successfully.");
-        } catch (SQLException e) {
-            throw e;
-        } catch (ClassNotFoundException e){
+        } catch (ClassNotFoundException e) {
             throw new ClassNotFoundException("Backend Issue: ClassNotFound Exception at changePassword method in Controller.java");
         }
     }
@@ -94,14 +71,12 @@ public class Controller {
     public JsonObject resetPass(@RequestParam(value = "username") String username) throws SQLException, ClassNotFoundException {
         if (username == null) {
             throw new NullPointerException("Username cannot be empty.");
-        } 
+        }
         mysqlcon conn = new mysqlcon();
         try {
             conn.resetPassword(username);
             return new JsonSuccess("Password has been reset successfully");
-        } catch (SQLException e) {
-            throw e;
-        } catch (ClassNotFoundException e){
+        } catch (ClassNotFoundException e) {
             throw new ClassNotFoundException("Backend Issue: ClassNotFound Exception at changePassword method in Controller.java");
         }
     }
@@ -109,7 +84,7 @@ public class Controller {
 
     // done    
     @RequestMapping(path = "/login", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-    public JsonObject login(@RequestBody LoginDetails inputDetails) throws SQLException, ClassNotFoundException, NullPointerException, InvalidTokenException{
+    public JsonObject login(@RequestBody LoginDetails inputDetails) throws SQLException, ClassNotFoundException, NullPointerException, InvalidTokenException {
         if (inputDetails.getUsername() == null || inputDetails.getPassword() == null) {
             throw new NullPointerException("Username or password cannot be empty.");
         }
@@ -127,31 +102,27 @@ public class Controller {
             } else {
                 throw new InvalidTokenException("Username or password is invalid");
             }
-        } catch (SQLException e) {
-            throw e;
-        } catch (ClassNotFoundException e){
+        } catch (ClassNotFoundException e) {
             throw new ClassNotFoundException("Backend Issue: ClassNotFound Exception at login method in Controller.java");
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             throw new NullPointerException("Username or password is invalid.");
         }
     }
 
     // done
     @RequestMapping(path = "/verify", method = RequestMethod.GET)
-    public ResponseEntity<JsonObject> verifyToken(@RequestHeader("x-auth-token") String token)  throws Exception {
+    public ResponseEntity<JsonObject> verifyToken(@RequestHeader("x-auth-token") String token) throws Exception {
         try {
 
             if (TOKEN.isTokenValid(token)) {
 
-                return new ResponseEntity<JsonObject>(new JsonResponse("SUCCESS", TOKEN.retrieveUserObject(token)), HttpStatus.OK);
+                return new ResponseEntity<>(new JsonResponse("SUCCESS", TOKEN.retrieveUserObject(token)), HttpStatus.OK);
             }
             throw new InvalidTokenException("Token is invalid");
 
-        }  catch (SQLException e) {
-            throw e;
-        } catch (ClassNotFoundException e){
+        } catch (ClassNotFoundException e) {
             throw new ClassNotFoundException("Backend Issue: ClassNotFound Exception at verify method in Controller.java");
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             throw new NullPointerException("Token is invalid");
         }
 
@@ -207,10 +178,7 @@ public class Controller {
         mysqlcon conn = new mysqlcon();
         try {
             ArrayList<GetFacilityUtilResult> staffUsage = conn.readFacilityUtil(staffId);
-            ArrayList<JsonObject> result = new ArrayList<JsonObject>();
-            for (JsonObject row : staffUsage) {
-                result.add(row);
-            }
+            ArrayList<JsonObject> result = new ArrayList<JsonObject>(staffUsage);
 
             return new ResponseEntity(new JsonResponses("SUCCESS", result), HttpStatus.OK);
         } catch (Exception e) {
@@ -230,13 +198,12 @@ public class Controller {
                 faci_id = conn.getNextFaciId();
                 String out = conn.createFacilityUtil(data, staffId, faci_id);
                 return "created facility, next faci_id => " + faci_id;
-            } else if (staffUsage.size() > 0) {
+            } else {
                 faci_id = Integer.parseInt(staffUsage.get(0).getFaci_id());
                 conn.removeUsage(staffId);
 //                String out = conn.createFacilityUtil(data, staffId, faci_id);
                 return conn.createFacilityUtil(data, staffId, faci_id);
             }
-            return "x";
         } catch (Exception e) {
             return "y";
         }
@@ -250,6 +217,11 @@ public class Controller {
         } catch (Exception e) {
             return "Fail";
         }
+    }
+
+    @RequestMapping(path = "/hellosa", method = RequestMethod.GET, produces = "application/json")
+    public String hellosa() {
+        return "Superman was here";
     }
 
 

@@ -1,18 +1,19 @@
 package authentication;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
-import java.util.*;
-import java.security.*;
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.util.Base64;
+import java.util.Date;
 
-import main.java.authentication.json.JsonObject;
-import main.java.authentication.json.users.*;
-
+import authentication.connection.mysqlcon;
+import authentication.json.users.User;
 import com.auth0.jwt.JWT;
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 
-import connection.*;
+//import connection.*;
 
 // Token class in charge of creating and verifying JWTs.
 
@@ -23,12 +24,10 @@ public class Token {
 
     public String createToken(String username){
         long EXPIRATION_TIME = 5 * 60 * 60 * 1000;
-        String token = JWT.create()
+        return JWT.create()
                 .withSubject((username))
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(HMAC512(SECRET.getBytes()));
-            
-        return token;
     }
 
     public boolean isTokenValid(String user_token) throws SQLException, ClassNotFoundException, NullPointerException{
@@ -41,10 +40,7 @@ public class Token {
             throw new NullPointerException();
         }
         String dbusername = userObject.getUsername();
-        if (dbusername.equals(username)){
-            return true;
-        }
-        return false;
+        return dbusername.equals(username);
     }
 
     //modify code - inform Ben
@@ -57,9 +53,7 @@ public class Token {
         try{
             User userObject = conn.getUser(username);
         return userObject;
-        }  catch (SQLException e) {
-            throw e;
-        } catch (ClassNotFoundException e){
+        }  catch (SQLException | ClassNotFoundException e) {
             throw e;
         }
     }
@@ -72,9 +66,9 @@ public class Token {
 
             BigInteger no = new BigInteger(1, messageDigest); 
     
-            String hashText = no.toString(16); 
+            String hashText = no.toString(16);
             while (hashText.length() < 32) { 
-                hashText = "0" + hashText; 
+                hashText = "0" + hashText;
             } 
 
             return hashText;
@@ -84,19 +78,16 @@ public class Token {
     }
 
     public static String base64encode(String to_encode){
-        String encodedString = Base64.getEncoder().encodeToString(to_encode.getBytes());
-        return encodedString;
+        return Base64.getEncoder().encodeToString(to_encode.getBytes());
     }
 
     public static String base64decode(String to_decode){
         byte[] decodedStringByte = Base64.getDecoder().decode(to_decode);
-        String decodedString = new String(decodedStringByte);
-        return decodedString;
+        return new String(decodedStringByte);
     }
 
     public static String getDate(){
-        String date = (java.time.LocalDate.now().toString());
-        return date;
+        return (LocalDate.now().toString());
     }
 
 }

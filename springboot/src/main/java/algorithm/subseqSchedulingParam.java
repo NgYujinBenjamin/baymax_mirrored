@@ -1,10 +1,11 @@
-package main.java.algorithm;
+package algorithm;
+import authentication.json.JsonObject;
+
 import java.util.*;
 import java.text.*;
 
-import main.java.authentication.json.JsonObject;
 
-public class subseqSchedulingParam implements JsonObject{
+public class subseqSchedulingParam implements JsonObject {
     public Map<String, Map<String, List<List<Object>>>> preSchedule;
     public Integer numBays;
     public Integer minGap;

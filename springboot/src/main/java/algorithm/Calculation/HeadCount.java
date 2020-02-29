@@ -1,6 +1,6 @@
-package main.java.algorithm.Calculation;
+package algorithm.Calculation;
 
-import main.java.algorithm.Objects.*;
+import algorithm.Objects.Product;
 
 import java.util.*;
 
@@ -13,7 +13,7 @@ public class HeadCount{
         HashMap<String, Integer> quarterJobs = new HashMap<String, Integer>();
         quarterHC = new HashMap<String, Integer>();
         
-        Integer newBuildCount;
+        int newBuildCount;
         for (Product p: allProduct){
             String buildQtr = p.getBuildQtr();
             if (quarterJobs.containsKey(buildQtr)){

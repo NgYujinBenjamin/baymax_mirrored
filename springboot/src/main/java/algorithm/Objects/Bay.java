@@ -1,10 +1,10 @@
-package main.java.algorithm.Objects;
-
-import main.java.algorithm.ExclusionStrategy.*;
+package algorithm.Objects;
 
 import java.util.*;
 
+import algorithm.ExclusionStrategy.Exclude;
 import com.google.gson.Gson;
+import algorithm.Objects.Product;
 
 public class Bay implements Comparable<Bay>{
     @Exclude

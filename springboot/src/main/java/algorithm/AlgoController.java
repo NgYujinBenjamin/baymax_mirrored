@@ -1,14 +1,10 @@
-package main.java.algorithm;
+package algorithm;
 
-import main.java.algorithm.Calculation.*;
-import main.java.algorithm.Objects.*;
-
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestParam;
+import algorithm.Calculation.BayRequirement;
+import algorithm.Calculation.BaySchedule;
+import algorithm.Calculation.HeadCount;
+import algorithm.Objects.Product;
+import org.springframework.web.bind.annotation.*;
 
 // import main.java.algorithm.*;
 
@@ -50,7 +46,7 @@ public class AlgoController {
 
         ArrayList<Product> allProduct = new ArrayList<Product>();
         ArrayList<Product> baseLineProduct = new ArrayList<Product>();
-        
+
         for (int i = 0; i < data.size(); i++){
             Product p = new Product(data.get(i));
             allProduct.add(p);

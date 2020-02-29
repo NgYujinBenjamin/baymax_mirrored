@@ -1,16 +1,12 @@
-package connection;
+package authentication.connection;
+
+import authentication.json.*;
+import authentication.json.users.RegistrationDetails;
+import authentication.json.users.User;
+import authentication.json.users.UserCredentials;
 
 import java.sql.*;
 import java.util.*;
-
-import main.java.authentication.json.users.*;
-import main.java.authentication.json.HistoryDetails;
-import main.java.authentication.json.JsonError;
-import main.java.authentication.json.JsonObject;
-import main.java.authentication.json.MassSlotUploadDetails;
-import main.java.authentication.json.GetMassSlotUploadResult;
-import main.java.authentication.json.FacilityUtil;
-import main.java.authentication.json.GetFacilityUtilResult;
 
 // import org.springframework.beans.factory.annotation.*;
 // import org.springframework.stereotype.*;
@@ -381,15 +377,8 @@ public class mysqlcon {
     }
 
     public int checkUpdateCounts(int[] updateCounts) {
-        for (int i = 0; i < updateCounts.length; i++) {
-//            if (updateCounts[i] >= 0) {
-//                System.out.println("OK; updateCount=" + updateCounts[i]);
-//            } else if (updateCounts[i] == Statement.SUCCESS_NO_INFO) {
-//                System.out.println("OK; updateCount=Statement.SUCCESS_NO_INFO");
-//            } else if (updateCounts[i] == Statement.EXECUTE_FAILED) {
-//                return -1;
-//            }
-            if (updateCounts[i] == Statement.EXECUTE_FAILED) {
+        for (int updateCount : updateCounts) {
+            if (updateCount == Statement.EXECUTE_FAILED) {
                 return -1;
             }
         }

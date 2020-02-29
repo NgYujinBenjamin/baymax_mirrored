@@ -1,10 +1,8 @@
-package main.java.authentication.json.users;
+package authentication.json.users;
 
-import java.util.*;
-import java.text.*;
+import authentication.json.JsonObject;
 
-import main.java.authentication.json.JsonObject;
-public class User implements JsonObject{
+public class User implements JsonObject {
     public String username;
     public String firstname;
     public String lastname;

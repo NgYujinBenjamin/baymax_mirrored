@@ -1,10 +1,11 @@
-package main.java.algorithm;
+package algorithm;
+import authentication.json.JsonObject;
+
 import java.util.*;
 import java.text.*;
 
-import main.java.authentication.json.JsonObject;
 
-public class firstSchedulingParam implements JsonObject{
+public class firstSchedulingParam implements JsonObject {
     public List<Map<String,Object>> baseLineData;
     public List<Map<String,Object>> data;
     public Integer numBays;

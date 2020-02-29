@@ -1,7 +1,4 @@
-package main.java.authentication.json;
-
-import java.util.*;
-import java.text.*;
+package authentication.json;
 
 public class FacilityUtil implements JsonObject {
     private String slot_id_utid;

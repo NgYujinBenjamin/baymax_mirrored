@@ -1,7 +1,4 @@
-package main.java.authentication.json;
-
-import java.util.*;
-import java.text.*;
+package authentication.json;
 
 /**
  * {"data":[{"msu_id":1,"argo_id":1,"slot_id":1,"slot_status":"string","ship_rev_type":"string","build_category":"string","build_product":"string","slot_plan_notes":"","plan_product_type":"string","ship_risk":"","ship_risk_reason":"","comment_for_change":"","commited_ship":"","secondary_customer_name":"","fab_id":"","sales_order":"","forecast_id":"","mfg_commit_date":"6/6/2019","ship_recognition_date":"6/6/2019","mrp_date":"6/6/2019","build_complete":"6/6/2019","int_ops_ship_ready_date":"6/6/2019","plant":"","category":"6/6/2019","core_need_date":"","core_arrival_date":"","refurb_start_date":"","refurb_complete_date":"","donor_status":"","core_utid":"","core_notes":"","mfg_status":"","qty":"","config_note":"","drop_ship":"","rma":"","product_pn":"","off_date_to_de":"","off_date_to_mfg":"","install_start_date":"","cycle_time_days":"","flex":"","fulfilled":0}]}
