@@ -14,7 +14,7 @@ const Preresult = ({ fileName, minGap, maxGap }) => {
 
     const { updateNavItem } = authContext;
     const { setAlert } = alertContext;
-    const { schedule, updateSchedule, createResult, bays, baseline, stepcount, setStepCount } = uploadContext;
+    const { schedule, updateSchedule, createResult, bays, baseline, stepcount, setStepCount, updateBaseline } = uploadContext;
 
     const [objs, setObjects] = useState(schedule);
 
@@ -100,6 +100,7 @@ const Preresult = ({ fileName, minGap, maxGap }) => {
 
         if(!preCounter) {
             updateSchedule(objs);
+            updateBaseline(baseline);
             createResult(baseline, objs, bays, minGap, maxGap);
             setStepCount(stepcount + 2); // add 2 since it will be the end of the step
         } else {
