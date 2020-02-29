@@ -32,7 +32,7 @@ const Schedule = (props) => {
         if(baseline === null){
             props.history.push('/baseline');
         }
-        console.log(baseline)
+        // console.log(baseline)
 
         //eslint-disable-next-line
     }, [error, baseline, props.history])
