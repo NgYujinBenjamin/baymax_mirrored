@@ -20,6 +20,7 @@ const Postresult = () => {
 
     useEffect(() => {
         updateNavItem(0)
+        //eslint-disable-next-line
     }, [])
 
     // if(currentQuarter !== null){

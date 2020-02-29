@@ -40,6 +40,7 @@ const Navbar = () => {
                     <StyledListItem
                         button
                         selected={currentNavItem === 0}
+                        onClick={() => clearZero()}
                     >
                         <TrendingUpIcon style={{ marginRight: '4px' }}/>
                         Schedule
