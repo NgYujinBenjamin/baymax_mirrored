@@ -15040,6 +15040,15 @@ const UploadState = (props) => {
         }
     }
 
+    //update baseline
+    const updateBaseline = base => {
+      base.forEach(val => val.hasOwnProperty('emptyToDelete') && delete val['emptyToDelete'])
+      dispatch({
+        type: UPDATE_BASELINE,
+        payload: base
+      })
+    }
+
     //get baseline
     const getBaseline = async () => {
       setLoading()
@@ -15197,7 +15206,8 @@ const UploadState = (props) => {
             updateCurrentQuarter,
             updateCurrentData,
             updateSave,
-            getBaseline
+            getBaseline,
+            updateBaseline
         }}>
         {props.children}
     </UploadContext.Provider>
