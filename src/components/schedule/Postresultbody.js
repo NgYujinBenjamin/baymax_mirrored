@@ -10,22 +10,26 @@ const Postresultbody = ({ result, baseline, quarter }) => {
     const { currentQuarter, updateCurrentQuarter, updatePostResult, postResult, scheduletest, saved, updateSave, endDateCheck } = uploadContext;
 
     useEffect(() => {
-        if(currentQuarter === null || currentQuarter !== quarter){
+        if(currentQuarter === null){
             updateCurrentQuarter(quarter);
-        }
+        } 
 
-        if(saved){
-            // console.log(scheduletest);
-            updatePostResult(scheduletest, localStorage.getItem('postResultEdit'), quarter);
-            localStorage.setItem('postResultEdit', null);
-            updateSave(!saved); // go back to false
-            console.log(scheduletest);
+        // if user change tab, it will do an auto save on the previous tab
+        if( (currentQuarter !== null && currentQuarter !== quarter) || saved){
+            saveChanges(saved, scheduletest, currentQuarter);
+            updateCurrentQuarter(quarter);
         }
 
         localStorage.setItem('postResultEdit', JSON.stringify(objs));
         //eslint-disable-next-line
     }, [currentQuarter, objs, saved])
     
+    const saveChanges = (saved, scheduletest, currentQuarter) => {
+        updatePostResult(scheduletest, localStorage.getItem('postResultEdit'), currentQuarter);
+        localStorage.setItem('postResultEdit', null);
+        updateSave(!saved); // go back to false
+    }
+
     // console.log(objs);
 
     const handleChange = (obj) => {
