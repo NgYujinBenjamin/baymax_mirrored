@@ -7,7 +7,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
     const [ objs, setObjects ] = useState(result);
     
     const uploadContext = useContext(UploadContext);
-    const { currentQuarter, updateCurrentQuarter, updatePostResult, postResult, scheduletest, saved, updateSave } = uploadContext;
+    const { currentQuarter, updateCurrentQuarter, updatePostResult, postResult, scheduletest, saved, updateSave, endDateCheck } = uploadContext;
 
     useEffect(() => {
         if(currentQuarter === null || currentQuarter !== quarter){
@@ -32,17 +32,35 @@ const Postresultbody = ({ result, baseline, quarter }) => {
         return (event) => {
             const value = event.target.value;
             const name = event.target.name;
+            let checked = false;
             // console.log(obj);
             // console.log(event.target)
             setObjects(prevObjs => (prevObjs.map((o) => {
-                // console.log(o)
                 if (o === obj) {
-                    if (name === 'MRPDate'){
-                        return [ {...obj[0], 'MRPDate': value}, ...obj.slice(1) ]
+                    if (name == 'cycleTimeDays'){
+                        return [ {...obj[0], [name]: parseInt(value)}, ...obj.slice(1) ];
+                    } 
+                    if (name == 'moveToStorage'){
+                        return [ {...obj[0], [name]: value}, ...obj.slice(1) ];
                     }
-                    if (name === 'cycleTimeDays'){
-                        return [ {...obj[0], 'cycleTimeDays': parseInt(value)}, ...obj.slice(1) ]
+                    if (name == 'lockMRPDate'){
+                        checked = event.target.checked;
+                        if (checked){
+                            obj[0].endDate = obj[0].MRPDate;
+                        } else{
+                            // hardcoded min gap for now to 3 days
+                            endDateCheck(obj[0], 'endDate', (24*60*60*1000) * 3);
+                        }
+                        return [ {...obj[0], [name]: checked}, ...obj.slice(1) ];
                     }
+                    if (name == 'MRPDate'){
+                        if (obj[0].lockMRPDate){
+                            // obj[0].endDate = value;
+                            obj = [ {...obj[0], 'endDate': value}, ...obj.slice(1) ];
+                        }
+                        return [ {...obj[0], [name]: value}, ...obj.slice(1) ];
+                    }
+                    
                     // return [ {...obj[0], [name]: parseInt(value)}, ...obj.slice(1) ]
                 }
                 return o;

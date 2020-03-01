@@ -18,6 +18,8 @@ const Postresultheader = ({ result }) => {
                     <TableCell>End Date</TableCell>
                     <TableCell>Gap</TableCell>
                     <TableCell>Cycle Time Days</TableCell>
+                    <TableCell>Lock MRP Date?</TableCell>
+                    <TableCell>Move to Storage Date</TableCell>
                     { result.map((date, index) =>
                         <TableCell key={index}>{date}</TableCell>
                     )}

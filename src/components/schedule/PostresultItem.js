@@ -1,8 +1,9 @@
 import React, { Fragment, memo } from 'react'
-import { TableCell, TableRow, Input } from '@material-ui/core'
+import { TableCell, TableRow, Input, Checkbox } from '@material-ui/core'
 
 const PostresultItem = memo(({ result, id, onChange }) => {
     // console.log(result)
+
     const slotID_UTID = result[0].slotID_UTID;
     const buildProd = result[0].buildProduct;
     const config = result[0].configuration;
@@ -13,12 +14,18 @@ const PostresultItem = memo(({ result, id, onChange }) => {
     const endDate = result[0].endDate;
     const gapDays = result[0].gapDays;
 
-    let cycleTime = result[0].cycleTimeDays;
     const cycleName = 'cycleTimeDays';
+    let cycleTime = result[0].cycleTimeDays;
 
     const MRPName = "MRPDate";
     let MRPDate = result[0].MRPDate;
 
+    const storageName = "moveToStorage";
+    let storageDate = result[0].moveToStorage;
+
+    const lockMRPName = "lockMRPDate";
+    let lockMRPCheck = result[0].lockMRPDate;
+    
     return (
         <Fragment>
             <TableRow style={{whiteSpace: "nowrap"}}>
@@ -31,17 +38,15 @@ const PostresultItem = memo(({ result, id, onChange }) => {
                 <TableCell> {intReadDate} </TableCell>
                 <TableCell> {endDate} </TableCell>
                 <TableCell style={gapDays >= 0 ? null : {backgroundColor: 'red'}}> {gapDays} </TableCell>
-                <TableCell> 
-                    { id === 'predicted' ?
-                        <Input type='text' name={cycleName} value={cycleTime} onChange={onChange} required /> : cycleTime
-                    }
-                </TableCell>
+                <TableCell> {id === 'predicted' ? <Input type='text' name={cycleName} value={cycleTime} onChange={onChange} required /> : cycleTime} </TableCell>
+                <TableCell> {id === 'predicted' ? <Checkbox name={lockMRPName} checked={lockMRPCheck} onChange={onChange} color="primary" /> : null} </TableCell>
+                <TableCell> {id === 'predicted' ? <Input type='text' name={storageName} value={storageDate} onChange={onChange} /> : null} </TableCell>
                 { result.map((obj, index) => (typeof(obj) === "object") ?
                     null : <TableCell key={index}> {obj} </TableCell>
                 )}
             </TableRow>
         </Fragment>
     )
-}, (prevProps, nextProps) => prevProps.result[0].cycleTimeDays === nextProps.result[0].cycleTimeDays && prevProps.result[0].MRPDate === nextProps.result[0].MRPDate)
+}, (prevProps, nextProps) => prevProps.result[0].cycleTimeDays === nextProps.result[0].cycleTimeDays && prevProps.result[0].MRPDate === nextProps.result[0].MRPDate && prevProps.result[0].moveToStorage === nextProps.result[0].moveToStorage && prevProps.result[0].lockMRPDate === nextProps.result[0].lockMRPDate)
 
 export default PostresultItem

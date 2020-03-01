@@ -15453,9 +15453,16 @@ const UploadState = (props) => {
 
     const dateConversion = (dateString) => {
       let output = dateString.split("/");
-      return new Date(output[2], output[1], output[0]); 
+      return new Date(output[2], output[1]-1, output[0]); 
     }
 
+    const endDateCheck = (qtrObj, key, minGap) => {
+      let intRedDate = dateConversion(qtrObj.intOpsShipReadinessDate);
+      let MFGCommit = dateConversion(qtrObj.MFGCommitDate);
+      {qtrObj.fabID == "OPEN" ? 
+      qtrObj[key] = new Date(intRedDate.setTime(intRedDate.getTime() - minGap)).toLocaleDateString('en-GB') : qtrObj[key] = new Date(MFGCommit.setTime(MFGCommit.getTime() - minGap)).toLocaleDateString('en-GB');
+      }
+    }
     //set post result dates
     const setPostResult = (postResult) => {
       const minGap = (24*60*60*1000) * 3; // hardcoded for now to 3 days
@@ -15476,12 +15483,16 @@ const UploadState = (props) => {
               if(key !== "endDate"){
                 currentQtr[i][0][key] = new Date(currentQtr[i][0][key]).toLocaleDateString('en-GB');
               } else{
-                let intRedDate = dateConversion(currentQtr[i][0].intOpsShipReadinessDate);
-                let MFGCommit = dateConversion(currentQtr[i][0].MFGCommitDate);
-                {currentQtr[i][0].fabID == "OPEN" ? 
-                  currentQtr[i][0][key] = new Date(intRedDate.setTime(intRedDate.getTime() - minGap)).toLocaleDateString('en-GB') : currentQtr[i][0][key] = new Date(MFGCommit.setTime(MFGCommit.getTime() - minGap)).toLocaleDateString('en-GB');
-                }
+                endDateCheck(currentQtr[i][0], key, minGap);
+                // let intRedDate = dateConversion(currentQtr[i][0].intOpsShipReadinessDate);
+                // let MFGCommit = dateConversion(currentQtr[i][0].MFGCommitDate);
+                // {currentQtr[i][0].fabID == "OPEN" ? 
+                //   currentQtr[i][0][key] = new Date(intRedDate.setTime(intRedDate.getTime() - minGap)).toLocaleDateString('en-GB') : currentQtr[i][0][key] = new Date(MFGCommit.setTime(MFGCommit.getTime() - minGap)).toLocaleDateString('en-GB');
+                // }
               }
+              // create new key value pair
+              currentQtr[i][0].moveToStorage = "";
+              currentQtr[i][0].lockMRPDate = false;
             })
           }
 
@@ -15687,7 +15698,8 @@ const UploadState = (props) => {
             updateCurrentQuarter,
             updateCurrentData,
             updateSave,
-            setPostResult
+            setPostResult,
+            endDateCheck
         }}>
         {props.children}
     </UploadContext.Provider>
