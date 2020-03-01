@@ -1,9 +1,9 @@
-import React, { Fragment } from 'react'
-import { TableHead, TableCell, TableRow } from '@material-ui/core'
+import React, { Fragment } from 'react';
+import { TableHead, TableCell, TableRow } from '@material-ui/core';
 
 const Postresultheader = ({ result }) => {
-    // console.log(result[0]);
-    
+    // console.log(result);
+
     return (
         <Fragment>
             <TableHead>
@@ -14,10 +14,14 @@ const Postresultheader = ({ result }) => {
                     <TableCell>Tool Start</TableCell>
                     <TableCell>MRP Date</TableCell>
                     <TableCell>MFG Commit Date</TableCell>
+                    <TableCell>Int. Readiness Date</TableCell>
+                    <TableCell>End Date</TableCell>
                     <TableCell>Gap</TableCell>
                     <TableCell>Cycle Time Days</TableCell>
+                    <TableCell>Lock MRP Date?</TableCell>
+                    <TableCell>Move to Storage Date</TableCell>
                     { result.map((date, index) =>
-                        <TableCell key={index}>{date.split(",")[0].split(" ")[1] + " " + date.split(",")[0].split(" ")[0] + " " + date.split(",")[1]}</TableCell>
+                        <TableCell key={index}>{date}</TableCell>
                     )}
                 </TableRow>
             </TableHead>

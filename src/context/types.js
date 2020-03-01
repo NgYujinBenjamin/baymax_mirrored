@@ -38,3 +38,5 @@ export const UPDATE_QUARTER = 'UPDATE_QUARTER';
 export const UPDATE_DATA = 'UPDATE_DATA'; 
 export const UPDATE_SAVE = 'UPDATE_SAVE'; 
 export const CLEAR_ONE = 'CLEAR_ONE'; 
+export const UPDATE_POST_RESULT_1 = 'UPDATE_POST_RESULT_1';
+export const UPDATE_POST_RESULT_2 = 'UPDATE_POST_RESULT_2';

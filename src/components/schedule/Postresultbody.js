@@ -1,95 +1,87 @@
-import React, { Fragment, useEffect, useContext, useState, useMemo, useCallback } from 'react'
+import React, { Fragment, useEffect, useContext, useState } from 'react'
 import { TableBody } from '@material-ui/core'
 import PostresultItem from './PostresultItem'
-import { TableContainer, Paper, Typography, Box, Table, Button } from '@material-ui/core'
 import UploadContext from '../../context/upload/uploadContext'
 
-const Postresultbody = ({ result, id, quarter }) => {
+const Postresultbody = ({ result, baseline, quarter }) => {
     const [ objs, setObjects ] = useState(result);
-    // const [ arr, setArr ] = useState([]);
     
     const uploadContext = useContext(UploadContext);
-    const { currentQuarter, updateCurrentQuarter, updatePostResult, postResult, saved, updateSave } = uploadContext;
-    
-    console.log(postResult);
-    
+    const { currentQuarter, updateCurrentQuarter, updatePostResult, postResult, scheduletest, saved, updateSave, endDateCheck } = uploadContext;
+
     useEffect(() => {
         if(currentQuarter === null || currentQuarter !== quarter){
-            updateCurrentQuarter(quarter)
+            updateCurrentQuarter(quarter);
         }
 
         if(saved){
-            updatePostResult(postResult, localStorage.getItem('postResultEdit'), quarter);
+            // console.log(scheduletest);
+            updatePostResult(scheduletest, localStorage.getItem('postResultEdit'), quarter);
             localStorage.setItem('postResultEdit', null);
             updateSave(!saved); // go back to false
+            console.log(scheduletest);
         }
 
         localStorage.setItem('postResultEdit', JSON.stringify(objs));
         //eslint-disable-next-line
     }, [currentQuarter, objs, saved])
     
+    // console.log(objs);
+
     const handleChange = (obj) => {
         return (event) => {
             const value = event.target.value;
             const name = event.target.name;
+            let checked = false;
             // console.log(obj);
-            console.log(event.target)
+            // console.log(event.target)
             setObjects(prevObjs => (prevObjs.map((o) => {
-                // console.log(o)
                 if (o === obj) {
-
-                    // if(currentData !== null){
-                    //     const tempArr = currentData.map(valObj => {
-                    //         if(valObj === o && valObj === obj){
-                    //             return [{...valObj[0], 'cycleTimeDays': value}, ...valObj.slice(1)]
-                    //         }
-                    //         return valObj
-                    //     })
-                    // }
-                    // sendData([ {...obj[0], [name]: value}, ...obj.slice(1) ])
-                    return [ {...obj[0], [name]: parseInt(value)}, ...obj.slice(1) ]
+                    if (name == 'cycleTimeDays'){
+                        return [ {...obj[0], [name]: parseInt(value)}, ...obj.slice(1) ];
+                    } 
+                    if (name == 'moveToStorage'){
+                        return [ {...obj[0], [name]: value}, ...obj.slice(1) ];
+                    }
+                    if (name == 'lockMRPDate'){
+                        checked = event.target.checked;
+                        if (checked){
+                            obj[0].endDate = obj[0].MRPDate;
+                        } else{
+                            // hardcoded min gap for now to 3 days
+                            endDateCheck(obj[0], 'endDate', (24*60*60*1000) * 3);
+                        }
+                        return [ {...obj[0], [name]: checked}, ...obj.slice(1) ];
+                    }
+                    if (name == 'MRPDate'){
+                        if (obj[0].lockMRPDate){
+                            // obj[0].endDate = value;
+                            obj = [ {...obj[0], 'endDate': value}, ...obj.slice(1) ];
+                        }
+                        return [ {...obj[0], [name]: value}, ...obj.slice(1) ];
+                    }
+                    
+                    // return [ {...obj[0], [name]: parseInt(value)}, ...obj.slice(1) ]
                 }
                 return o;
             })))
         }
     }
 
-    // const computeChange = useMemo(() => handleChange(objs), [objs, handleChange])
-
-    // const handletest = () => {
-    //     // console.log(objs)
-    //     console.log(postResult)
-    // }
-
-    // return (
-    //     <Fragment>
-    //         <TableContainer component={Paper}>
-    //             <Table>
-    //                 <TableBody style={{ whiteSpace: 'nowrap' }}>
-    //                     { objs.map((obj, index) =>
-    //                         // <PostresultItem result={obj} id={id} onChange={handleChange(obj)} key={index} />
-    //                         <PostresultItem result={obj} id={id} onChange={handleChange(obj)} key={index} />
-    //                     )}
-    //                 </TableBody>
-    //             </Table>
-    //         </TableContainer>
-    //         <Button variant='contained' onClick={handletest} color='primary'>test</Button>
-    //     </Fragment>
-    // )
-
     return (
         <Fragment>
             <Fragment>
                 <TableBody style={{whiteSpace: "nowrap"}}>
+                    { baseline !== null && baseline.map((obj, index) =>
+                        // <PostresultItem result={obj} id={id} onChange={handleChange(obj)} key={index} />
+                        <PostresultItem result={obj} id="baseline" key={index} />
+                    )}
                     { objs.map((obj, index) =>
                         // <PostresultItem result={obj} id={id} onChange={handleChange(obj)} key={index} />
-                        <PostresultItem result={obj} id={id} onChange={handleChange(obj)} key={index} />
+                        <PostresultItem result={obj} id="predicted" onChange={handleChange(obj)} key={index} />
                     )}
                 </TableBody>
             </Fragment>
-            {/* <Fragment>
-                <Button variant='contained' onClick={handletest} color='primary'>test</Button>
-            </Fragment> */}
         </Fragment>
     )
 }

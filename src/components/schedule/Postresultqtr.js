@@ -1,12 +1,20 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useContext } from 'react'
 import { TableContainer, Paper, Typography, Box, Table, Button } from '@material-ui/core'
 import Postresultheader from './Postresultheader';
 import Postresultbody from './Postresultbody';
 import PropTypes from 'prop-types';
+import UploadContext from '../../context/upload/uploadContext'
 
-const Postresultqtr = ({ schedule, value, num, quarter }) => {
-    // console.log(schedule);
+const Postresultqtr = ({ schedule, baseline, value, num, quarter }) => {
     
+    const qtrs = new Array();
+    Object.keys(schedule).map(quarterName => 
+        qtrs.push(quarterName)
+    )
+    
+    // console.log(schedule)
+    // console.log(baseline);
+
     const TabPanel = (props) => {
         const { children, value, index, ...other } = props;
       
@@ -30,44 +38,20 @@ const Postresultqtr = ({ schedule, value, num, quarter }) => {
         value: PropTypes.any.isRequired,
     };
 
-    // return (
-    //     <Fragment>
-    //         <TabPanel value={value} index={num}>
-    //             { Object.keys(schedule).map((quarterName, index) => (quarterName === quarter) ?
-    //                 <Postresultbody sendData={sendData} result={schedule[quarterName].slice(1)} id='predicted' key={index} quarter={quarterName}/> : null
-    //             )}
-    //         </TabPanel>
-    //     </Fragment>
-    // )
-
-    // const handletest = () => {
-        
-    // }
-
-    // const [arr, setarr] = useState([])
-    // const givemedata = (res) => {
-    //     setarr(res)
-    // }
-
     return (
         <Fragment>
             <TabPanel value={value} index={num}>
-                <TableContainer component={Paper}>
+                <TableContainer component={Paper} style={{maxHeight:440}}>
                     <Table style={{tableLayout: "auto"}}>
                         {/* TableHeader */}
-                        { Object.keys(schedule).map((quarterName, index) => (quarterName === quarter) ?
-                            <Postresultheader result={schedule[quarterName][0]} key={index} /> : null
-                        )}
+                        <Postresultheader result={schedule[quarter][0]}/>
                         {/* TableRow */}
-                        {/* { Object.keys(schedule.baseline).map((quarterName, index) => (quarterName === quarter) ?
-                            <Postresultbody result={schedule.baseline[quarterName]} id='baseline' key={index}/> : null
-                        )} */}
                         { Object.keys(schedule).map((quarterName, index) => (quarterName === quarter) ?
-                            <Postresultbody result={schedule[quarterName].slice(1)} id='predicted' key={index} quarter={quarterName}/> : null
+                            // <Postresultbody result={schedule } baseline={baseline} id='predicted' key={index} quarter={quarterName}/> : null
+                            <Postresultbody result={schedule[quarterName].slice(1)} baseline={qtrs[0]===quarterName ? baseline[quarterName].slice(1) : null } key={index} quarter={quarterName}/> : null
                         )}
                     </Table>
                 </TableContainer>
-                {/* <Button variant='contained' onClick={handletest} color='primary'>test</Button> */}
             </TabPanel>
         </Fragment>
     )
