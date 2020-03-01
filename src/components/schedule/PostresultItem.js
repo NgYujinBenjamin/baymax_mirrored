@@ -1,7 +1,23 @@
-import React, { Fragment, memo } from 'react'
-import { TableCell, TableRow, Input, Checkbox } from '@material-ui/core'
+import React, { Fragment, memo, useContext } from 'react';
+import { TableCell, TableRow, Input, Checkbox, FormHelperText } from '@material-ui/core';
+import UploadContext from '../../context/upload/uploadContext';
+import { makeStyles } from '@material-ui/core/styles';
 
 const PostresultItem = memo(({ result, id, onChange }) => {
+    
+    const uploadContext = useContext(UploadContext);
+    const { postResultErrors } = uploadContext;
+    
+    const useStyles = makeStyles(theme => ({
+        errorText: {
+            color: 'red',
+            fontSize: '12px'
+        },
+    }));
+
+    const classes = useStyles();
+
+    const argoID = result[0].argoID;
     const slotID_UTID = result[0].slotID_UTID;
     const buildProd = result[0].buildProduct;
     const config = result[0].configuration;
@@ -31,14 +47,23 @@ const PostresultItem = memo(({ result, id, onChange }) => {
                 <TableCell> {buildProd} </TableCell>
                 <TableCell> {config == null ? "NA" : config} </TableCell>
                 <TableCell style={id==='baseline' ? {backgroundColor: '#1cc61c'} : {backgroundColor: '#00b8ff'}}> {toolStart} </TableCell>
-                <TableCell> {id === 'predicted' ? <Input type='text' name={MRPName} value={MRPDate} onChange={onChange} required /> : MRPDate} </TableCell>
+                <TableCell> 
+                    { id === 'predicted' ? <Input className={postResultErrors.includes(argoID + "_MRPDate") ? classes.errorField : ''} type='text' name={MRPName} value={MRPDate} onChange={onChange} required /> : MRPDate } 
+                    { postResultErrors.includes(argoID + "_MRPDate") && <FormHelperText className={classes.errorText}>Invalid Date</FormHelperText>}
+                </TableCell>
                 <TableCell style={fabID ? {backgroundColor: 'yellow'} : null}> {MFGCommit} </TableCell>
                 <TableCell> {intReadDate} </TableCell>
                 <TableCell> {endDate} </TableCell>
                 <TableCell style={gapDays >= 0 ? null : {backgroundColor: 'red'}}> {gapDays} </TableCell>
-                <TableCell> {id === 'predicted' ? <Input type='text' name={cycleName} value={cycleTime} onChange={onChange} required /> : cycleTime} </TableCell>
-                <TableCell> {id === 'predicted' ? <Checkbox name={lockMRPName} checked={lockMRPCheck} onChange={onChange} color="primary" /> : null} </TableCell>
-                <TableCell> {id === 'predicted' ? <Input type='text' name={storageName} value={storageDate} onChange={onChange} /> : null} </TableCell>
+                <TableCell> 
+                    { id === 'predicted' ? <Input type='text' name={cycleName} value={cycleTime} onChange={onChange} required /> : cycleTime }
+                    { postResultErrors.includes(argoID + "_cycleTimeDays") && <FormHelperText className={classes.errorText}>Invalid Number</FormHelperText>}
+                </TableCell>
+                <TableCell align='center'> {id === 'predicted' ? <Checkbox name={lockMRPName} checked={lockMRPCheck} onChange={onChange} color="primary" /> : null} </TableCell>
+                <TableCell> 
+                    { id === 'predicted' ? <Input type='text' name={storageName} value={storageDate} onChange={onChange} /> : null }
+                    { postResultErrors.includes(argoID + "_moveToStorage") && <FormHelperText className={classes.errorText}>Invalid Date</FormHelperText>}                     
+                </TableCell>
                 { result.map((obj, index) => (typeof(obj) === "object") ?
                     null : <TableCell key={index}> {obj} </TableCell>
                 )}
