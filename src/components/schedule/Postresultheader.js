@@ -2,8 +2,7 @@ import React, { Fragment } from 'react';
 import { TableHead, TableCell, TableRow } from '@material-ui/core';
 
 const Postresultheader = ({ result }) => {
-    // console.log(result);
-
+    
     return (
         <Fragment>
             <TableHead>

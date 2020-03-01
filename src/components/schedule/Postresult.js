@@ -25,8 +25,6 @@ const Postresult = () => {
         updatePostResultEmpties(scheduletest);
         setPostResult(scheduletest);
     }, [])
-    
-    console.log(scheduletest);
 
     const qtrs = new Array();
     Object.keys(scheduletest.bayOccupancy).map(quarterName => 
@@ -44,7 +42,6 @@ const Postresult = () => {
         setValue(newValue);
     };
 
-    //-----HERE------
     const handleClearAll = () => {
         clearAll();
     }
