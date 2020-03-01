@@ -2,8 +2,6 @@ import React, { Fragment, memo } from 'react'
 import { TableCell, TableRow, Input, Checkbox } from '@material-ui/core'
 
 const PostresultItem = memo(({ result, id, onChange }) => {
-    // console.log(result)
-
     const slotID_UTID = result[0].slotID_UTID;
     const buildProd = result[0].buildProduct;
     const config = result[0].configuration;

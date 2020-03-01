@@ -11,9 +11,6 @@ const Postresultqtr = ({ schedule, baseline, value, num, quarter }) => {
     Object.keys(schedule).map(quarterName => 
         qtrs.push(quarterName)
     )
-    
-    // console.log(schedule)
-    // console.log(baseline);
 
     const TabPanel = (props) => {
         const { children, value, index, ...other } = props;
@@ -47,7 +44,6 @@ const Postresultqtr = ({ schedule, baseline, value, num, quarter }) => {
                         <Postresultheader result={schedule[quarter][0]}/>
                         {/* TableRow */}
                         { Object.keys(schedule).map((quarterName, index) => (quarterName === quarter) ?
-                            // <Postresultbody result={schedule } baseline={baseline} id='predicted' key={index} quarter={quarterName}/> : null
                             <Postresultbody result={schedule[quarterName].slice(1)} baseline={qtrs[0]===quarterName ? baseline[quarterName].slice(1) : null } key={index} quarter={quarterName}/> : null
                         )}
                     </Table>

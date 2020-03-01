@@ -30,15 +30,12 @@ const Postresultbody = ({ result, baseline, quarter }) => {
         updateSave(!saved); // go back to false
     }
 
-    // console.log(objs);
-
     const handleChange = (obj) => {
         return (event) => {
             const value = event.target.value;
             const name = event.target.name;
             let checked = false;
-            // console.log(obj);
-            // console.log(event.target)
+            
             setObjects(prevObjs => (prevObjs.map((o) => {
                 if (o === obj) {
                     if (name == 'cycleTimeDays'){
@@ -59,13 +56,10 @@ const Postresultbody = ({ result, baseline, quarter }) => {
                     }
                     if (name == 'MRPDate'){
                         if (obj[0].lockMRPDate){
-                            // obj[0].endDate = value;
                             obj = [ {...obj[0], 'endDate': value}, ...obj.slice(1) ];
                         }
                         return [ {...obj[0], [name]: value}, ...obj.slice(1) ];
                     }
-                    
-                    // return [ {...obj[0], [name]: parseInt(value)}, ...obj.slice(1) ]
                 }
                 return o;
             })))
@@ -77,11 +71,9 @@ const Postresultbody = ({ result, baseline, quarter }) => {
             <Fragment>
                 <TableBody style={{whiteSpace: "nowrap"}}>
                     { baseline !== null && baseline.map((obj, index) =>
-                        // <PostresultItem result={obj} id={id} onChange={handleChange(obj)} key={index} />
                         <PostresultItem result={obj} id="baseline" key={index} />
                     )}
                     { objs.map((obj, index) =>
-                        // <PostresultItem result={obj} id={id} onChange={handleChange(obj)} key={index} />
                         <PostresultItem result={obj} id="predicted" onChange={handleChange(obj)} key={index} />
                     )}
                 </TableBody>
