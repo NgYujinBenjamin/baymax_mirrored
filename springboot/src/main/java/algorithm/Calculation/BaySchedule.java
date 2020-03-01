@@ -103,13 +103,30 @@ public class BaySchedule{
         Integer bayID = b.getBayID();
         p.setAssignedBayID(bayID);
         
-        // Pull forward the date as early as possible or push it back to the date when the bay is available
-        Long diff = toolStartDate.getTime() - b.getAvailableDate().getTime();
-        Integer diffDays = (int) (diff / (24 * 60 * 60 * 1000));
-            // diffDays +ve if toolStartDate is after bayAvailableDate
-            // diffDays -ve if toolStartDate is before bayAvailableDate
+        // Pull forward the date as early as possible
         
-        Date newToolStartDate = DateUtils.addDays(toolStartDate, -Math.min(diffDays, gapDiff));
+        Date newToolStartDate;
+        Date today = new Date();
+        // Date today = new Date(119, 10, 1); // For testing purposes
+        if (b.getAvailableDate().after(today)){
+            // If bayAvailableDate is after current date, we can pull forward up to the maxGap or the date when the bay is available
+            Long diff = toolStartDate.getTime() - b.getAvailableDate().getTime();
+            Integer diffDays = (int) (diff / (24 * 60 * 60 * 1000));
+                // diffDays +ve if toolStartDate is after bayAvailableDate
+                // diffDays -ve if toolStartDate is before bayAvailableDate
+            
+            newToolStartDate = DateUtils.addDays(toolStartDate, -Math.min(diffDays, gapDiff));
+        }
+        else {
+            // If bayAvailableDate is before current date, we can pull forward up to the maxGap or current date
+            Long diff = toolStartDate.getTime() - today.getTime();
+            Integer diffDays = (int) (diff / (24 * 60 * 60 * 1000));
+                // diffDays +ve if toolStartDate is after today's date date
+                // diffDays -ve if toolStartDate is before today's date
+            
+            newToolStartDate = DateUtils.addDays(toolStartDate, -Math.min(diffDays, gapDiff));
+        }
+        
 
         Boolean scheduled = false;
 
