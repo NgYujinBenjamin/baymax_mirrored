@@ -7,6 +7,7 @@ import AuthContext from '../../context/auth/authContext';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
 import GetAppIcon from '@material-ui/icons/GetApp';
+import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import Postresultqtr from './Postresultqtr';
 
 const Postresult = () => {
@@ -90,10 +91,13 @@ const Postresult = () => {
                         <Button fullWidth variant='contained' onClick={handleClearAll} startIcon={<DeleteIcon />} color='secondary'>Clear All</Button>
                     </Grid>
                     <Grid item xs>
-                        <Button fullWidth variant='contained' onClick={handleSave} startIcon={<SaveIcon />} color='primary'>Save</Button>
+                        <Button fullWidth variant='contained' onClick={handleSave} startIcon={<SaveIcon />}>Save to History</Button>
                     </Grid>
                     <Grid item xs>
-                        <Button fullWidth variant='contained' onClick={handleExport} startIcon={<GetAppIcon />}>Export</Button>
+                        <Button fullWidth variant='contained' onClick={handleExport} startIcon={<GetAppIcon />}>Export to Excel File</Button>
+                    </Grid>
+                    <Grid item xs>
+                        <Button fullWidth variant='contained' startIcon={<TrendingUpIcon />} color='primary'>Generate Schedule Again</Button>
                     </Grid>
                 </Grid>
             </Box>
