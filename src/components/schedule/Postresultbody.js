@@ -34,6 +34,11 @@ const Postresultbody = ({ result, baseline, quarter }) => {
         let uniqueID = argoID + "_" + type;
         let errorMsg = validateDate(value) ? null : 'Invalid date format';
 
+        // overwrite since move to storage can be empty
+        if( type == 'moveToStorage' && value == ''){
+            errorMsg = null;
+        }
+
         if (type == 'cycleTimeDays'){
             errorMsg = validateNum(value);
         }

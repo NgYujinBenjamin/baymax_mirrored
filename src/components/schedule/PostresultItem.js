@@ -48,7 +48,7 @@ const PostresultItem = memo(({ result, id, onChange }) => {
                 <TableCell> {config == null ? "NA" : config} </TableCell>
                 <TableCell style={id==='baseline' ? {backgroundColor: '#1cc61c'} : {backgroundColor: '#00b8ff'}}> {toolStart} </TableCell>
                 <TableCell> 
-                    { id === 'predicted' ? <Input className={postResultErrors.includes(argoID + "_MRPDate") ? classes.errorField : ''} type='text' name={MRPName} value={MRPDate} onChange={onChange} required /> : MRPDate } 
+                    { id === 'predicted' ? <Input error={postResultErrors.includes(argoID + "_MRPDate")} style={{width: '100px'}} type='text' name={MRPName} value={MRPDate} onChange={onChange} required /> : MRPDate } 
                     { postResultErrors.includes(argoID + "_MRPDate") && <FormHelperText className={classes.errorText}>Invalid Date</FormHelperText>}
                 </TableCell>
                 <TableCell style={fabID ? {backgroundColor: 'yellow'} : null}> {MFGCommit} </TableCell>
@@ -56,12 +56,12 @@ const PostresultItem = memo(({ result, id, onChange }) => {
                 <TableCell> {endDate} </TableCell>
                 <TableCell style={gapDays >= 0 ? null : {backgroundColor: 'red'}}> {gapDays} </TableCell>
                 <TableCell> 
-                    { id === 'predicted' ? <Input type='text' name={cycleName} value={cycleTime} onChange={onChange} required /> : cycleTime }
+                    { id === 'predicted' ? <Input error={postResultErrors.includes(argoID + "_cycleTimeDays")} type='text' name={cycleName} value={cycleTime} onChange={onChange} required /> : cycleTime }
                     { postResultErrors.includes(argoID + "_cycleTimeDays") && <FormHelperText className={classes.errorText}>Invalid Number</FormHelperText>}
                 </TableCell>
                 <TableCell align='center'> {id === 'predicted' ? <Checkbox name={lockMRPName} checked={lockMRPCheck} onChange={onChange} color="primary" /> : null} </TableCell>
                 <TableCell> 
-                    { id === 'predicted' ? <Input type='text' name={storageName} value={storageDate} onChange={onChange} /> : null }
+                    { id === 'predicted' ? <Input error={postResultErrors.includes(argoID + "_moveToStorage")} type='text' name={storageName} value={storageDate} onChange={onChange} /> : null }
                     { postResultErrors.includes(argoID + "_moveToStorage") && <FormHelperText className={classes.errorText}>Invalid Date</FormHelperText>}                     
                 </TableCell>
                 { result.map((obj, index) => (typeof(obj) === "object") ?
