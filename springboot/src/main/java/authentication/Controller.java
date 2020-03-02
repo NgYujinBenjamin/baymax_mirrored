@@ -36,11 +36,11 @@ import main.java.exceptions.*;
 public class Controller {
 
     private static final Token TOKEN = new Token();
-
+    private static final mysqlcon conn = new mysqlcon();
+        
     // done
     @RequestMapping(path = "/register", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
     public JsonObject register(@RequestBody RegistrationDetails userDetails) throws SQLException, ClassNotFoundException{
-        mysqlcon conn = new mysqlcon();
         try {
             conn.addUser(userDetails.getUsername(),
                     TOKEN.generateMD5Hash(userDetails.getPassword()),
@@ -61,10 +61,8 @@ public class Controller {
     // original by Ben
     @RequestMapping(path = "/getusers", method = RequestMethod.GET, produces = "application/json")
     public ArrayList<User> getUsers() throws SQLException, ClassNotFoundException{
-        mysqlcon conn = new mysqlcon();
         try {
             return conn.getAllUsers();
-
         } catch (SQLException e) {
             throw e;
         } catch (ClassNotFoundException e) {
@@ -78,7 +76,6 @@ public class Controller {
         if (details.getOldPassword() == null || details.getNewPassword() == null || details.getUsername() == null) {
             throw new NullPointerException("Username or password cannot be empty.");
         }
-        mysqlcon conn = new mysqlcon();
         try {
             conn.changePassword(details.getUsername(), TOKEN.generateMD5Hash(details.getOldPassword()), TOKEN.generateMD5Hash(details.getNewPassword()));
             return new JsonSuccess("Password has been updated successfully.");
@@ -95,7 +92,6 @@ public class Controller {
         if (username == null) {
             throw new NullPointerException("Username cannot be empty.");
         } 
-        mysqlcon conn = new mysqlcon();
         try {
             conn.resetPassword(username);
             return new JsonSuccess("Password has been reset successfully");
@@ -113,7 +109,6 @@ public class Controller {
         if (inputDetails.getUsername() == null || inputDetails.getPassword() == null) {
             throw new NullPointerException("Username or password cannot be empty.");
         }
-        mysqlcon conn = new mysqlcon();
         try {
             String username = inputDetails.getUsername();
             RegistrationDetails userObject = conn.getUser(username);
@@ -160,7 +155,6 @@ public class Controller {
     // to be discussed
     @RequestMapping(path = "/history/{staffId}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity getHistory(@PathVariable("staffId") String staffId) {
-        mysqlcon conn = new mysqlcon();
         try {
             ArrayList<JsonObject> result = conn.getHistory(staffId);
             return new ResponseEntity(new JsonResponses("SUCCESS", result), HttpStatus.OK);
@@ -171,7 +165,6 @@ public class Controller {
 
     @RequestMapping(path = "/history/{msuId}", method = RequestMethod.DELETE)
     public String removeHistory(@PathVariable("msuId") String msuId) {
-        mysqlcon conn = new mysqlcon();
         try {
             return conn.removeHistory(msuId);
         } catch (Exception e) {
@@ -181,7 +174,6 @@ public class Controller {
 
     @RequestMapping(path = "/msu/{msuId}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity getMassSlotUpload(@PathVariable("msuId") String msuId) {
-        mysqlcon conn = new mysqlcon();
         try {
             ArrayList<JsonObject> result = conn.getMassSlotUpload(msuId);
             return new ResponseEntity(new JsonResponses("SUCCESS", result), HttpStatus.OK);
@@ -193,7 +185,6 @@ public class Controller {
     @RequestMapping(path = "/msu/{staffId}", method = RequestMethod.POST, produces = "application/json")
     public String addMassSlotUpload(@RequestBody ArrayList<MassSlotUploadDetails> data,
                                     @PathVariable("staffId") String staffId) {
-        mysqlcon conn = new mysqlcon();
         try {
             int newHistoryId = conn.addHistory(staffId);
             return conn.addMassSlotUpload(data, newHistoryId);
@@ -204,7 +195,6 @@ public class Controller {
 
     @RequestMapping(path = "/facility/{staffId}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity getFacilityUtil(@PathVariable("staffId") String staffId) {
-        mysqlcon conn = new mysqlcon();
         try {
             ArrayList<GetFacilityUtilResult> staffUsage = conn.readFacilityUtil(staffId);
             ArrayList<JsonObject> result = new ArrayList<JsonObject>();
@@ -221,7 +211,6 @@ public class Controller {
     @RequestMapping(path = "/facility/{staffId}", method = RequestMethod.POST, produces = "application/json")
     public String updateFacilityUtil(@RequestBody ArrayList<FacilityUtil> data,
                                      @PathVariable("staffId") String staffId) {
-        mysqlcon conn = new mysqlcon();
         int faci_id = 0; // default faci_id
         try {
             ArrayList<GetFacilityUtilResult> staffUsage = conn.readFacilityUtil(staffId);
@@ -244,7 +233,6 @@ public class Controller {
 
     @RequestMapping(path = "/facility/{staffId}", method = RequestMethod.DELETE, produces = "application/json")
     public String removeUsage(@PathVariable("staffId") String staffId) {
-        mysqlcon conn = new mysqlcon();
         try {
             return conn.removeHistory(staffId);
         } catch (Exception e) {
