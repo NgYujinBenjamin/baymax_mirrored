@@ -40,6 +40,10 @@ const PostresultItem = memo(({ result, id, onChange }) => {
     const lockMRPName = "lockMRPDate";
     let lockMRPCheck = result[0].lockMRPDate;
     
+    const MRPUnique = argoID + "_" + MRPName;
+    const storageUnique = argoID + "_" + storageName;
+    const cycleTimeUnique = argoID + "_" + cycleName;
+
     return (
         <Fragment>
             <TableRow style={{whiteSpace: "nowrap"}}>
@@ -48,21 +52,21 @@ const PostresultItem = memo(({ result, id, onChange }) => {
                 <TableCell> {config == null ? "NA" : config} </TableCell>
                 <TableCell style={id==='baseline' ? {backgroundColor: '#1cc61c'} : {backgroundColor: '#00b8ff'}}> {toolStart} </TableCell>
                 <TableCell> 
-                    { id === 'predicted' ? <Input error={postResultErrors.includes(argoID + "_MRPDate")} style={{width: '100px'}} type='text' name={MRPName} value={MRPDate} onChange={onChange} required /> : MRPDate } 
-                    { postResultErrors.includes(argoID + "_MRPDate") && <FormHelperText className={classes.errorText}>Invalid Date</FormHelperText>}
+                    { id === 'predicted' ? <Input error={MRPUnique in postResultErrors} style={{width: '140px'}} type='text' name={MRPName} value={MRPDate} onChange={onChange} required /> : MRPDate } 
+                    { MRPUnique in postResultErrors && <FormHelperText className={classes.errorText}>{postResultErrors[MRPUnique]}</FormHelperText>}
                 </TableCell>
                 <TableCell style={fabID ? {backgroundColor: 'yellow'} : null}> {MFGCommit} </TableCell>
                 <TableCell> {intReadDate} </TableCell>
                 <TableCell> {endDate} </TableCell>
                 <TableCell style={gapDays >= 0 ? null : {backgroundColor: 'red'}}> {gapDays} </TableCell>
                 <TableCell> 
-                    { id === 'predicted' ? <Input error={postResultErrors.includes(argoID + "_cycleTimeDays")} type='text' name={cycleName} value={cycleTime} onChange={onChange} required /> : cycleTime }
-                    { postResultErrors.includes(argoID + "_cycleTimeDays") && <FormHelperText className={classes.errorText}>Invalid Number</FormHelperText>}
+                    { id === 'predicted' ? <Input error={cycleTimeUnique in postResultErrors} type='text' name={cycleName} value={cycleTime} onChange={onChange} required /> : cycleTime }
+                    { cycleTimeUnique in postResultErrors && <FormHelperText className={classes.errorText}>{postResultErrors[cycleTimeUnique]}</FormHelperText>}
                 </TableCell>
                 <TableCell align='center'> {id === 'predicted' ? <Checkbox name={lockMRPName} checked={lockMRPCheck} onChange={onChange} color="primary" /> : null} </TableCell>
                 <TableCell> 
-                    { id === 'predicted' ? <Input error={postResultErrors.includes(argoID + "_moveToStorage")} type='text' name={storageName} value={storageDate} onChange={onChange} /> : null }
-                    { postResultErrors.includes(argoID + "_moveToStorage") && <FormHelperText className={classes.errorText}>Invalid Date</FormHelperText>}                     
+                    { id === 'predicted' ? <Input error={storageUnique in postResultErrors} type='text' name={storageName} value={storageDate} onChange={onChange} /> : null }
+                    { storageUnique in postResultErrors && <FormHelperText className={classes.errorText}>{postResultErrors[storageUnique]}</FormHelperText>}                     
                 </TableCell>
                 { result.map((obj, index) => (typeof(obj) === "object") ?
                     null : <TableCell key={index}> {obj} </TableCell>

@@ -1,9 +1,10 @@
 import React, { Fragment, useContext, useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Button, Box, Grid, Typography } from '@material-ui/core'
+import { Button, Box, Grid } from '@material-ui/core'
 import { AppBar, Tabs, Tab } from '@material-ui/core';
 import UploadContext from '../../context/upload/uploadContext';
 import AuthContext from '../../context/auth/authContext';
+import AlertContext from '../../context/alert/alertContext';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
 import GetAppIcon from '@material-ui/icons/GetApp';
@@ -14,21 +15,23 @@ const Postresult = () => {
     const classes = useStyles();
     const uploadContext = useContext(UploadContext);
     const authContext = useContext(AuthContext);
+    const alertContext = useContext(AlertContext);
+
     const [value, setValue] = useState(0); // this is for tab panel to display quarters
 
+    const { setAlert } = alertContext;
     const { loadUser, updateNavItem } = authContext
-    const { postResult, createExport, createExportSchedule, saved, updateSave, saveFile, clearAll, scheduletest, updatePostResultEmpties, setPostResult } = uploadContext;
+    const { currentQuarter, postResult, postResultDone, postResultErrors, tabChecker, updateReschedule, createExport, createExportSchedule, updateSave, saveFile, clearAll, updatePostResultEmpties, setPostResult } = uploadContext;
 
     useEffect(() => {
         updateNavItem(0)
         //eslint-disable-next-line
         updateNavItem(0);
-        updatePostResultEmpties(scheduletest);
-        setPostResult(scheduletest);
+        updatePostResultEmpties(postResult);
     }, [])
 
     const qtrs = new Array();
-    Object.keys(scheduletest.bayOccupancy).map(quarterName => 
+    Object.keys(postResult.bayOccupancy).map(quarterName => 
         qtrs.push(quarterName)
     )
 
@@ -40,7 +43,13 @@ const Postresult = () => {
     }
 
     const handleChange = (event, newValue) => {
-        setValue(newValue);
+        console.log(newValue);
+        if (Object.keys(postResultErrors).length == 0){
+            setValue(newValue);
+        } else{
+            setValue(qtrs.indexOf(currentQuarter)); //set back to the original quarter
+            tabChecker(true);
+        }
     };
 
     const handleClearAll = () => {
@@ -48,18 +57,17 @@ const Postresult = () => {
     }
 
     const handleSave = () => {
-        updateSave(!saved);
-        // if(currentData !== null){
-        //     console.log(currentData)
-        // }
-        // saveFile(postResult);
-        // console.log(arr)
+        updateSave(true);
     }
 
     const handleExport = (event) => {
         event.preventDefault();
-        createExport(scheduletest);
-        createExportSchedule(scheduletest);
+        createExport(postResult);
+        createExportSchedule(postResult);
+    }
+
+    const handleReschedule = () => {
+        updateReschedule(true);
     }
 
     return (
@@ -77,13 +85,13 @@ const Postresult = () => {
                     >
                         {/* This will create the tab headers */}
                         { qtrs.map((key, i) => 
-                            <Tab label={key} {...a11yProps({i})} key={i} />
+                            <Tab label={key} {...a11yProps({i})} key={i}/>
                         )}
                     </Tabs>
                 </AppBar>
-
-                {qtrs.map((qtr, index) =>
-                    <Postresultqtr schedule={scheduletest.bayOccupancy} baseline={scheduletest.baseLineOccupancy} value={value} num={index} quarter={qtr} key={index}/>
+                            
+                {postResultDone !== null && qtrs.map((qtr, index) =>
+                    <Postresultqtr schedule={postResultDone.bayOccupancy} baseline={postResultDone.baseLineOccupancy} value={value} num={index} quarter={qtr} key={index}/>
                 )}
             </div>
             
@@ -99,7 +107,7 @@ const Postresult = () => {
                         <Button fullWidth variant='contained' onClick={handleExport} startIcon={<GetAppIcon />}>Export to Excel File</Button>
                     </Grid>
                     <Grid item xs>
-                        <Button fullWidth variant='contained' startIcon={<TrendingUpIcon />} color='primary'>Generate Schedule Again</Button>
+                        <Button fullWidth variant='contained' onClick={handleReschedule} startIcon={<TrendingUpIcon />} color='primary'>Generate Schedule Again</Button>
                     </Grid>
                 </Grid>
             </Box>

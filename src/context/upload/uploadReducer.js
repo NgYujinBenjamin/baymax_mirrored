@@ -1,4 +1,4 @@
-import { SET_BASELINE, UPDATE_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS, UPDATE_POST_RESULT, UPDATE_QUARTER, UPDATE_DATA, UPDATE_SAVE, UPDATE_POST_RESULT_1, UPDATE_POST_RESULT_2 } from '../types';
+import { SET_BASELINE, UPDATE_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS, UPDATE_POST_RESULT, UPDATE_QUARTER, UPDATE_DATA, UPDATE_SAVE, UPDATE_POST_RESULT_FORMAT, UPDATE_RESCHEDULE, RESCHEDULE_POST_RESULT, UPDATE_TABCHECKER } from '../types';
 
 export default (state, action) => {
     switch(action.type) {
@@ -19,26 +19,32 @@ export default (state, action) => {
                 ...state,
                 currentQuarter: action.payload
             }
-        case UPDATE_POST_RESULT_1:
-        case UPDATE_POST_RESULT_2:
-            return {
-                ...state,
-                scheduletest: action.payload
-            }
+        case UPDATE_POST_RESULT_FORMAT:
         case UPDATE_POST_RESULT:
+        case RESCHEDULE_POST_RESULT:
             return {
                 ...state,
-                postResult: action.payload
+                postResultDone: action.payload
+            }
+        case UPDATE_RESCHEDULE:
+            return {
+                ...state,
+                reschedule: action.payload
+            }
+        case UPDATE_TABCHECKER:
+            return {
+                ...state,
+                tabUpdate: action.payload
             }
         case UPDATE_SAVE:
             return {
                 ...state,
-                saved: action.payload
+                saveHistory: action.payload
             }
         case CREATE_RESULT:
             return {
                 ...state,
-                postResult: action.payload,
+                // postResult: action.payload,
                 loading: false,
                 scheduleDone: true
             }
@@ -95,9 +101,13 @@ export default (state, action) => {
                 bays: '',
                 loading: false,
                 postResult: null,
+                postResultDone: null,
                 scheduleDone: false,
                 error: null,
-                stepcount: 1
+                currentQuarter: null,
+                stepcount: 1,
+                reschedule: false,
+                saveHistory: false
             }
         case CLEAR_PRERESULT:
             return {
@@ -116,6 +126,7 @@ export default (state, action) => {
                 bays: '',
                 loading: false,
                 postResult: null,
+                postResultDone: null,
                 scheduleDone: false,
                 error: null,
                 stepcount: 0
