@@ -3,7 +3,7 @@ import UploadContext from './uploadContext';
 import UploadReducer from './uploadReducer';
 import XLSX from 'xlsx';
 import axios from 'axios';
-import { SET_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS, UPDATE_POST_RESULT, UPDATE_QUARTER, UPDATE_DATA, UPDATE_SAVE, UPDATE_POST_RESULT_1, UPDATE_POST_RESULT_2 } from '../types';
+import { SET_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS, UPDATE_POST_RESULT, UPDATE_QUARTER, UPDATE_DATA, UPDATE_SAVE, UPDATE_POST_RESULT_FORMAT, UPDATE_RESCHEDULE, RESCHEDULE_POST_RESULT, UPDATE_TABCHECKER } from '../types';
 
 const UploadState = (props) => {
     const initialState = {
@@ -11,10 +11,7 @@ const UploadState = (props) => {
         schedule: null,
         bays: '',
         loading: false,
-        postResult: null,
-        scheduleDone: false,
-        error: null,
-        scheduletest: {
+        postResult: {
           "baseLineOccupancy": {
             "CY19Q4": [
               [
@@ -21234,12 +21231,16 @@ const UploadState = (props) => {
             ]
           }
         },
+        scheduleDone: false,
+        error: null,
+        postResultDone: null,
         stepcount: 0,
         steps: ['Upload Bay Requirement', 'Input guidelines & upload MasterOpsPlan', 'Edit MasterOpsPlan', 'Schedule Generated'],
         currentQuarter: null,
-        currentData: [],
-        saved: false,
-        postResultErrors: []
+        postResultErrors: {},
+        saveHistory: false,
+        reschedule: false,
+        tabUpdate: false
     }
 
     const [state, dispatch] = useReducer(UploadReducer, initialState);
@@ -21514,29 +21515,6 @@ const UploadState = (props) => {
       arr.forEach(val => obj[val] = new Date(obj[val]).toLocaleDateString('en-GB'))
     }
 
-    //save file
-    const saveFile = async (file) => {
-        setLoading();
-
-        const output = file.allProduct;
-
-        const config = {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }
-
-        try {
-            await axios.post('http://localhost:8080/save', output, config)
-            dispatch({
-                type: SAVE_RESULT
-            })
-        } catch (err) {
-            //prompt error
-
-        }
-    }
-
     //clear all - back to default state
     const clearAll = () => dispatch({ type: CLEAR_ALL })
 
@@ -21555,26 +21533,28 @@ const UploadState = (props) => {
     // ######################################## POST RESULT START #######################################
     // ##################################################################################################
 
-    // retrieve json from backend (Have not implemented this!)
-    // const getPostResult = () => {
-    //   const config = {
-    //     headers: {
-    //         'Content-Type': 'application/json'
-    //     }
-    //   }
+    // send to backend for rescheduling (Have not implemented this!)
+    const reschedulePostResult = async (postResultDone) => {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+      
+      try {
+        // console.log(postResultDone);
+        await axios.post('http://localhost:8080/subseqScheduling', postResultDone, config);
 
-    //   try {
-    //       const res = await axios.post('http://localhost:8080/subseqScheduling');
+        dispatch({ 
+          type: RESCHEDULE_POST_RESULT, 
+          payload: postResultDone 
+        })
 
-    //       dispatch({
-    //           type: ,
-    //           payload: 
-    //       })
-    //   } catch (err) {
-    //       //prompt error
+      } catch (err) {
+        //prompt error
 
-    //   }
-    // }
+      }
+    }
 
     // get all quarters
     const getQtrs = (postResult) => {
@@ -21601,12 +21581,13 @@ const UploadState = (props) => {
 
     // update post result data "E"s
     const updatePostResultEmpties = (postResult) => {
+      let postResultUpdate = JSON.parse(JSON.stringify(postResult));
 
-      const qtrs = getQtrs(postResult);
-      const firstQtrDates = getUniqueDates(postResult);
+      const qtrs = getQtrs(postResultUpdate);
+      const firstQtrDates = getUniqueDates(postResultUpdate);
 
       // update baseline 
-      let result = postResult.baseLineOccupancy[qtrs[0]];
+      let result = postResultUpdate.baseLineOccupancy[qtrs[0]];
       for( let i = 1; i < result.length; i++){
         let EOcount = result[i].slice(1).length;
         for (let j = EOcount; j < firstQtrDates.length; j++){
@@ -21614,10 +21595,10 @@ const UploadState = (props) => {
         }
       }
       result[0] = firstQtrDates;
-      postResult.baseLineOccupancy[qtrs[0]] = result;
+      postResultUpdate.baseLineOccupancy[qtrs[0]] = result;
 
       // update scheduled
-      result = postResult.bayOccupancy[qtrs[0]];
+      result = postResultUpdate.bayOccupancy[qtrs[0]];
       for( let i = 1; i < result.length; i++){
         let EOcount = result[i].slice(1).length;
         for (let j = EOcount; j < firstQtrDates.length; j++){
@@ -21627,12 +21608,9 @@ const UploadState = (props) => {
       }
       
       result[0] = firstQtrDates;
-      postResult.bayOccupancy[qtrs[0]] = result;
+      postResultUpdate.bayOccupancy[qtrs[0]] = result;
 
-      dispatch({ 
-        type: UPDATE_POST_RESULT_1,
-        payload: postResult 
-      })
+      setPostResult(postResultUpdate);
     }
 
     //update post result data when user click "Save"
@@ -21663,14 +21641,14 @@ const UploadState = (props) => {
     }
 
     //set post result dates
-    const setPostResult = (postResult) => {
+    const setPostResult = (postResultDone) => {
       const minGap = (24*60*60*1000) * 3; // hardcoded for now to 3 days
       const objItemsToChange = ["MRPDate", "intOpsShipReadinessDate", "MFGCommitDate", "shipRecogDate", "toolStartDate", 'endDate'];
 
-      Object.keys(postResult).map( occupancy => {
-        Object.keys(postResult[occupancy]).map( quarter => {
+      Object.keys(postResultDone).map( occupancy => {
+        Object.keys(postResultDone[occupancy]).map( quarter => {
           
-          let currentQtr = postResult[occupancy][quarter];
+          let currentQtr = postResultDone[occupancy][quarter];
           for(let i=0; i<currentQtr[0].length; i++){
             
             // sort the dates in ascending order for table header to output
@@ -21701,23 +21679,47 @@ const UploadState = (props) => {
       })
 
       dispatch({ 
-        type: UPDATE_POST_RESULT_2,
-        payload: postResult 
+        type: UPDATE_POST_RESULT_FORMAT,
+        payload: postResultDone 
       })
 
     }
 
     const handlePostResultError = (postResultErrors, uniqueID, errorMsg, type) => {
-      if(errorMsg == null && postResultErrors.includes(uniqueID)){
-        let pos = postResultErrors.indexOf(uniqueID);
-        postResultErrors.splice(pos, 1);
+      if(errorMsg == null && uniqueID in postResultErrors){
+        delete postResultErrors[uniqueID];
       } 
 
-      if(errorMsg !== null && !postResultErrors.includes(uniqueID)){
-        postResultErrors.push(uniqueID);
+      if(errorMsg !== null && !(uniqueID in postResultErrors)){
+        postResultErrors[uniqueID] = errorMsg;
       }
 
       // no need to dispatch since it's for instant check
+    }
+    
+    const updateReschedule = (res) => dispatch({ type: UPDATE_RESCHEDULE, payload: res })
+    const tabChecker = (res) => dispatch({ type: UPDATE_TABCHECKER, payload: res })
+
+    //save to history
+    const saveResult = async (postResultDone) => {
+      setLoading();
+
+      const config = {
+          headers: {
+              'Content-Type': 'application/json'
+          }
+      }
+
+      try {
+          await axios.post('http://localhost:8080/save', postResultDone, config);
+
+          dispatch({
+              type: SAVE_RESULT
+          })
+      } catch (err) {
+          //prompt error
+
+      }
     }
 
     // ##################################################################################################
@@ -21887,13 +21889,14 @@ const UploadState = (props) => {
             scheduleDone: state.scheduleDone,
             postResult: state.postResult,
             error: state.error,
-            scheduletest: state.scheduletest,
+            postResultDone: state.postResultDone,
             stepcount : state.stepcount,
             steps: state.steps,
             currentQuarter: state.currentQuarter,
-            currentData: state.currentData,
             postResultErrors: state.postResultErrors,
-            saved: state.saved,
+            reschedule: state.reschedule,
+            saveHistory: state.saveHistory,
+            tabUpdate: state.tabUpdate,
             setBaseline,
             setSchedule,
             setBays,
@@ -21903,7 +21906,7 @@ const UploadState = (props) => {
             clearPreresult,
             setLoading,
             createExport,
-            saveFile,
+            saveResult,
             clearAll,
             uploadClearError,
             clearZero,
@@ -21915,7 +21918,10 @@ const UploadState = (props) => {
             updateSave,
             setPostResult,
             endDateCheck,
-            handlePostResultError
+            handlePostResultError,
+            reschedulePostResult,
+            updateReschedule,
+            tabChecker
         }}>
         {props.children}
     </UploadContext.Provider>

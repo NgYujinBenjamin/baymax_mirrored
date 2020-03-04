@@ -2,37 +2,68 @@ import React, { Fragment, useEffect, useContext, useState } from 'react'
 import { TableBody } from '@material-ui/core'
 import PostresultItem from './PostresultItem'
 import UploadContext from '../../context/upload/uploadContext'
+import AlertContext from '../../context/alert/alertContext'
 
 const Postresultbody = ({ result, baseline, quarter }) => {
     const [ objs, setObjects ] = useState(result);
     
     const uploadContext = useContext(UploadContext);
-    const { currentQuarter, updateCurrentQuarter, updatePostResult, postResult, scheduletest, saved, updateSave, endDateCheck, postResultErrors, handlePostResultError } = uploadContext;
+    const alertContext = useContext(AlertContext);
+
+    const { setAlert } = alertContext;
+    const { currentQuarter, updateCurrentQuarter, reschedule, tabUpdate, tabChecker, reschedulePostResult, saveResult, updateReschedule, updatePostResult, postResultDone, saveHistory, updateSave, endDateCheck, postResultErrors, handlePostResultError } = uploadContext;
 
     useEffect(() => {
         if(currentQuarter === null){
             updateCurrentQuarter(quarter);
         } 
 
-        // if user change tab, it will do an auto save on the previous tab
-        if( (currentQuarter !== null && currentQuarter !== quarter) || saved){
-            saveChanges(saved, scheduletest, currentQuarter);
-            updateCurrentQuarter(quarter);
+        if( (currentQuarter !== null && currentQuarter !== quarter) || saveHistory || reschedule || tabUpdate ){
+            appLevelSave(postResultDone, currentQuarter); // save local copy only
+            
+            if( Object.keys(postResultErrors).length !== 0 ){
+                setAlert("Please fix existing errors in this table quarter! Update failed.");
+                window.scrollTo(0,0);
+                updateSave(false);
+                updateReschedule(false);
+                tabChecker(false);
+            } else{
+                // save success when user change tab
+                updateCurrentQuarter(quarter);
+
+                if(tabUpdate){
+                    console.log("Errors saved for Tab");
+                    tabChecker(false);
+                }
+
+                // save to history
+                if(saveHistory){
+                    console.log("Saved");
+                    // saveResult(postResult); // send to backend via endpoint
+                    updateSave(false);
+                }
+    
+                // reschuling
+                if(reschedule){
+                    console.log("Rescheduled");
+                    // reschedulePostResult(postResultDone); // send to backend via endpoint
+                    updateReschedule(false);
+                }
+            }
         }
 
         localStorage.setItem('postResultEdit', JSON.stringify(objs));
         //eslint-disable-next-line
-    }, [currentQuarter, objs, saved])
-    
-    const saveChanges = (saved, scheduletest, currentQuarter) => {
-        updatePostResult(scheduletest, localStorage.getItem('postResultEdit'), currentQuarter);
+    }, [currentQuarter, objs, tabUpdate, saveHistory, reschedule])
+
+    const appLevelSave = (postResultDone, currentQuarter) => {
+        updatePostResult(postResultDone, localStorage.getItem('postResultEdit'), currentQuarter);
         localStorage.setItem('postResultEdit', null);
-        updateSave(!saved); // go back to false
     }
 
     const validateFields = (postResultErrors, value, argoID, type) => {
         let uniqueID = argoID + "_" + type;
-        let errorMsg = validateDate(value) ? null : 'Invalid date format';
+        let errorMsg = validateDate(value) ? null : 'Invalid Date (d/m/yyyy)';
 
         // overwrite since move to storage can be empty
         if( type == 'moveToStorage' && value == ''){
@@ -49,7 +80,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
     const validateDate = (value) => {
         const dateParts = value.split("/");
         const date = new Date(dateParts[2], (dateParts[1] - 1), dateParts[0]);
-        
+    
         if (date.getDate() == dateParts[0] && date.getMonth() == (dateParts[1] - 1) && (date.getFullYear() == dateParts[2]) && dateParts[2].length == 4) {
             return true;
         }
