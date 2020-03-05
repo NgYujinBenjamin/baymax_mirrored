@@ -34,8 +34,8 @@ const PostresultItem = memo(({ result, id, onChange }) => {
     const MRPName = "MRPDate";
     let MRPDate = result[0].MRPDate;
 
-    const storageName = "moveToStorage";
-    let storageDate = result[0].moveToStorage;
+    const storageName = "sendToStorageDate";
+    let storageDate = result[0].sendToStorageDate;
 
     const lockMRPName = "lockMRPDate";
     let lockMRPCheck = result[0].lockMRPDate;
@@ -74,6 +74,6 @@ const PostresultItem = memo(({ result, id, onChange }) => {
             </TableRow>
         </Fragment>
     )
-}, (prevProps, nextProps) => prevProps.result[0].cycleTimeDays === nextProps.result[0].cycleTimeDays && prevProps.result[0].MRPDate === nextProps.result[0].MRPDate && prevProps.result[0].moveToStorage === nextProps.result[0].moveToStorage && prevProps.result[0].lockMRPDate === nextProps.result[0].lockMRPDate)
+}, (prevProps, nextProps) => prevProps.result[0].cycleTimeDays === nextProps.result[0].cycleTimeDays && prevProps.result[0].MRPDate === nextProps.result[0].MRPDate && prevProps.result[0].sendToStorageDate === nextProps.result[0].sendToStorageDate && prevProps.result[0].lockMRPDate === nextProps.result[0].lockMRPDate)
 
 export default PostresultItem

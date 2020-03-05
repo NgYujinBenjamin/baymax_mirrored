@@ -11,7 +11,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
     const alertContext = useContext(AlertContext);
 
     const { setAlert } = alertContext;
-    const { currentQuarter, updateCurrentQuarter, reschedule, tabUpdate, tabChecker, reschedulePostResult, saveResult, updateReschedule, updatePostResult, postResultDone, saveHistory, updateSave, endDateCheck, postResultErrors, handlePostResultError } = uploadContext;
+    const { validateDate, validateNum, currentQuarter, updateCurrentQuarter, reschedule, tabUpdate, tabChecker, reschedulePostResult, saveResult, updateReschedule, updatePostResult, postResultDone, saveHistory, updateSave, endDateCheck, postResultErrors, handlePostResultError } = uploadContext;
 
     useEffect(() => {
         if(currentQuarter === null){
@@ -45,6 +45,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
     
                 // reschuling
                 if(reschedule){
+                    console.log(postResultDone);
                     console.log("Rescheduled");
                     // reschedulePostResult(postResultDone); // send to backend via endpoint
                     updateReschedule(false);
@@ -63,10 +64,10 @@ const Postresultbody = ({ result, baseline, quarter }) => {
 
     const validateFields = (postResultErrors, value, argoID, type) => {
         let uniqueID = argoID + "_" + type;
-        let errorMsg = validateDate(value) ? null : 'Invalid Date (d/m/yyyy)';
+        let errorMsg = validateDate(value);
 
         // overwrite since move to storage can be empty
-        if( type == 'moveToStorage' && value == ''){
+        if( type == 'sendToStorageDate' && value == ''){
             errorMsg = null;
         }
 
@@ -75,22 +76,6 @@ const Postresultbody = ({ result, baseline, quarter }) => {
         }
 
         handlePostResultError(postResultErrors, uniqueID, errorMsg, type);
-    }
-
-    const validateDate = (value) => {
-        const dateParts = value.split("/");
-        const date = new Date(dateParts[2], (dateParts[1] - 1), dateParts[0]);
-    
-        if (date.getDate() == dateParts[0] && date.getMonth() == (dateParts[1] - 1) && (date.getFullYear() == dateParts[2]) && dateParts[2].length == 4) {
-            return true;
-        }
-        return false;
-    }
-
-    const validateNum = (value) => {
-        let errorMsg = isNaN(value) ? 'Invalid number' : null;
-
-        return errorMsg;
     }
 
     const handleChange = (obj, postResultErrors) => {
@@ -105,7 +90,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
                         validateFields(postResultErrors, value, obj[0].argoID, name); // validation check
                         return [ {...obj[0], [name]: value}, ...obj.slice(1) ];
                     } 
-                    if (name == 'moveToStorage'){
+                    if (name == 'sendToStorageDate'){
                         validateFields(postResultErrors, value, obj[0].argoID, name); // validation check
                         return [ {...obj[0], [name]: value}, ...obj.slice(1) ];
                     }
