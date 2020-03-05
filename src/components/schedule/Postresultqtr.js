@@ -1,9 +1,7 @@
-import React, { Fragment, useContext } from 'react'
-import { TableContainer, Paper, Typography, Box, Table, Button } from '@material-ui/core'
-import Postresultheader from './Postresultheader';
+import React, { Fragment, useContext } from 'react';
+import { TableContainer, Paper, Typography, Box, Table, TableHead, TableRow, TableCell } from '@material-ui/core';
 import Postresultbody from './Postresultbody';
 import PropTypes from 'prop-types';
-import UploadContext from '../../context/upload/uploadContext'
 
 const Postresultqtr = ({ schedule, baseline, value, num, quarter }) => {
     
@@ -40,8 +38,25 @@ const Postresultqtr = ({ schedule, baseline, value, num, quarter }) => {
             <TabPanel value={value} index={num}>
                 <TableContainer component={Paper} style={{maxHeight:440}}>
                     <Table stickyHeader style={{tableLayout: "auto"}}>
-                        {/* TableHeader */}
-                        <Postresultheader result={schedule[quarter][0]}/>
+                        <TableHead>
+                            <TableRow style={{whiteSpace: "nowrap"}}>
+                                <TableCell>Slot/UTID</TableCell>
+                                <TableCell>Built Product</TableCell>
+                                <TableCell>Configuration</TableCell>
+                                <TableCell>Tool Start</TableCell>
+                                <TableCell>MRP Date</TableCell>
+                                <TableCell>MFG Commit Date</TableCell>
+                                <TableCell>Int. Readiness Date</TableCell>
+                                <TableCell>End Date</TableCell>
+                                <TableCell>Gap</TableCell>
+                                <TableCell>Cycle Time Days</TableCell>
+                                <TableCell>Lock MRP Date?</TableCell>
+                                <TableCell>Move to Storage Date</TableCell>
+                                { schedule[quarter][0].map((date, index) =>
+                                    <TableCell key={index}>{date}</TableCell>
+                                )}
+                            </TableRow>
+                        </TableHead>
                         {/* TableRow */}
                         { Object.keys(schedule).map((quarterName, index) => (quarterName === quarter) ?
                             <Postresultbody result={schedule[quarterName].slice(1)} baseline={qtrs[0]===quarterName ? baseline[quarterName].slice(1) : null } key={index} quarter={quarterName}/> : null
