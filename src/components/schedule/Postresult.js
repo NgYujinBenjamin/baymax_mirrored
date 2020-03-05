@@ -1,10 +1,9 @@
-import React, { Fragment, useContext, useState, useEffect } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
-import { Button, Box, Grid } from '@material-ui/core'
+import React, { Fragment, useContext, useState, useEffect } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import { Button, Box, Grid } from '@material-ui/core';
 import { AppBar, Tabs, Tab } from '@material-ui/core';
 import UploadContext from '../../context/upload/uploadContext';
 import AuthContext from '../../context/auth/authContext';
-import AlertContext from '../../context/alert/alertContext';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
 import GetAppIcon from '@material-ui/icons/GetApp';
@@ -15,13 +14,11 @@ const Postresult = () => {
     const classes = useStyles();
     const uploadContext = useContext(UploadContext);
     const authContext = useContext(AuthContext);
-    const alertContext = useContext(AlertContext);
 
     const [value, setValue] = useState(0); // this is for tab panel to display quarters
 
-    const { setAlert } = alertContext;
     const { loadUser, updateNavItem } = authContext
-    const { currentQuarter, postResult, postResultDone, postResultErrors, tabChecker, updateReschedule, createExport, createExportSchedule, updateSave, saveFile, clearAll, updatePostResultEmpties, setPostResult } = uploadContext;
+    const { currentQuarter, postResult, postResultDone, postResultErrors, tabChecker, updateReschedule, createExport, createExportSchedule, updateSave, clearAll, updatePostResultEmpties } = uploadContext;
 
     useEffect(() => {
         updateNavItem(0);
@@ -60,7 +57,7 @@ const Postresult = () => {
 
     const handleExport = (event) => {
         event.preventDefault();
-        createExport(postResult);
+        createExport(postResult); // use postResult since export will be based on the first generated result data
         createExportSchedule(postResult);
     }
 
