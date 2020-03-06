@@ -21,10 +21,10 @@ const Postresult = () => {
     const { currentQuarter, postResult, postResultDone, postResultErrors, tabChecker, updateReschedule, createExport, createExportSchedule, updateSave, clearAll, updatePostResultEmpties } = uploadContext;
 
     useEffect(() => {
-        updateNavItem(0)
-        //eslint-disable-next-line
         updateNavItem(0);
         updatePostResultEmpties(postResult);
+        //console.log(postResult)
+        //eslint-disable-next-line
     }, [])
 
     const qtrs = new Array();

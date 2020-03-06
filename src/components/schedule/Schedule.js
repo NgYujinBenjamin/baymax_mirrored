@@ -18,15 +18,24 @@ const Schedule = (props) => {
 
     const { setAlert } = alertContext;
     const { loadUser, updateNavItem } = authContext
-    const { setSchedule, setBays, clearPreresult, schedule, bays, loading, scheduleDone, postResult, error, uploadClearError, stepcount, setStepCount, baseline, getBaseline } = uploadContext;
+    const { setSchedule, setBays, clearPreresult, schedule, loading, scheduleDone, postResult, error, uploadClearError, stepcount, setStepCount, baseline, setMinGap, setMaxGap } = uploadContext;
 
     useEffect(() => {
         loadUser();
         updateNavItem(0);
 
         if(error !== null){
+            window.scrollTo(0,0);
             setAlert(error);
             uploadClearError();
+            setUserInput({
+                bayComponent: '',
+                bayFile: null,
+                fileName: '',
+                bayFileValue: '',
+                minGapTime: '',
+                maxGapTime: ''
+            })
         }
 
         if(baseline === null){
@@ -78,18 +87,12 @@ const Schedule = (props) => {
             setAlert('Please upload an excel file');
         } else if(splitFilename[splitFilename.length - 1] !== 'xlsx' && splitFilename[splitFilename.length - 1] !== 'xlsm') {
             setAlert('Please upload a .xlsx or .xlsm excel file');
-        } /*else if(baseline.length <= parseInt(userInput.bayComponent)){
-            setAlert('Please make sure the number of bays inputted is less than the number of products inside Bay Requirement file')
-        }*/ else {
+        } else {
             setStepCount(stepcount + 1);
-            setUserInput({
-                ...userInput,
-                bayComponent: parseInt(userInput.bayComponent),
-                minGapTime: parseInt(userInput.minGapTime),
-                maxGapTime: parseInt(userInput.maxGapTime)
-            })
             setBays(parseInt(userInput.bayComponent));
-            setSchedule(userInput.bayFile, userInput.minGapTime, baseline);
+            setMinGap(parseInt(userInput.minGapTime));
+            setMaxGap(parseInt(userInput.maxGapTime));
+            setSchedule(userInput.bayFile, parseInt(userInput.minGapTime), baseline);
         }
     }
 
@@ -150,12 +153,12 @@ const Schedule = (props) => {
                                 </Typography>
                             </Box>
                             {(userInput.bayFile && userInput.fileName !== '' && schedule === null) && <Button color='primary' variant='contained' fullWidth onClick={handleConfirm}>Confirm</Button>}
-                            {(schedule !== null && bays !== '' && !scheduleDone) && <Button fullWidth color='default' variant='contained' className={classes.marginTop} onClick={handleClearPreresult}>Clear</Button>}
+                            {(schedule !== null && !scheduleDone) && <Button fullWidth color='default' variant='contained' className={classes.marginTop} onClick={handleClearPreresult}>Clear</Button>}
                         </Box>
                     }  
                     <Box>
                         {loading && <Spinner />}
-                        {(schedule !== null && bays !== '' && !scheduleDone && !loading) && <Preresult fileName={userInput.fileName} minGap={userInput.minGapTime} maxGap={userInput.maxGapTime} /> }
+                        {(schedule !== null && !scheduleDone && !loading) && <Preresult fileName={userInput.fileName} /> }
                         {(postResult !== null && scheduleDone && !loading) && <Postresult />}
                     </Box>
                 </CardContent>
