@@ -5,16 +5,16 @@ import java.text.*;
 import main.java.authentication.json.JsonObject;
 
 public class firstSchedulingParam implements JsonObject{
-    public List<Map<String,Object>> baseLineData;
-    public List<Map<String,Object>> data;
-    public Integer numBays;
+    public List<Map<String,Object>> baseline;
+    public List<Map<String,Object>> masterOps;
+    public Integer bays;
     public Integer minGap;
     public Integer maxGap;
 
-    public firstSchedulingParam(List<Map<String,Object>> baseLineData, List<Map<String,Object>> data, Integer numBays, Integer minGap, Integer maxGap){
-        this.baseLineData = baseLineData;
-        this.data = data;
-        this.numBays = numBays;
+    public firstSchedulingParam(List<Map<String,Object>> baseline, List<Map<String,Object>> masterOps, Integer bays, Integer minGap, Integer maxGap){
+        this.baseline = baseline;
+        this.masterOps = masterOps;
+        this.bays = bays;
         this.minGap = minGap;
         this.maxGap = maxGap;
     }
