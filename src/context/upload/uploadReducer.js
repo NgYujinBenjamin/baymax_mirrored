@@ -1,4 +1,4 @@
-import { SET_BASELINE, UPDATE_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS, UPDATE_POST_RESULT, UPDATE_QUARTER, UPDATE_DATA, UPDATE_SAVE, UPDATE_POST_RESULT_FORMAT, UPDATE_RESCHEDULE, RESCHEDULE_POST_RESULT, UPDATE_TABCHECKER } from '../types';
+import { SET_BASELINE, UPDATE_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS, UPDATE_POST_RESULT, UPDATE_QUARTER, UPDATE_DATA, UPDATE_SAVE, UPDATE_POST_RESULT_FORMAT, UPDATE_RESCHEDULE, RESCHEDULE_POST_RESULT, UPDATE_TABCHECKER, CREATE_RESULT_ERROR, SET_MIN_GAP, SET_MAX_GAP } from '../types';
 
 export default (state, action) => {
     switch(action.type) {
@@ -44,14 +44,38 @@ export default (state, action) => {
         case CREATE_RESULT:
             return {
                 ...state,
-                // postResult: action.payload,
+                postResult: action.payload,
                 loading: false,
                 scheduleDone: true
+            }
+        case CREATE_RESULT_ERROR:
+            return {
+                ...state,
+                schedule: null,
+                newBaseline: null,
+                bays: '',
+                minGap: '',
+                maxGap: '',
+                loading: false,
+                error: action.payload,
+                stepcount: 1
             }
         case SET_BAYS:
             return {
                 ...state,
                 bays: action.payload,
+                loading: false
+            }
+        case SET_MIN_GAP:
+            return {
+                ...state,
+                minGap: action.payload,
+                loading: false
+            }
+        case SET_MAX_GAP:
+            return {
+                ...state,
+                maxGap: action.payload,
                 loading: false
             }
         case SET_SCHEDULE:
@@ -69,7 +93,7 @@ export default (state, action) => {
         case UPDATE_BASELINE:
             return {
                 ...state,
-                baseline: action.payload
+                newBaseline: action.payload
             }
         case SET_BASELINE:
             return {
@@ -98,7 +122,10 @@ export default (state, action) => {
             return {
                 ...state,
                 schedule: null,
+                newBaseline: null,
                 bays: '',
+                minGap: '',
+                maxGap: '',
                 loading: false,
                 postResult: null,
                 postResultDone: null,
@@ -113,7 +140,10 @@ export default (state, action) => {
             return {
                 ...state,
                 schedule: null,
+                newBaseline: null,
                 bays: '',
+                minGap: '',
+                maxGap: '',
                 loading: false,
                 error: null,
                 stepcount: 1
@@ -122,8 +152,11 @@ export default (state, action) => {
             return {
                 ...state,
                 baseline: null,
+                newBaseline: null,
                 schedule: null,
                 bays: '',
+                minGap: '',
+                maxGap: '',
                 loading: false,
                 postResult: null,
                 postResultDone: null,
