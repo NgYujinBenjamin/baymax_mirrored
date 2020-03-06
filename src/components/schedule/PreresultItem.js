@@ -36,7 +36,7 @@ const PreresultItem = memo (({ obj, onChange }) => {
                         name={mrpName} 
                         value={mrpDate} 
                         onChange={onChange} 
-                        required 
+                        required
                     /> 
                 </TableCell>
                 <TableCell>{mfgCommit}</TableCell>
@@ -51,7 +51,7 @@ const PreresultItem = memo (({ obj, onChange }) => {
                         name={cycleName} 
                         value={cycleTime} 
                         onChange={onChange} 
-                        required 
+                        required
                     />
                 </TableCell>
                 <TableCell align='center'>
