@@ -75,7 +75,9 @@ public class AlgoController {
         while (quarterHCChanged){
             baySchedule = new BaySchedule(baseLineProduct, allProduct, quarterHC, numBays, gapDiff);
 
-            bayReq = new BayRequirement(baySchedule);
+            allProduct = baySchedule.getAllProduct();
+            baseLineProduct = baySchedule.getBaseLineProduct();
+            bayReq = new BayRequirement(baseLineProduct, allProduct);
     
             allProduct = baySchedule.getAllProduct();
 

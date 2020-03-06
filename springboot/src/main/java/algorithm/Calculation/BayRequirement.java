@@ -13,11 +13,8 @@ public class BayRequirement{
     private TreeMap<String, ArrayList<ArrayList<Object>>> baseLineOccupancy;
     private TreeMap<String, ArrayList<ArrayList<Object>>> bayOccupancy;
 
-    public BayRequirement(BaySchedule BS){
+    public BayRequirement(ArrayList<Product> baseLineProduct, ArrayList<Product> allProduct){
       
-        ArrayList<Product> allProduct = BS.getAllProduct();
-        ArrayList<Product> baseLineProduct = BS.getBaseLineProduct();
-
         HashMap<String, HashMap<String, Date>> baseLine_earliestStartLatestEnd = findEarliestStartLatestEnd(baseLineProduct);
         HashMap<String, HashMap<String, Date>> bayOccupancy_earliestStartLatestEnd = findEarliestStartLatestEnd(allProduct);
         // {Q1: {"Earliest start": Date1, "Latest End": Date2}, Q2: ...}
