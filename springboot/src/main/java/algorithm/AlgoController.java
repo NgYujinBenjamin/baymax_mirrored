@@ -31,7 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class AlgoController {
 
     @RequestMapping(path = "/firstScheduling", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
-    public String testing(@RequestBody firstSchedulingParam param) throws Exception{
+    public String testing(@RequestBody firstSchedulingParam param) throws RuntimeException, Exception{
         List<Map<String, Object>> baseLineData;
         List<Map<String, Object>> data;
         Integer numBays;
@@ -41,7 +41,7 @@ public class AlgoController {
         try {
             baseLineData = param.baseline;
             data = param.masterOps;
-            numBays = param.bays;
+            numBays = param.bay;
             minGap = param.minGap;
             maxGap = param.maxGap;
         } catch(Exception e) {
@@ -62,7 +62,7 @@ public class AlgoController {
         }
 
         Collections.sort(allProduct);
-        Collections. sort(baseLineProduct);
+        Collections.sort(baseLineProduct);
 
         BayRequirement bayReq = null;
         BaySchedule baySchedule = null;
@@ -75,7 +75,9 @@ public class AlgoController {
         while (quarterHCChanged){
             baySchedule = new BaySchedule(baseLineProduct, allProduct, quarterHC, numBays, gapDiff);
 
-            bayReq = new BayRequirement(baySchedule);
+            allProduct = baySchedule.getAllProduct();
+            baseLineProduct = baySchedule.getBaseLineProduct();
+            bayReq = new BayRequirement(baseLineProduct, allProduct);
     
             allProduct = baySchedule.getAllProduct();
 
