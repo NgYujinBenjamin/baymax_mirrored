@@ -148,6 +148,7 @@ public class UserControllerTest {
 //    @Order(8)
 //    public void verify() throws Exception {
 //        System.out.println("\t ===================== 8 /verify test =====================");
+//        System.out.println("Token can still be accessed here " + token);
 //
 ////        assertTrue(TOKEN.isTokenValid(token));
 //    }

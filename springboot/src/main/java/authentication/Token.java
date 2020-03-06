@@ -1,25 +1,24 @@
 package authentication;
 
-import java.sql.SQLException;
-import java.util.*;
-import java.security.*;
-import java.math.BigInteger;
-import java.time.LocalDate;
-
-import main.java.authentication.json.JsonObject;
+import com.auth0.jwt.JWT;
+import connection.userscon;
 import main.java.authentication.json.users.*;
 
-import com.auth0.jwt.JWT;
-import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
+import java.util.Base64;
+import java.util.Date;
 
-import connection.*;
+import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 
 // Token class in charge of creating and verifying JWTs.
 
 public class Token {
     
     private static final String SECRET = "baymax";
-    private static final mysqlcon conn = new mysqlcon();
+    private static final userscon conn = new userscon();
 
     public String createToken(String username){
         long EXPIRATION_TIME = 5 * 60 * 60 * 1000;
