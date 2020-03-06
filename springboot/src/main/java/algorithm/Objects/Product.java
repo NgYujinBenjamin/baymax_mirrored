@@ -212,7 +212,7 @@ public class Product implements Comparable<Product>{
             // changedOn = (rowData.get("Changed On") == null) ? null : dateFormat.parse((String) rowData.get("Changed On"));
             // createdTime = (rowData.get("Created Time") == null) ? null : dateFormat.parse((String) rowData.get("Created Time"));
             // lastChangedTime = (rowData.get("Last Changed Time") == null) ? null : dateFormat.parse((String) rowData.get("Last Changed Time"));
-            endDate = (rowData.get("End Date") == null) ? null : dateFormat.parse((String) rowData.get("End Date"));
+            endDate = (rowData.get("End Date") == null) ? MFGCommitDate : dateFormat.parse((String) rowData.get("End Date"));
             sendToStorageDate = (rowData.get("Send To Storage Date") == null) ? null : dateFormat.parse((String) rowData.get("Send To Storage Date"));
         } catch (ParseException e){
             e.printStackTrace();
