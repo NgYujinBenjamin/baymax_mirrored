@@ -6,24 +6,18 @@ import java.text.*;
 public class HistoryDetails implements JsonObject {
 
     private String msuId;
-    private String staffId;
-    private String dateGenerated;
+    private String date_generated;
 
-    public HistoryDetails(String msuId, String staffId, String dateGenerated) {
+    public HistoryDetails(String msuId, String date_generated) {
         this.msuId = msuId;
-        this.staffId = staffId;
-        this.dateGenerated = dateGenerated;
+        this.date_generated = date_generated;
     }
 
     public String getMsuId() {
         return msuId;
     }
 
-    public String getStaffId() {
-        return staffId;
-    }
-
-    public String getDateGenerated() {
-        return dateGenerated;
+    public String getDate_generated() {
+        return date_generated;
     }
 }

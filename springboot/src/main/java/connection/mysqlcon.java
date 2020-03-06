@@ -17,7 +17,7 @@ import main.java.authentication.json.GetFacilityUtilResult;
 
 // @Component
 public class mysqlcon {
-    
+
     // @Value("${port}")
     // private String port;
 
@@ -27,7 +27,7 @@ public class mysqlcon {
     private final String connection = "jdbc:mysql://localhost:" + port + "/" + databaseName + "?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
     private final String driverName = "com.mysql.cj.jdbc.Driver";
 
-    public RegistrationDetails getUser(String username) throws SQLException, ClassNotFoundException{
+    public RegistrationDetails getUser(String username) throws SQLException, ClassNotFoundException {
         Class.forName(driverName);
 
         Connection con = DriverManager.getConnection(connection, "root", connectionPassword);
@@ -44,7 +44,7 @@ public class mysqlcon {
         return rv;
     }
 
-    public ArrayList<User> getAllUsers() throws SQLException, ClassNotFoundException{
+    public ArrayList<User> getAllUsers() throws SQLException, ClassNotFoundException {
         Class.forName(driverName);
 
         Connection con = DriverManager.getConnection(connection, "root", connectionPassword);
@@ -60,8 +60,8 @@ public class mysqlcon {
         return rv;
     }
 
-    public void addUser(String username, String password, String firstname, String lastname, String department, String role) throws SQLException, ClassNotFoundException{
-    
+    public void addUser(String username, String password, String firstname, String lastname, String department, String role) throws SQLException, ClassNotFoundException {
+
         Class.forName(driverName);
 
         Connection con = DriverManager.getConnection(connection, "root", connectionPassword);
@@ -69,11 +69,11 @@ public class mysqlcon {
         String my_string = "insert into users (username, password, firstname, lastname, department, role) values ('" + username + "', '" + password + "', '" + firstname + "', '" + lastname + "', '" + department + "', '" + role + "')";
         stmt.executeUpdate(my_string);
         con.close();
-            
+
     }
 
-    public void changePassword(String username, String oldpassword, String newpassword) throws SQLException, ClassNotFoundException{
-    
+    public void changePassword(String username, String oldpassword, String newpassword) throws SQLException, ClassNotFoundException {
+
         Class.forName(driverName);
 
         Connection con = DriverManager.getConnection(connection, "root", connectionPassword);
@@ -83,8 +83,8 @@ public class mysqlcon {
         con.close();
     }
 
-    public void resetPassword(String username) throws SQLException, ClassNotFoundException{
-    
+    public void resetPassword(String username) throws SQLException, ClassNotFoundException {
+
         Class.forName(driverName);
 
         Connection con = DriverManager.getConnection(connection, "root", connectionPassword);
@@ -94,7 +94,7 @@ public class mysqlcon {
         con.close();
     }
 
-    public ArrayList<JsonObject> getHistory(String staffId) {
+    public ArrayList<JsonObject> getAllHistory() {
         try {
             Class.forName(driverName);
 
@@ -105,7 +105,7 @@ public class mysqlcon {
 
             ArrayList<JsonObject> rv = new ArrayList<>();
             while (rs.next()) {
-                rv.add(new HistoryDetails(rs.getString(1), rs.getString(2), rs.getString(3)));
+                rv.add(new HistoryDetails(rs.getString(1), rs.getString(5)));
             }
             con.close();
             return rv;
@@ -116,15 +116,37 @@ public class mysqlcon {
         }
     }
 
-    public int addHistory(String staffId) {
+    public ArrayList<JsonObject> getHistory(String staffId) throws SQLException, ClassNotFoundException {
+        Class.forName(driverName);
+
+        Connection con = DriverManager.getConnection(connection, "root", connectionPassword);
+        Statement stmt = con.createStatement();
+        String my_string = "select * from history where staff_id = '" + staffId + "'";
+        ResultSet rs = stmt.executeQuery(my_string);
+
+        ArrayList<JsonObject> rv = new ArrayList<>();
+        while (rs.next()) {
+            rv.add(new HistoryDetails(rs.getString(1), rs.getString(5)));
+        }
+        con.close();
+        return rv;
+    }
+
+    public int addHistory(String staffId, String date) {
         try {
             Class.forName(driverName);
 
             Connection con = DriverManager.getConnection(connection, "root", connectionPassword);
             Statement stmt = con.createStatement();
-            String my_string = "insert into history (staff_id) values ('" + staffId + "')";
-            stmt.executeUpdate(my_string, Statement.RETURN_GENERATED_KEYS);
-            ResultSet rs = stmt.getGeneratedKeys();
+
+            String query = "insert into history (staff_id, date_generated)";
+            query += " values (?,?)";
+            PreparedStatement pstmt = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            pstmt.setString(1, staffId);
+            pstmt.setString(2, date);
+            pstmt.executeUpdate();
+
+            ResultSet rs = pstmt.getGeneratedKeys();
             int id = 0;
             if (rs.next()) {
                 id = rs.getInt(1);
@@ -371,7 +393,7 @@ public class mysqlcon {
 
             pstmt.close();
             con.close();
-            if (status == -1){
+            if (status == -1) {
                 return "Failed adding facility usage";
             }
             return "Successfully added facility usage";

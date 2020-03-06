@@ -1,35 +1,21 @@
 package main.java.authentication;
 
-import com.auth0.jwt.JWT;
-
-import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
-
-import org.springframework.http.*;
-
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-
-import java.sql.*;
-import java.util.*;
-import java.text.SimpleDateFormat;
-
-import connection.*;
-
-import main.java.authentication.json.users.*;
-import main.java.authentication.json.*;
 import authentication.Token;
-
-import authentication.*;
-
+import connection.mysqlcon;
+import main.java.authentication.json.*;
+import main.java.authentication.json.HistoryDetails;
+import main.java.authentication.json.users.*;
 import main.java.exceptions.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
+import main.java.authentication.json.JsonObject;
 
 @CrossOrigin
 @RestController
@@ -37,10 +23,10 @@ public class Controller {
 
     private static final Token TOKEN = new Token();
     private static final mysqlcon conn = new mysqlcon();
-        
+
     // done
     @RequestMapping(path = "/register", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-    public JsonObject register(@RequestBody RegistrationDetails userDetails) throws SQLException, ClassNotFoundException{
+    public JsonObject register(@RequestBody RegistrationDetails userDetails) throws SQLException, ClassNotFoundException {
         try {
             conn.addUser(userDetails.getUsername(),
                     TOKEN.generateMD5Hash(userDetails.getPassword()),
@@ -53,14 +39,14 @@ public class Controller {
             return new TokenSuccess(token);
         } catch (SQLException e) {
             throw e;
-        } catch (ClassNotFoundException e){
+        } catch (ClassNotFoundException e) {
             throw new ClassNotFoundException("Backend Issue: ClassNotFound Exception at register method in Controller.java");
         }
     }
 
     // original by Ben
     @RequestMapping(path = "/getusers", method = RequestMethod.GET, produces = "application/json")
-    public ArrayList<User> getUsers() throws SQLException, ClassNotFoundException{
+    public ArrayList<User> getUsers() throws SQLException, ClassNotFoundException {
         try {
             return conn.getAllUsers();
         } catch (SQLException e) {
@@ -81,7 +67,7 @@ public class Controller {
             return new JsonSuccess("Password has been updated successfully.");
         } catch (SQLException e) {
             throw e;
-        } catch (ClassNotFoundException e){
+        } catch (ClassNotFoundException e) {
             throw new ClassNotFoundException("Backend Issue: ClassNotFound Exception at changePassword method in Controller.java");
         }
     }
@@ -91,13 +77,13 @@ public class Controller {
     public JsonObject resetPass(@RequestParam(value = "username") String username) throws SQLException, ClassNotFoundException {
         if (username == null) {
             throw new NullPointerException("Username cannot be empty.");
-        } 
+        }
         try {
             conn.resetPassword(username);
             return new JsonSuccess("Password has been reset successfully");
         } catch (SQLException e) {
             throw e;
-        } catch (ClassNotFoundException e){
+        } catch (ClassNotFoundException e) {
             throw new ClassNotFoundException("Backend Issue: ClassNotFound Exception at changePassword method in Controller.java");
         }
     }
@@ -105,7 +91,7 @@ public class Controller {
 
     // done    
     @RequestMapping(path = "/login", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-    public JsonObject login(@RequestBody LoginDetails inputDetails) throws SQLException, ClassNotFoundException, NullPointerException, InvalidTokenException{
+    public JsonObject login(@RequestBody LoginDetails inputDetails) throws SQLException, ClassNotFoundException, NullPointerException, InvalidTokenException {
         if (inputDetails.getUsername() == null || inputDetails.getPassword() == null) {
             throw new NullPointerException("Username or password cannot be empty.");
         }
@@ -124,16 +110,16 @@ public class Controller {
             }
         } catch (SQLException e) {
             throw e;
-        } catch (ClassNotFoundException e){
+        } catch (ClassNotFoundException e) {
             throw new ClassNotFoundException("Backend Issue: ClassNotFound Exception at login method in Controller.java");
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             throw new NullPointerException("Username or password is invalid.");
         }
     }
 
     // done
     @RequestMapping(path = "/verify", method = RequestMethod.GET)
-    public ResponseEntity<JsonObject> verifyToken(@RequestHeader("x-auth-token") String token)  throws Exception {
+    public ResponseEntity<JsonObject> verifyToken(@RequestHeader("x-auth-token") String token) throws Exception {
         try {
 
             if (TOKEN.isTokenValid(token)) {
@@ -142,11 +128,11 @@ public class Controller {
             }
             throw new InvalidTokenException("Token is invalid");
 
-        }  catch (SQLException e) {
+        } catch (SQLException e) {
             throw e;
-        } catch (ClassNotFoundException e){
+        } catch (ClassNotFoundException e) {
             throw new ClassNotFoundException("Backend Issue: ClassNotFound Exception at verify method in Controller.java");
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             throw new NullPointerException("Token is invalid");
         }
 
@@ -154,13 +140,8 @@ public class Controller {
 
     // to be discussed
     @RequestMapping(path = "/history/{staffId}", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity getHistory(@PathVariable("staffId") String staffId) {
-        try {
-            ArrayList<JsonObject> result = conn.getHistory(staffId);
-            return new ResponseEntity(new JsonResponses("SUCCESS", result), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity(new JsonError("ERROR", "Backend Issue: Exception occured at getHistory method in Controller.java. Database connection may be lost."), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ArrayList<JsonObject> getHistory(@PathVariable("staffId") String staffId) throws SQLException, ClassNotFoundException {
+        return conn.getHistory(staffId);
     }
 
     @RequestMapping(path = "/history/{msuId}", method = RequestMethod.DELETE)
@@ -186,7 +167,7 @@ public class Controller {
     public String addMassSlotUpload(@RequestBody ArrayList<MassSlotUploadDetails> data,
                                     @PathVariable("staffId") String staffId) {
         try {
-            int newHistoryId = conn.addHistory(staffId);
+            int newHistoryId = conn.addHistory(staffId, getCurrentDateTime());
             return conn.addMassSlotUpload(data, newHistoryId);
         } catch (Exception e) {
             return "Fail";
@@ -238,6 +219,12 @@ public class Controller {
         } catch (Exception e) {
             return "Fail";
         }
+    }
+
+    public String getCurrentDateTime() {
+        SimpleDateFormat formatter = new SimpleDateFormat("MMM d, yyyy, HH:mm:ss a");
+        Date date = new Date();
+        return formatter.format(date);
     }
 
 
