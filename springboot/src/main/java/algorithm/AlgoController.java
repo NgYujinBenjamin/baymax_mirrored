@@ -41,7 +41,7 @@ public class AlgoController {
         try {
             baseLineData = param.baseline;
             data = param.masterOps;
-            numBays = param.bays;
+            numBays = param.bay;
             minGap = param.minGap;
             maxGap = param.maxGap;
         } catch(Exception e) {
