@@ -1,5 +1,5 @@
 import React, { Fragment, memo } from 'react'
-import { Input, TableCell, TableRow, Checkbox } from '@material-ui/core'
+import { Input, TableCell, TableRow, Checkbox, TextField } from '@material-ui/core'
 
 const PreresultItem = memo (({ obj, onChange }) => {
     let argoID = obj['Argo ID'];
@@ -18,6 +18,9 @@ const PreresultItem = memo (({ obj, onChange }) => {
     const mrpName = 'MRP Date';
     const lockMRPDate = 'Lock MRP Date';
 
+    const regxDate = /^\d\d\/\d\d\/\d\d\d\d$/;
+    const regxNum = /^[0-9]+$/;
+
     return (
         <Fragment>
             <TableRow>
@@ -25,15 +28,33 @@ const PreresultItem = memo (({ obj, onChange }) => {
                 <TableCell>{utID}</TableCell>
                 <TableCell>{productName}</TableCell>
                 <TableCell>
-                    <Input type='text' name={mrpName} value={mrpDate} onChange={onChange} required /> 
+                    <TextField 
+                        error={!regxDate.test(mrpDate)} 
+                        helperText={!regxDate.test(mrpDate) && 'Invalid Date (dd/mm/yyyy)'} 
+                        label={!regxDate.test(mrpDate) && 'Error'} 
+                        type='text' 
+                        name={mrpName} 
+                        value={mrpDate} 
+                        onChange={onChange} 
+                        required 
+                    /> 
                 </TableCell>
                 <TableCell>{mfgCommit}</TableCell>
                 <TableCell>{internalRDate}</TableCell>
                 <TableCell>{endDate}</TableCell>
                 <TableCell>
-                    <Input type='text' name={cycleName} value={cycleTime} onChange={onChange} required />
+                    <TextField 
+                        error={!regxNum.test(cycleTime)}
+                        helperText={!regxNum.test(cycleTime) && 'Invalid Number'}
+                        label={!regxNum.test(cycleTime) && 'Error'}
+                        type='text' 
+                        name={cycleName} 
+                        value={cycleTime} 
+                        onChange={onChange} 
+                        required 
+                    />
                 </TableCell>
-                <TableCell>
+                <TableCell align='center'>
                     <Checkbox name={lockMRPDate} onChange={onChange} checked={lockChecked} />
                 </TableCell>
             </TableRow>

@@ -22,6 +22,7 @@ const UploadState = (props) => {
         steps: ['Upload Bay Requirement', 'Input guidelines & upload MasterOpsPlan', 'Edit MasterOpsPlan', 'Schedule Generated'],
         currentQuarter: null,
         postResultErrors: {},
+        preResultErrors: {},
         saveHistory: false,
         reschedule: false,
         tabUpdate: false

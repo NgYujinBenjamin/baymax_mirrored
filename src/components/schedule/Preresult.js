@@ -84,49 +84,33 @@ const Preresult = ({ fileName }) => {
 
     const handleSchedule = (event) => {
         event.preventDefault();
-        //test regx
         const regxDate = /^\d\d\/\d\d\/\d\d\d\d$/;
         const regxNum = /^[0-9]+$/;
         let preCounter = false;
-        let errorArr = []
 
-        //check if Cycle Time Days and MRP Date are NOT in the right format
         objs.forEach(obj => {
-            if(!regxNum.test(obj['Cycle Time Days']) || !regxDate.test(obj['MRP Date'])){
-                errorArr.push(`ArgoID: ${obj['Argo ID']}. Please enter a valid number in Cycle Time Days and valid date format (DD/MM/YYYY) in MRP Date`)
+            if(!regxDate.test(obj['MRP Date']) || !regxNum.test(obj['Cycle Time Days'])){
                 preCounter = true;
             }
         })
 
-        if(!preCounter) {
+        if(preCounter){
+            setAlert('Please fix existing errors in this table! Begin Schedule Creation failed.');
+            window.scrollTo(0,0);
+        } else {
             updateSchedule(objs);
             updateBaseline(newBaseline);
             createResult(newBaseline, objs, bays, minGap, maxGap);
-            setStepCount(stepcount + 2); // add 2 since it will be the end of the step
-        } else {
-            errorArr.forEach(val => setAlert(val))
-            errorArr = [];
-            window.scrollTo(0,0);
+            setStepCount(stepcount + 2);
         }
     }
     
     return (
         <Fragment>
-            <TableContainer component={Paper}>
-                <Table>
+            <TableContainer component={Paper} style={{ maxHeight: 500 }}>
+                <Table stickyHeader>
                     <TableHead>
-                        <TableRow>
-                            <TableCell>{fileName}</TableCell>
-                            <TableCell></TableCell>
-                            <TableCell></TableCell>
-                            <TableCell></TableCell>
-                            <TableCell></TableCell>
-                            <TableCell></TableCell>
-                            <TableCell></TableCell>
-                            <TableCell></TableCell>
-                            <TableCell></TableCell>
-                        </TableRow>
-                        <TableRow>
+                        <TableRow style={{ whiteSpace: 'nowrap' }}>
                             <TableCell>Argo ID</TableCell>
                             <TableCell>Slot/UTID</TableCell>
                             <TableCell>Product Name</TableCell>
