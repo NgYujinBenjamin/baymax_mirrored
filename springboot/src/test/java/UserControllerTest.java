@@ -1,27 +1,33 @@
+import authentication.Token;
 import main.java.authentication.Controller;
+import main.java.authentication.json.TokenSuccess;
+import main.java.authentication.json.users.LoginDetails;
 import main.java.authentication.json.users.RegistrationDetails;
 import main.java.authentication.json.users.User;
-
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
+import main.java.exceptions.InvalidTokenException;
+import org.apache.poi.ss.formula.functions.T;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.springframework.http.ResponseEntity;
+import main.java.authentication.json.JsonObject;
+import main.java.authentication.json.JsonResponse;
 
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+//import main.java.
+
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserControllerTest {
     private Controller controller = new Controller();
+    private String token = "";
+    private Token TOKEN = new Token();
 
     @Test
     @Order(1)
@@ -86,4 +92,63 @@ public class UserControllerTest {
         System.out.println("\t " + result + "\n");
         assertEquals(expectedNum, users.size());
     }
+
+    @Test
+    @Order(5)
+    public void login() throws SQLException, ClassNotFoundException, NullPointerException, InvalidTokenException {
+        System.out.println("\t ===================== 5 user login successfully test =====================");
+        LoginDetails loginDetails = new LoginDetails("tukiz", "password");
+        TokenSuccess tokenSuccess = (TokenSuccess) controller.login(loginDetails);
+        token = tokenSuccess.getToken();
+
+        System.out.println("\t Expected 1 Token");
+        System.out.println("\t " + token + "\n");
+
+        // assert that the token is present
+        boolean isTokenValid = token.length() > 0;
+        assertTrue(isTokenValid);
+    }
+
+    @Test
+    @Order(6)
+    public void wrongpassword() throws SQLException, ClassNotFoundException, NullPointerException, InvalidTokenException {
+        System.out.println("\t ===================== 6 wrongpassword test =====================");
+        LoginDetails loginDetails = new LoginDetails("tukiz", "passwords");
+
+        Exception exception = assertThrows(
+                InvalidTokenException.class,
+                () -> controller.login(loginDetails)
+        );
+
+        String expectedMsg = "Username or password is invalid";
+        String result = exception.getMessage().contains(expectedMsg) ? "Success" : "Fail";
+        System.out.println("\t " + result + "\n");
+
+        assertTrue(exception.getMessage().contains(expectedMsg));
+    }
+
+    @Test
+    @Order(7)
+    public void invaliduser() throws SQLException, ClassNotFoundException, NullPointerException, InvalidTokenException {
+        System.out.println("\t ===================== 7 non existent user test =====================");
+        LoginDetails loginDetails = new LoginDetails("tuki", "password");
+
+        Exception exception = assertThrows(
+                NullPointerException.class,
+                () -> controller.login(loginDetails)
+        );
+
+        String expectedMsg = "Username or password is invalid";
+        String result = exception.getMessage().contains(expectedMsg) ? "Success" : "Fail";
+        System.out.println("\t " + result + "\n");
+        assertTrue(exception.getMessage().contains(expectedMsg));
+    }
+
+//    @Test
+//    @Order(8)
+//    public void verify() throws Exception {
+//        System.out.println("\t ===================== 8 /verify test =====================");
+//
+////        assertTrue(TOKEN.isTokenValid(token));
+//    }
 }
