@@ -93,21 +93,88 @@ public class AlgoController {
 
     @RequestMapping(path = "/subseqScheduling", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
     public String testing(@RequestBody subseqSchedulingParam param) throws Exception{
-        
+        Map<String, Map<String, List<List<Object>>>> preSchedule;
+        Integer numBays;
+        Integer minGap;
+        Integer maxGap;
+
         try {
-            Map<String, Map<String, List<List<Object>>>> preSchedule = param.preSchedule;
-            Integer numBays = param.numBays;
-            Integer minGap = param.minGap;
-            Integer maxGap = param.maxGap;
+            preSchedule = param.preSchedule;
+            numBays = param.numBays;
+            minGap = param.minGap;
+            maxGap = param.maxGap;
 
-            Object to_print = preSchedule.get("baseline").get("CY10Q1").get(1).get(0);
-            
-            Map <String,String> map = new ObjectMapper().convertValue(to_print, Map.class);
-
-            return map + " " + param.numBays + " " + param.minGap + " " + param.maxGap;
         } catch(Exception e) {
-            return "error";
-        }   
+            return "JSON Reading Error";
+        }
+
+        Map<String, List<List<Object>>> baseLine = null;
+        Map<String, List<List<Object>>> bayOccupancy = null;
+        ArrayList<Product> allProduct = new ArrayList<Product>();
+        ArrayList<Product> baseLineProduct = new ArrayList<Product>();
+        
+        if (preSchedule.containsKey("baseLineOccupancy")){
+            baseLine = preSchedule.get("baseLineOccupancy");
+            
+            Set<String> baseLineQtrs = baseLine.keySet();
+            for (String qtr: baseLineQtrs){
+                List<List<Object>> qtrOccupancy = baseLine.get(qtr);
+                // Within each quarter
+                for (int i = 1; i < qtrOccupancy.size(); i++){
+                    // Skip index 0 because it is the [weekOf]
+                    Object productRaw = qtrOccupancy.get(i).get(0);
+                    Product p = new Product(productRaw);
+                    baseLineProduct.add(p);                   
+                }
+            }
+        }
+
+        if (preSchedule.containsKey("bayOccupancy")){
+            bayOccupancy = preSchedule.get("bayOccupancy");
+            
+            Set<String> futureQtrs = bayOccupancy.keySet();
+            for (String qtr: futureQtrs){
+                List<List<Object>> qtrOccupancy = bayOccupancy.get(qtr);
+                // Within each quarter
+                for (int i = 1; i < qtrOccupancy.size(); i++){
+                    // Skip index 0 because it is the [weekOf]
+                    Object productRaw = qtrOccupancy.get(i).get(0);
+                    Product p = new Product(productRaw);
+                    allProduct.add(p);                   
+                }
+            }
+        }
+        
+        Collections.sort(allProduct);
+        Collections.sort(baseLineProduct);
+
+        BayRequirement bayReq = null;
+        BaySchedule baySchedule = null;
+
+        Integer gapDiff = maxGap - minGap; // End date alr considers the min gap; Can only pull forward by gapDiff more days
+        
+        HashMap<String, Integer> quarterHC = new HeadCount(allProduct).getQuarterHC();
+        Boolean quarterHCChanged = true;
+        
+       
+        while (quarterHCChanged){
+            System.out.println(quarterHC);
+
+            baySchedule = new BaySchedule(baseLineProduct, allProduct, quarterHC, numBays, gapDiff);
+
+            allProduct = baySchedule.getAllProduct();
+            baseLineProduct = baySchedule.getBaseLineProduct();
+            bayReq = new BayRequirement(baseLineProduct, allProduct);
+            
+            // Check if quarterHC has changed
+            HashMap<String, Integer> newQuarterHC = new HeadCount(allProduct).getQuarterHC();
+            if (quarterHC.equals(newQuarterHC)){
+                quarterHCChanged = false;
+            } else {
+                quarterHC = newQuarterHC;
+            }
+        }
+        return BayRequirement.toJSONString(bayReq);
     }
 
     // @RequestMapping(path = "/algo", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
