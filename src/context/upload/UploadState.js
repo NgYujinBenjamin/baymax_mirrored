@@ -435,6 +435,19 @@ const UploadState = (props) => {
       result[0] = firstQtrDates;
       postResultUpdate.bayOccupancy[qtrs[0]] = result;
 
+      // update bays and gaps for history
+      if("minGap" in postResultUpdate){
+        setMinGap(postResultUpdate.minGap);
+      }
+      
+      if("maxGap" in postResultUpdate){
+        setMaxGap(postResultUpdate.maxGap);
+      }
+      
+      if("numBays" in postResultUpdate){
+        setBays(postResultUpdate.numBays);
+      }
+
       setPostResult(postResultUpdate, minGapDays);
     }
 

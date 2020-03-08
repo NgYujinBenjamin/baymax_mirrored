@@ -21,7 +21,7 @@ const HistoryItem = ({ record }) => {
     const { msuID, dateGenerated } = record;
 
     const handleHistory = () => {
-        // getHistory();
+        getHistory();
     }
 
     return (

@@ -179,9 +179,7 @@ export default (state, action) => {
                 postResultDone: null,
                 scheduleDone: false,
                 error: null,
-                currentQuarter: null,
-                reschedule: false,
-                saveHistory: false
+                currentQuarter: null
             }
         default:
             return state;
