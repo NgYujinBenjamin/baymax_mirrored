@@ -93,13 +93,15 @@ public class AlgoController {
 
     @RequestMapping(path = "/subseqScheduling", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
     public String testing(@RequestBody subseqSchedulingParam param) throws Exception{
-        Map<String, Map<String, List<List<Object>>>> preSchedule;
+        Map<String, List<List<Object>>> baseLine;
+        Map<String, List<List<Object>>> bayOccupancy;
         Integer numBays;
         Integer minGap;
         Integer maxGap;
 
         try {
-            preSchedule = param.preSchedule;
+            baseLine = param.baseLine;
+            bayOccupancy = param.bayOccupancy;
             numBays = param.numBays;
             minGap = param.minGap;
             maxGap = param.maxGap;
@@ -108,40 +110,30 @@ public class AlgoController {
             return "JSON Reading Error";
         }
 
-        Map<String, List<List<Object>>> baseLine = null;
-        Map<String, List<List<Object>>> bayOccupancy = null;
         ArrayList<Product> allProduct = new ArrayList<Product>();
         ArrayList<Product> baseLineProduct = new ArrayList<Product>();
         
-        if (preSchedule.containsKey("baseLineOccupancy")){
-            baseLine = preSchedule.get("baseLineOccupancy");
-            
-            Set<String> baseLineQtrs = baseLine.keySet();
-            for (String qtr: baseLineQtrs){
-                List<List<Object>> qtrOccupancy = baseLine.get(qtr);
-                // Within each quarter
-                for (int i = 1; i < qtrOccupancy.size(); i++){
-                    // Skip index 0 because it is the [weekOf]
-                    Object productRaw = qtrOccupancy.get(i).get(0);
-                    Product p = new Product(productRaw);
-                    baseLineProduct.add(p);                   
-                }
+        Set<String> baseLineQtrs = baseLine.keySet();
+        for (String qtr: baseLineQtrs){
+            List<List<Object>> qtrOccupancy = baseLine.get(qtr);
+            // Within each quarter
+            for (int i = 1; i < qtrOccupancy.size(); i++){
+                // Skip index 0 because it is the [weekOf]
+                Object productRaw = qtrOccupancy.get(i).get(0);
+                Product p = new Product(productRaw);
+                baseLineProduct.add(p);                   
             }
         }
-
-        if (preSchedule.containsKey("bayOccupancy")){
-            bayOccupancy = preSchedule.get("bayOccupancy");
-            
-            Set<String> futureQtrs = bayOccupancy.keySet();
-            for (String qtr: futureQtrs){
-                List<List<Object>> qtrOccupancy = bayOccupancy.get(qtr);
-                // Within each quarter
-                for (int i = 1; i < qtrOccupancy.size(); i++){
-                    // Skip index 0 because it is the [weekOf]
-                    Object productRaw = qtrOccupancy.get(i).get(0);
-                    Product p = new Product(productRaw);
-                    allProduct.add(p);                   
-                }
+        
+        Set<String> futureQtrs = bayOccupancy.keySet();
+        for (String qtr: futureQtrs){
+            List<List<Object>> qtrOccupancy = bayOccupancy.get(qtr);
+            // Within each quarter
+            for (int i = 1; i < qtrOccupancy.size(); i++){
+                // Skip index 0 because it is the [weekOf]
+                Object productRaw = qtrOccupancy.get(i).get(0);
+                Product p = new Product(productRaw);
+                allProduct.add(p);                   
             }
         }
         
