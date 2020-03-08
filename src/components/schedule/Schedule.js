@@ -113,22 +113,24 @@ const Schedule = (props) => {
             <ScheduleStep/>
             <Card>
                 <CardContent>
-                    <Box className={classes.box}>
-                        <Grid container spacing={3}>
-                            <Grid item xs>
-                                <InputLabel htmlFor='bays'>No of Available Bays</InputLabel>
-                                <Input fullWidth type='text' id='bays' name='bayComponent' value={userInput.bayComponent} onChange={handleChange} required />
+                    {schedule === null && 
+                        <Box className={classes.box}>
+                            <Grid container spacing={3}>
+                                <Grid item xs>
+                                    <InputLabel htmlFor='bays'>No of Available Bays</InputLabel>
+                                    <Input fullWidth type='text' id='bays' name='bayComponent' value={userInput.bayComponent} onChange={handleChange} required />
+                                </Grid>
+                                <Grid item xs>
+                                    <InputLabel htmlFor='minGap'>Minimum Gap Time</InputLabel>
+                                    <Input fullWidth type='text' id='minGap' name='minGapTime' value={userInput.minGapTime} onChange={handleChange} required />
+                                </Grid>
+                                <Grid item xs>
+                                    <InputLabel htmlFor='maxGap'>Maximum Gap Time</InputLabel>
+                                    <Input fullWidth type='text' id='maxGap' name='maxGapTime' value={userInput.maxGapTime} onChange={handleChange} required />
+                                </Grid>
                             </Grid>
-                            <Grid item xs>
-                                <InputLabel htmlFor='minGap'>Minimum Gap Time</InputLabel>
-                                <Input fullWidth type='text' id='minGap' name='minGapTime' value={userInput.minGapTime} onChange={handleChange} required />
-                            </Grid>
-                            <Grid item xs>
-                                <InputLabel htmlFor='maxGap'>Maximum Gap Time</InputLabel>
-                                <Input fullWidth type='text' id='maxGap' name='maxGapTime' value={userInput.maxGapTime} onChange={handleChange} required />
-                            </Grid>
-                        </Grid>
-                    </Box>
+                        </Box>
+                    }
                     {!scheduleDone && 
                         <Box className={classes.box}>
                             <InputLabel className={classes.marginBottom}>Upload excel file:</InputLabel>
@@ -158,7 +160,7 @@ const Schedule = (props) => {
                     }  
                     <Box>
                         {loading && <Spinner />}
-                        {(schedule !== null && !scheduleDone && !loading) && <Preresult fileName={userInput.fileName} /> }
+                        {(schedule !== null && !scheduleDone && !loading) && <Preresult fileName={userInput.fileName} curBay={parseInt(userInput.bayComponent)} /> }
                         {(postResult !== null && scheduleDone && !loading) && <Postresult />}
                     </Box>
                 </CardContent>
