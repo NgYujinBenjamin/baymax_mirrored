@@ -1,8 +1,9 @@
-import React, { Fragment, useEffect, useContext, useState } from 'react'
-import { TableBody } from '@material-ui/core'
-import PostresultItem from './PostresultItem'
-import UploadContext from '../../context/upload/uploadContext'
-import AlertContext from '../../context/alert/alertContext'
+import React, { Fragment, useEffect, useContext, useState } from 'react';
+import { TableBody } from '@material-ui/core';
+import Spinner from '../layout/Spinner';
+import PostresultItem from './PostresultItem';
+import UploadContext from '../../context/upload/uploadContext';
+import AlertContext from '../../context/alert/alertContext';
 
 const Postresultbody = ({ result, baseline, quarter }) => {
     const [ objs, setObjects ] = useState(result);
@@ -11,7 +12,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
     const alertContext = useContext(AlertContext);
 
     const { setAlert } = alertContext;
-    const { validateDate, validateNum, currentQuarter, updateCurrentQuarter, reschedule, tabUpdate, tabChecker, reschedulePostResult, saveResult, updateReschedule, updatePostResult, postResultDone, saveHistory, updateSave, endDateCheck, postResultErrors, handlePostResultError } = uploadContext;
+    const { bays, minGap, maxGap, validateDate, validateNum, currentQuarter, updateCurrentQuarter, reschedule, tabUpdate, tabChecker, reschedulePostResult, saveResult, updateReschedule, updatePostResult, postResultDone, saveHistory, updateSave, endDateCheck, postResultErrors, handlePostResultError } = uploadContext;
 
     useEffect(() => {
         if(currentQuarter === null){
@@ -22,7 +23,13 @@ const Postresultbody = ({ result, baseline, quarter }) => {
             appLevelSave(postResultDone, currentQuarter); // save local copy only
             
             if( Object.keys(postResultErrors).length !== 0 ){
-                setAlert("Please fix existing errors in this table quarter! Update failed.");
+                if(reschedule){
+                    setAlert("Please fix existing errors in this table quarter! Failed to send for reschedule.");
+                } else if(saveHistory){
+                    setAlert("Please fix existing errors in this table quarter! Failed to save.");
+                } else{
+                    setAlert("Please fix existing errors in the table before switching quarter!");
+                }
                 window.scrollTo(0,0);
                 updateSave(false);
                 updateReschedule(false);
@@ -43,11 +50,9 @@ const Postresultbody = ({ result, baseline, quarter }) => {
                     updateSave(false);
                 }
     
-                // reschuling
+                // rescheduling
                 if(reschedule){
-                    console.log(postResultDone);
-                    console.log("Rescheduled");
-                    // reschedulePostResult(postResultDone); // send to backend via endpoint
+                    reschedulePostResult(postResultDone, bays, minGap, maxGap);
                     updateReschedule(false);
                 }
             }
@@ -88,7 +93,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
                 if (o === obj) {
                     if (name == 'cycleTimeDays'){
                         validateFields(postResultErrors, value, obj[0].argoID, name); // validation check
-                        return [ {...obj[0], [name]: value}, ...obj.slice(1) ];
+                        return [ {...obj[0], [name]: parseInt(value)}, ...obj.slice(1) ];
                     } 
                     if (name == 'sendToStorageDate'){
                         validateFields(postResultErrors, value, obj[0].argoID, name); // validation check
@@ -119,7 +124,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
 
     return (
         <Fragment>
-            <Fragment>
+            {!reschedule &&
                 <TableBody style={{whiteSpace: "nowrap"}}>
                     { baseline !== null && baseline.map((obj, index) =>
                         <PostresultItem result={obj} id="baseline" key={index} />
@@ -128,7 +133,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
                         <PostresultItem result={obj} id="predicted" onChange={handleChange(obj, postResultErrors)} key={index} />
                     )}
                 </TableBody>
-            </Fragment>
+            }
         </Fragment>
     )
 }

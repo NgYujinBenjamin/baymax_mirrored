@@ -352,7 +352,13 @@ const UploadState = (props) => {
     // ##################################################################################################
 
     // send to backend for rescheduling (Have not implemented this!)
-    const reschedulePostResult = async (postResultDone) => {
+    const reschedulePostResult = async (postResultDone, bays, mingap, maxgap) => {
+      postResultDone.numBays = parseInt(bays);
+      postResultDone.minGap = parseInt(mingap);
+      postResultDone.maxGap = parseInt(maxgap);
+
+      console.log(postResultDone);
+      
       const config = {
         headers: {
           'Content-Type': 'application/json'
@@ -360,17 +366,18 @@ const UploadState = (props) => {
       }
       
       try {
-        // console.log(postResultDone);
-        await axios.post('http://localhost:8080/subseqScheduling', postResultDone, config);
+        const res = await axios.post('http://localhost:8080/subseqScheduling', postResultDone, config);
 
         dispatch({ 
           type: RESCHEDULE_POST_RESULT, 
-          payload: postResultDone 
+          payload: res.data 
         })
 
       } catch (err) {
-        //prompt error
-
+        dispatch({
+          type: CREATE_RESULT_ERROR,
+          payload: err.response.data.message
+        })
       }
     }
 
@@ -398,7 +405,7 @@ const UploadState = (props) => {
     }
 
     // update post result data "E"s
-    const updatePostResultEmpties = (postResult) => {
+    const updatePostResultEmpties = (postResult, minGapDays) => {
       let postResultUpdate = JSON.parse(JSON.stringify(postResult));
 
       const qtrs = getQtrs(postResultUpdate);
@@ -428,20 +435,20 @@ const UploadState = (props) => {
       result[0] = firstQtrDates;
       postResultUpdate.bayOccupancy[qtrs[0]] = result;
 
-      setPostResult(postResultUpdate);
+      setPostResult(postResultUpdate, minGapDays);
     }
 
     //update post result data when user click "Save"
-    const updatePostResult = (postResult, objs, quarter) => {
+    const updatePostResult = (postResultDone, objs, quarter) => {
       objs = JSON.parse(objs);
-      const dates = postResult.bayOccupancy[quarter][0];
+      const dates = postResultDone.bayOccupancy[quarter][0];
 
       objs.unshift(dates);
-      postResult.bayOccupancy[quarter] = objs;
+      postResultDone.bayOccupancy[quarter] = objs;
 
       dispatch({ 
         type: UPDATE_POST_RESULT,
-        payload: postResult 
+        payload: postResultDone 
       })
     }
 
@@ -459,9 +466,9 @@ const UploadState = (props) => {
     }
 
     //set post result dates
-    const setPostResult = (postResultDone) => {
-      const minGap = (24*60*60*1000) * 3; // hardcoded for now to 3 days
-      const objItemsToChange = ["MRPDate", "intOpsShipReadinessDate", "MFGCommitDate", "shipRecogDate", "toolStartDate", 'endDate'];
+    const setPostResult = (postResultDone, minGapDays) => {
+      const minGap = (24*60*60*1000) * minGapDays;
+      const objItemsToChange = ["sendToStorageDate", "MRPDate", "intOpsShipReadinessDate", "MFGCommitDate", "shipRecogDate", "toolStartDate", 'endDate'];
 
       Object.keys(postResultDone).map( occupancy => {
         Object.keys(postResultDone[occupancy]).map( quarter => {
@@ -482,14 +489,15 @@ const UploadState = (props) => {
           for(let i=1; i<currentQtr.length; i++){
             objItemsToChange.forEach(key => {
               if(key !== "endDate"){
-                currentQtr[i][0][key] = new Date(currentQtr[i][0][key]).toLocaleDateString('en-GB');
+                if(currentQtr[i][0][key] !== null){
+                  currentQtr[i][0][key] = new Date(currentQtr[i][0][key]).toLocaleDateString('en-GB');
+                } else {
+                  currentQtr[i][0][key] = "";
+                }
               } else{
                 endDateCheck(currentQtr[i][0], key, minGap);
               }
 
-              // change these key value pair to default values instead of null
-              currentQtr[i][0].sendToStorageDate = "";
-              currentQtr[i][0].lockMRPDate = false;
             })
           }
 
@@ -585,7 +593,6 @@ const UploadState = (props) => {
         })
 
         let preResult = { baseline: newbaseline,  masterOps: masterops, bay: bays, minGap: mingap, maxGap: maxgap}
-        console.log(preResult)
 
         const config = {
             headers: {

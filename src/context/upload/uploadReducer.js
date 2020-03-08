@@ -21,7 +21,6 @@ export default (state, action) => {
             }
         case UPDATE_POST_RESULT_FORMAT:
         case UPDATE_POST_RESULT:
-        case RESCHEDULE_POST_RESULT:
             return {
                 ...state,
                 postResultDone: action.payload
@@ -40,6 +39,12 @@ export default (state, action) => {
             return {
                 ...state,
                 saveHistory: action.payload
+            }
+        case RESCHEDULE_POST_RESULT:
+            return {
+                ...state,
+                postResultDone: null,
+                postResult: action.payload
             }
         case CREATE_RESULT:
             return {
@@ -132,9 +137,7 @@ export default (state, action) => {
                 scheduleDone: false,
                 error: null,
                 currentQuarter: null,
-                stepcount: 1,
-                reschedule: false,
-                saveHistory: false
+                stepcount: 1
             }
         case CLEAR_PRERESULT:
             return {

@@ -22,6 +22,8 @@ public class Bay implements Comparable<Bay>{
     }
 
     public void addToBaySchedule (Product p){
+        p.setAssignedBayID(bayID);
+        
         baySchedule.add(p);
         availableDate = p.getLeaveBayDate();
     }
