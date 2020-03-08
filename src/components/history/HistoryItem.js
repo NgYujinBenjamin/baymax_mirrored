@@ -1,13 +1,28 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useContext, useEffect } from 'react';
 import { Typography, Card, CardContent, CardActions, Button } from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import UploadContext from '../../context/upload/uploadContext';
+import AuthContext from '../../context/auth/authContext';
 
 const HistoryItem = ({ record }) => {
+
+    const uploadContext = useContext(UploadContext);
+    const authContext = useContext(AuthContext);
+
+    const { getHistory } = uploadContext;
+    const { loadUser, updateNavItem } = authContext;
+    
+    useEffect(() => {
+        loadUser();
+        updateNavItem(1);
+        //eslint-disable-next-line
+    }, [])
+
     const { msuID, dateGenerated } = record;
 
-    // const handleClick = () => {
-    //     console.log(msuID);
-    // }
+    const handleHistory = () => {
+        // getHistory();
+    }
 
     return (
         <Fragment>
@@ -23,9 +38,9 @@ const HistoryItem = ({ record }) => {
                 </CardContent>
 
                 <CardActions>
-                    <Button size="small" color="primary">
-                        <Link to={'/history/' + msuID} style={{ textDecoration:'none' }}> View Full Data </Link>
-                    </Button>
+                    <Link to={'/history/' + msuID} style={{ textDecoration:'none' }}>
+                        <Button size="small" color="primary" onClick={handleHistory}> View Full Data </Button>
+                    </Link>
                 </CardActions>
 
             </Card>

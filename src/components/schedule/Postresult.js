@@ -22,15 +22,19 @@ const Postresult = () => {
 
     useEffect(() => {
         updateNavItem(0);
-        updatePostResultEmpties(postResult);
+        if(postResult !== null){
+            updatePostResultEmpties(postResult);
+        }
         //console.log(postResult)
         //eslint-disable-next-line
-    }, [])
+    }, [postResult])
 
     const qtrs = new Array();
-    Object.keys(postResult.bayOccupancy).map(quarterName => 
-        qtrs.push(quarterName)
-    )
+    if(postResult !== null){
+        Object.keys(postResult.bayOccupancy).map(quarterName => 
+            qtrs.push(quarterName)
+        )
+    }
 
     const a11yProps = (index) => {
         return {
