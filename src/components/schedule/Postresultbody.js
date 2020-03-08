@@ -104,8 +104,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
                         if (checked){
                             obj[0].endDate = obj[0].MRPDate;
                         } else{
-                            // hardcoded min gap for now to 3 days
-                            endDateCheck(obj[0], 'endDate', (24*60*60*1000) * 3);
+                            endDateCheck(obj[0], 'endDate', (24*60*60*1000) * minGap);
                         }
                         return [ {...obj[0], [name]: checked}, ...obj.slice(1) ];
                     }
