@@ -93,14 +93,14 @@ public class AlgoController {
 
     @RequestMapping(path = "/subseqScheduling", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
     public String testing(@RequestBody subseqSchedulingParam param) throws Exception{
-        Map<String, List<List<Object>>> baseLine;
+        Map<String, List<List<Object>>> baseLineOccupancy;
         Map<String, List<List<Object>>> bayOccupancy;
         Integer numBays;
         Integer minGap;
         Integer maxGap;
 
         try {
-            baseLine = param.baseLine;
+            baseLineOccupancy = param.baseLineOccupancy;
             bayOccupancy = param.bayOccupancy;
             numBays = param.numBays;
             minGap = param.minGap;
@@ -113,9 +113,9 @@ public class AlgoController {
         ArrayList<Product> allProduct = new ArrayList<Product>();
         ArrayList<Product> baseLineProduct = new ArrayList<Product>();
         
-        Set<String> baseLineQtrs = baseLine.keySet();
+        Set<String> baseLineQtrs = baseLineOccupancy.keySet();
         for (String qtr: baseLineQtrs){
-            List<List<Object>> qtrOccupancy = baseLine.get(qtr);
+            List<List<Object>> qtrOccupancy = baseLineOccupancy.get(qtr);
             // Within each quarter
             for (int i = 1; i < qtrOccupancy.size(); i++){
                 // Skip index 0 because it is the [weekOf]
