@@ -1,8 +1,9 @@
-import React, { Fragment, useEffect, useContext, useState } from 'react'
-import { TableBody } from '@material-ui/core'
-import PostresultItem from './PostresultItem'
-import UploadContext from '../../context/upload/uploadContext'
-import AlertContext from '../../context/alert/alertContext'
+import React, { Fragment, useEffect, useContext, useState } from 'react';
+import { TableBody } from '@material-ui/core';
+import Spinner from '../layout/Spinner';
+import PostresultItem from './PostresultItem';
+import UploadContext from '../../context/upload/uploadContext';
+import AlertContext from '../../context/alert/alertContext';
 
 const Postresultbody = ({ result, baseline, quarter }) => {
     const [ objs, setObjects ] = useState(result);
@@ -22,7 +23,13 @@ const Postresultbody = ({ result, baseline, quarter }) => {
             appLevelSave(postResultDone, currentQuarter); // save local copy only
             
             if( Object.keys(postResultErrors).length !== 0 ){
-                setAlert("Please fix existing errors in this table quarter! Update failed.");
+                if(reschedule){
+                    setAlert("Please fix existing errors in this table quarter! Failed to send for reschedule.");
+                } else if(saveHistory){
+                    setAlert("Please fix existing errors in this table quarter! Failed to save.");
+                } else{
+                    setAlert("Please fix existing errors in the table before switching quarter!");
+                }
                 window.scrollTo(0,0);
                 updateSave(false);
                 updateReschedule(false);
@@ -43,9 +50,8 @@ const Postresultbody = ({ result, baseline, quarter }) => {
                     updateSave(false);
                 }
     
-                // reschuling
+                // rescheduling
                 if(reschedule){
-                    console.log("Rescheduled");
                     reschedulePostResult(postResultDone, bays, minGap, maxGap);
                     updateReschedule(false);
                 }
@@ -118,7 +124,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
 
     return (
         <Fragment>
-            <Fragment>
+            {!reschedule &&
                 <TableBody style={{whiteSpace: "nowrap"}}>
                     { baseline !== null && baseline.map((obj, index) =>
                         <PostresultItem result={obj} id="baseline" key={index} />
@@ -127,7 +133,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
                         <PostresultItem result={obj} id="predicted" onChange={handleChange(obj, postResultErrors)} key={index} />
                     )}
                 </TableBody>
-            </Fragment>
+            }
         </Fragment>
     )
 }
