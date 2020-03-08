@@ -232,7 +232,7 @@ public class Product implements Comparable<Product>{
             leaveBayDate = endDate;
         }
 
-        gapDays = (int) ((MRPDate.getTime() - MFGCommitDate.getTime())/ (24 * 60 * 60 * 1000));        
+        gapDays = (int) ((MFGCommitDate.getTime() - MRPDate.getTime())/ (24 * 60 * 60 * 1000));    
     }
 
     public Product (Object productRaw){
@@ -354,7 +354,7 @@ public class Product implements Comparable<Product>{
             leaveBayDate = endDate;
         }
 
-        gapDays = (int) ((MRPDate.getTime() - MFGCommitDate.getTime())/ (24 * 60 * 60 * 1000));        
+        gapDays = (int) ((MFGCommitDate.getTime() - MRPDate.getTime())/ (24 * 60 * 60 * 1000)); 
     }
 
     public int compareTo(Product other){
