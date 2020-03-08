@@ -11,7 +11,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
     const alertContext = useContext(AlertContext);
 
     const { setAlert } = alertContext;
-    const { validateDate, validateNum, currentQuarter, updateCurrentQuarter, reschedule, tabUpdate, tabChecker, reschedulePostResult, saveResult, updateReschedule, updatePostResult, postResultDone, saveHistory, updateSave, endDateCheck, postResultErrors, handlePostResultError } = uploadContext;
+    const { bays, minGap, maxGap, validateDate, validateNum, currentQuarter, updateCurrentQuarter, reschedule, tabUpdate, tabChecker, reschedulePostResult, saveResult, updateReschedule, updatePostResult, postResultDone, saveHistory, updateSave, endDateCheck, postResultErrors, handlePostResultError } = uploadContext;
 
     useEffect(() => {
         if(currentQuarter === null){
@@ -45,9 +45,8 @@ const Postresultbody = ({ result, baseline, quarter }) => {
     
                 // reschuling
                 if(reschedule){
-                    console.log(postResultDone);
                     console.log("Rescheduled");
-                    // reschedulePostResult(postResultDone); // send to backend via endpoint
+                    reschedulePostResult(postResultDone, bays, minGap, maxGap);
                     updateReschedule(false);
                 }
             }
@@ -88,7 +87,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
                 if (o === obj) {
                     if (name == 'cycleTimeDays'){
                         validateFields(postResultErrors, value, obj[0].argoID, name); // validation check
-                        return [ {...obj[0], [name]: value}, ...obj.slice(1) ];
+                        return [ {...obj[0], [name]: parseInt(value)}, ...obj.slice(1) ];
                     } 
                     if (name == 'sendToStorageDate'){
                         validateFields(postResultErrors, value, obj[0].argoID, name); // validation check

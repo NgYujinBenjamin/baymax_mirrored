@@ -21,7 +21,6 @@ export default (state, action) => {
             }
         case UPDATE_POST_RESULT_FORMAT:
         case UPDATE_POST_RESULT:
-        case RESCHEDULE_POST_RESULT:
             return {
                 ...state,
                 postResultDone: action.payload
@@ -40,6 +39,11 @@ export default (state, action) => {
             return {
                 ...state,
                 saveHistory: action.payload
+            }
+        case RESCHEDULE_POST_RESULT:
+            return {
+                ...state,
+                postResult: action.payload
             }
         case CREATE_RESULT:
             return {

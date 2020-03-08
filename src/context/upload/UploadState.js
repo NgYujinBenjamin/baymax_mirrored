@@ -338,7 +338,13 @@ const UploadState = (props) => {
     // ##################################################################################################
 
     // send to backend for rescheduling (Have not implemented this!)
-    const reschedulePostResult = async (postResultDone) => {
+    const reschedulePostResult = async (postResultDone, bays, mingap, maxgap) => {
+      postResultDone.numBays = bays;
+      postResultDone.minGap = mingap;
+      postResultDone.maxGap = maxgap;
+      
+      console.log(postResultDone);
+
       const config = {
         headers: {
           'Content-Type': 'application/json'
@@ -346,17 +352,19 @@ const UploadState = (props) => {
       }
       
       try {
-        // console.log(postResultDone);
-        await axios.post('http://localhost:8080/subseqScheduling', postResultDone, config);
-
+        const res = await axios.post('http://localhost:8080/subseqScheduling', postResultDone, config);
+        // console.log(res)
+        
         dispatch({ 
           type: RESCHEDULE_POST_RESULT, 
-          payload: postResultDone 
+          payload: res.data 
         })
 
       } catch (err) {
-        //prompt error
-
+        dispatch({
+          type: CREATE_RESULT_ERROR,
+          payload: err.response.data.message
+        })
       }
     }
 
@@ -539,7 +547,6 @@ const UploadState = (props) => {
         })
 
         let preResult = { baseline: newbaseline,  masterOps: masterops, bay: bays, minGap: mingap, maxGap: maxgap}
-        console.log(preResult)
 
         const config = {
             headers: {
