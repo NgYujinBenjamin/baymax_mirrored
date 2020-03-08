@@ -74,7 +74,12 @@
             <artifactId>commons-collections4</artifactId>
             <version>4.4</version>
         </dependency>
-        
+        <dependency>
+			<groupId>commons-validator</groupId>
+			<artifactId>commons-validator</artifactId>
+			<version>1.6</version>
+		</dependency>
+		
         <!-- junit 5, unit test -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -88,6 +93,7 @@
             <version>5.4.2</version>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>
