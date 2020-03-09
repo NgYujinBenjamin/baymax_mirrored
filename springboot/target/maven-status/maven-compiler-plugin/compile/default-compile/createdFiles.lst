@@ -1,2 +1,4 @@
-connection/userscon.class
-connection/historycon.class
+main\java\history\HistoryController.class
+connection\userscon.class
+connection\historycon.class
+main\java\history\preSchedule.class
