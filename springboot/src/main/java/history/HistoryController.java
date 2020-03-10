@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.*;
 import java.text.*;
+import java.lang.String;
 
 @CrossOrigin
 @RestController
@@ -22,6 +23,7 @@ public class HistoryController {
         Integer bay;
         Integer minGap;
         Integer maxGap;
+        Integer staffId;
 
         historycon conn = new historycon();
 
@@ -31,11 +33,12 @@ public class HistoryController {
             bay = param.bay;
             minGap = param.minGap;
             maxGap = param.maxGap;
+            staffId = param.staffId;
         } catch (Exception e){
             throw new Exception("JSON Reading Error");
         }
 
-        ArrayList<main.java.history.MassSlotUploadDetails> pList = new ArrayList<>();
+        ArrayList<main.java.history.MassSlotUploadDetails> MSUList = new ArrayList<>();
 
         for(String key : baseLineOccupancy.keySet()){
             List<List<Object>> baseLineOccupancyList = baseLineOccupancy.get(key);
@@ -44,11 +47,12 @@ public class HistoryController {
                 MassSlotUploadDetails p;
                 if (i == 0){
                     //dates (CY19Q4's [0])
-                    dates = baseLineOccupancyList.get(i);
+                    // dates = baseLineOccupancyList.get(i);
+                    continue;
                 } else {
                     //product (CY19Q4's [1,2,3,4,...])
                     p = new MassSlotUploadDetails(baseLineOccupancyList.get(i).get(0));
-                    pList.add(p);
+                    MSUList.add(p);
                     
                 }
             }
@@ -61,20 +65,30 @@ public class HistoryController {
                 MassSlotUploadDetails p;
                 if (i == 0){
                     //dates (CY19Q4's [0])
-                    dates = bayOccupancyList.get(i);
+                    // dates = bayOccupancyList.get(i);
+                    continue;
                 } else {
                     //product (CY19Q4's [1,2,3,4,...])
                     p = new MassSlotUploadDetails(bayOccupancyList.get(i).get(0));
-                    pList.add(p);
+                    MSUList.add(p);
                 }
             }
         }
 
-        return conn.addMassSlotUpload(pList, 1);
+        String return_message = "Failed";
 
-        // return baseLineOccupancy.get("CY19Q4");
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        String modifiedDate = formatter.format(date);
 
-        // return param.bay;
+        try {
+            // hardcoded history_id to be 1 should be retrieved to see which is the next history_id to be added
+            conn.addHistory(String.valueOf(staffId), String.valueOf(minGap), String.valueOf(maxGap), modifiedDate);
+            return_message = conn.addMassSlotUpload(MSUList, 1);
+        } catch (Exception e){
+            throw new Exception("Upload failed");
+        }
+        return return_message;
     }
 
     @RequestMapping(path = "/retrievePreSchedule", method = RequestMethod.GET, produces = "application/json")

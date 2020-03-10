@@ -11,13 +11,15 @@ public class preSchedule implements JsonObject{
     public Integer minGap;
     public Integer maxGap;
     public Integer bay;
+    public Integer staffId;
 
     public preSchedule(
-        Map<String,List<List<Object>>> baseLineOccupancy, Map<String,List<List<Object>>> bayOccupancy, Integer bay, Integer minGap, Integer maxGap){
+        Map<String,List<List<Object>>> baseLineOccupancy, Map<String,List<List<Object>>> bayOccupancy, Integer bay, Integer minGap, Integer maxGap, Integer staffId){
         this.baseLineOccupancy = baseLineOccupancy;
         this.bayOccupancy = bayOccupancy;
         this.bay = bay;
         this.minGap = minGap;
         this.maxGap = maxGap;
+        this.staffId = staffId;
     }
 }
