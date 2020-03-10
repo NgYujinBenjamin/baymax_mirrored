@@ -1,6 +1,6 @@
 package main.java.history;
 
-import main.java.algorithm.Objects.*;
+import connection.historycon;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,6 +23,8 @@ public class HistoryController {
         Integer minGap;
         Integer maxGap;
 
+        historycon conn = new historycon();
+
         try{
             baseLineOccupancy = param.baseLineOccupancy; 
             bayOccupancy = param.bayOccupancy;
@@ -33,17 +35,21 @@ public class HistoryController {
             throw new Exception("JSON Reading Error");
         }
 
+        ArrayList<main.java.history.MassSlotUploadDetails> pList = new ArrayList<>();
+
         for(String key : baseLineOccupancy.keySet()){
             List<List<Object>> baseLineOccupancyList = baseLineOccupancy.get(key);
             for (int i = 0; i < baseLineOccupancyList.size(); i++){
                 List dates;
-                Product p;
+                MassSlotUploadDetails p;
                 if (i == 0){
                     //dates (CY19Q4's [0])
                     dates = baseLineOccupancyList.get(i);
                 } else {
                     //product (CY19Q4's [1,2,3,4,...])
-                    p = new Product(baseLineOccupancyList.get(i).get(0));
+                    p = new MassSlotUploadDetails(baseLineOccupancyList.get(i).get(0));
+                    pList.add(p);
+                    
                 }
             }
         }
@@ -52,18 +58,21 @@ public class HistoryController {
             List<List<Object>> bayOccupancyList = bayOccupancy.get(key);
             for (int i = 0; i < bayOccupancyList.size(); i++){
                 List dates;
-                Product p;
+                MassSlotUploadDetails p;
                 if (i == 0){
                     //dates (CY19Q4's [0])
                     dates = bayOccupancyList.get(i);
                 } else {
                     //product (CY19Q4's [1,2,3,4,...])
-                    p = new Product(bayOccupancyList.get(i).get(0));
+                    p = new MassSlotUploadDetails(bayOccupancyList.get(i).get(0));
+                    pList.add(p);
                 }
             }
         }
 
-        return baseLineOccupancy.get("CY19Q4");
+        return conn.addMassSlotUpload(pList, 1);
+
+        // return baseLineOccupancy.get("CY19Q4");
 
         // return param.bay;
     }
