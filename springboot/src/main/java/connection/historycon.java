@@ -79,7 +79,7 @@ public class historycon extends mysqlcon {
     public ArrayList<JsonObject> getMassSlotUpload(String msuId) throws SQLException, ClassNotFoundException {
         Connection con = super.getConnection();
         Statement stmt = con.createStatement();
-        String my_string = "select * from mass_slot_upload where msu_id = '" + msuId + "'";
+        String my_string = "select * from mass_slot_upload where history_id = '" + msuId + "'";
         ResultSet rs = stmt.executeQuery(my_string);
 
         ArrayList<JsonObject> rv = new ArrayList<>();

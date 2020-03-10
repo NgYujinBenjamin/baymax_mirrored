@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.sql.SQLException;
+
 import java.util.*;
 import java.text.*;
 import java.lang.String;
@@ -16,8 +18,11 @@ import java.lang.String;
 @CrossOrigin
 @RestController
 public class HistoryController {
+    
+    public static final historycon conn = new historycon();
+
     @RequestMapping(path = "/savePreSchedule", method = RequestMethod.GET, consumes="application/json")
-    public Object savePreSchedule(@RequestBody preSchedule param) throws Exception{
+    public Object savePreSchedule(@RequestBody preSchedule param) throws SQLException, Exception{
         Map<String,List<List<Object>>> baseLineOccupancy; 
         Map<String,List<List<Object>>> bayOccupancy;
         Integer bay;
@@ -25,7 +30,6 @@ public class HistoryController {
         Integer maxGap;
         Integer staffId;
 
-        historycon conn = new historycon();
 
         try{
             baseLineOccupancy = param.baseLineOccupancy; 
@@ -83,8 +87,8 @@ public class HistoryController {
 
         try {
             // hardcoded history_id to be 1 should be retrieved to see which is the next history_id to be added
-            conn.addHistory(String.valueOf(staffId), String.valueOf(minGap), String.valueOf(maxGap), modifiedDate);
             return_message = conn.addMassSlotUpload(MSUList, 1);
+            conn.addHistory(String.valueOf(staffId), String.valueOf(minGap), String.valueOf(maxGap), modifiedDate);
         } catch (Exception e){
             throw new Exception("Upload failed");
         }
@@ -92,8 +96,8 @@ public class HistoryController {
     }
 
     @RequestMapping(path = "/retrievePreSchedule", method = RequestMethod.GET, produces = "application/json")
-    public Object retrievePreSchedule(){
-        return "1";
+    public Object retrievePreSchedule() throws SQLException, ClassNotFoundException{
+        return conn.getMassSlotUpload("1");
     }
     
 }
