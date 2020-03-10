@@ -48,13 +48,13 @@ public class Token {
 
     //modify code - inform Ben
     //@MODIFY - add staffid
-    public User retrieveUserObject(String user_token) throws Exception{
+    public UserCredentials retrieveUserObject(String user_token) throws Exception{
         String username = JWT.require(HMAC512(SECRET.getBytes()))
         .build()
         .verify(user_token)
         .getSubject();
         try{
-            User userObject = conn.getUser(username);
+            UserCredentials userObject = conn.getUserCredentials(username);
         return userObject;
         }  catch (SQLException e) {
             throw e;
