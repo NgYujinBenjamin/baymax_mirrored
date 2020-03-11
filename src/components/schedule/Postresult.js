@@ -129,7 +129,7 @@ const Postresult = () => {
                         <Button fullWidth variant='contained' onClick={handleClearAll} startIcon={<DeleteIcon />} color='secondary'>Clear All</Button>
                     </Grid>
                     <Grid item xs>
-                        <Button fullWidth variant='contained' onClick={handleSave} startIcon={<SaveIcon />}>Save to History</Button>
+                        <Button fullWidth variant='contained' onClick={handleSave} startIcon={<SaveIcon />}>Save Result</Button>
                     </Grid>
                     <Grid item xs>
                         <Button fullWidth variant='contained' onClick={handleExport} startIcon={<GetAppIcon />}>Export to Excel File</Button>

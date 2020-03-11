@@ -539,10 +539,19 @@ const UploadState = (props) => {
     const updateReschedule = (res) => dispatch({ type: UPDATE_RESCHEDULE, payload: res })
     const tabChecker = (res) => dispatch({ type: UPDATE_TABCHECKER, payload: res })
 
+    // ##################################################################################################
+    // ########################################## HISTORY START #########################################
+    // ##################################################################################################
+
     //save to history
-    const saveResult = async (postResultDone) => {
+    const saveResult = async (postResult, bays, mingap, maxgap, staffID) => {
       setLoading();
 
+      postResult.numBays = parseInt(bays);
+      postResult.minGap = parseInt(mingap);
+      postResult.maxGap = parseInt(maxgap);
+      postResult.staffID = parseInt(staffID);
+      
       const config = {
           headers: {
               'Content-Type': 'application/json'
@@ -550,7 +559,7 @@ const UploadState = (props) => {
       }
 
       try {
-          await axios.post('http://localhost:8080/save', postResultDone, config);
+          await axios.post('http://localhost:8080/savePreSchedule', postResult, config);
 
           dispatch({
               type: SAVE_RESULT
@@ -561,10 +570,7 @@ const UploadState = (props) => {
       }
     }
 
-    // ##################################################################################################
-    // ########################################## HISTORY START #########################################
-    // ##################################################################################################
-
+    // get a history
     const getHistory = async () => {
       try {
           const res = await axios.get(`http://localhost:8080/getHistory`);
@@ -579,6 +585,7 @@ const UploadState = (props) => {
       }
     }
 
+    // get ALL histories
     const loadHistories = async () => {
       try {
           const res = await axios.get(`http://localhost:8080/allHistories`);

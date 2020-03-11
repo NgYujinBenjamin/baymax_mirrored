@@ -1,14 +1,12 @@
 import React, { Fragment, useContext, useEffect } from 'react';
 import { Card, CardContent, Button } from '@material-ui/core';
 import { Link } from 'react-router-dom';
-import UploadContext from '../../context/upload/uploadContext';
 import AuthContext from '../../context/auth/authContext';
 import Postresult from '../schedule/Postresult';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 const HistoryDetails = () => {
     
-    const uploadContext = useContext(UploadContext);
     const authContext = useContext(AuthContext);
 
     const { loadUser, updateNavItem } = authContext;
