@@ -17,7 +17,6 @@ import HistoryDetails from './components/history/HistoryDetails';
 import PrivateRoute from './components/routing/PrivateRoute';
 
 import UploadState from './context/upload/UploadState';
-import HistState from './context/history/HistState';
 import AlertState from './context/alert/AlertState';
 import AuthState from './context/auth/AuthState';
 import AdminState from './context/admin/AdminState';
@@ -32,7 +31,6 @@ const App = () => {
     <AuthState>
     <UploadState>
     <AdminState>
-    <HistState>
     <AlertState>
       <Router>
         <Fragment>
@@ -54,7 +52,6 @@ const App = () => {
         </Fragment>
       </Router>
     </AlertState>
-    </HistState>
     </AdminState>
     </UploadState>
     </AuthState>

@@ -74,15 +74,15 @@ const Profile = () => {
                     
                     {/* Check if user is admin; if so, show the button */}
                     {user !== null && user.role === "admin" && <Typography gutterBottom> 
-                        <Button variant="contained" color="primary" style={{ width: '25%' }}>
-                            <Link to='/admin' style={{ color: 'white', textDecoration:'none' }}> View / Add Users </Link>
-                        </Button>
+                        <Link to='/admin' style={{ color: 'white', textDecoration:'none' }}>
+                            <Button variant="contained" color="primary" style={{ width: '25%' }}> View / Add Users </Button>
+                        </Link>
                     </Typography>}
                     
                     <Typography gutterBottom>
-                        <Button variant="contained" color="primary" style={{ width: '25%' }}>
-                            <Link to='/history' style={{ color: 'white', textDecoration:'none' }}> View History </Link>
-                        </Button>
+                        <Link to='/history' style={{ color: 'white', textDecoration:'none' }}>
+                            <Button variant="contained" color="primary" style={{ width: '25%' }}> View History </Button>
+                        </Link>
                     </Typography>
                     
                     <Dialog

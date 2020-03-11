@@ -50,6 +50,7 @@ const Navbar = () => {
                     <StyledListItem
                         button
                         selected={currentNavItem === 1}
+                        onClick={() => clearZero()}
                     >
                         <AccountCircleIcon style={{ marginRight: '4px' }}/>
                         Profile
