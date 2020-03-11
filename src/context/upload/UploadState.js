@@ -3,7 +3,7 @@ import UploadContext from './uploadContext';
 import UploadReducer from './uploadReducer';
 import XLSX from 'xlsx';
 import axios from 'axios';
-import { SET_BASELINE, UPDATE_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS, UPDATE_POST_RESULT, UPDATE_QUARTER, UPDATE_DATA, UPDATE_SAVE, UPDATE_POST_RESULT_FORMAT, UPDATE_RESCHEDULE, RESCHEDULE_POST_RESULT, UPDATE_TABCHECKER,CREATE_RESULT_ERROR, SET_MIN_GAP, SET_MAX_GAP } from '../types';
+import { SET_BASELINE, UPDATE_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS, UPDATE_POST_RESULT, UPDATE_QUARTER, UPDATE_DATA, UPDATE_SAVE, UPDATE_POST_RESULT_FORMAT, UPDATE_RESCHEDULE, RESCHEDULE_POST_RESULT, UPDATE_TABCHECKER,CREATE_RESULT_ERROR, SET_MIN_GAP, SET_MAX_GAP, GET_HISTORY, LOAD_ALL_HISTORY } from '../types';
 
 const UploadState = (props) => {
     const initialState = {
@@ -24,7 +24,21 @@ const UploadState = (props) => {
         postResultErrors: {},
         saveHistory: false,
         reschedule: false,
-        tabUpdate: false
+        tabUpdate: false,
+        allHistory: [
+          {
+              msuID: 1,
+              dateGenerated: '14 August 2020'
+          },
+          {
+              msuID: 2,
+              dateGenerated: '13 August 2020'
+          },
+          {
+              msuID: 3,
+              dateGenerated: '11 August 2020'
+          }
+        ]
     }
 
     const [state, dispatch] = useReducer(UploadReducer, initialState);
@@ -339,11 +353,15 @@ const UploadState = (props) => {
 
     // send to backend for rescheduling (Have not implemented this!)
     const reschedulePostResult = async (postResultDone, bays, mingap, maxgap) => {
+      Object.keys(postResultDone.bayOccupancy).map(qtr => {
+        for(let i = 1; i < postResultDone.bayOccupancy[qtr].length; i++){
+          postResultDone.bayOccupancy[qtr][i][0].cycleTimeDays = parseInt(postResultDone.bayOccupancy[qtr][i][0].cycleTimeDays);
+        }
+      })
+
       postResultDone.numBays = parseInt(bays);
       postResultDone.minGap = parseInt(mingap);
       postResultDone.maxGap = parseInt(maxgap);
-
-      console.log(postResultDone);
       
       const config = {
         headers: {
@@ -420,6 +438,19 @@ const UploadState = (props) => {
       
       result[0] = firstQtrDates;
       postResultUpdate.bayOccupancy[qtrs[0]] = result;
+
+      // update bays and gaps for history
+      if("minGap" in postResultUpdate){
+        setMinGap(postResultUpdate.minGap);
+      }
+      
+      if("maxGap" in postResultUpdate){
+        setMaxGap(postResultUpdate.maxGap);
+      }
+      
+      if("numBays" in postResultUpdate){
+        setBays(postResultUpdate.numBays);
+      }
 
       setPostResult(postResultUpdate, minGapDays);
     }
@@ -512,10 +543,19 @@ const UploadState = (props) => {
     const updateReschedule = (res) => dispatch({ type: UPDATE_RESCHEDULE, payload: res })
     const tabChecker = (res) => dispatch({ type: UPDATE_TABCHECKER, payload: res })
 
+    // ##################################################################################################
+    // ########################################## HISTORY START #########################################
+    // ##################################################################################################
+
     //save to history
-    const saveResult = async (postResultDone) => {
+    const saveResult = async (postResult, bays, mingap, maxgap, staffID) => {
       setLoading();
 
+      postResult.numBays = parseInt(bays);
+      postResult.minGap = parseInt(mingap);
+      postResult.maxGap = parseInt(maxgap);
+      postResult.staffID = parseInt(staffID);
+      
       const config = {
           headers: {
               'Content-Type': 'application/json'
@@ -523,7 +563,7 @@ const UploadState = (props) => {
       }
 
       try {
-          await axios.post('http://localhost:8080/save', postResultDone, config);
+          await axios.post('http://localhost:8080/savePreSchedule', postResult, config);
 
           dispatch({
               type: SAVE_RESULT
@@ -534,8 +574,38 @@ const UploadState = (props) => {
       }
     }
 
+    // get a history
+    const getHistory = async () => {
+      try {
+          const res = await axios.get(`http://localhost:8080/getHistory`);
+          // console.log(res);
+
+          dispatch({
+              type: GET_HISTORY,
+              payload: res
+          })
+      } catch (err) {
+          
+      }
+    }
+
+    // get ALL histories
+    const loadHistories = async () => {
+      try {
+          const res = await axios.get(`http://localhost:8080/allHistories`);
+          // console.log(res);
+          
+          dispatch({
+              type: LOAD_ALL_HISTORY,
+              payload: res
+          })
+      } catch (err) {
+
+      }
+    }
+
     // ##################################################################################################
-    // ######################################### POST RESULT END ########################################
+    // ########################################### HISTORY END ##########################################
     // ##################################################################################################
 
     //create result
@@ -792,6 +862,7 @@ const UploadState = (props) => {
             reschedule: state.reschedule,
             saveHistory: state.saveHistory,
             tabUpdate: state.tabUpdate,
+            allHistory: state.allHistory,
             setBaseline,
             setSchedule,
             setBays,
@@ -822,7 +893,9 @@ const UploadState = (props) => {
             validateDate,
             validateNum,
             setMinGap,
-            setMaxGap
+            setMaxGap,
+            getHistory,
+            loadHistories
         }}>
         {props.children}
     </UploadContext.Provider>

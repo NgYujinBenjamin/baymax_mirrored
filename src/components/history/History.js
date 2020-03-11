@@ -1,16 +1,16 @@
 import React, { Fragment, useContext, useEffect } from 'react';
 import { Typography } from '@material-ui/core';
-import HistContext from '../../context/history/histContext';
 import HistoryItem from './HistoryItem';
+import UploadContext from '../../context/upload/uploadContext';
 import AuthContext from '../../context/auth/authContext';
 import '../../App.css';
 
 const History = () => {
-    const histContext = useContext(HistContext);
+    const uploadContext = useContext(UploadContext);
     const authContext = useContext(AuthContext);
 
-    const { historyData } = histContext;
-    const { user, loadUser, updateNavItem } = authContext;
+    const { allHistory } = uploadContext;
+    const { loadUser, updateNavItem } = authContext;
     
     useEffect(() => {
         loadUser();
@@ -18,21 +18,15 @@ const History = () => {
         //eslint-disable-next-line
     }, [])
 
-    // console.log(user);
-
     return (
         <Fragment>
-            {/* Breadcrumbs */}
-            <Typography>
-                <a href='/profile' className="breadcrumb"> Profile</a> > 
-                <a className="breadcrumb"> History</a> 
+            <Typography variant='h2' style={{ fontSize: '2rem', marginBottom: '16px' }}>
+                Schedule Histories
             </Typography>
 
-            <Typography variant='h5' component='h3' gutterBottom> History </Typography>
-            
-            {historyData.map(history => (user && user.username === history.username) ?
-                <HistoryItem record={history} key={history.msuID} /> :
-                null
+            {/* Load the top 10 histories retrieved from database */}
+            { allHistory.map(history =>
+                <HistoryItem record={history} key={history.msuID} />
             )}
         </Fragment>
     )

@@ -21,15 +21,19 @@ const Postresult = () => {
 
     useEffect(() => {
         updateNavItem(0);
-        updatePostResultEmpties(postResult, minGap);
+        if(postResult !== null){
+            updatePostResultEmpties(postResult, minGap);
+        }
         //console.log(postResult)
         //eslint-disable-next-line
     }, [postResult])
 
     const qtrs = new Array();
-    Object.keys(postResult.bayOccupancy).map(quarterName => 
-        qtrs.push(quarterName)
-    )
+    if(postResult !== null){
+        Object.keys(postResult.bayOccupancy).map(quarterName => 
+            qtrs.push(quarterName)
+        )
+    }
 
     const a11yProps = (index) => {
         return {
@@ -125,7 +129,7 @@ const Postresult = () => {
                         <Button fullWidth variant='contained' onClick={handleClearAll} startIcon={<DeleteIcon />} color='secondary'>Clear All</Button>
                     </Grid>
                     <Grid item xs>
-                        <Button fullWidth variant='contained' onClick={handleSave} startIcon={<SaveIcon />}>Save to History</Button>
+                        <Button fullWidth variant='contained' onClick={handleSave} startIcon={<SaveIcon />}>Save Result</Button>
                     </Grid>
                     <Grid item xs>
                         <Button fullWidth variant='contained' onClick={handleExport} startIcon={<GetAppIcon />}>Export to Excel File</Button>

@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useContext, useState } from 'react';
 import { TableBody } from '@material-ui/core';
-import Spinner from '../layout/Spinner';
 import PostresultItem from './PostresultItem';
+import AuthContext from '../../context/auth/authContext';
 import UploadContext from '../../context/upload/uploadContext';
 import AlertContext from '../../context/alert/alertContext';
 
@@ -10,9 +10,11 @@ const Postresultbody = ({ result, baseline, quarter }) => {
     
     const uploadContext = useContext(UploadContext);
     const alertContext = useContext(AlertContext);
-
+    const authContext = useContext(AuthContext);
+    
     const { setAlert } = alertContext;
-    const { bays, minGap, maxGap, validateDate, validateNum, currentQuarter, updateCurrentQuarter, reschedule, tabUpdate, tabChecker, reschedulePostResult, saveResult, updateReschedule, updatePostResult, postResultDone, saveHistory, updateSave, endDateCheck, postResultErrors, handlePostResultError } = uploadContext;
+    const { bays, minGap, maxGap, validateDate, validateNum, currentQuarter, updateCurrentQuarter, reschedule, tabUpdate, tabChecker, reschedulePostResult, saveResult, updateReschedule, updatePostResult, postResultDone, postResult, saveHistory, updateSave, endDateCheck, postResultErrors, handlePostResultError } = uploadContext;
+    const { user } = authContext;
 
     useEffect(() => {
         if(currentQuarter === null){
@@ -46,7 +48,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
                 // save to history
                 if(saveHistory){
                     console.log("Saved");
-                    // saveResult(postResult); // send to backend via endpoint
+                    saveResult(postResult, bays, minGap, maxGap, user['staff_id']);
                     updateSave(false);
                 }
     
@@ -93,7 +95,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
                 if (o === obj) {
                     if (name == 'cycleTimeDays'){
                         validateFields(postResultErrors, value, obj[0].argoID, name); // validation check
-                        return [ {...obj[0], [name]: parseInt(value)}, ...obj.slice(1) ];
+                        return [ {...obj[0], [name]: value}, ...obj.slice(1) ];
                     } 
                     if (name == 'sendToStorageDate'){
                         validateFields(postResultErrors, value, obj[0].argoID, name); // validation check
