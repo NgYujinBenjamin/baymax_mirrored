@@ -656,32 +656,37 @@ const UploadState = (props) => {
     const filterAndInsertToBaseline = (filtered, base) => {
       let tempBase = [];
       
-      filtered.forEach(obj => {
-        base.forEach(val => {
-          if(val['Slot ID/UTID'] === obj['Slot ID/UTID']){
-            tempBase.push(obj)
-          }
-        })
-      })
-
-      if(tempBase.length !== 0){
-        tempBase.forEach(val => {
-          filtered.forEach(obj => {
-            if(val === obj){
-              obj['emptyToDelete'] = ''
+      if(base.length > 0){
+        filtered.forEach(obj => {
+          base.forEach(val => {
+            if(val['Slot ID/UTID'] === obj['Slot ID/UTID']){
+              tempBase.push(obj)
             }
           })
         })
-
-        dispatch({
-          type: UPDATE_BASELINE,
-          payload: tempBase
-        })
-
-        return filtered.filter(obj => !(obj.hasOwnProperty('emptyToDelete')))
+  
+        if(tempBase.length !== 0){
+          tempBase.forEach(val => {
+            filtered.forEach(obj => {
+              if(val === obj){
+                obj['emptyToDelete'] = ''
+              }
+            })
+          })
+  
+          dispatch({
+            type: UPDATE_BASELINE,
+            payload: tempBase
+          })
+  
+          return filtered.filter(obj => !(obj.hasOwnProperty('emptyToDelete')))
+        } else {
+          return filtered
+        }
       } else {
         return filtered
       }
+      
     }
 
     //check date value if undefined

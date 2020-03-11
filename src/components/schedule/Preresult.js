@@ -1,6 +1,6 @@
 import React, { Fragment, useContext, useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@material-ui/core'
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Typography } from '@material-ui/core'
 import PreresultItem from './PreresultItem'
 import AuthContext from '../../context/auth/authContext'
 import UploadContext from '../../context/upload/uploadContext'
@@ -99,7 +99,9 @@ const Preresult = ({ fileName }) => {
             window.scrollTo(0,0);
         } else {
             updateSchedule(objs);
-            updateBaseline(newBaseline);
+            if(newBaseline !== null){
+                updateBaseline(newBaseline);
+            }
             createResult(newBaseline, objs, bays, minGap, maxGap);
             setStepCount(stepcount + 2);
         }

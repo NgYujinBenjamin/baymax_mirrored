@@ -93,6 +93,14 @@ const Schedule = (props) => {
             setMinGap(parseInt(userInput.minGapTime));
             setMaxGap(parseInt(userInput.maxGapTime));
             setSchedule(userInput.bayFile, parseInt(userInput.minGapTime), baseline);
+            setUserInput({
+                bayComponent: '',
+                bayFile: null,
+                fileName: '',
+                bayFileValue: '',
+                minGapTime: '',
+                maxGapTime: ''
+            })
         }
     }
 
@@ -160,7 +168,7 @@ const Schedule = (props) => {
                     }  
                     <Box>
                         {loading && <Spinner />}
-                        {(schedule !== null && !scheduleDone && !loading) && <Preresult fileName={userInput.fileName} curBay={parseInt(userInput.bayComponent)} /> }
+                        {(schedule !== null && !scheduleDone && !loading) && <Preresult /> }
                         {(postResult !== null && scheduleDone && !loading) && <Postresult />}
                     </Box>
                 </CardContent>
