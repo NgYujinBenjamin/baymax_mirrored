@@ -353,11 +353,15 @@ const UploadState = (props) => {
 
     // send to backend for rescheduling (Have not implemented this!)
     const reschedulePostResult = async (postResultDone, bays, mingap, maxgap) => {
+      Object.keys(postResultDone.bayOccupancy).map(qtr => {
+        for(let i = 1; i < postResultDone.bayOccupancy[qtr].length; i++){
+          postResultDone.bayOccupancy[qtr][i][0].cycleTimeDays = parseInt(postResultDone.bayOccupancy[qtr][i][0].cycleTimeDays);
+        }
+      })
+
       postResultDone.numBays = parseInt(bays);
       postResultDone.minGap = parseInt(mingap);
       postResultDone.maxGap = parseInt(maxgap);
-
-      console.log(postResultDone);
       
       const config = {
         headers: {
