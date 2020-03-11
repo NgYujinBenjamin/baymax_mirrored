@@ -216,8 +216,8 @@ public class MassSlotUploadDetails implements Comparable<MassSlotUploadDetails>{
 
         }        
 
-        latestToolStartDate = DateUtils.addDays(endDate, -cycleTimeDays);
-        toolStartDate = latestToolStartDate;
+        // latestToolStartDate = DateUtils.addDays(endDate == null? "" : endDate, -cycleTimeDays);
+        // toolStartDate = latestToolStartDate;
 
         if (sendToStorageDate != null){
             leaveBayDate = sendToStorageDate;
@@ -228,7 +228,7 @@ public class MassSlotUploadDetails implements Comparable<MassSlotUploadDetails>{
             leaveBayDate = endDate;
         }
 
-        gapDays = (int) ((MFGCommitDate.getTime() - MRPDate.getTime())/ (24 * 60 * 60 * 1000)); 
+        //gapDays = (int) ((MFGCommitDate.getTime() - MRPDate.getTime())/ (24 * 60 * 60 * 1000)); 
     }
 
     public int compareTo(MassSlotUploadDetails other){

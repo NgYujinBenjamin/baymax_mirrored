@@ -21,7 +21,7 @@ public class HistoryController {
     
     public static final historycon conn = new historycon();
 
-    @RequestMapping(path = "/savePreSchedule", method = RequestMethod.GET, consumes="application/json")
+    @RequestMapping(path = "/savePreSchedule", method = RequestMethod.POST, consumes="application/json")
     public Object savePreSchedule(@RequestBody preSchedule param) throws SQLException, Exception{
         Map<String,List<List<Object>>> baseLineOccupancy; 
         Map<String,List<List<Object>>> bayOccupancy;
