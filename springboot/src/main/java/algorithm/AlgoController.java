@@ -31,7 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class AlgoController {
 
     @RequestMapping(path = "/firstScheduling", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
-    public String testing(@RequestBody firstSchedulingParam param) throws RuntimeException, Exception{
+    public String firstScheduling(@RequestBody firstSchedulingParam param) throws RuntimeException, Exception{
         List<Map<String, Object>> baseLineData;
         List<Map<String, Object>> data;
         Integer numBays;
@@ -92,7 +92,7 @@ public class AlgoController {
     }
 
     @RequestMapping(path = "/subseqScheduling", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
-    public String testing(@RequestBody subseqSchedulingParam param) throws Exception{
+    public String subseqScheduling(@RequestBody subseqSchedulingParam param) throws Exception{
         Map<String, List<List<Object>>> baseLineOccupancy;
         Map<String, List<List<Object>>> bayOccupancy;
         Integer numBays;

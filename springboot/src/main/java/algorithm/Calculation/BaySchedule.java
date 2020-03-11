@@ -37,7 +37,9 @@ public class BaySchedule{
         if (baseLineProduct.size() <= maxBays){
             for (int j=0; j < baseLineProduct.size(); j++){
                 Bay b = schedule.get(j);
+                
                 Product p = baseLineProduct.get(j);
+
                 b.addToBaySchedule(p);
             }
         } else {
@@ -100,8 +102,6 @@ public class BaySchedule{
         Date toolStartDate = p.getLatestToolStartDate(); // Represents the latest date at which the tool must start
         
         Bay b = schedule.get(0); // Earliest bay available
-        Integer bayID = b.getBayID();
-        p.setAssignedBayID(bayID);
         
         // Pull forward the date as early as possible
         

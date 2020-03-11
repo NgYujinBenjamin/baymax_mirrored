@@ -1,8 +1,6 @@
 import React, { Fragment, useContext, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, Box, Grid } from '@material-ui/core';
-import { AppBar, Tabs, Tab } from '@material-ui/core';
-import Spinner from '../layout/Spinner';
+import { Button, Box, Grid, InputLabel, Input, AppBar, Tabs, Tab } from '@material-ui/core';
 import UploadContext from '../../context/upload/uploadContext';
 import AuthContext from '../../context/auth/authContext';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -19,17 +17,15 @@ const Postresult = () => {
     const [value, setValue] = useState(0); // this is for tab panel to display quarters
 
     const { loadUser, updateNavItem } = authContext
-    const { loading, currentQuarter, postResult, postResultDone, postResultErrors, tabChecker, updateReschedule, createExport, createExportSchedule, updateSave, clearAll, updatePostResultEmpties } = uploadContext;
+    const { bays, minGap, maxGap, setBays, setMinGap, setMaxGap, currentQuarter, postResult, postResultDone, postResultErrors, tabChecker, updateReschedule, createExport, createExportSchedule, updateSave, clearAll, updatePostResultEmpties } = uploadContext;
 
     useEffect(() => {
         updateNavItem(0);
-        updatePostResultEmpties(postResult);
+        updatePostResultEmpties(postResult, minGap);
         //console.log(postResult)
         //eslint-disable-next-line
     }, [postResult])
 
-    console.log(postResult);
-    
     const qtrs = new Array();
     Object.keys(postResult.bayOccupancy).map(quarterName => 
         qtrs.push(quarterName)
@@ -42,8 +38,8 @@ const Postresult = () => {
         }
     }
 
-    const handleChange = (event, newValue) => {
-        console.log(newValue);
+    const tabsChange = (event, newValue) => {
+        // console.log(newValue);
         if (Object.keys(postResultErrors).length == 0){
             setValue(newValue);
         } else{
@@ -70,55 +66,81 @@ const Postresult = () => {
         updateReschedule(true);
     }
 
+    const handleChange = (event) => {
+        const value = event.target.value;
+        const name = event.target.name;
+        if(name == 'bayNum'){
+            setBays(value);
+        } else if (name == 'minGap'){
+            setMinGap(value);
+        } else{
+            setMaxGap(value);
+        }
+    }
+
     return (
         <Fragment>
-            {loading && <Spinner />}
-            {!loading && <div>
-                <div>
-                    <AppBar position="static" color="default">
-                        <Tabs
-                            value={value}
-                            onChange={handleChange}
-                            variant="scrollable"
-                            scrollButtons="on"
-                            indicatorColor="primary"
-                            textColor="primary"
-                            aria-label="scrollable force tabs example"
-                        >
-                            {/* This will create the tab headers */}
-                            { qtrs.map((key, i) => 
-                                <Tab label={key} {...a11yProps({i})} key={i}/>
-                            )}
-                        </Tabs>
-                    </AppBar>
-                                
-                    {postResultDone !== null && qtrs.map((qtr, index) =>
-                        <Postresultqtr schedule={postResultDone.bayOccupancy} baseline={postResultDone.baseLineOccupancy} value={value} num={index} quarter={qtr} key={index}/>
-                    )}
-                </div>
-                
-                <Box className={classes.marginTop}>
-                    <Grid container spacing={1}>
-                        <Grid item xs>
-                            <Button fullWidth variant='contained' onClick={handleClearAll} startIcon={<DeleteIcon />} color='secondary'>Clear All</Button>
-                        </Grid>
-                        <Grid item xs>
-                            <Button fullWidth variant='contained' onClick={handleSave} startIcon={<SaveIcon />}>Save to History</Button>
-                        </Grid>
-                        <Grid item xs>
-                            <Button fullWidth variant='contained' onClick={handleExport} startIcon={<GetAppIcon />}>Export to Excel File</Button>
-                        </Grid>
-                        <Grid item xs>
-                            <Button fullWidth variant='contained' onClick={handleReschedule} startIcon={<TrendingUpIcon />} color='primary'>Generate Schedule Again</Button>
-                        </Grid>
+            <Box className={classes.box}>
+                <Grid container spacing={3}>
+                    <Grid item xs>
+                        <InputLabel htmlFor='bays'>No of Available Bays</InputLabel>
+                        <Input fullWidth type='text' id='bays' name='bayNum' value={bays} onChange={handleChange} required />
                     </Grid>
-                </Box>
-            </div>}
+                    <Grid item xs>
+                        <InputLabel htmlFor='minGap'>Minimum Gap Time</InputLabel>
+                        <Input fullWidth type='text' id='minGap' name='minGap' value={minGap} onChange={handleChange} required />
+                    </Grid>
+                    <Grid item xs>
+                        <InputLabel htmlFor='maxGap'>Maximum Gap Time</InputLabel>
+                        <Input fullWidth type='text' id='maxGap' name='maxGapTime' value={maxGap} onChange={handleChange} required />
+                    </Grid>
+                </Grid>
+            </Box>
+            <div>
+                <AppBar position="static" color="default">
+                    <Tabs
+                        value={value}
+                        onChange={tabsChange}
+                        variant="scrollable"
+                        scrollButtons="on"
+                        indicatorColor="primary"
+                        textColor="primary"
+                        aria-label="scrollable force tabs example"
+                    >
+                        {/* This will create the tab headers */}
+                        { qtrs.map((key, i) => 
+                            <Tab label={key} {...a11yProps({i})} key={i}/>
+                        )}
+                    </Tabs>
+                </AppBar>
+                            
+                {postResultDone !== null && qtrs.map((qtr, index) =>
+                    <Postresultqtr schedule={postResultDone.bayOccupancy} baseline={postResultDone.baseLineOccupancy} value={value} num={index} quarter={qtr} key={index}/>
+                )}
+            </div>
+            
+            <Box className={classes.marginTop}>
+                <Grid container spacing={1}>
+                    <Grid item xs>
+                        <Button fullWidth variant='contained' onClick={handleClearAll} startIcon={<DeleteIcon />} color='secondary'>Clear All</Button>
+                    </Grid>
+                    <Grid item xs>
+                        <Button fullWidth variant='contained' onClick={handleSave} startIcon={<SaveIcon />}>Save to History</Button>
+                    </Grid>
+                    <Grid item xs>
+                        <Button fullWidth variant='contained' onClick={handleExport} startIcon={<GetAppIcon />}>Export to Excel File</Button>
+                    </Grid>
+                    <Grid item xs>
+                        <Button fullWidth variant='contained' onClick={handleReschedule} startIcon={<TrendingUpIcon />} color='primary'>Generate Schedule Again</Button>
+                    </Grid>
+                </Grid>
+            </Box>
         </Fragment>
     )
 }
 
 const useStyles = makeStyles(theme => ({
+    box: { marginBottom: 24 },
     marginTop: { marginTop: 12 }
 }));
 

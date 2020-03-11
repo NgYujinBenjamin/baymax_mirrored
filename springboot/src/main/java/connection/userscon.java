@@ -30,6 +30,22 @@ public class userscon extends mysqlcon {
         return rv;
     }
 
+    public UserCredentials getUserCredentials(String username) throws SQLException, ClassNotFoundException {
+        Connection con = super.getConnection();
+        Statement stmt = con.createStatement();
+        String my_string = "select * from users WHERE username = '" + username + "'";
+        ResultSet rs = stmt.executeQuery(my_string);
+
+        UserCredentials rv = null;
+
+        while (rs.next()) {
+            rv = new UserCredentials(rs.getString(1), rs.getString(2), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7));
+        }
+        con.close();
+        return rv;
+    }
+
+
     public ArrayList<User> getAllUsers() throws SQLException, ClassNotFoundException {
         Connection con = super.getConnection();
         Statement stmt = con.createStatement();

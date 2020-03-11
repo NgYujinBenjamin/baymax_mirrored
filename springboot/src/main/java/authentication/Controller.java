@@ -148,16 +148,16 @@ public class Controller {
         }
     }
 
-    @RequestMapping(path = "/msu/{staffId}", method = RequestMethod.POST, produces = "application/json")
-    public String addMassSlotUpload(@RequestBody ArrayList<main.java.authentication.json.MassSlotUploadDetails> data,
-                                    @PathVariable("staffId") String staffId) {
-        try {
-            int newHistoryId = historyscon.addHistory(staffId, getCurrentDateTime());
-            return historyscon.addMassSlotUpload(data, newHistoryId);
-        } catch (Exception e) {
-            return "Fail";
-        }
-    }
+    // @RequestMapping(path = "/msu/{staffId}", method = RequestMethod.POST, produces = "application/json")
+    // public String addMassSlotUpload(@RequestBody ArrayList<main.java.authentication.json.MassSlotUploadDetails> data,
+    //                                 @PathVariable("staffId") String staffId) {
+    //     try {
+    //         int newHistoryId = historyscon.addHistory(staffId, getCurrentDateTime());
+    //         return historyscon.addMassSlotUpload(data, newHistoryId);
+    //     } catch (Exception e) {
+    //         return "Fail";
+    //     }
+    // }
 
     public String getCurrentDateTime() {
         SimpleDateFormat formatter = new SimpleDateFormat("MMM d, yyyy, HH:mm:ss a");
