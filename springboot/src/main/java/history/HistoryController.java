@@ -28,7 +28,7 @@ public class HistoryController {
         Integer bay;
         Integer minGap;
         Integer maxGap;
-        Integer staffId;
+        Integer staffID;
 
 
         try{
@@ -37,7 +37,7 @@ public class HistoryController {
             bay = param.bay;
             minGap = param.minGap;
             maxGap = param.maxGap;
-            staffId = param.staffId;
+            staffID = param.staffID;
         } catch (Exception e){
             throw new Exception("JSON Reading Error");
         }
@@ -88,7 +88,7 @@ public class HistoryController {
         try {
             // hardcoded history_id to be 1 should be retrieved to see which is the next history_id to be added
             return_message = conn.addMassSlotUpload(MSUList, 1);
-            conn.addHistory(String.valueOf(staffId), String.valueOf(minGap), String.valueOf(maxGap), modifiedDate);
+            conn.addHistory(String.valueOf(staffID), String.valueOf(minGap), String.valueOf(maxGap), modifiedDate);
         } catch (Exception e){
             throw new Exception("Upload failed");
         }
