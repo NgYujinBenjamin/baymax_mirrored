@@ -1,12 +1,12 @@
 import React, { Fragment, useContext, useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Typography } from '@material-ui/core'
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@material-ui/core'
 import PreresultItem from './PreresultItem'
 import AuthContext from '../../context/auth/authContext'
 import UploadContext from '../../context/upload/uploadContext'
 import AlertContext from '../../context/alert/alertContext'
 
-const Preresult = ({ fileName }) => {
+const Preresult = () => {
     const uploadContext = useContext(UploadContext);
     const alertContext = useContext(AlertContext);
     const authContext = useContext(AuthContext);
@@ -27,7 +27,6 @@ const Preresult = ({ fileName }) => {
         return (event) => {
             const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
             const name = event.target.name;
-            // console.log(event.target)
             setObjects(prevObjs => (prevObjs.map((o) => {
                 if (o === obj) {
                     if(name === 'MRP Date'){
@@ -38,12 +37,8 @@ const Preresult = ({ fileName }) => {
                                 'End Date': value
                             }
                         } else {
-                            let output = obj['Slot Status'] === 'OPEN' ? obj['Int. Ops Ship Readiness Date'] : obj['MFG Commit Date']
-                            let dates = output.split('/')
-                            let year = parseInt(dates[2])
-                            let month = parseInt(dates[1]) - 1
-                            let day = parseInt(dates[0])
-                            let currentDate = new Date(year, month, day)
+                            let output = obj['Fab Name'] === 'OPEN' ? obj['Int. Ops Ship Readiness Date'] : obj['MFG Commit Date']
+                            let currentDate = dateConvert(output)
                             currentDate.setDate(currentDate.getDate() - minGap)
                             return {
                                 ...obj,
@@ -61,12 +56,8 @@ const Preresult = ({ fileName }) => {
                                 [name]: value
                             }
                         } else {
-                            let output = obj['Slot Status'] === 'OPEN' ? obj['Int. Ops Ship Readiness Date'] : obj['MFG Commit Date']
-                            let dates = output.split('/')
-                            let year = parseInt(dates[2])
-                            let month = parseInt(dates[1]) - 1
-                            let day = parseInt(dates[0])
-                            let currentDate = new Date(year, month, day)
+                            let output = obj['Fab Name'] === 'OPEN' ? obj['Int. Ops Ship Readiness Date'] : obj['MFG Commit Date']
+                            let currentDate = dateConvert(output)
                             currentDate.setDate(currentDate.getDate() - minGap)
                             return {
                                 ...obj,
@@ -80,6 +71,15 @@ const Preresult = ({ fileName }) => {
                 return o;
             })))
         }
+    }
+
+    const dateConvert = (date) => {
+        let dates = date.split('/')
+        let year = parseInt(dates[2])
+        let month = parseInt(dates[1]) - 1
+        let day = parseInt(dates[0])
+        let currentDate = new Date(year, month, day)
+        return currentDate
     }
 
     const handleSchedule = (event) => {
@@ -99,9 +99,11 @@ const Preresult = ({ fileName }) => {
             window.scrollTo(0,0);
         } else {
             updateSchedule(objs);
-            if(newBaseline !== null){
+
+            if(newBaseline.length > 0){
                 updateBaseline(newBaseline);
             }
+    
             createResult(newBaseline, objs, bays, minGap, maxGap);
             setStepCount(stepcount + 2);
         }
