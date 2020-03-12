@@ -28,6 +28,7 @@ const Schedule = (props) => {
             window.scrollTo(0,0);
             setAlert(error);
             uploadClearError();
+
             setUserInput({
                 bayComponent: '',
                 bayFile: null,
@@ -41,7 +42,6 @@ const Schedule = (props) => {
         if(baseline === null){
             props.history.push('/baseline');
         }
-        // console.log(baseline)
 
         //eslint-disable-next-line
     }, [error, baseline, props.history])
@@ -89,10 +89,13 @@ const Schedule = (props) => {
             setAlert('Please upload a .xlsx or .xlsm excel file');
         } else {
             setStepCount(stepcount + 1);
+
             setBays(parseInt(userInput.bayComponent));
             setMinGap(parseInt(userInput.minGapTime));
             setMaxGap(parseInt(userInput.maxGapTime));
-            setSchedule(userInput.bayFile, parseInt(userInput.minGapTime), baseline);
+
+            setSchedule(userInput.bayFile, parseInt(userInput.minGapTime), baseline, parseInt(userInput.bayComponent));
+
             setUserInput({
                 bayComponent: '',
                 bayFile: null,

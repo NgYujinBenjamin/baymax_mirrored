@@ -12,9 +12,11 @@ const AdminState = (props) => {
 
     const [state, dispatch] = useReducer(AdminReducer, initialState);
 
-    //all actions here
+    // METHODS
 
-    //get all users
+    // @loc     Users.js
+    // @desc    get all users
+    // @param   ()
     const getUsers = async () => {
         try {
             const res = await axios.get('http://localhost:8080/getusers');
@@ -30,7 +32,9 @@ const AdminState = (props) => {
         }
     }
 
-    //delete user
+    // @loc     UserItem.js
+    // @desc    delete the user
+    // @param   (string)
     const deleteUser = async (id) => {
         try {
             await axios.delete(`http://localhost:8080/deleteuser/${id}`)
@@ -46,7 +50,9 @@ const AdminState = (props) => {
         }
     }
 
-    //reset user password
+    // @loc     UserItem.js
+    // @desc    reset user password
+    // @param   (string)
     const resetPassword = async (id) => {
         try {
             await axios.get(`http://localhost:8080/resetpassword/${id}`)
@@ -61,7 +67,9 @@ const AdminState = (props) => {
         }
     }
 
-    //convert user to admin
+    // @loc     UserItem.js
+    // @desc    convert user to admin
+    // @param   (string)
     const convertAdmin = async (id) => {
         try {
             const res = await axios.get(`http://localhost:8080/convertadmin/${id}`)
@@ -77,7 +85,9 @@ const AdminState = (props) => {
         }
     }
 
-    //clear error
+    // @loc     Admin.js
+    // @desc    clear errors in admin component
+    // @param   ()
     const adminClearError = () => dispatch({ type: ADMIN_CLEAR_ERROR })
 
     return <AdminContext.Provider 

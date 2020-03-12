@@ -8,7 +8,7 @@ import { SET_BASELINE, UPDATE_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT,
 const UploadState = (props) => {
     const initialState = {
         baseline: null,
-        newBaseline: null,
+        newBaseline: [],
         schedule: null,
         bays: '',
         minGap: '',
@@ -833,6 +833,8 @@ const UploadState = (props) => {
 
         let preResult = { baseline: newbaseline,  masterOps: masterops, bay: bays, minGap: mingap, maxGap: maxgap}
 
+        console.log(preResult)
+
         const config = {
             headers: {
                 'Content-Type': 'application/json'
@@ -856,9 +858,8 @@ const UploadState = (props) => {
 
     // @loc     Preresult.js
     // @desc    to generate schedule file 
-    // @param   (array, int, array)
-    // @TODO    change the error handling for checking, check if bays <= to baseline
-    const setSchedule = async (file, minGap, baseFile) => {
+    // @param   (array, int, array, int)
+    const setSchedule = async (file, minGap, baseFile, numBay) => {
         setLoading();
 
         let data = await convertExcelToJSON(file);
@@ -866,10 +867,10 @@ const UploadState = (props) => {
 
         data[data.length - 1]['Argo ID'] === undefined && data.pop();
 
-        //if excelfile is not masterops data/excel file
+        //check masterops have the necessary keys for the UI to be displayed
         data.forEach(val => {
-          if( !(val.hasOwnProperty('Argo ID')) && !(val.hasOwnProperty('Slot ID/UTID')) && !(val.hasOwnProperty('Build Product')) && !(val.hasOwnProperty('Cycle Time Days')) && !(val.hasOwnProperty('MRP Date')) && !(val.hasOwnProperty('MFG Commit Date')) && !(val.hasOwnProperty('Int. Ops Ship Readiness Date'))){
-            scheduleCounter = true
+          if((!(val.hasOwnProperty('Argo ID'))) || (!(val.hasOwnProperty('Slot ID/UTID'))) || (!(val.hasOwnProperty('Build Product'))) || (!(val.hasOwnProperty('Cycle Time Days'))) || (!(val.hasOwnProperty('MRP Date'))) || (!(val.hasOwnProperty('MFG Commit Date')))){
+            scheduleCounter = true;
           }
         })
 
@@ -883,32 +884,39 @@ const UploadState = (props) => {
             let filtered_one = data.filter(obj => obj['Plan Product Type'] === 'Tool');
 
             //remove all the slotid/utid thats is the same as baseline inside masterops && put in inside baseline instead
-            let filtered_two = filterAndInsertToBaseline(filtered_one, baseFile)
+            let filtered_two = filterAndInsertToBaseline(filtered_one, baseFile, numBay)
 
-            //check of previously shipped products (today's date & mfg commit date)
-            let filtered = filtered_two.filter(obj => obj['MFG Commit Date'] >= new Date());
+            if(filtered_two.checker === false){
+              dispatch({
+                type: CREATE_RESULT_ERROR,
+                payload: `Number of Baseline Products exceed number of Bays allocated! Current Number of Baseline Products = ${filtered_two.newBaseLength}`
+              })
+            } else {
+              //check of previously shipped products (today's date & mfg commit date)
+              let filtered = filtered_two['filteredOutput'].filter(obj => obj['MFG Commit Date'] >= new Date());
 
-            //check date in right format & setup for end date
-            filtered.forEach(obj => {
-              checkDatesValue(obj, ['MRP Date','Created On','Created Time','SAP Customer Req Date','Ship Recog Date','Slot Request Date','Int. Ops Ship Readiness Date','MFG Commit Date','Div Commit Date','Changed On','Last Changed Time'])
+              //check date in right format & setup for end date
+              filtered.forEach(obj => {
+                checkDatesValue(obj, ['MRP Date','Created On','Created Time','SAP Customer Req Date','Ship Recog Date','Slot Request Date','Int. Ops Ship Readiness Date','MFG Commit Date','Div Commit Date','Changed On','Last Changed Time'])
 
-              obj['Lock MRP Date'] = false
+                obj['Lock MRP Date'] = false
 
-              let output = obj['Slot Status'] === 'OPEN' ? obj['Int. Ops Ship Readiness Date'] : obj['MFG Commit Date']
-              let outDates = output.split('/')
-              let outYear = parseInt(outDates[2])
-              let outMonth = parseInt(outDates[1]) - 1
-              let outDay = parseInt(outDates[0])
-              let outcurrentDate = new Date(outYear, outMonth, outDay)
-              outcurrentDate.setDate(outcurrentDate.getDate() - minGap)
-              
-              obj['End Date'] = obj['Lock MRP Date'] === false ? outcurrentDate.toLocaleDateString() : obj['MRP Date']
-            })
+                let output = obj['Fab Name'] === 'OPEN' ? obj['Int. Ops Ship Readiness Date'] : obj['MFG Commit Date']
+                let outDates = output.split('/')
+                let outYear = parseInt(outDates[2])
+                let outMonth = parseInt(outDates[1]) - 1
+                let outDay = parseInt(outDates[0])
+                let outcurrentDate = new Date(outYear, outMonth, outDay)
+                outcurrentDate.setDate(outcurrentDate.getDate() - minGap)
+                
+                obj['End Date'] = obj['Lock MRP Date'] === false ? outcurrentDate.toLocaleDateString() : obj['MRP Date']
+              })
 
-            dispatch({
-                type: SET_SCHEDULE,
-                payload: filtered
-            });
+              dispatch({
+                  type: SET_SCHEDULE,
+                  payload: filtered
+              });
+            }
         }
     }
 
@@ -918,6 +926,7 @@ const UploadState = (props) => {
     const getBaseline = async () => {
       setLoading()
       // const res = await axios.get('http://localhost:8080/getBaseline')
+
       dispatch({
         type: SET_BASELINE,
         payload: []
@@ -925,14 +934,23 @@ const UploadState = (props) => {
     }
 
     // @loc     Preresult.js
-    // @desc    update baseline after comparing with the baseline send
+    // @desc    update baseline, format the date for storing to DB
     // @param   (array)
-    const updateBaseline = base => {
+    const updateBaseline = async base => {
       base.forEach(obj => {
         obj.hasOwnProperty('emptyToDelete') && delete obj['emptyToDelete'];
         
         checkDatesValue(obj, ['MRP Date','Created On','Created Time','SAP Customer Req Date','Ship Recog Date','Slot Request Date','Int. Ops Ship Readiness Date','MFG Commit Date','Div Commit Date','Changed On','Last Changed Time'])
       })
+
+      const config = {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+
+      // const res = await axios.post('http://localhost:8080/setbaseline', base, config)
+
       dispatch({
         type: UPDATE_BASELINE,
         payload: base
@@ -941,12 +959,13 @@ const UploadState = (props) => {
 
     // @loc     UploadState.js -> setSchedule
     // @desc    compare and filter out the baseline with masterops
-    // @param   (array, array)
-    // @TODO    clean up code
-    const filterAndInsertToBaseline = (filtered, base) => {
+    // @param   (array, array, int)
+    const filterAndInsertToBaseline = (filtered, base, numBay) => {
       let tempBase = [];
-      
-      if(base.length > 0){
+
+      if(base.length === 0) {
+        return { filteredOutput: filtered }
+      } else {
         filtered.forEach(obj => {
           base.forEach(val => {
             if(val['Slot ID/UTID'] === obj['Slot ID/UTID']){
@@ -954,8 +973,10 @@ const UploadState = (props) => {
             }
           })
         })
-  
-        if(tempBase.length !== 0){
+
+        if(tempBase.length === 0){
+          return { filteredOutput: filtered }
+        } else {
           tempBase.forEach(val => {
             filtered.forEach(obj => {
               if(val === obj){
@@ -963,21 +984,28 @@ const UploadState = (props) => {
               }
             })
           })
-  
+
+          //return true/false to check newBaseline and number of bays
+          let checker = checkNewBaselineAndBays(tempBase, numBay);
+          
           dispatch({
             type: UPDATE_BASELINE,
             payload: tempBase
           })
-  
-          return filtered.filter(obj => !(obj.hasOwnProperty('emptyToDelete')))
-        } else {
-          return filtered
+
+          return {
+            filteredOutput: filtered.filter(obj => !(obj.hasOwnProperty('emptyToDelete'))), 
+            checker: checker, 
+            newBaseLength: tempBase.length
+          }
         }
-      } else {
-        return filtered
       }
-      
     }
+
+    // @loc     UploadState.js -> filterAndInsertToBaseline
+    // @desc    check if baseline products exceed number of bays
+    // @param   (array, int)
+    const checkNewBaselineAndBays = (newBase, numBay) => newBase.length <= numBay ? true : false
 
     // @loc     UploadState.js -> updateBaseline, setSchedule
     // @desc    check date value if undefined and change date format
@@ -1051,6 +1079,8 @@ const UploadState = (props) => {
             payload: 'Please upload a proper bay requirement file'
           })
         } else {
+          data.forEach(obj => obj['Slot ID/UTID'] = obj['Slot ID/UTID'].toString())
+
           dispatch({
             type: SET_BASELINE,
             payload: data
@@ -1139,7 +1169,8 @@ const UploadState = (props) => {
             setMinGap,
             setMaxGap,
             getHistory,
-            loadHistories
+            loadHistories,
+            checkNewBaselineAndBays
         }}>
         {props.children}
     </UploadContext.Provider>

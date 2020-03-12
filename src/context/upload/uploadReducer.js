@@ -57,7 +57,7 @@ export default (state, action) => {
             return {
                 ...state,
                 schedule: null,
-                newBaseline: null,
+                newBaseline: [],
                 bays: '',
                 minGap: '',
                 maxGap: '',
@@ -128,7 +128,7 @@ export default (state, action) => {
                 ...state,
                 schedule: null,
                 scheduleDone: false,
-                newBaseline: null,
+                newBaseline: [],
                 bays: '',
                 minGap: '',
                 maxGap: '',
@@ -143,7 +143,7 @@ export default (state, action) => {
             return {
                 ...state,
                 schedule: null,
-                newBaseline: null,
+                newBaseline: [],
                 bays: '',
                 minGap: '',
                 maxGap: '',
@@ -155,7 +155,7 @@ export default (state, action) => {
             return {
                 ...state,
                 baseline: null,
-                newBaseline: null,
+                newBaseline: [],
                 schedule: null,
                 bays: '',
                 minGap: '',
