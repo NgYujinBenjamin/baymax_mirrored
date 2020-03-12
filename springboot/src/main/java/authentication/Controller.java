@@ -55,7 +55,7 @@ public class Controller {
 
     // done
     @RequestMapping(path = "/changepassword", method = RequestMethod.POST)
-    public JsonObject changePass(@RequestBody NewPassword details) throws SQLException, ClassNotFoundException {
+    public JsonObject changePass(@RequestBody NewPassword details) throws SQLException, ClassNotFoundException, Exception {
         if (details.getOldPassword() == null || details.getNewPassword() == null || details.getUsername() == null) {
             throw new NullPointerException("Username or password cannot be empty.");
         }

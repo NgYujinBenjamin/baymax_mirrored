@@ -66,15 +66,35 @@ public class userscon extends mysqlcon {
         String my_string = "insert into users (username, password, firstname, lastname, department, role) values ('" + username + "', '" + password + "', '" + firstname + "', '" + lastname + "', '" + department + "', '" + role + "')";
         stmt.executeUpdate(my_string);
         con.close();
-
     }
 
-    public void changePassword(String username, String oldpassword, String newpassword) throws SQLException, ClassNotFoundException {
+    public boolean verifyPassword(String username, String oldpassword) throws SQLException, ClassNotFoundException {
         Connection con = super.getConnection();
-        Statement stmt = con.createStatement();
-        String my_string = "update users set password = '" + newpassword + "' where username = '" + username + "' and password = '" + oldpassword + "';";
-        stmt.executeUpdate(my_string);
-        con.close();
+
+        String query = "select password from users where username = ?;";
+        PreparedStatement pstmt = con.prepareStatement(query);
+        pstmt.setString(1, username);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next())
+            return oldpassword.contains(rs.getString(1));
+
+        return false;
+    }
+
+    public void changePassword(String username, String oldpassword, String newpassword) throws SQLException, ClassNotFoundException, Exception {
+
+        if (verifyPassword(username, oldpassword)) {
+            Connection con = super.getConnection();
+            Statement stmt = con.createStatement();
+            String my_string = "update users set password = '" + newpassword + "' where username = '" + username + "';";
+            stmt.executeUpdate(my_string);
+            con.close();
+        } else {
+            throw new Exception("Invalid old password");
+        }
+
+
+
     }
 
     public void resetPassword(String username) throws SQLException, ClassNotFoundException {
