@@ -5,19 +5,19 @@ import java.text.*;
 
 public class HistoryDetails implements JsonObject {
 
-    private String msuId;
-    private String date_generated;
+    private String histID;
+    private String dateGenerated;
 
-    public HistoryDetails(String msuId, String date_generated) {
-        this.msuId = msuId;
-        this.date_generated = date_generated;
+    public HistoryDetails(String histID, String dateGenerated) {
+        this.histID = histID;
+        this.dateGenerated = dateGenerated;
     }
 
-    public String getMsuId() {
-        return msuId;
+    public String getHistID() {
+        return histID;
     }
 
-    public String getDate_generated() {
-        return date_generated;
+    public String getDateGenerated() {
+        return dateGenerated;
     }
 }

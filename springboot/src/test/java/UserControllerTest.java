@@ -4,6 +4,8 @@ import main.java.authentication.json.TokenSuccess;
 import main.java.authentication.json.users.LoginDetails;
 import main.java.authentication.json.users.RegistrationDetails;
 import main.java.authentication.json.users.User;
+import main.java.authentication.json.users.NewPassword;
+import main.java.authentication.json.JsonSuccess;
 import main.java.exceptions.InvalidTokenException;
 import org.apache.poi.ss.formula.functions.T;
 import org.junit.jupiter.api.MethodOrderer;
@@ -95,7 +97,7 @@ public class UserControllerTest {
 
     @Test
     @Order(5)
-    public void login() throws SQLException, ClassNotFoundException, NullPointerException, InvalidTokenException {
+    public void login() throws SQLException, ClassNotFoundException, NullPointerException, InvalidTokenException, Exception {
         System.out.println("\t ===================== 5 user login successfully test =====================");
         LoginDetails loginDetails = new LoginDetails("tukiz", "password");
         TokenSuccess tokenSuccess = (TokenSuccess) controller.login(loginDetails);
@@ -104,9 +106,12 @@ public class UserControllerTest {
         System.out.println("\t Expected 1 Token");
         System.out.println("\t " + token + "\n");
 
-        // assert that the token is present
-        boolean isTokenValid = token.length() > 0;
-        assertTrue(isTokenValid);
+        // validate generated token
+        TOKEN.validateToken(token);
+
+        // will throw errors if token is not valid, hence can just assert a boolean true
+        assertTrue(true);
+        System.out.println("\t " + "Success" + "\n");
     }
 
     @Test
@@ -116,7 +121,7 @@ public class UserControllerTest {
         LoginDetails loginDetails = new LoginDetails("tukiz", "passwords");
 
         Exception exception = assertThrows(
-                InvalidTokenException.class,
+                Exception.class,
                 () -> controller.login(loginDetails)
         );
 
@@ -144,12 +149,86 @@ public class UserControllerTest {
         assertTrue(exception.getMessage().contains(expectedMsg));
     }
 
-//    @Test
-//    @Order(8)
-//    public void verify() throws Exception {
-//        System.out.println("\t ===================== 8 /verify test =====================");
-//        System.out.println("Token can still be accessed here " + token);
-//
-////        assertTrue(TOKEN.isTokenValid(token));
-//    }
+    @Test
+    @Order(8)
+    public void failchangepassNoUname() throws SQLException, ClassNotFoundException, NullPointerException, InvalidTokenException {
+        System.out.println("\t ===================== 8 failchangepass no username test =====================");
+        NewPassword newPassword = new NewPassword("", "passwor", "newpassword");
+
+        Exception exception = assertThrows(
+                NullPointerException.class,
+                () -> controller.changePass(newPassword)
+        );
+
+        String expectedMsg = "Username or password cannot be empty.";
+        String result = exception.getMessage().contains(expectedMsg) ? "Success" : "Fail";
+        System.out.println("\t " + result + "\n");
+        assertTrue(exception.getMessage().contains(expectedMsg));
+    }
+
+    @Test
+    @Order(9)
+    public void failchangepassNoOldPass() throws SQLException, ClassNotFoundException, NullPointerException, InvalidTokenException {
+        System.out.println("\t ===================== 9 failchangepass no old password test =====================");
+        NewPassword newPassword = new NewPassword("tukiz", "", "newpassword");
+
+        Exception exception = assertThrows(
+                NullPointerException.class,
+                () -> controller.changePass(newPassword)
+        );
+
+        String expectedMsg = "Username or password cannot be empty.";
+        String result = exception.getMessage().contains(expectedMsg) ? "Success" : "Fail";
+        System.out.println("\t " + result + "\n");
+        assertTrue(exception.getMessage().contains(expectedMsg));
+    }
+
+    @Test
+    @Order(10)
+    public void failchangepassNoNewPass() throws SQLException, ClassNotFoundException, NullPointerException, InvalidTokenException {
+        System.out.println("\t ===================== 10 failchangepass no new password test =====================");
+        NewPassword newPassword = new NewPassword("tukiz", "passwor", "");
+
+        Exception exception = assertThrows(
+                NullPointerException.class,
+                () -> controller.changePass(newPassword)
+        );
+
+        String expectedMsg = "Username or password cannot be empty.";
+        String result = exception.getMessage().contains(expectedMsg) ? "Success" : "Fail";
+        System.out.println("\t " + result + "\n");
+        assertTrue(exception.getMessage().contains(expectedMsg));
+    }
+
+    @Test
+    @Order(11)
+    public void changepass() throws SQLException, ClassNotFoundException, NullPointerException, InvalidTokenException, Exception {
+        System.out.println("\t ===================== 11 correct changepass test =====================");
+        NewPassword newPassword = new NewPassword("tukiz", "password", "newpassword");
+
+
+        JsonSuccess jsonSuccess = (JsonSuccess) controller.changePass(newPassword);
+        String expectedMsg = "Password has been updated successfully.";
+        String passwordUpdate = jsonSuccess.getMessage().contains(expectedMsg) ? "Success" : "Fail";
+        // check whether change pass was successful
+        assertTrue(jsonSuccess.getMessage().contains(expectedMsg));
+
+        // from here on try login with new pass and assert if a valid token is generated
+        LoginDetails loginDetails = new LoginDetails("tukiz", "newpassword");
+        TokenSuccess tokenSuccess = (TokenSuccess) controller.login(loginDetails);
+        token = tokenSuccess.getToken();
+
+        System.out.println("\t Expected 1 Token");
+        System.out.println("\t " + token + "\n");
+
+        // validate generated token
+        TOKEN.validateToken(token);
+
+        // will throw errors if token is not valid, hence can just assert a boolean true
+        assertTrue(true);
+        System.out.println("\t " + "Success" + "\n");
+
+    }
+
+
 }
