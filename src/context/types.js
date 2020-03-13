@@ -46,3 +46,4 @@ export const SET_MIN_GAP = 'SET_MIN_GAP';
 export const SET_MAX_GAP = 'SET_MAX_GAP';
 export const GET_HISTORY = 'GET_HISTORY';
 export const LOAD_ALL_HISTORY = 'LOAD_ALL_HISTORY';
+export const CHANGE_PWD_FAIL = 'CHANGE_PWD_FAIL';

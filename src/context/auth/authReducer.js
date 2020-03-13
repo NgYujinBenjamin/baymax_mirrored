@@ -1,4 +1,4 @@
-import { REGISTER_SUCCESS, REGISTER_FAIL, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, USER_LOADED, CLEAR_ERRORS, AUTH_ERROR, NEW_PASSWORD, UPDATE_NAV } from '../types';
+import { REGISTER_SUCCESS, REGISTER_FAIL, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, USER_LOADED, CLEAR_ERRORS, AUTH_ERROR, NEW_PASSWORD, UPDATE_NAV, CHANGE_PWD_FAIL } from '../types';
 
 export default (state, action) => {
     switch(action.type){
@@ -49,6 +49,11 @@ export default (state, action) => {
             return {
                 ...state,
                 currentNavItem: action.payload
+            }
+        case CHANGE_PWD_FAIL:
+            return {
+                ...state,
+                error: action.payload
             }
         case NEW_PASSWORD:
         default:
