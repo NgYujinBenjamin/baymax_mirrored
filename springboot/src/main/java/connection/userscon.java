@@ -68,7 +68,7 @@ public class userscon extends mysqlcon {
         con.close();
     }
 
-    public boolean verifyPassword(String username, String oldpassword) throws SQLException, ClassNotFoundException {
+    public boolean verifyPassword(String username, String password) throws SQLException, ClassNotFoundException {
         Connection con = super.getConnection();
 
         String query = "select password from users where username = ?;";
@@ -76,7 +76,7 @@ public class userscon extends mysqlcon {
         pstmt.setString(1, username);
         ResultSet rs = pstmt.executeQuery();
         if (rs.next())
-            return oldpassword.contains(rs.getString(1));
+            return password.contains(rs.getString(1));
 
         return false;
     }
