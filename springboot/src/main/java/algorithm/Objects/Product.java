@@ -222,11 +222,11 @@ public class Product implements Comparable<Product>{
 
         latestToolStartDate = DateUtils.addDays(endDate, -cycleTimeDays);
         toolStartDate = latestToolStartDate;
-
+        
         if (sendToStorageDate != null){
             leaveBayDate = sendToStorageDate;
         }
-        else if (fabName.equals("OPEN")){
+        else if (fabName != null && fabName.equals("OPEN")){
             leaveBayDate = intOpsShipReadinessDate;
         } else {
             leaveBayDate = endDate;
@@ -337,18 +337,23 @@ public class Product implements Comparable<Product>{
             // lastChangedTime = GenericValidator.isDate((String) productDetails.get("Last Changed Time"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("Last Changed Time")): null: null;
             endDate = GenericValidator.isDate((String)productDetails.get("endDate"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("endDate")): MFGCommitDate;
             sendToStorageDate = GenericValidator.isDate((String) productDetails.get("sendToStorageDate"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("sendToStorageDate")): null;
+            toolStartDate = GenericValidator.isDate((String) productDetails.get("toolStartDate"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("toolStartDate")): null;
         } catch (ParseException e){
             e.printStackTrace();
 
         }        
 
-        latestToolStartDate = DateUtils.addDays(endDate, -cycleTimeDays);
-        toolStartDate = latestToolStartDate;
-
+        if (lockMRPDate != null && lockMRPDate){
+            latestToolStartDate = toolStartDate;
+        } else {
+            latestToolStartDate = DateUtils.addDays(endDate, -cycleTimeDays);
+        }
+        
+        
         if (sendToStorageDate != null){
             leaveBayDate = sendToStorageDate;
         }
-        else if (fabName.equals("OPEN")){
+        else if (fabName != null && fabName.equals("OPEN")){
             leaveBayDate = intOpsShipReadinessDate;
         } else {
             leaveBayDate = endDate;
@@ -358,15 +363,15 @@ public class Product implements Comparable<Product>{
     }
 
     public int compareTo(Product other){
-        Date thisToolStart = toolStartDate;
+        Date thisLatestToolStart = latestToolStartDate;
         Integer thisCommittedShip$ = committedShip$;
-        Date otherToolStart = other.toolStartDate;
+        Date otherLatestToolStart = other.latestToolStartDate;
         Integer otherCommittedShip$ = other.committedShip$;
 
-        if (thisToolStart.compareTo(otherToolStart) == 0){
+        if (thisLatestToolStart.compareTo(otherLatestToolStart) == 0){
             return - thisCommittedShip$.compareTo(otherCommittedShip$);
         }
-        return thisToolStart.compareTo(otherToolStart);
+        return thisLatestToolStart.compareTo(otherLatestToolStart);
     }
 
     public Integer getArgoID() {
@@ -577,6 +582,10 @@ public class Product implements Comparable<Product>{
         return assignedBayID;
     }
 
+    public Boolean getLockMRPDate(){
+        return lockMRPDate;
+    }
+
     /**
      * Setters
      */
@@ -779,6 +788,9 @@ public class Product implements Comparable<Product>{
         }
 
         String buildQtr = "CY" + MRPYear.toString() + MRPQuarter;
+        
+        System.out.println(MRPDate);
+        System.out.println(leaveBayDate);
 
         if (MRPDate.after(leaveBayDate)){
             leaveBayDate = MRPDate;

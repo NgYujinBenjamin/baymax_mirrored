@@ -100,33 +100,19 @@ public class BaySchedule{
         Collections.sort(schedule);
         
         Date toolStartDate = p.getLatestToolStartDate(); // Represents the latest date at which the tool must start
+        Date MRPDate = p.getMRPDate();
         
         Bay b = schedule.get(0); // Earliest bay available
-        
-        // Pull forward the date as early as possible
+        Date bayAvailDate = b.getAvailableDate(); // Date of when the bay is available
         
         Date newToolStartDate;
-        Date today = new Date();
-        // Date today = new Date(119, 10, 1); // For testing purposes
-        if (b.getAvailableDate().after(today)){
-            // If bayAvailableDate is after current date, we can pull forward up to the maxGap or the date when the bay is available
-            Long diff = toolStartDate.getTime() - b.getAvailableDate().getTime();
-            Integer diffDays = (int) (diff / (24 * 60 * 60 * 1000));
-                // diffDays +ve if toolStartDate is after bayAvailableDate
-                // diffDays -ve if toolStartDate is before bayAvailableDate
-            
-            newToolStartDate = DateUtils.addDays(toolStartDate, -Math.min(diffDays, gapDiff));
+        if (p.getLockMRPDate() != null && p.getLockMRPDate()){
+            // Generate new tool start date based on the specified cycle time
+            newToolStartDate = DateUtils.addDays(MRPDate, -p.getCycleTimeDays());
+        } else {
+            // Pull forward the date as early as possible, or if necessary, delay the toolStart (e.g. if latestToolStart is before today, or before bayAvailDate)
+            newToolStartDate = adjustToolStart(toolStartDate, bayAvailDate, gapDiff);
         }
-        else {
-            // If bayAvailableDate is before current date, we can pull forward up to the maxGap or current date
-            Long diff = toolStartDate.getTime() - today.getTime();
-            Integer diffDays = (int) (diff / (24 * 60 * 60 * 1000));
-                // diffDays +ve if toolStartDate is after today's date date
-                // diffDays -ve if toolStartDate is before today's date
-            
-            newToolStartDate = DateUtils.addDays(toolStartDate, -Math.min(diffDays, gapDiff));
-        }
-        
 
         Boolean scheduled = false;
 
@@ -161,6 +147,34 @@ public class BaySchedule{
         }
     }
 
+    private Date adjustToolStart(Date toolStartDate, Date bayAvailDate, Integer gapDiff){
+        Date newToolStartDate;
+        Date today = new Date();
+        // Date today = new Date(119, 10, 1); // For testing purposes
+        if (bayAvailDate.after(today)){
+            // If bayAvailableDate is after current date, we can pull forward up to the maxGap or the date when the bay is available
+            Long diff = toolStartDate.getTime() - bayAvailDate.getTime();
+            Integer diffDays = (int) (diff / (24 * 60 * 60 * 1000));
+                // diffDays +ve if toolStartDate is after bayAvailableDate
+                // diffDays -ve if toolStartDate is before bayAvailableDate
+            
+            newToolStartDate = DateUtils.addDays(toolStartDate, -Math.min(diffDays, gapDiff));
+                // if diffDays is -10 (i.e. toolStart is 10 days before bayAvailDate), then -Math.min(diffDays, gapDiff) will give +10
+                // newToolStartDate will be delayed 10 days
+        }
+        else {
+            // If bayAvailableDate is before current date, we can pull forward up to the maxGap or current date
+            Long diff = toolStartDate.getTime() - today.getTime();
+            Integer diffDays = (int) (diff / (24 * 60 * 60 * 1000));
+                // diffDays +ve if toolStartDate is after today's date date
+                // diffDays -ve if toolStartDate is before today's date
+            
+            newToolStartDate = DateUtils.addDays(toolStartDate, -Math.min(diffDays, gapDiff));
+                // if diffDays is -10 (i.e. toolStart is 10 days before todayDate), then -Math.min(diffDays, gapDiff) will give +10
+                // newToolStartDate will be delayed 10 days
+        }
+        return newToolStartDate;
+    }
 
     private Date getFriday (Date earliestStart){
         Date friday = earliestStart;
