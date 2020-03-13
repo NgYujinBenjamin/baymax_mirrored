@@ -23,7 +23,7 @@ const Baseline = (props) => {
         setStepCount(0)
 
         if(error !== null){
-            setAlert(error)
+            setAlert(error, 'error')
             uploadClearError()
         }
 
@@ -56,7 +56,7 @@ const Baseline = (props) => {
         const splitFilename = name.split('.')
 
         if(splitFilename[splitFilename.length - 1] !== 'xlsx' && splitFilename[splitFilename.length -1] !== 'xlsm'){
-            setAlert('Please upload a .xlsx or .xlsm excel file')
+            setAlert('Please upload a .xlsx or .xlsm excel file', 'error')
         } else {
             setBaseline(file);
         }

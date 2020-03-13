@@ -26,7 +26,7 @@ const Schedule = (props) => {
 
         if(error !== null){
             window.scrollTo(0,0);
-            setAlert(error);
+            setAlert(error, 'error');
             uploadClearError();
 
             setUserInput({
@@ -78,15 +78,15 @@ const Schedule = (props) => {
         const splitFilename = userInput.fileName.split('.')
         
         if(!regx.test(userInput.bayComponent)){
-            setAlert('Please enter a number in the Available Bay field');
+            setAlert('Please enter a number in the Available Bay field', 'error');
         } else if(!regx.test(userInput.minGapTime)) {
-            setAlert('Please enter a number in the Minimum Gap field')
+            setAlert('Please enter a number in the Minimum Gap field', 'error')
         } else if(!regx.test(userInput.maxGapTime)) {
-            setAlert('Please enter a number in the Maximum Gap field')
+            setAlert('Please enter a number in the Maximum Gap field', 'error')
         } else if(userInput.bayComponent === '' || userInput.bayFile === null) {
-            setAlert('Please upload an excel file');
+            setAlert('Please upload an excel file', 'error');
         } else if(splitFilename[splitFilename.length - 1] !== 'xlsx' && splitFilename[splitFilename.length - 1] !== 'xlsm') {
-            setAlert('Please upload a .xlsx or .xlsm excel file');
+            setAlert('Please upload a .xlsx or .xlsm excel file', 'error');
         } else {
             setStepCount(stepcount + 1);
 
