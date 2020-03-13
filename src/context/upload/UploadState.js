@@ -26,20 +26,7 @@ const UploadState = (props) => {
         reschedule: false,
         tabUpdate: false,
         histID: null,
-        allHistory: [
-          {
-              msuID: 1,
-              dateGenerated: '14 August 2020'
-          },
-          {
-              msuID: 2,
-              dateGenerated: '13 August 2020'
-          },
-          {
-              msuID: 3,
-              dateGenerated: '11 August 2020'
-          }
-        ]
+        allHistory: []
     }
 
     const [state, dispatch] = useReducer(UploadReducer, initialState);
@@ -815,17 +802,21 @@ const UploadState = (props) => {
     }
 
     // get ALL histories
-    const loadHistories = async () => {
+    const loadHistories = async (staffID) => {
       try {
-          const res = await axios.get(`http://localhost:8080/allHistories`);
-          // console.log(res);
-          
-          dispatch({
-              type: LOAD_ALL_HISTORY,
-              payload: res
-          })
+        const res = await axios.get(`http://localhost:8080/history/${staffID}`);
+        // console.log(res);
+        
+        dispatch({
+            type: LOAD_ALL_HISTORY,
+            payload: res.data
+        })
       } catch (err) {
-
+        // console.log(err);
+        dispatch({
+          type: CREATE_RESULT_ERROR,
+          payload: err.response.data.message
+        })
       }
     }
 

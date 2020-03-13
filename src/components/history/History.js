@@ -9,25 +9,27 @@ const History = () => {
     const uploadContext = useContext(UploadContext);
     const authContext = useContext(AuthContext);
 
-    const { allHistory } = uploadContext;
-    const { loadUser, updateNavItem } = authContext;
-    
+    const { allHistory, loadHistories } = uploadContext;
+    const { user, loadUser, updateNavItem } = authContext;
+
     useEffect(() => {
         loadUser();
         updateNavItem(1);
+        if(user !== null){
+            loadHistories(user['staff_id']);
+        }
         //eslint-disable-next-line
     }, [])
 
     return (
         <Fragment>
             <Typography variant='h2' style={{ fontSize: '2rem', marginBottom: '16px' }}>
-                Schedule Histories
+                Scheduled Histories
             </Typography>
 
-            {/* Load the top 10 histories retrieved from database */}
-            { allHistory.map(history =>
-                <HistoryItem record={history} key={history.msuID} />
-            )}
+            { allHistory.length > 0 ? allHistory.map(history =>
+                <HistoryItem record={history} key={history.histID} />
+            ) : 'No records'}
         </Fragment>
     )
 }

@@ -18,7 +18,7 @@ const HistoryItem = ({ record }) => {
         //eslint-disable-next-line
     }, [])
 
-    const { msuID, dateGenerated } = record;
+    const { histID, dateGenerated } = record;
 
     const handleHistory = () => {
         getHistory();
@@ -38,7 +38,7 @@ const HistoryItem = ({ record }) => {
                 </CardContent>
 
                 <CardActions>
-                    <Link to={'/history/' + msuID} style={{ textDecoration:'none' }}>
+                    <Link to={'/history/' + histID} style={{ textDecoration:'none' }}>
                         <Button size="small" color="primary" onClick={handleHistory}> View Full Data </Button>
                     </Link>
                 </CardActions>
