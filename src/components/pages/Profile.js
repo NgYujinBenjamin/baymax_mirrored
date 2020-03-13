@@ -8,14 +8,14 @@ const Profile = () => {
     const classes = useStyles();
     const authContext = useContext(AuthContext);
 
-    const { user, updatePwd, loadUser, updateNavItem } = authContext;
-    const [error, setError] = useState(false);
+    const { error, user, clearErrors, updatePwd, loadUser, updateNavItem } = authContext;
+    const [errorField, setError] = useState({});
 
     useEffect(() => {
         loadUser();
         updateNavItem(1);
         //eslint-disable-next-line
-    }, [error])
+    }, [error, errorField])
 
     // form
     const [form, setForm] = useState({
@@ -35,13 +35,16 @@ const Profile = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log(newpwd, reenterpwd);
+        clearErrors();
         if(newpwd !== reenterpwd){
-            //alert prompt
-            setError(true);
+            setError({'newpwd': 'New password do not match! Please re-enter'});
+        } else if (newpwd.length < 8){
+            setError({'newpwd': 'Password length must be more than 8 characters'});
         } else {
-            // updatePwd({ newpwd });
-            handleClose();
+            updatePwd(user.username, oldpwd, newpwd);
+            if (error == null){
+                handleClose();
+            }
         }
     }
 
@@ -58,7 +61,7 @@ const Profile = () => {
             newpwd: '',
             reenterpwd: ''
         })
-        setError(false);
+        setError({});
         setOpen(false);
     };
 
@@ -103,6 +106,7 @@ const Profile = () => {
                         <DialogContentText id="alert-dialog-description">
                             <form onSubmit={handleSubmit}>
                                 <TextField 
+                                    error = {error !== null}
                                     variant='outlined' 
                                     margin='normal' 
                                     type='password'
@@ -114,9 +118,10 @@ const Profile = () => {
                                     value={oldpwd}
                                     onChange={handleChange}
                                 />
+                                { error !== null && <FormHelperText className={classes.errorText}>{error}</FormHelperText>}
 
                                 <TextField 
-                                    error = {error}
+                                    error = {'newpwd' in errorField}
                                     variant='outlined' 
                                     margin='normal' 
                                     type='password'
@@ -128,10 +133,10 @@ const Profile = () => {
                                     value={newpwd}
                                     onChange={handleChange}
                                 />
-                                { error && <FormHelperText className={classes.errorText}>New password do not match! Please re-enter</FormHelperText>}
+                                { 'newpwd' in errorField && <FormHelperText className={classes.errorText}>{errorField.newpwd}</FormHelperText>}
 
                                 <TextField 
-                                    error = {error}
+                                    error = {'newpwd' in errorField}
                                     variant='outlined' 
                                     margin='normal' 
                                     type='password'
@@ -143,7 +148,7 @@ const Profile = () => {
                                     value={reenterpwd}
                                     onChange={handleChange}
                                 />
-                                { error && <FormHelperText className={classes.errorText}>New password do not match! Please re-enter</FormHelperText>}
+                                { 'newpwd' in errorField && <FormHelperText className={classes.errorText}>{errorField.newpwd}</FormHelperText>}
 
                                 <DialogActions>
                                     <Button type='submit' color="primary">

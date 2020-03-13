@@ -1,7 +1,7 @@
 import React, { useReducer } from 'react';
 import AuthContext from './authContext';
 import AuthReducer from './authReducer';
-import { REGISTER_SUCCESS, REGISTER_FAIL, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, USER_LOADED, CLEAR_ERRORS, AUTH_ERROR, NEW_PASSWORD, UPDATE_NAV } from '../types';
+import { REGISTER_SUCCESS, REGISTER_FAIL, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, USER_LOADED, CLEAR_ERRORS, AUTH_ERROR, NEW_PASSWORD, UPDATE_NAV, CHANGE_PWD_FAIL } from '../types';
 import axios from 'axios';
 import setAuthToken from '../../utils/setAuthToken';
 
@@ -98,8 +98,9 @@ const AuthState = (props) => {
     const clearErrors = () => dispatch({ type: CLEAR_ERRORS })
 
     // update password 
-    const updatePwd = async (newpwd) => {
-        // console.log(newpwd);
+    const updatePwd = async (username, oldpwd, newpwd) => {
+        const pwd = {'username': username, 'oldpassword': oldpwd, 'newpassword': newpwd};
+
         const config = {
             headers: {
                 'Content-Type': 'application/json'
@@ -107,12 +108,15 @@ const AuthState = (props) => {
         }
 
         try {
-            await axios.post('http://localhost:8080', newpwd, config);
+            await axios.post('http://localhost:8080/changepassword', pwd, config);
             dispatch({
-                type: NEW_PASSWORD,
+                type: NEW_PASSWORD
             })
         } catch (err) {
-            
+            dispatch({
+                type: CHANGE_PWD_FAIL,
+                payload: err.response.data.message
+            })
         }
     }
 

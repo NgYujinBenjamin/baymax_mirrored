@@ -8,7 +8,7 @@ import { SET_BASELINE, UPDATE_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT,
 const UploadState = (props) => {
     const initialState = {
         baseline: null,
-        newBaseline: null,
+        newBaseline: [],
         schedule: null,
         bays: '',
         minGap: '',
@@ -43,42 +43,85 @@ const UploadState = (props) => {
 
     const [state, dispatch] = useReducer(UploadReducer, initialState);
 
-    //methods all over here
-    //export bay_requirement_schedule
+    // METHODS
+
+    // @loc     PostResult.js
+    // @desc    export of Bay_Requirement excel file
+    // @param   (object)
     const createExportSchedule = file => {
         setLoading();
-        let headerDates = new Set()
-        let quarterIdArr = {}
 
+        let headerDates = new Set();
+        let quarterIdArr = {};
+        let baselineIdArr = {};
+
+        //form of quarters in baselineIdArr
+        if(file.hasOwnProperty('baseLineOccupancy')){
+          for(const property in file.baseLineOccupancy){
+            baselineIdArr[property] = {};
+            file.baseLineOccupancy[property][0].forEach(val => {
+              headerDates.add(val);
+            })
+          }
+        }
+        
+        //form of quarters in quarterIdArr
         for(const property in file.bayOccupancy){
-          quarterIdArr[property] = {}
+          quarterIdArr[property] = {};
           file.bayOccupancy[property][0].forEach(val => {
-            headerDates.add(val)
+            headerDates.add(val);
           })
         }
 
-        //no duplicates, array of dates
-        let headerDatesArr = Array.from(headerDates)
+        //form no duplicates, array of dates
+        let headerDatesArr = Array.from(headerDates);
 
         //sorts the dates from smallest to biggest
         headerDatesArr.sort((a, b) => new Date(a) - new Date(b));
 
+        //format the dates according to dd/mm/yyyy
         const dateoptions = { year: 'numeric', month: 'long', day: 'numeric' };
         const formatedHeaderDates = headerDatesArr.map(val => val = new Date(val).toLocaleDateString('en-GB', dateoptions))
 
         //form the headers for the excel
-        const excelHeader = [ ['Slot/UTID', 'Fab Name', 'Build Product', 'Configuration', 'Tool Start', 'MRP Date', 'Mfg Commit Date', 'Gap','Cycle Time Day', 'Actual Cycle Time', ...formatedHeaderDates] ]
+        const excelHeader = [ ['Slot/UTID', 'Fab Name', 'Build Product', 'Configuration', 'Tool Start', 'MRP Date', 'Mfg Commit Date', 'Gap','Cycle Time Day', 'Actual Cycle Time', ...formatedHeaderDates] ];
 
-        //form each row => how to display the 'e','o','e','o', now theres different dates
-        //form the 'e','o', for entire quarter
-        let bayIndex = 1;
+        //put dates -> 'E', 'O' inside baselineIdArr
+        if(file.hasOwnProperty('baseLineOccupancy')){
+          for(const property in file.baseLineOccupancy){
+            let baselineIndex = 1;
+  
+            file.baseLineOccupancy[property].slice(1).forEach(arr => {
+              let name = `quarter${baselineIndex}`;
+
+              headerDatesArr.forEach(dte => arr[0][dte] = '')
+
+              baselineIdArr[property][name] = {};
+
+              file.baseLineOccupancy[property][0].forEach(val => {
+                baselineIdArr[property][name][val] = '';
+              })
+
+              arr.slice(1).forEach((val,idx) => {
+                let key = Object.keys(baselineIdArr[property][name])[idx];
+                baselineIdArr[property][name][key] = val;
+              })
+
+              baselineIndex++;
+
+            })
+          }
+        }
+        
+        //put dates -> 'E', 'O' inside quarterIdArr
         for(const property in file.bayOccupancy){
+          let bayIndex = 1;
 
           file.bayOccupancy[property].slice(1).forEach(arr => {
-            let name = `quarter${bayIndex}`
+            let name = `quarter${bayIndex}`;
             headerDatesArr.forEach(dte => arr[0][dte] = '')
 
-            quarterIdArr[property][name] = {}
+            quarterIdArr[property][name] = {};
 
             file.bayOccupancy[property][0].forEach(val => {
               quarterIdArr[property][name][val] = ''
@@ -94,33 +137,60 @@ const UploadState = (props) => {
           })
         }
 
-        //put in each quarter -> within each quarter { date: value }
-        //now the date is inside each quarter
-        //value => E, O, E, O, follow each quarter 
-        //insert the value accordingly to each quarter
-        //CY19Q4 -> CY20Q1 -> CY20Q2 -> CY20Q3 -> CY20Q4
-        let tempindex = 1;
+        //putting the key:value in baselineIdArr into baseLineOccupancy
+        if(file.hasOwnProperty('baseLineOccupancy')){
+          for(const property in file.baseLineOccupancy){
+            let index = 1;
+            
+            file.baseLineOccupancy[property].slice(1).forEach(arr => {
+              let name = `quarter${index}`;
+  
+              for(const inProp in baselineIdArr[property][name]){
+                if(arr[0].hasOwnProperty(inProp)){
+                  arr[0][inProp] = baselineIdArr[property][name][inProp];
+                }
+              }
+  
+              index++;
+  
+            })
+          }
+        }
+        
+        //putting the key:value in quarterIdArr into bayOccupancy
         for(const property in file.bayOccupancy){
-          // console.log(property)
+          let tempindex = 1;
+          
           file.bayOccupancy[property].slice(1).forEach(arr => {
-            // console.log(arr[0])
             let name = `quarter${tempindex}`
-            // console.log(quarterIdArr[property][])
+            
             for(const inProp in quarterIdArr[property][name]){
-              // console.log(`${inProp} : ${quarterIdArr[property][name][inProp]}`)
               if(arr[0].hasOwnProperty(inProp)){
                 arr[0][inProp] = quarterIdArr[property][name][inProp]
               }
             }
+
             tempindex++
+
           })
         }
 
-        // now all the e, o are in the right place
-        // left the empty spaces -> put all 'O' into empty space
+        //putting 'E' under the key dates that are empty in baseLineOccupancy
+        if(file.hasOwnProperty('baseLineOccupancy')){
+          for(const property in file.baseLineOccupancy){
+            file.baseLineOccupancy[property].slice(1).forEach(arr => {
+              Object.entries(arr[0]).forEach(( [key, value] ) => {
+                if(arr[0][key] === ''){
+                  arr[0][key] = 'E'
+                }
+              })
+            })
+          }
+        }
+
+        //putting 'E' under the key dates that are empty in bayOccupancy
         for(const property in file.bayOccupancy){
           file.bayOccupancy[property].slice(1).forEach(arr => {
-            // console.log(arr[0])
             Object.entries(arr[0]).forEach(( [key, value] ) => {
               if(arr[0][key] === ''){
                 arr[0][key] = 'E'
@@ -129,11 +199,80 @@ const UploadState = (props) => {
           })
         }
 
-        // console.log(file.bayOccupancy)
-        //form array of objects
+        //form array of objects for excel file
         let excelFormat = [];
 
-        //delete all the unnecessary keys inside file bayoccupancy
+        //remove not needed keys inside baseLineOccupancy and pushing the keys needed into excelFormat
+        if(file.hasOwnProperty('baseLineOccupancy')){
+          for(const property in file.baseLineOccupancy){
+            file.baseLineOccupancy[property].slice(1).forEach(arr => {
+
+              checkDeleteProperty(arr[0],[
+                'argoID',
+                'plant',
+                'buildComplete',
+                'slotStatus',
+                'planProductType',
+                'buildCategory',
+                'shipRevenueType',
+                'salesOrder',
+                'forecastID',
+                'productPN',
+                'committedShip$',
+                'intOpsShipReadinessDate',
+                'shipRecogDate',
+                'quantity',
+                'RMATool',
+                'new_Used',
+                'fabID',
+                'buildQtr',
+                'endDate',
+                'leaveBayDate',
+                'secondaryCustomerName',
+                'shipRisk_Upside',
+                'shipRiskReason',
+                'handOffDateToDE',
+                'handOffDateBackToMFG',
+                'installStartDate',
+                'slotPlanNote',
+                'commentFor$Change',
+                'configurationNote',
+                'dropShip',
+                'MFGStatus',
+                'coreNeedDate',
+                'coreArrivalDate',
+                'refurbStartDate',
+                'refurbCompleteDate',
+                'donorStatus',
+                'coreUTID',
+                'coreNotes',
+                'flex01',
+                'flex02',
+                'flex03',
+                'flex04',
+                'lockMRPDate',
+                'sendToStorageDate'
+              ])
+
+              excelFormat.push({
+                'slotID_UTID': arr[0].slotID_UTID,
+                'fabName': arr[0].fabName,
+                'buildProduct': arr[0].buildProduct,
+                'configuration': '',
+                'toolStartDate': arr[0].toolStartDate,
+                'MRPDate': arr[0].MRPDate,
+                'MFGCommitDate': arr[0].MFGCommitDate,
+                'gapDays': arr[0].gapDays,
+                'cycleTimeDays': arr[0].cycleTimeDays,
+                'actualCycleTime': Math.round((new Date(arr[0].MFGCommitDate) - new Date(arr[0].toolStartDate)) / (1000 * 60 * 60 * 24)),
+                ...arr[0]
+              })
+
+            })
+          }
+        }
+
+        //remove not needed keys inside bayOccupancy and pushing the keys needed into excelFormat
         for(const property in file.bayOccupancy){
           file.bayOccupancy[property].slice(1).forEach(arr => {
 
@@ -157,10 +296,33 @@ const UploadState = (props) => {
               'fabID',
               'buildQtr',
               'endDate',
-              'leaveBayDate'
+              'leaveBayDate',
+              'secondaryCustomerName',
+              'shipRisk_Upside',
+              'shipRiskReason',
+              'handOffDateToDE',
+              'handOffDateBackToMFG',
+              'installStartDate',
+              'slotPlanNote',
+              'commentFor$Change',
+              'configurationNote',
+              'dropShip',
+              'MFGStatus',
+              'coreNeedDate',
+              'coreArrivalDate',
+              'refurbStartDate',
+              'refurbCompleteDate',
+              'donorStatus',
+              'coreUTID',
+              'coreNotes',
+              'flex01',
+              'flex02',
+              'flex03',
+              'flex04',
+              'lockMRPDate',
+              'sendToStorageDate'
             ])
             
-            //add into the format XLSX needs
             excelFormat.push({
               'slotID_UTID': arr[0].slotID_UTID,
               'fabName': arr[0].fabName,
@@ -178,13 +340,12 @@ const UploadState = (props) => {
           })
         }
 
-        //format date
+        //format date inside excelFormat
         excelFormat.forEach(val => {
           changeDateFormat(val, ['toolStartDate','MRPDate','MFGCommitDate'])
-
         })
 
-        //count the number of O
+        //count the number of 'O' inside excelFormat
         let bayAllCount = {};
         bayAllCount = headerDatesArr.reduce((ac, ci) => (ac[ci] = 0, ac), {})
         excelFormat.forEach(val => {
@@ -201,7 +362,7 @@ const UploadState = (props) => {
         let excelCount = []
         excelCount.push(bayAllCount);
 
-        //putting it into excel
+        //write as excel file format
         const wb = XLSX.utils.book_new();
 
         const ws = XLSX.utils.json_to_sheet(excelFormat, {
@@ -230,12 +391,26 @@ const UploadState = (props) => {
           type: EXPORT_SCHEDULE
         });
     }
-
-    //export file - mass_slot_upload
+    
+    // @loc     PostResult.js
+    // @desc    export of Mass_Slot_Upload excel file
+    // @param   (object)
     const createExport = file => {
-        // setLoading();
+        setLoading();
         const output = []
 
+        //get the actual data from baseLineOccupancy
+        if(file.hasOwnProperty('baseLineOccupancy')){
+          for(const property in file.baseLineOccupancy){
+            file.baseLineOccupancy[property].slice(1).forEach(arr => {
+              output.push({
+                ...arr[0]
+              })
+            })
+          }
+        }
+
+        //get the actual data from bayOccupancy
         for(const property in file.bayOccupancy){
           file.bayOccupancy[property].slice(1).forEach(arr => {
             output.push({
@@ -244,49 +419,83 @@ const UploadState = (props) => {
           })
         }
 
+        //form array of object for excel file output
+        const excelOutput = [];
+
+        //check date format
         output.forEach(val => {
-          checkDeleteProperty(val, ['committedShip$','buildQtr','endDate','leaveBayDate','gapDays'])
-          changeDateFormat(val, ['MRPDate','intOpsShipReadinessDate','MFGCommitDate','shipRecogDate','toolStartDate'])
+          changeDateFormat(
+            val, 
+            [
+              'MRPDate',
+              'intOpsShipReadinessDate',
+              'MFGCommitDate',
+              'shipRecogDate',
+              'toolStartDate',
+              'coreNeedDate',
+              'coreArrivalDate',
+              'refurbStartDate',
+              'refurbCompleteDate',
+              'handOffDateToDE',
+              'handOffDateBackToMFG',
+              'installStartDate'
+            ]
+          )
+
+          //form it into the output
+          excelOutput.push({
+            'Argo ID': val.argoID,
+            'Slot ID/UTID': val.slotID_UTID,
+            'Slot Status': val.slotStatus,
+            'Ship Rev Type': val.shipRevenueType,
+            'Build Category': val.buildCategory,
+            'Build Product': val.buildProduct,
+            'Slot Plan Notes': val.slotPlanNote,
+            'Plan Product Type': val.planProductType,
+            'Ship Risk/Upside': val.shipRisk_Upside,
+            'Ship Risk Reason': val.shipRiskReason,
+            'Comment for $ Change': val.commentFor$Change,
+            'Commited Ship $': val.committedShip$,
+            'Secondary Customer Name': val.secondaryCustomerName,
+            'Fab ID': val.fabID,
+            'Sales Order #': val.salesOrder,
+            'Forecast ID': val.forecastID,
+            'Mfg Commit Date': val.MFGCommitDate,
+            'Ship Recognition Date': val.shipRecogDate,
+            'MRP Date': val.MRPDate,
+            'Build Complete': val.buildComplete,
+            'Internal Ops Ship Readiness Date': val.intOpsShipReadinessDate,
+            'Plant': val.plant,
+            'New/Used': val.new_Used,
+            'Core Need Date': val.coreNeedDate,
+            'Core Arrival Date': val.coreArrivalDate,
+            'Refurb Start Date': val.refurbStartDate,
+            'Refurb Complete Date': val.refurbCompleteDate,
+            'Donor Status': val.donorStatus,
+            'Core UTID': val.coreUTID,
+            'Core Notes': val.coreNotes,
+            'Mfg Status': val.MFGStatus,
+            'Qty': val.quantity,
+            'Configuration Note': val.configurationNote,
+            'Drop Ship': val.dropShip,
+            'RMA': val.RMATool,
+            'Product PN': val.productPN,
+            'Hand Off Date to DE': val.handOffDateToDE,
+            'Hand Off Date back to Mfg': val.handOffDateBackToMFG,
+            'Install Start Date': val.installStartDate,
+            'Cycle Time Days': val.cycleTimeDays,
+            'Flex01': val.flex01,
+            'Flex02': val.flex02,
+            'Flex03': val.flex03,
+            'Flex04': val.flex04
+          })
         })
 
         //create new workbook
         const massWB = XLSX.utils.book_new(); 
 
         //create new worksheet
-        const massWS = XLSX.utils.json_to_sheet(output, {
-          skipHeader: true,
-          origin: 1
-        });
-
-        const massHeader = [ [
-          'Argo ID',
-          'Plant',
-          'Build Complete',
-          'Slot Status',
-          'Plan Product Type',
-          'Build Category',
-          'Ship Revenue Type',
-          'Sales Order',
-          'Forecast ID',
-          'Slot ID/UTID',
-          'Fab Name',
-          'Build Product',
-          'Product PN',
-          'MRP Date',
-          'Int. Ops Ship Readiness Date',
-          'MFG Commit Date',
-          'Ship Recog Date',
-          'Cycle Time Days',
-          'Quantity',
-          'RMA Tool',
-          'New Used',
-          'Fab ID',
-          'Tool Start Date'
-        ] ]
-
-        XLSX.utils.sheet_add_aoa(massWS, massHeader, {
-          origin: 0
-        })
+        const massWS = XLSX.utils.json_to_sheet(excelOutput);
 
         //parse in a worksheet into the workbook
         //1st arg: workbook, 2nd arg: worksheet, 3rd: name of worksheet
@@ -301,16 +510,20 @@ const UploadState = (props) => {
         })
     }
 
-    //submethod - check and delete property
-    //1st arg: obj, 2nd arg: array of property names inside obj (string)
+    // @loc     UploadState.js -> createExport, createExportSchedule
+    // @desc    check if property exist and delete
+    // @param   (object, array)
     const checkDeleteProperty = (obj, arr) => {
       arr.forEach(val => obj.hasOwnProperty(val) && delete obj[val])
     }
 
-    //submethod - change date format
-    //1st arg: obj, 2nd arg: array of property names inside obj (string)
+    // @loc     UploadState.js -> createExport, createExportSchedule
+    // @desc    check if property exist and delete
+    // @param   (object, array)
     const changeDateFormat = (obj, arr) => {
-      arr.forEach(val => obj[val] = new Date(obj[val]).toLocaleDateString('en-GB'))
+      arr.forEach(val => {
+        obj[val] = obj[val] !== null ? new Date(obj[val]).toLocaleDateString('en-GB') : null
+      })
     }
 
     //clear all - back to default state
@@ -400,7 +613,11 @@ const UploadState = (props) => {
       const qtrs = getQtrs(postResult);
       const firstQtr = qtrs[0];
       const SfirstQtrDates = postResult.bayOccupancy[firstQtr][0];
-      const BfirstQtrDates = postResult.baseLineOccupancy[firstQtr][0];
+      let BfirstQtrDates = [];
+      // console.log(postResult.baseLineOccupancy)
+      if (firstQtr in postResult.baseLineOccupancy){
+        BfirstQtrDates = postResult.baseLineOccupancy[firstQtr][0];
+      }
 
       let allDates = SfirstQtrDates.concat(BfirstQtrDates);
       allDates = Array.from(new Set(allDates));
@@ -414,17 +631,20 @@ const UploadState = (props) => {
 
       const qtrs = getQtrs(postResultUpdate);
       const firstQtrDates = getUniqueDates(postResultUpdate);
+      let result = []
 
       // update baseline 
-      let result = postResultUpdate.baseLineOccupancy[qtrs[0]];
-      for( let i = 1; i < result.length; i++){
-        let EOcount = result[i].slice(1).length;
-        for (let j = EOcount; j < firstQtrDates.length; j++){
-          result[i].push("E");
+      if(qtrs in postResultUpdate.baseLineOccupancy){
+        result = postResultUpdate.baseLineOccupancy[qtrs[0]];
+        for( let i = 1; i < result.length; i++){
+          let EOcount = result[i].slice(1).length;
+          for (let j = EOcount; j < firstQtrDates.length; j++){
+            result[i].push("E");
+          }
         }
+        result[0] = firstQtrDates;
+        postResultUpdate.baseLineOccupancy[qtrs[0]] = result;
       }
-      result[0] = firstQtrDates;
-      postResultUpdate.baseLineOccupancy[qtrs[0]] = result;
 
       // update scheduled
       result = postResultUpdate.bayOccupancy[qtrs[0]];
@@ -608,7 +828,9 @@ const UploadState = (props) => {
     // ########################################### HISTORY END ##########################################
     // ##################################################################################################
 
-    //create result
+    // @loc     Preresult.js
+    // @desc    to create the first post schedule output result
+    // @param   (array, array, int, int, int)
     const createResult = async (newbaseline, masterops, bays, mingap, maxgap) => {
         setLoading();
 
@@ -639,8 +861,10 @@ const UploadState = (props) => {
         }
     }
 
-    //import masterops
-    const setSchedule = async (file, minGap, baseFile) => {
+    // @loc     Preresult.js
+    // @desc    to generate schedule file 
+    // @param   (array, int, array, int)
+    const setSchedule = async (file, minGap, baseFile, numBay) => {
         setLoading();
 
         let data = await convertExcelToJSON(file);
@@ -648,10 +872,10 @@ const UploadState = (props) => {
 
         data[data.length - 1]['Argo ID'] === undefined && data.pop();
 
-        //if excelfile is not masterops data/excel file
+        //check masterops have the necessary keys for the UI to be displayed
         data.forEach(val => {
-          if( !(val.hasOwnProperty('Argo ID')) && !(val.hasOwnProperty('Slot ID/UTID')) && !(val.hasOwnProperty('Build Product')) && !(val.hasOwnProperty('Cycle Time Days')) && !(val.hasOwnProperty('MRP Date')) && !(val.hasOwnProperty('MFG Commit Date')) && !(val.hasOwnProperty('Int. Ops Ship Readiness Date'))){
-            scheduleCounter = true
+          if((!(val.hasOwnProperty('Argo ID'))) || (!(val.hasOwnProperty('Slot ID/UTID'))) || (!(val.hasOwnProperty('Build Product'))) || (!(val.hasOwnProperty('Cycle Time Days'))) || (!(val.hasOwnProperty('MRP Date'))) || (!(val.hasOwnProperty('MFG Commit Date')))){
+            scheduleCounter = true;
           }
         })
 
@@ -665,68 +889,88 @@ const UploadState = (props) => {
             let filtered_one = data.filter(obj => obj['Plan Product Type'] === 'Tool');
 
             //remove all the slotid/utid thats is the same as baseline inside masterops && put in inside baseline instead
-            let filtered_two = filterAndInsertToBaseline(filtered_one, baseFile)
+            let filtered_two = filterAndInsertToBaseline(filtered_one, baseFile, numBay)
 
-            //check of previously shipped products (today's date & mfg commit date)
-            let filtered = filtered_two.filter(obj => obj['MFG Commit Date'] >= new Date());
+            if(filtered_two.checker === false){
+              dispatch({
+                type: CREATE_RESULT_ERROR,
+                payload: `Number of Baseline Products exceed number of Bays allocated! Current Number of Baseline Products = ${filtered_two.newBaseLength}`
+              })
+            } else {
+              //check of previously shipped products (today's date & mfg commit date)
+              let filtered = filtered_two['filteredOutput'].filter(obj => obj['MFG Commit Date'] >= new Date());
 
-            //check date in right format & setup for end date
-            filtered.forEach(obj => {
-              checkDatesValue(obj, ['MRP Date','Created On','Created Time','SAP Customer Req Date','Ship Recog Date','Slot Request Date','Int. Ops Ship Readiness Date','MFG Commit Date','Div Commit Date','Changed On','Last Changed Time'])
+              //check date in right format & setup for end date
+              filtered.forEach(obj => {
+                checkDatesValue(obj, ['MRP Date','Created On','Created Time','SAP Customer Req Date','Ship Recog Date','Slot Request Date','Int. Ops Ship Readiness Date','MFG Commit Date','Div Commit Date','Changed On','Last Changed Time'])
 
-              obj['Lock MRP Date'] = false
+                obj['Lock MRP Date'] = false
 
-              let output = obj['Slot Status'] === 'OPEN' ? obj['Int. Ops Ship Readiness Date'] : obj['MFG Commit Date']
-              let outDates = output.split('/')
-              let outYear = parseInt(outDates[2])
-              let outMonth = parseInt(outDates[1]) - 1
-              let outDay = parseInt(outDates[0])
-              let outcurrentDate = new Date(outYear, outMonth, outDay)
-              outcurrentDate.setDate(outcurrentDate.getDate() - minGap)
-              
-              obj['End Date'] = obj['Lock MRP Date'] === false ? outcurrentDate.toLocaleDateString() : obj['MRP Date']
-            })
+                let output = obj['Fab Name'] === 'OPEN' ? obj['Int. Ops Ship Readiness Date'] : obj['MFG Commit Date']
+                let outDates = output.split('/')
+                let outYear = parseInt(outDates[2])
+                let outMonth = parseInt(outDates[1]) - 1
+                let outDay = parseInt(outDates[0])
+                let outcurrentDate = new Date(outYear, outMonth, outDay)
+                outcurrentDate.setDate(outcurrentDate.getDate() - minGap)
+                
+                obj['End Date'] = obj['Lock MRP Date'] === false ? outcurrentDate.toLocaleDateString() : obj['MRP Date']
+              })
 
-            dispatch({
-                type: SET_SCHEDULE,
-                payload: filtered
-            });
+              dispatch({
+                  type: SET_SCHEDULE,
+                  payload: filtered
+              });
+            }
         }
     }
 
-    //get baseline
+    // @loc     Baseline.js
+    // @desc    to get baseline from DB
+    // @param   ()
     const getBaseline = async () => {
       setLoading()
+      // const res = await axios.get('http://localhost:8080/getBaseline')
 
-      try {
-        // const res = await axios.get('http://localhost:8080/getBaseline')
-        dispatch({
-          type: SET_BASELINE,
-          payload: []
-        })
-      } catch (err) {
-        
-      }
+      dispatch({
+        type: SET_BASELINE,
+        payload: []
+      })
     }
 
-    //update baseline
-    const updateBaseline = base => {
+    // @loc     Preresult.js
+    // @desc    update baseline, format the date for storing to DB
+    // @param   (array)
+    const updateBaseline = async base => {
       base.forEach(obj => {
         obj.hasOwnProperty('emptyToDelete') && delete obj['emptyToDelete'];
         
         checkDatesValue(obj, ['MRP Date','Created On','Created Time','SAP Customer Req Date','Ship Recog Date','Slot Request Date','Int. Ops Ship Readiness Date','MFG Commit Date','Div Commit Date','Changed On','Last Changed Time'])
       })
+
+      const config = {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+
+      // const res = await axios.post('http://localhost:8080/setbaseline', base, config)
+
       dispatch({
         type: UPDATE_BASELINE,
         payload: base
       })
     }
 
-    //filter then insert/dispatch to newbaseline
-    const filterAndInsertToBaseline = (filtered, base) => {
+    // @loc     UploadState.js -> setSchedule
+    // @desc    compare and filter out the baseline with masterops
+    // @param   (array, array, int)
+    const filterAndInsertToBaseline = (filtered, base, numBay) => {
       let tempBase = [];
-      
-      if(base.length > 0){
+
+      if(base.length === 0) {
+        return { filteredOutput: filtered }
+      } else {
         filtered.forEach(obj => {
           base.forEach(val => {
             if(val['Slot ID/UTID'] === obj['Slot ID/UTID']){
@@ -734,8 +978,10 @@ const UploadState = (props) => {
             }
           })
         })
-  
-        if(tempBase.length !== 0){
+
+        if(tempBase.length === 0){
+          return { filteredOutput: filtered }
+        } else {
           tempBase.forEach(val => {
             filtered.forEach(obj => {
               if(val === obj){
@@ -743,28 +989,39 @@ const UploadState = (props) => {
               }
             })
           })
-  
+
+          //return true/false to check newBaseline and number of bays
+          let checker = checkNewBaselineAndBays(tempBase, numBay);
+          
           dispatch({
             type: UPDATE_BASELINE,
             payload: tempBase
           })
-  
-          return filtered.filter(obj => !(obj.hasOwnProperty('emptyToDelete')))
-        } else {
-          return filtered
+
+          return {
+            filteredOutput: filtered.filter(obj => !(obj.hasOwnProperty('emptyToDelete'))), 
+            checker: checker, 
+            newBaseLength: tempBase.length
+          }
         }
-      } else {
-        return filtered
       }
-      
     }
 
-    //check date value if undefined
+    // @loc     UploadState.js -> filterAndInsertToBaseline
+    // @desc    check if baseline products exceed number of bays
+    // @param   (array, int)
+    const checkNewBaselineAndBays = (newBase, numBay) => newBase.length <= numBay ? true : false
+
+    // @loc     UploadState.js -> updateBaseline, setSchedule
+    // @desc    check date value if undefined and change date format
+    // @param   (object, array)
     const checkDatesValue = (obj, arr) => {
       arr.forEach(val => obj[val] = obj[val] === undefined ? '' : obj[val].toLocaleDateString('en-GB'))
     }
 
-    //update masterops
+    // @loc     Preresult.js
+    // @desc    update the masterops file
+    // @param   (array)
     const updateSchedule = (objs) => {
         //convert cycle time days to integer
         objs.forEach(obj => {
@@ -779,22 +1036,36 @@ const UploadState = (props) => {
     //update save
     const updateSave = (res) => dispatch({ type: UPDATE_SAVE, payload: res })
 
-    //set bays
+    // @loc     Schedule.js
+    // @desc    set number of bays
+    // @param   (int)
     const setBays = (bayNum) => dispatch({ type: SET_BAYS, payload: bayNum })
 
-    //set min gap
+    // @loc     Schedule.js
+    // @desc    set number of min gap time
+    // @param   (int)
     const setMinGap = (num) => dispatch({ type: SET_MIN_GAP, payload: num });
 
-    //set max gap
+    // @loc     Schedule.js
+    // @desc    set number of max gap time
+    // @param   (int)
     const setMaxGap = (num) => dispatch({ type: SET_MAX_GAP, payload: num })
 
     //clear preresult
+    // @loc     Schedule.js
+    // @desc    clear the generated schedule
+    // @param   ()
     const clearPreresult = () => dispatch({ type: CLEAR_PRERESULT })
 
-    //clear upload errors
+    // @loc     Schedule.js
+    // @desc    clear errors in Schedule
+    // @param   ()
     const uploadClearError = () => dispatch({ type: UPLOAD_CLEAR_ERROR })
 
     //set baseline
+    // @loc     Baseline.js
+    // @desc    set the baseline
+    // @param   (array)
     const setBaseline = async (file) => {
         setLoading();
 
@@ -813,6 +1084,8 @@ const UploadState = (props) => {
             payload: 'Please upload a proper bay requirement file'
           })
         } else {
+          data.forEach(obj => obj['Slot ID/UTID'] = obj['Slot ID/UTID'].toString())
+
           dispatch({
             type: SET_BASELINE,
             payload: data
@@ -820,7 +1093,9 @@ const UploadState = (props) => {
         }
     }
 
-    //convert excel to json
+    // @loc     UploadState.js -> setBaseline, setSchedule
+    // @desc    set number of bays
+    // @param   (file-object)
     const convertExcelToJSON = async (file) => {
         return new Promise((resolve, reject) => {
             let reader = new FileReader();
@@ -836,10 +1111,14 @@ const UploadState = (props) => {
         });
     }
 
-    //set loading
+    // @loc     UploadState.js
+    // @desc    set loading
+    // @param   ()
     const setLoading = () => dispatch({ type: SET_LOADING })
 
-    //back to default - for logout purpose
+    // @loc     Navbar.js
+    // @desc    back to default, for logout purpose
+    // @param   ()
     const clearZero = () => dispatch({ type: CLEAR_ZERO })
 
     return <UploadContext.Provider
@@ -895,7 +1174,8 @@ const UploadState = (props) => {
             setMinGap,
             setMaxGap,
             getHistory,
-            loadHistories
+            loadHistories,
+            checkNewBaselineAndBays
         }}>
         {props.children}
     </UploadContext.Provider>
