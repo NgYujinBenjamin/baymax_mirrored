@@ -685,7 +685,7 @@ const UploadState = (props) => {
     const endDateCheck = (qtrObj, key, minGap) => {
       let intRedDate = dateConversion(qtrObj.intOpsShipReadinessDate);
       let MFGCommit = dateConversion(qtrObj.MFGCommitDate);
-      {qtrObj.fabID == "OPEN" ? 
+      {qtrObj.fabName == "OPEN" ? 
       qtrObj[key] = new Date(intRedDate.setTime(intRedDate.getTime() - minGap)).toLocaleDateString('en-GB') : qtrObj[key] = new Date(MFGCommit.setTime(MFGCommit.getTime() - minGap)).toLocaleDateString('en-GB');
       }
     }
