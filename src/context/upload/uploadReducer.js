@@ -2,12 +2,16 @@ import { SET_BASELINE, UPDATE_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT,
 
 export default (state, action) => {
     switch(action.type) {
-        case SAVE_RESULT:
         case EXPORT_RESULT:
         case EXPORT_SCHEDULE:
             return {
                 ...state,
                 loading: false
+            }
+        case SAVE_RESULT:
+            return {
+                ...state,
+                histID: action.payload
             }
         case UPDATE_DATA:
             return {

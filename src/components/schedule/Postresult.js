@@ -17,7 +17,7 @@ const Postresult = () => {
     const [value, setValue] = useState(0); // this is for tab panel to display quarters
 
     const { loadUser, updateNavItem } = authContext
-    const { bays, minGap, maxGap, setBays, setMinGap, setMaxGap, currentQuarter, postResult, postResultDone, postResultErrors, tabChecker, updateReschedule, createExport, createExportSchedule, updateSave, clearAll, updatePostResultEmpties } = uploadContext;
+    const { histID, bays, minGap, maxGap, setBays, setMinGap, setMaxGap, currentQuarter, postResult, postResultDone, postResultErrors, tabChecker, updateReschedule, createExport, createExportSchedule, updateSave, clearAll, updatePostResultEmpties } = uploadContext;
 
     useEffect(() => {
         updateNavItem(0);
@@ -71,6 +71,7 @@ const Postresult = () => {
     }
 
     const handleChange = (event) => {
+        event.preventDefault();
         const value = event.target.value;
         const name = event.target.name;
         if(name == 'bayNum'){
@@ -129,7 +130,7 @@ const Postresult = () => {
                         <Button fullWidth variant='contained' onClick={handleClearAll} startIcon={<DeleteIcon />} color='secondary'>Clear All</Button>
                     </Grid>
                     <Grid item xs>
-                        <Button fullWidth variant='contained' onClick={handleSave} startIcon={<SaveIcon />}>Save Result</Button>
+                        <Button fullWidth variant='contained' onClick={handleSave} startIcon={<SaveIcon />}> {histID == null ? 'Save Result' : 'Update History Result'} </Button>
                     </Grid>
                     <Grid item xs>
                         <Button fullWidth variant='contained' onClick={handleExport} startIcon={<GetAppIcon />}>Export to Excel File</Button>

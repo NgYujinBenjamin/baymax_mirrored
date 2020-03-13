@@ -25,6 +25,7 @@ const UploadState = (props) => {
         saveHistory: false,
         reschedule: false,
         tabUpdate: false,
+        histID: null,
         allHistory: [
           {
               msuID: 1,
@@ -768,14 +769,17 @@ const UploadState = (props) => {
     // ##################################################################################################
 
     //save to history
-    const saveResult = async (postResult, bays, mingap, maxgap, staffID) => {
+    const saveResult = async (postResult, bays, mingap, maxgap, staffID, histID) => {
       setLoading();
 
       postResult.numBays = parseInt(bays);
       postResult.minGap = parseInt(mingap);
       postResult.maxGap = parseInt(maxgap);
       postResult.staffID = parseInt(staffID);
-      
+      postResult.histID = (histID == null) ? null : parseInt(histID);
+
+      // console.log(postResult);
+
       const config = {
           headers: {
               'Content-Type': 'application/json'
@@ -783,10 +787,11 @@ const UploadState = (props) => {
       }
 
       try {
-          await axios.post('http://localhost:8080/savePreSchedule', postResult, config);
+          let res = await axios.post('http://localhost:8080/savePreSchedule', postResult, config);
 
           dispatch({
-              type: SAVE_RESULT
+              type: SAVE_RESULT,
+              payload: res
           })
       } catch (err) {
           //prompt error
@@ -1142,6 +1147,7 @@ const UploadState = (props) => {
             saveHistory: state.saveHistory,
             tabUpdate: state.tabUpdate,
             allHistory: state.allHistory,
+            histID: state.histID,
             setBaseline,
             setSchedule,
             setBays,
