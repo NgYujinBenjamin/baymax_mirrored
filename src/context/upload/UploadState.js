@@ -613,7 +613,11 @@ const UploadState = (props) => {
       const qtrs = getQtrs(postResult);
       const firstQtr = qtrs[0];
       const SfirstQtrDates = postResult.bayOccupancy[firstQtr][0];
-      const BfirstQtrDates = postResult.baseLineOccupancy[firstQtr][0];
+      let BfirstQtrDates = [];
+      // console.log(postResult.baseLineOccupancy)
+      if (firstQtr in postResult.baseLineOccupancy){
+        BfirstQtrDates = postResult.baseLineOccupancy[firstQtr][0];
+      }
 
       let allDates = SfirstQtrDates.concat(BfirstQtrDates);
       allDates = Array.from(new Set(allDates));
@@ -627,17 +631,20 @@ const UploadState = (props) => {
 
       const qtrs = getQtrs(postResultUpdate);
       const firstQtrDates = getUniqueDates(postResultUpdate);
+      let result = []
 
       // update baseline 
-      let result = postResultUpdate.baseLineOccupancy[qtrs[0]];
-      for( let i = 1; i < result.length; i++){
-        let EOcount = result[i].slice(1).length;
-        for (let j = EOcount; j < firstQtrDates.length; j++){
-          result[i].push("E");
+      if(qtrs in postResultUpdate.baseLineOccupancy){
+        result = postResultUpdate.baseLineOccupancy[qtrs[0]];
+        for( let i = 1; i < result.length; i++){
+          let EOcount = result[i].slice(1).length;
+          for (let j = EOcount; j < firstQtrDates.length; j++){
+            result[i].push("E");
+          }
         }
+        result[0] = firstQtrDates;
+        postResultUpdate.baseLineOccupancy[qtrs[0]] = result;
       }
-      result[0] = firstQtrDates;
-      postResultUpdate.baseLineOccupancy[qtrs[0]] = result;
 
       // update scheduled
       result = postResultUpdate.bayOccupancy[qtrs[0]];
@@ -832,8 +839,6 @@ const UploadState = (props) => {
         })
 
         let preResult = { baseline: newbaseline,  masterOps: masterops, bay: bays, minGap: mingap, maxGap: maxgap}
-
-        console.log(preResult)
 
         const config = {
             headers: {
