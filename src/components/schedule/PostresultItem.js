@@ -22,7 +22,7 @@ const PostresultItem = memo(({ result, id, onChange }) => {
     const buildProd = result[0].buildProduct;
     const config = result[0].configuration;
     const toolStart = result[0].toolStartDate;
-    const fabID = result[0].fabID==='OPEN';
+    const fabName = result[0].fabName==='OPEN';
     const MFGCommit = result[0].MFGCommitDate;
     const intReadDate = result[0].intOpsShipReadinessDate;
     const endDate = result[0].endDate;
@@ -55,7 +55,7 @@ const PostresultItem = memo(({ result, id, onChange }) => {
                     { id === 'predicted' ? <Input error={MRPUnique in postResultErrors} style={{width: '140px'}} type='text' name={MRPName} value={MRPDate} onChange={onChange} required /> : MRPDate } 
                     { MRPUnique in postResultErrors && <FormHelperText className={classes.errorText}>{postResultErrors[MRPUnique]}</FormHelperText>}
                 </TableCell>
-                <TableCell style={fabID ? {backgroundColor: 'yellow'} : null}> {MFGCommit} </TableCell>
+                <TableCell style={fabName ? {backgroundColor: 'yellow'} : null}> {MFGCommit} </TableCell>
                 <TableCell> {intReadDate} </TableCell>
                 <TableCell> {endDate} </TableCell>
                 <TableCell style={gapDays >= 0 ? null : {backgroundColor: 'red'}}> {gapDays} </TableCell>
