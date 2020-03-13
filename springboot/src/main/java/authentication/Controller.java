@@ -67,7 +67,7 @@ public class Controller {
     // done
     @RequestMapping(path = "/resetpassword", method = RequestMethod.GET)
     public JsonObject resetPass(@RequestParam(value = "username") String username) throws SQLException, ClassNotFoundException {
-        if (username == null) {
+        if (username.isEmpty()) {
             throw new NullPointerException("Username cannot be empty.");
         }
         userscon.resetPassword(username);
@@ -77,7 +77,7 @@ public class Controller {
     // done
     @RequestMapping(path = "/login", method = RequestMethod.POST)
     public JsonObject login(@RequestBody LoginDetails inputDetails) throws SQLException, ClassNotFoundException, NullPointerException, InvalidTokenException {
-        if (inputDetails.getUsername() == null || inputDetails.getPassword() == null) {
+        if ( inputDetails.getUsername().isEmpty() || inputDetails.getPassword().isEmpty() || inputDetails.getUsername() == null || inputDetails.getPassword() == null) {
             throw new NullPointerException("Username or password cannot be empty.");
         }
         String username = inputDetails.getUsername();
@@ -115,9 +115,9 @@ public class Controller {
     }
 
     @RequestMapping(path = "/msu/{msuId}", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity getMassSlotUpload(@PathVariable("msuId") String msuId) throws SQLException, ClassNotFoundException {
-        ArrayList<JsonObject> result = historyscon.getMassSlotUpload(msuId);
-        return new ResponseEntity(new JsonResponses("SUCCESS", result), HttpStatus.OK);
+    public ArrayList<JsonObject> getMassSlotUpload(@PathVariable("msuId") String msuId) throws SQLException, ClassNotFoundException {
+//        ArrayList<JsonObject> result = historyscon.getMassSlotUpload(msuId);
+        return historyscon.getMassSlotUpload(msuId);
     }
 
     // @RequestMapping(path = "/msu/{staffId}", method = RequestMethod.POST, produces = "application/json")
