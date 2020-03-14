@@ -1044,7 +1044,7 @@ const UploadState = (props) => {
     const setStepCount = (num) => dispatch({ type: SET_STEPS, payload: num })
 
     //update save
-    const updateSave = (res) => dispatch({ type: UPDATE_SAVE, payload: { res: res, msg: 'Save Successfully!' } })
+    const updateSave = (res) => dispatch({ type: UPDATE_SAVE, payload: res })
 
     // @loc     Schedule.js
     // @desc    set number of bays

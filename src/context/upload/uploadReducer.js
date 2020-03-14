@@ -47,8 +47,8 @@ export default (state, action) => {
         case UPDATE_SAVE:
             return {
                 ...state,
-                saveHistory: action.payload.res,
-                success: action.payload.msg
+                saveHistory: action.payload,
+                loading: false
             }
         case RESCHEDULE_POST_RESULT:
             return {

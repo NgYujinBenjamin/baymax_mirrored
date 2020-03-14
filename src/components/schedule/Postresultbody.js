@@ -47,6 +47,11 @@ const Postresultbody = ({ result, baseline, quarter }) => {
                 // save to history
                 if(saveHistory){
                     saveResult(postResult, bays, minGap, maxGap, user['staff_id'], histID);
+                    if(histID == null){
+                        setAlert("Scheduled result has been saved to history!", 'success');
+                    } else{
+                        setAlert("Scheduled result has been updated!", 'success');
+                    }
                     updateSave(false);
                 }
     

@@ -1,13 +1,16 @@
 import React, { Fragment, useState, useContext, useEffect } from 'react';
 import { Grid, TextField, DialogContent, DialogContentText, DialogActions, DialogTitle, Dialog , Avatar, Typography, Button, FormHelperText } from '@material-ui/core';
 import AuthContext from '../../context/auth/authContext';
+import AlertContext from '../../context/alert/alertContext';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 
 const Profile = () => {
     const classes = useStyles();
     const authContext = useContext(AuthContext);
+    const alertContext = useContext(AlertContext);
 
+    const { setAlert } = alertContext;
     const { error, user, clearErrors, updatePwd, loadUser, updateNavItem } = authContext;
     const [errorField, setError] = useState({});
 
@@ -44,6 +47,7 @@ const Profile = () => {
             updatePwd(user.username, oldpwd, newpwd);
             if (error == null){
                 handleClose();
+                setAlert('Password updated successfully!', 'success');
             }
         }
     }
