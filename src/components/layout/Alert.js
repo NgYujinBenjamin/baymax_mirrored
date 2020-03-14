@@ -1,27 +1,38 @@
 import React, { useContext, useState } from 'react';
-import { Button, Snackbar } from '@material-ui/core';
+import { Button, Snackbar, SnackbarContent } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
 import { Card, CardActions, Typography } from '@material-ui/core';
 import CancelRoundedIcon from '@material-ui/icons/CancelRounded';
 import AlertContext from '../../context/alert/alertContext';
+import { makeStyles } from '@material-ui/core/styles';
+import { useSnackbar } from 'notistack';
 
 const AlertAlt = (props) => {
     return <MuiAlert elevation={6} variant='filled' {...props} />
 }
 
+const useStyles = makeStyles(theme => ({
+    root: {
+      width: '100%',
+      '& > * + *': {
+        marginTop: theme.spacing(2),
+      },
+    }
+}));
+
 const Alert = () => {
     const alertContext = useContext(AlertContext);
-    const [open, setOpen] = useState(true);
-
-    const handleClose =() => {
-        setOpen(false)
-    }
+    const classes = useStyles();
 
     return (
         alertContext.alert.length > 0 && alertContext.alert.map(al => (
-            <div key={al.id} style={{ width: '100%' }}>
-                <Snackbar open={open} autoHideDuration={4500} onClose={handleClose}>
-                    <AlertAlt onClose={handleClose} severity={al.type}>
+            <div key={al.id} className={classes.root}>
+                <Snackbar 
+                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                    open={true} 
+                    autoHideDuration={4500}
+                >
+                    <AlertAlt severity={al.type}>
                         {al.msg}
                     </AlertAlt>
                 </Snackbar>

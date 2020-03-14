@@ -1,4 +1,4 @@
-import { SET_BASELINE, UPDATE_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS, UPDATE_POST_RESULT, UPDATE_QUARTER, UPDATE_DATA, UPDATE_SAVE, UPDATE_POST_RESULT_FORMAT, UPDATE_RESCHEDULE, RESCHEDULE_POST_RESULT, UPDATE_TABCHECKER, CREATE_RESULT_ERROR, SET_MIN_GAP, SET_MAX_GAP, LOAD_ALL_HISTORY, GET_HISTORY } from '../types';
+import { SET_BASELINE, GET_BASELINE, UPDATE_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS, UPDATE_POST_RESULT, UPDATE_QUARTER, UPDATE_DATA, UPDATE_SAVE, UPDATE_POST_RESULT_FORMAT, UPDATE_RESCHEDULE, RESCHEDULE_POST_RESULT, UPDATE_TABCHECKER, CREATE_RESULT_ERROR, SET_MIN_GAP, SET_MAX_GAP, LOAD_ALL_HISTORY, GET_HISTORY } from '../types';
 
 export default (state, action) => {
     switch(action.type) {
@@ -104,10 +104,17 @@ export default (state, action) => {
                 ...state,
                 newBaseline: action.payload
             }
-        case SET_BASELINE:
+        case GET_BASELINE:
             return {
                 ...state,
                 baseline: action.payload,
+                loading: false
+            }
+        case SET_BASELINE:
+            return {
+                ...state,
+                baseline: action.payload.data,
+                success: action.payload.msg,
                 loading: false
             }
         case SET_LOADING:
@@ -125,6 +132,7 @@ export default (state, action) => {
             return {
                 ...state,
                 error: null,
+                success: null,
                 loading: false
             }
         case CLEAR_ALL:
@@ -137,6 +145,7 @@ export default (state, action) => {
                 minGap: '',
                 maxGap: '',
                 error: null,
+                success: null,
                 loading: false,
                 postResult: null,
                 postResultDone: null,
@@ -153,6 +162,7 @@ export default (state, action) => {
                 maxGap: '',
                 loading: false,
                 error: null,
+                success: null,
                 stepcount: 1
             }
         case CLEAR_ZERO:
@@ -169,6 +179,7 @@ export default (state, action) => {
                 postResultDone: null,
                 scheduleDone: false,
                 error: null,
+                success: null,
                 stepcount: 0
             }
         case LOAD_ALL_HISTORY:

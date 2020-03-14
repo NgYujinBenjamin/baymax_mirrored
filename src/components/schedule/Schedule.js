@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useContext, useEffect } from 'react'
-import { Button, Box, Card, CardContent, Input, InputLabel, Typography, Grid } from '@material-ui/core'
+import { Button, Box, Card, CardContent, Input, InputLabel, Typography, Grid, TextField } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import Preresult from './Preresult'
 import Postresult from './Postresult'
@@ -55,6 +55,8 @@ const Schedule = (props) => {
         maxGapTime: ''
     })
 
+    const { bayComponent, bayFile, fileName, bayFileValue, minGapTime, maxGapTime } = userInput
+
     const handleChange = (event) => {
         const { name, value } = event.target;
         setUserInput({
@@ -75,31 +77,30 @@ const Schedule = (props) => {
     const handleConfirm = (event) => {
         event.preventDefault();
         const regx = /^[0-9]+$/;
-        const splitFilename = userInput.fileName.split('.')
+        const splitFilename = fileName.split('.')
         
-        if(!regx.test(userInput.bayComponent)){
+        if(!regx.test(bayComponent)){
             setAlert('Please enter a number in the Available Bay field', 'error');
-        } else if(!regx.test(userInput.minGapTime)) {
+        } else if(!regx.test(minGapTime)) {
             setAlert('Please enter a number in the Minimum Gap field', 'error')
-        } else if(!regx.test(userInput.maxGapTime)) {
+        } else if(!regx.test(maxGapTime)) {
             setAlert('Please enter a number in the Maximum Gap field', 'error')
-        } else if(userInput.bayComponent === '' || userInput.bayFile === null) {
+        } else if(bayComponent === '' || bayFile === null) {
             setAlert('Please upload an excel file', 'error');
         } else if(splitFilename[splitFilename.length - 1] !== 'xlsx' && splitFilename[splitFilename.length - 1] !== 'xlsm') {
             setAlert('Please upload a .xlsx or .xlsm excel file', 'error');
         } else {
             setStepCount(stepcount + 1);
 
-            setBays(parseInt(userInput.bayComponent));
-            setMinGap(parseInt(userInput.minGapTime));
-            setMaxGap(parseInt(userInput.maxGapTime));
+            setBays(parseInt(bayComponent));
+            setMinGap(parseInt(minGapTime));
+            setMaxGap(parseInt(maxGapTime));
 
-            setSchedule(userInput.bayFile, parseInt(userInput.minGapTime), baseline, parseInt(userInput.bayComponent));
-
+            setSchedule(bayFile, parseInt(minGapTime), baseline, parseInt(bayComponent));
             setUserInput({
+                ...userInput,
                 bayComponent: '',
                 bayFile: null,
-                fileName: '',
                 bayFileValue: '',
                 minGapTime: '',
                 maxGapTime: ''
@@ -128,16 +129,46 @@ const Schedule = (props) => {
                         <Box className={classes.box}>
                             <Grid container spacing={3}>
                                 <Grid item xs>
-                                    <InputLabel htmlFor='bays'>No of Available Bays</InputLabel>
-                                    <Input fullWidth type='text' id='bays' name='bayComponent' value={userInput.bayComponent} onChange={handleChange} required />
+                                    <InputLabel htmlFor='bay'>No of Available Bays</InputLabel>
+                                    <TextField
+                                        error={isNaN(bayComponent)}
+                                        helperText={isNaN(bayComponent) && 'Invalid number'}
+                                        type='text'
+                                        id='bay'
+                                        name='bayComponent'
+                                        value={bayComponent}
+                                        onChange={handleChange} 
+                                        required
+                                        fullWidth
+                                    />
                                 </Grid>
                                 <Grid item xs>
                                     <InputLabel htmlFor='minGap'>Minimum Gap Time</InputLabel>
-                                    <Input fullWidth type='text' id='minGap' name='minGapTime' value={userInput.minGapTime} onChange={handleChange} required />
+                                    <TextField 
+                                        error={isNaN(minGapTime)}
+                                        helperText={isNaN(minGapTime) && 'Invalid number'}
+                                        type='text'
+                                        id='minGap'
+                                        name='minGapTime'
+                                        value={minGapTime}
+                                        onChange={handleChange}
+                                        required
+                                        fullWidth
+                                    />
                                 </Grid>
                                 <Grid item xs>
                                     <InputLabel htmlFor='maxGap'>Maximum Gap Time</InputLabel>
-                                    <Input fullWidth type='text' id='maxGap' name='maxGapTime' value={userInput.maxGapTime} onChange={handleChange} required />
+                                    <TextField 
+                                        error={isNaN(maxGapTime)}
+                                        helperText={isNaN(maxGapTime) && 'Invalid number'}
+                                        type='text'
+                                        id='maxGap'
+                                        name='maxGapTime'
+                                        value={maxGapTime}
+                                        onChange={handleChange}
+                                        required
+                                        fullWidth
+                                    />
                                 </Grid>
                             </Grid>
                         </Box>
@@ -154,7 +185,7 @@ const Schedule = (props) => {
                                     id='schedule-file' 
                                     style={{ display: 'none' }} 
                                     name='bayFile'
-                                    value={userInput.bayFileValue}
+                                    value={bayFileValue}
                                 />
                                 <label htmlFor='schedule-file'>
                                     <Button variant='contained' color='primary' component='span' disabled={schedule !== null} startIcon={<CloudUploadIcon />}>
@@ -162,10 +193,10 @@ const Schedule = (props) => {
                                     </Button>
                                 </label>
                                 <Typography component='span' variant='body2' style={{ marginLeft: '12px'}}>
-                                    {userInput.fileName !== '' && userInput.fileName}
+                                    {fileName !== '' && fileName}
                                 </Typography>
                             </Box>
-                            {(userInput.bayFile && userInput.fileName !== '' && schedule === null) && <Button color='primary' variant='contained' fullWidth onClick={handleConfirm}>Confirm</Button>}
+                            {(bayFile && fileName !== '' && schedule === null) && <Button color='primary' variant='contained' fullWidth onClick={handleConfirm}>Confirm</Button>}
                             {(schedule !== null && !scheduleDone) && <Button fullWidth color='default' variant='contained' className={classes.marginTop} onClick={handleClearPreresult}>Clear</Button>}
                         </Box>
                     }  
