@@ -3,7 +3,7 @@ import UploadContext from './uploadContext';
 import UploadReducer from './uploadReducer';
 import XLSX from 'xlsx';
 import axios from 'axios';
-import { SET_BASELINE, UPDATE_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS, UPDATE_POST_RESULT, UPDATE_QUARTER, UPDATE_DATA, UPDATE_SAVE, UPDATE_POST_RESULT_FORMAT, UPDATE_RESCHEDULE, RESCHEDULE_POST_RESULT, UPDATE_TABCHECKER,CREATE_RESULT_ERROR, SET_MIN_GAP, SET_MAX_GAP, GET_HISTORY, LOAD_ALL_HISTORY, UPDATE_NEW_MIN_GAP } from '../types';
+import { SET_BASELINE, GET_BASELINE, UPDATE_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS, UPDATE_POST_RESULT, UPDATE_QUARTER, UPDATE_DATA, UPDATE_SAVE, UPDATE_POST_RESULT_FORMAT, UPDATE_RESCHEDULE, RESCHEDULE_POST_RESULT, UPDATE_TABCHECKER,CREATE_RESULT_ERROR, SET_MIN_GAP, SET_MAX_GAP, GET_HISTORY, LOAD_ALL_HISTORY, UPDATE_NEW_MIN_GAP } from '../types';
 
 const UploadState = (props) => {
     const initialState = {
@@ -18,6 +18,7 @@ const UploadState = (props) => {
         postResult: null,
         scheduleDone: false,
         error: null,
+        success: null,
         postResultDone: null,
         stepcount: 0,
         steps: ['Upload Bay Requirement', 'Input guidelines & upload MasterOpsPlan', 'Edit MasterOpsPlan', 'Schedule Generated'],
@@ -39,6 +40,11 @@ const UploadState = (props) => {
     // @param   (object)
     const createExportSchedule = file => {
         setLoading();
+
+        dispatch({
+          type: EXPORT_RESULT,
+          payload: 'Export Successfully!'
+        })
 
         let headerDates = new Set();
         let quarterIdArr = {};
@@ -375,10 +381,6 @@ const UploadState = (props) => {
         XLSX.utils.book_append_sheet(wb, ws, 'Shipment Plan');
 
         XLSX.writeFile(wb, `Bay_Requirement_${new Date().toLocaleDateString('en-GB')}.xlsx`);
-
-        dispatch({
-          type: EXPORT_SCHEDULE
-        });
     }
     
     // @loc     PostResult.js
@@ -386,6 +388,9 @@ const UploadState = (props) => {
     // @param   (object)
     const createExport = file => {
         setLoading();
+
+        dispatch({ type: EXPORT_SCHEDULE })
+
         const output = []
 
         //get the actual data from baseLineOccupancy
@@ -493,10 +498,6 @@ const UploadState = (props) => {
         //write workbook to file
         //1st arg: workbook, 2nd arg: name of file
         XLSX.writeFile(massWB, 'Mass_Slot_Upload.xlsx');
-
-        dispatch({
-            type: EXPORT_RESULT
-        })
     }
 
     // @loc     UploadState.js -> createExport, createExportSchedule
@@ -942,7 +943,7 @@ const UploadState = (props) => {
       // const res = await axios.get('http://localhost:8080/getBaseline')
 
       dispatch({
-        type: SET_BASELINE,
+        type: GET_BASELINE,
         payload: []
       })
     }
@@ -1043,7 +1044,7 @@ const UploadState = (props) => {
     const setStepCount = (num) => dispatch({ type: SET_STEPS, payload: num })
 
     //update save
-    const updateSave = (res) => dispatch({ type: UPDATE_SAVE, payload: res })
+    const updateSave = (res) => dispatch({ type: UPDATE_SAVE, payload: { res: res, msg: 'Save Successfully!' } })
 
     // @loc     Schedule.js
     // @desc    set number of bays
@@ -1097,7 +1098,7 @@ const UploadState = (props) => {
 
           dispatch({
             type: SET_BASELINE,
-            payload: data
+            payload: { data: data, msg: 'Baseline successfully imported!' }
           })
         }
     }
@@ -1143,6 +1144,7 @@ const UploadState = (props) => {
             scheduleDone: state.scheduleDone,
             postResult: state.postResult,
             error: state.error,
+            success: state.success,
             postResultDone: state.postResultDone,
             stepcount : state.stepcount,
             steps: state.steps,

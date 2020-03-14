@@ -48,3 +48,4 @@ export const GET_HISTORY = 'GET_HISTORY';
 export const LOAD_ALL_HISTORY = 'LOAD_ALL_HISTORY';
 export const CHANGE_PWD_FAIL = 'CHANGE_PWD_FAIL';
 export const UPDATE_NEW_MIN_GAP = 'UPDATE_NEW_MIN_GAP';
+export const GET_BASELINE = 'GET_BASELINE';

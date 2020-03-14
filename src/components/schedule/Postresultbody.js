@@ -26,11 +26,11 @@ const Postresultbody = ({ result, baseline, quarter }) => {
             
             if( Object.keys(postResultErrors).length !== 0 ){
                 if(reschedule){
-                    setAlert("Please fix existing errors in this table quarter! Failed to send for reschedule.");
+                    setAlert("Please fix existing errors in this table quarter! Failed to send for reschedule.", 'error');
                 } else if(saveHistory){
-                    setAlert("Please fix existing errors in this table quarter! Failed to save.");
+                    setAlert("Please fix existing errors in this table quarter! Failed to save.", 'error');
                 } else{
-                    setAlert("Please fix existing errors in the table before switching quarter!");
+                    setAlert("Please fix existing errors in the table before switching quarter!", 'error');
                 }
                 window.scrollTo(0,0);
                 updateSave(false);

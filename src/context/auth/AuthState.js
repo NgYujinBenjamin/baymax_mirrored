@@ -17,9 +17,11 @@ const AuthState = (props) => {
 
     const [state, dispatch] = useReducer(AuthReducer, initialState);
 
-    //all methods here
+    // METHODS
     
-    //load user
+    // @loc     AuthState.js -> login, register; multiple components
+    // @desc    load the user
+    // @param   ()
     const loadUser = async () => {
         if(localStorage.token){
             setAuthToken(localStorage.token);
@@ -38,7 +40,9 @@ const AuthState = (props) => {
         }
     }
 
-    //login user
+    // @loc     Login.js
+    // @desc    login the user
+    // @param   (object)
     const login = async (formData) => {
         const config = {
             headers: {
@@ -48,14 +52,14 @@ const AuthState = (props) => {
 
         try {
             const res = await axios.post('http://localhost:8080/login', formData, config);
-            // console.log(res);
+            
             dispatch({
                 type: LOGIN_SUCCESS,
                 payload: res.data
             });
             loadUser();
         } catch (err) {
-            // console.log(err.response.data);
+            console.log(err.response)
             dispatch({
                 type: LOGIN_FAIL,
                 payload: err.response.data.message
@@ -63,7 +67,9 @@ const AuthState = (props) => {
         }
     }
     
-    //register user
+    // @loc     Register.js
+    // @desc    register the user
+    // @param   (object)
     const register = async (user) => {
         const config = {
             headers: {
@@ -76,14 +82,13 @@ const AuthState = (props) => {
 
         try {
             const res = await axios.post('http://localhost:8080/register', user, config);
-            // console.log(res)
+            
             dispatch({
                 type: REGISTER_SUCCESS,
                 payload: res.data
             });
             loadUser();
         } catch (err) {
-            // console.log(err.response.data)
             dispatch({
                 type: REGISTER_FAIL,
                 payload: err.response.data.message
@@ -91,10 +96,14 @@ const AuthState = (props) => {
         }
     }
 
-    //logout user
+    // @loc     Navbar.js
+    // @desc    logout the user
+    // @param   ()
     const logout = () => dispatch({ type: LOGOUT })
 
-    //clear errors
+    // @loc     Register.js; Login.js
+    // @desc    clear errors in auth state
+    // @param   ()
     const clearErrors = () => dispatch({ type: CLEAR_ERRORS })
 
     // update password 
@@ -120,7 +129,9 @@ const AuthState = (props) => {
         }
     }
 
-    //update nav item
+    // @loc     Login.js; Register.js; Landing.js; Admin.js; multiple components
+    // @desc    update the item in the navbar
+    // @param   (int)
     const updateNavItem = (index) => {
         dispatch({
             type: UPDATE_NAV,

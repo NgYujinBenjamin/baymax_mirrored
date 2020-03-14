@@ -95,7 +95,7 @@ const Preresult = () => {
         })
 
         if(preCounter){
-            setAlert('Please fix existing errors in this table! Begin Schedule Creation failed.');
+            setAlert('Please fix existing errors in this table! Begin Schedule Creation failed.', 'error');
             window.scrollTo(0,0);
         } else {
             updateSchedule(objs);

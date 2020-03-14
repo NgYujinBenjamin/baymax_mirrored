@@ -19,7 +19,7 @@ const Register = (props) => {
         }
 
         if(error !== null){
-            setAlert(error);
+            setAlert(error, 'error');
             clearErrors();
         }
 
@@ -49,7 +49,7 @@ const Register = (props) => {
     const handleSubmit = (event) => {
         event.preventDefault();
         if(password !== password2){
-            setAlert('Passwords do not match');
+            setAlert('Passwords do not match', 'error');
         } else {
             register({
                 username,

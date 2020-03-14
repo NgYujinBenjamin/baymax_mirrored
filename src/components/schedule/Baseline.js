@@ -13,7 +13,7 @@ const Baseline = (props) => {
     const alertContext = useContext(AlertContext);
     const classes = useStyles();
 
-    const { setBaseline, stepcount, setStepCount, error, uploadClearError, baseline, getBaseline } = uploadContext;
+    const { setBaseline, stepcount, setStepCount, error, uploadClearError, baseline, getBaseline, success } = uploadContext;
     const { loadUser, updateNavItem } = authContext;
     const { setAlert } = alertContext;
 
@@ -23,7 +23,12 @@ const Baseline = (props) => {
         setStepCount(0)
 
         if(error !== null){
-            setAlert(error)
+            setAlert(error, 'error')
+            uploadClearError()
+        }
+
+        if(success !== null){
+            setAlert(success, 'success');
             uploadClearError()
         }
 
@@ -49,6 +54,7 @@ const Baseline = (props) => {
 
     const handleSubmit = (event) => {
         getBaseline();
+        setAlert('Baseline is not imported! Using previously stored Baseline', 'info')
         props.history.push('/schedule');
     }
 
@@ -56,7 +62,7 @@ const Baseline = (props) => {
         const splitFilename = name.split('.')
 
         if(splitFilename[splitFilename.length - 1] !== 'xlsx' && splitFilename[splitFilename.length -1] !== 'xlsm'){
-            setAlert('Please upload a .xlsx or .xlsm excel file')
+            setAlert('Please upload a .xlsx or .xlsm excel file', 'error')
         } else {
             setBaseline(file);
         }

@@ -19,7 +19,7 @@ const Admin = () => {
         updateNavItem(1);
 
         if(error !== null){
-            setAlert(error)
+            setAlert(error, 'error')
             adminClearError();
         }
 

@@ -19,7 +19,7 @@ const Login = (props) => {
         }
 
         if(error !== null){
-            setAlert(error);
+            setAlert(error, 'error');
             clearErrors();
         }
 
@@ -44,7 +44,7 @@ const Login = (props) => {
     const handleSubmit = (event) => {
         event.preventDefault();
         if(username === '' || password === ''){
-            setAlert('Please fill in all fields');
+            setAlert('Please fill in all fields', 'error');
         } else {
             login({
                 username: username,

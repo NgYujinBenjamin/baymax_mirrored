@@ -1,5 +1,5 @@
 import React, { Fragment, memo } from 'react'
-import { Input, TableCell, TableRow, Checkbox, TextField } from '@material-ui/core'
+import { TableCell, TableRow, Checkbox, TextField } from '@material-ui/core'
 
 const PreresultItem = memo (({ obj, onChange }) => {
     let argoID = obj['Argo ID'];
