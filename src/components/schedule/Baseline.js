@@ -29,6 +29,7 @@ const Baseline = (props) => {
 
         if(success !== null){
             setAlert(success, 'success');
+            uploadClearError()
         }
 
         if(baseline !== null){

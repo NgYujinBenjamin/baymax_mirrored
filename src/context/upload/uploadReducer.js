@@ -3,6 +3,11 @@ import { SET_BASELINE, GET_BASELINE, UPDATE_BASELINE, SET_SCHEDULE, SET_BAYS, CL
 export default (state, action) => {
     switch(action.type) {
         case EXPORT_RESULT:
+            return {
+                ...state,
+                loading: false,
+                success: action.payload
+            }
         case EXPORT_SCHEDULE:
             return {
                 ...state,
@@ -42,7 +47,8 @@ export default (state, action) => {
         case UPDATE_SAVE:
             return {
                 ...state,
-                saveHistory: action.payload
+                saveHistory: action.payload.res,
+                success: action.payload.msg
             }
         case RESCHEDULE_POST_RESULT:
             return {

@@ -18,7 +18,7 @@ const Schedule = (props) => {
 
     const { setAlert } = alertContext;
     const { loadUser, updateNavItem } = authContext
-    const { setSchedule, setBays, clearPreresult, schedule, loading, scheduleDone, postResult, error, uploadClearError, stepcount, setStepCount, baseline, setMinGap, setMaxGap } = uploadContext;
+    const { setSchedule, setBays, clearPreresult, schedule, loading, scheduleDone, postResult, error, uploadClearError, stepcount, setStepCount, baseline, setMinGap, setMaxGap, success } = uploadContext;
 
     useEffect(() => {
         loadUser();
@@ -39,12 +39,18 @@ const Schedule = (props) => {
             })
         }
 
+        if(success !== null){
+            window.scrollTo(0,0);
+            setAlert(success, 'success');
+            uploadClearError();
+        }
+
         if(baseline === null){
             props.history.push('/baseline');
         }
 
         //eslint-disable-next-line
-    }, [error, baseline, props.history])
+    }, [error, baseline, props.history, success])
 
     const [userInput, setUserInput] = useState({
         bayComponent: '',
@@ -98,9 +104,9 @@ const Schedule = (props) => {
 
             setSchedule(bayFile, parseInt(minGapTime), baseline, parseInt(bayComponent));
             setUserInput({
-                ...userInput,
                 bayComponent: '',
                 bayFile: null,
+                fileName: '',
                 bayFileValue: '',
                 minGapTime: '',
                 maxGapTime: ''

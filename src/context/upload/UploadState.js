@@ -40,6 +40,11 @@ const UploadState = (props) => {
     const createExportSchedule = file => {
         setLoading();
 
+        dispatch({
+          type: EXPORT_RESULT,
+          payload: 'Export Successfully!'
+        })
+
         let headerDates = new Set();
         let quarterIdArr = {};
         let baselineIdArr = {};
@@ -375,10 +380,6 @@ const UploadState = (props) => {
         XLSX.utils.book_append_sheet(wb, ws, 'Shipment Plan');
 
         XLSX.writeFile(wb, `Bay_Requirement_${new Date().toLocaleDateString('en-GB')}.xlsx`);
-
-        dispatch({
-          type: EXPORT_SCHEDULE
-        });
     }
     
     // @loc     PostResult.js
@@ -386,6 +387,9 @@ const UploadState = (props) => {
     // @param   (object)
     const createExport = file => {
         setLoading();
+
+        dispatch({ type: EXPORT_SCHEDULE })
+
         const output = []
 
         //get the actual data from baseLineOccupancy
@@ -493,10 +497,6 @@ const UploadState = (props) => {
         //write workbook to file
         //1st arg: workbook, 2nd arg: name of file
         XLSX.writeFile(massWB, 'Mass_Slot_Upload.xlsx');
-
-        dispatch({
-            type: EXPORT_RESULT
-        })
     }
 
     // @loc     UploadState.js -> createExport, createExportSchedule
@@ -1031,7 +1031,7 @@ const UploadState = (props) => {
     const setStepCount = (num) => dispatch({ type: SET_STEPS, payload: num })
 
     //update save
-    const updateSave = (res) => dispatch({ type: UPDATE_SAVE, payload: res })
+    const updateSave = (res) => dispatch({ type: UPDATE_SAVE, payload: { res: res, msg: 'Save Successfully!' } })
 
     // @loc     Schedule.js
     // @desc    set number of bays
