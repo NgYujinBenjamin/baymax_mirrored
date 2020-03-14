@@ -17,14 +17,14 @@ const Postresult = () => {
     const [value, setValue] = useState(0); // this is for tab panel to display quarters
 
     const { loadUser, updateNavItem } = authContext
-    const { histID, bays, minGap, maxGap, setBays, setMinGap, setMaxGap, currentQuarter, postResult, postResultDone, postResultErrors, tabChecker, updateReschedule, createExport, createExportSchedule, updateSave, clearAll, updatePostResultEmpties } = uploadContext;
+    const { histID, setNewMinGap, newMinGap, bays, minGap, maxGap, setBays, setMinGap, setMaxGap, currentQuarter, postResult, postResultDone, postResultErrors, tabChecker, updateReschedule, createExport, createExportSchedule, updateSave, clearAll, updatePostResultEmpties } = uploadContext;
 
     useEffect(() => {
         updateNavItem(0);
         if(postResult !== null){
+            setNewMinGap(minGap);
             updatePostResultEmpties(postResult, minGap);
         }
-        //console.log(postResult)
         //eslint-disable-next-line
     }, [postResult])
 
@@ -77,7 +77,7 @@ const Postresult = () => {
         if(name == 'bayNum'){
             setBays(value);
         } else if (name == 'minGap'){
-            setMinGap(value);
+            setNewMinGap(value);
         } else{
             setMaxGap(value);
         }
@@ -93,7 +93,7 @@ const Postresult = () => {
                     </Grid>
                     <Grid item xs>
                         <InputLabel htmlFor='minGap'>Minimum Gap Time</InputLabel>
-                        <Input fullWidth type='text' id='minGap' name='minGap' value={minGap} onChange={handleChange} required />
+                        <Input fullWidth type='text' id='minGap' name='minGap' value={newMinGap} onChange={handleChange} required />
                     </Grid>
                     <Grid item xs>
                         <InputLabel htmlFor='maxGap'>Maximum Gap Time</InputLabel>

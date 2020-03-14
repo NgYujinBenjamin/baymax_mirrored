@@ -13,7 +13,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
     const authContext = useContext(AuthContext);
     
     const { setAlert } = alertContext;
-    const { histID, bays, minGap, maxGap, validateDate, validateNum, currentQuarter, updateCurrentQuarter, reschedule, tabUpdate, tabChecker, reschedulePostResult, saveResult, updateReschedule, updatePostResult, postResultDone, postResult, saveHistory, updateSave, endDateCheck, postResultErrors, handlePostResultError } = uploadContext;
+    const { histID, newMinGap, bays, minGap, maxGap, validateDate, validateNum, currentQuarter, updateCurrentQuarter, reschedule, tabUpdate, tabChecker, reschedulePostResult, saveResult, updateReschedule, updatePostResult, postResultDone, postResult, saveHistory, updateSave, endDateCheck, postResultErrors, handlePostResultError } = uploadContext;
     const { user } = authContext;
 
     useEffect(() => {
@@ -52,7 +52,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
     
                 // rescheduling
                 if(reschedule){
-                    reschedulePostResult(postResultDone, bays, minGap, maxGap);
+                    reschedulePostResult(postResultDone, bays, newMinGap, maxGap);
                     updateReschedule(false);
                 }
             }

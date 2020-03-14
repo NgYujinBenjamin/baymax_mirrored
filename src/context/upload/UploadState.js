@@ -3,7 +3,7 @@ import UploadContext from './uploadContext';
 import UploadReducer from './uploadReducer';
 import XLSX from 'xlsx';
 import axios from 'axios';
-import { SET_BASELINE, UPDATE_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS, UPDATE_POST_RESULT, UPDATE_QUARTER, UPDATE_DATA, UPDATE_SAVE, UPDATE_POST_RESULT_FORMAT, UPDATE_RESCHEDULE, RESCHEDULE_POST_RESULT, UPDATE_TABCHECKER,CREATE_RESULT_ERROR, SET_MIN_GAP, SET_MAX_GAP, GET_HISTORY, LOAD_ALL_HISTORY } from '../types';
+import { SET_BASELINE, UPDATE_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS, UPDATE_POST_RESULT, UPDATE_QUARTER, UPDATE_DATA, UPDATE_SAVE, UPDATE_POST_RESULT_FORMAT, UPDATE_RESCHEDULE, RESCHEDULE_POST_RESULT, UPDATE_TABCHECKER,CREATE_RESULT_ERROR, SET_MIN_GAP, SET_MAX_GAP, GET_HISTORY, LOAD_ALL_HISTORY, UPDATE_NEW_MIN_GAP } from '../types';
 
 const UploadState = (props) => {
     const initialState = {
@@ -13,6 +13,7 @@ const UploadState = (props) => {
         bays: '',
         minGap: '',
         maxGap: '',
+        newMinGap: '',
         loading: false,
         postResult: null,
         scheduleDone: false,
@@ -553,17 +554,23 @@ const UploadState = (props) => {
     // ##################################################################################################
 
     // send to backend for rescheduling (Have not implemented this!)
-    const reschedulePostResult = async (postResultDone, bays, mingap, maxgap) => {
-      Object.keys(postResultDone.bayOccupancy).map(qtr => {
-        for(let i = 1; i < postResultDone.bayOccupancy[qtr].length; i++){
-          postResultDone.bayOccupancy[qtr][i][0].cycleTimeDays = parseInt(postResultDone.bayOccupancy[qtr][i][0].cycleTimeDays);
-        }
+    const reschedulePostResult = async (postResultDone, bays, newMinGap, maxgap) => {
+      Object.keys(postResultDone).map(type => {
+        Object.keys(postResultDone[type]).map(qtr => {
+          for(let i = 1; i < postResultDone[type][qtr].length; i++){
+            endDateCheck(postResultDone[type][qtr][i][0], 'endDate', newMinGap); // set the new endDate based on the newMinGap
+            postResultDone[type][qtr][i][0].cycleTimeDays = parseInt(postResultDone[type][qtr][i][0].cycleTimeDays);
+          }
+        })
       })
 
       postResultDone.numBays = parseInt(bays);
-      postResultDone.minGap = parseInt(mingap);
+      postResultDone.minGap = parseInt(newMinGap);
       postResultDone.maxGap = parseInt(maxgap);
-      
+
+      //update minGap to the newMinGap
+      setMinGap(newMinGap);
+
       const config = {
         headers: {
           'Content-Type': 'application/json'
@@ -748,6 +755,7 @@ const UploadState = (props) => {
       // no need to dispatch since it's for instant check
     }
     
+    const setNewMinGap = (res) => dispatch({ type: UPDATE_NEW_MIN_GAP, payload: res })
     const updateReschedule = (res) => dispatch({ type: UPDATE_RESCHEDULE, payload: res })
     const tabChecker = (res) => dispatch({ type: UPDATE_TABCHECKER, payload: res })
 
@@ -1125,6 +1133,7 @@ const UploadState = (props) => {
             minGap: state.minGap,
             maxGap: state.maxGap,
             bays: state.bays,
+            newMinGap: state.newMinGap,
             loading: state.loading,
             scheduleDone: state.scheduleDone,
             postResult: state.postResult,
@@ -1172,7 +1181,8 @@ const UploadState = (props) => {
             setMaxGap,
             getHistory,
             loadHistories,
-            checkNewBaselineAndBays
+            checkNewBaselineAndBays,
+            setNewMinGap
         }}>
         {props.children}
     </UploadContext.Provider>
