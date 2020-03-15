@@ -48,6 +48,12 @@ public class Controller {
         return new TokenSuccess(token);
     }
 
+    //Remove user, Need authentication of admin token for security
+    @RequestMapping(path = "/delete", method = RequestMethod.DELETE)
+    public void deleteUser(@PathVariable("username") String username) throws Exception {
+      return userscon.deleteUser(username);
+    }
+
     // original by Ben
     @RequestMapping(path = "/getusers", method = RequestMethod.GET, produces = "application/json")
     public ArrayList<User> getUsers() throws SQLException, ClassNotFoundException {
@@ -64,7 +70,7 @@ public class Controller {
         return new JsonSuccess("Password has been updated successfully.");
     }
 
-    // done
+    // Need authentication of admin token for security
     @RequestMapping(path = "/resetpassword", method = RequestMethod.GET)
     public JsonObject resetPass(@RequestParam(value = "username") String username) throws SQLException, ClassNotFoundException {
         if (username.isEmpty()) {
