@@ -1,6 +1,6 @@
 package main.java.history;
 
-import connection.historycon;
+import main.java.connection.historycon;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

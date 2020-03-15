@@ -1,7 +1,7 @@
 package authentication;
 
 import com.auth0.jwt.JWT;
-import connection.userscon;
+import main.java.connection.userscon;
 import main.java.authentication.json.users.*;
 
 import java.math.BigInteger;

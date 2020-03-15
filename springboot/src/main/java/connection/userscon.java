@@ -1,10 +1,11 @@
-package connection;
+package main.java.connection;
 
 import main.java.authentication.json.users.RegistrationDetails;
 import main.java.authentication.json.users.User;
 import main.java.authentication.json.users.UserCredentials;
 import main.java.authentication.json.JsonObject;
 import main.java.authentication.json.HistoryDetails;
+// import main.java.authentication.Token;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -67,9 +68,10 @@ public class userscon extends mysqlcon {
         stmt.executeUpdate(my_string);
         con.close();
     }
-
+    
+    /*
     public void deleteUser(String username) throws SQLException, ClassNotFoundException {
-        if(getUser(username)) {}
+        if(getUser(username)) {
           Connection con = super.getConnection();
           Statement stmt = con.createStatement();
           //Verify Admin token for extra security if needed
@@ -80,6 +82,7 @@ public class userscon extends mysqlcon {
           throw new Exception("User not found!");
         }
     }
+    */
 
     public boolean verifyPassword(String username, String password) throws SQLException, ClassNotFoundException {
         Connection con = super.getConnection();
@@ -110,7 +113,8 @@ public class userscon extends mysqlcon {
     public void resetPassword(String username) throws SQLException, ClassNotFoundException {
         Connection con = super.getConnection();
         Statement stmt = con.createStatement();
-        String my_string = "update users set password = 'password' where username = '" + username + "';";
+        // String pw = TOKEN.generateMD5Hash("password");
+        String my_string = "update users set password = '5f4dcc3b5aa765d61d8327deb882cf99' where username = '" + username + "';";
         stmt.executeUpdate(my_string);
         con.close();
     }

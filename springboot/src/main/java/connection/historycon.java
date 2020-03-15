@@ -1,4 +1,4 @@
-package connection;
+package main.java.connection;
 
 import main.java.authentication.json.HistoryDetails;
 import main.java.authentication.json.JsonObject;
