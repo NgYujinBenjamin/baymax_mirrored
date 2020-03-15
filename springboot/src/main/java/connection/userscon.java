@@ -68,6 +68,19 @@ public class userscon extends mysqlcon {
         con.close();
     }
 
+    public void deleteUser(String username) throws SQLException, ClassNotFoundException {
+        if(getUser(username)) {}
+          Connection con = super.getConnection();
+          Statement stmt = con.createStatement();
+          //Verify Admin token for extra security if needed
+          String my_string = "DELETE FROM users WHERE username = '" + username + "'";
+          stmt.executeUpdate(my_string);
+          con.close();
+        } else {
+          throw new Exception("User not found!");
+        }
+    }
+
     public boolean verifyPassword(String username, String password) throws SQLException, ClassNotFoundException {
         Connection con = super.getConnection();
 
@@ -92,9 +105,6 @@ public class userscon extends mysqlcon {
         } else {
             throw new Exception("Invalid old password");
         }
-
-
-
     }
 
     public void resetPassword(String username) throws SQLException, ClassNotFoundException {
