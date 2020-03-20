@@ -33,6 +33,7 @@ const PreresultItem = memo (({ obj, onChange }) => {
                         helperText={!regxDate.test(mrpDate) && 'Invalid Date (dd/mm/yyyy)'} 
                         label={!regxDate.test(mrpDate) && 'Error'} 
                         type='text' 
+                        id={argoID + "_mrpDate"}
                         name={mrpName} 
                         value={mrpDate} 
                         onChange={onChange} 
@@ -48,6 +49,7 @@ const PreresultItem = memo (({ obj, onChange }) => {
                         helperText={!regxNum.test(cycleTime) && 'Invalid Number'}
                         label={!regxNum.test(cycleTime) && 'Error'}
                         type='text' 
+                        id={argoID + "_cycleTime"}
                         name={cycleName} 
                         value={cycleTime} 
                         onChange={onChange} 
@@ -55,7 +57,7 @@ const PreresultItem = memo (({ obj, onChange }) => {
                     />
                 </TableCell>
                 <TableCell align='center'>
-                    <Checkbox name={lockMRPDate} onChange={onChange} checked={lockChecked} />
+                    <Checkbox name={lockMRPDate} id={argoID + "_lockMRPDate"} onChange={onChange} checked={lockChecked} />
                 </TableCell>
             </TableRow>
         </Fragment>

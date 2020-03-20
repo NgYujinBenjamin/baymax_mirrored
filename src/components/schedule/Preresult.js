@@ -135,6 +135,7 @@ const Preresult = () => {
             </TableContainer>
             <Button 
                 className={classes.marginTop} 
+                id='beginSchedule'
                 fullWidth color='primary' 
                 variant='contained' 
                 onClick={handleSchedule}

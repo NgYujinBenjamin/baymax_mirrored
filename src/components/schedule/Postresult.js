@@ -127,16 +127,16 @@ const Postresult = () => {
             <Box className={classes.marginTop}>
                 <Grid container spacing={1}>
                     <Grid item xs>
-                        <Button fullWidth variant='contained' onClick={handleClearAll} startIcon={<DeleteIcon />} color='secondary'>Clear All</Button>
+                        <Button fullWidth variant='contained' id='clearAll' onClick={handleClearAll} startIcon={<DeleteIcon />} color='secondary'>Clear All</Button>
                     </Grid>
                     <Grid item xs>
-                        <Button fullWidth variant='contained' onClick={handleSave} startIcon={<SaveIcon />}> {histID == null ? 'Save Result' : 'Update History Result'} </Button>
+                        <Button fullWidth variant='contained' id='save' onClick={handleSave} startIcon={<SaveIcon />}> {histID == null ? 'Save Result' : 'Update History Result'} </Button>
                     </Grid>
                     <Grid item xs>
-                        <Button fullWidth variant='contained' onClick={handleExport} startIcon={<GetAppIcon />}>Export to Excel File</Button>
+                        <Button fullWidth variant='contained' id='export' onClick={handleExport} startIcon={<GetAppIcon />}>Export to Excel File</Button>
                     </Grid>
                     <Grid item xs>
-                        <Button fullWidth variant='contained' onClick={handleReschedule} startIcon={<TrendingUpIcon />} color='primary'>Generate Schedule Again</Button>
+                        <Button fullWidth variant='contained' id='scheduleAgain' onClick={handleReschedule} startIcon={<TrendingUpIcon />} color='primary'>Generate Schedule Again</Button>
                     </Grid>
                 </Grid>
             </Box>

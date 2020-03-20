@@ -78,6 +78,7 @@ const Baseline = (props) => {
                         <Box component='span' className={classes.box}>
                             <Button 
                                 className={classes.button} 
+                                id="newBaseline"
                                 variant='contained' 
                                 color='default' 
                                 onClick={handleExpandBtn}
@@ -87,6 +88,7 @@ const Baseline = (props) => {
                             </Button>
                             <Button 
                                 className={classes.button} 
+                                id="noBaseline"
                                 variant='contained' 
                                 color='default'
                                 onClick={handleSubmit}

@@ -80,7 +80,7 @@ const Profile = () => {
                     </Typography>
 
                     <Typography gutterBottom>
-                        <Button variant="outlined" color="primary" onClick={handleClickOpen} style={{ width: '25%' }}>
+                        <Button variant="outlined" id='updatePassword' color="primary" onClick={handleClickOpen} style={{ width: '25%' }}>
                             Update Password
                         </Button>
                     </Typography>
@@ -88,13 +88,13 @@ const Profile = () => {
                     {/* Check if user is admin; if so, show the button */}
                     {user !== null && user.role === "admin" && <Typography gutterBottom> 
                         <Link to='/admin' style={{ color: 'white', textDecoration:'none' }}>
-                            <Button variant="contained" color="primary" style={{ width: '25%' }}> View / Add Users </Button>
+                            <Button variant="contained" id='viewUsers' color="primary" style={{ width: '25%' }}> View / Add Users </Button>
                         </Link>
                     </Typography>}
                     
                     <Typography gutterBottom>
                         <Link to='/history' style={{ color: 'white', textDecoration:'none' }}>
-                            <Button variant="contained" color="primary" style={{ width: '25%' }}> View History </Button>
+                            <Button variant="contained" id='viewHistory' color="primary" style={{ width: '25%' }}> View History </Button>
                         </Link>
                     </Typography>
                     
@@ -155,10 +155,10 @@ const Profile = () => {
                                 { 'newpwd' in errorField && <FormHelperText className={classes.errorText}>{errorField.newpwd}</FormHelperText>}
 
                                 <DialogActions>
-                                    <Button type='submit' color="primary">
+                                    <Button type='submit' id="submitPassword" color="primary">
                                         Submit
                                     </Button>
-                                    <Button onClick={handleClose} color="primary">
+                                    <Button onClick={handleClose} id="closeDialogue" color="primary">
                                         Cancel
                                     </Button>
                                 </DialogActions>
