@@ -30,7 +30,7 @@ const UserItem = ({ user }) => {
             <Card style={{ marginBottom: '12px' }}>
                 <CardContent>
                     <Typography variant='h5' component='h3' gutterBottom>
-                        {firstname}{' '}{lastname}
+                        {firstname.charAt(0).toUpperCase() + firstname.slice(1)}{' '}{lastname.charAt(0).toUpperCase() + lastname.slice(1)}
                         <Box component='span' style={{float: 'right'}}>
                             <Button 
                                 variant='contained' 

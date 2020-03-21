@@ -20,9 +20,10 @@ const AdminState = (props) => {
     const getUsers = async () => {
         try {
             const res = await axios.get('http://localhost:8080/getusers');
+            const data = res.data.filter(user => user.role !== 'admin')
             dispatch({
                 type: GET_USERS,
-                payload: res.data
+                payload: data
             }) 
         } catch (err) {
             dispatch({
