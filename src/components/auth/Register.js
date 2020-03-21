@@ -48,7 +48,9 @@ const Register = (props) => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        if(password !== password2){
+        if(password.length < 6 || password2.length < 6){
+            setAlert('Minimum password length is 6', 'error');
+        } else if(password !== password2){
             setAlert('Passwords do not match', 'error');
         } else {
             register({
