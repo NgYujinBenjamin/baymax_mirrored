@@ -73,15 +73,9 @@ public class Controller {
         return new JsonSuccess("Password has been updated successfully.");
     }
 
-    // Need authentication of admin token for security
-    @RequestMapping(path = "/resetpassword", method = RequestMethod.GET)
-    // public JsonObject resetPass(@RequestParam(value = "username")
-    public JsonObject resetPass(@RequestBody ResetPassword details) throws SQLException, ClassNotFoundException {
-        if (details.getUsername().isEmpty()) {
-            throw new NullPointerException("Username cannot be empty.");
-        }
-        userscon.resetPassword(details.getUsername());
-        return new JsonSuccess("Password has been reset successfully");
+    @RequestMapping(path = "/resetpassword/{staffId}", method = RequestMethod.GET, produces = "application/json")
+    public void resetPassword(@PathVariable("staffId") String staffId) throws SQLException, ClassNotFoundException {
+        userscon.resetPasswordWithStaffid(staffId);
     }
 
     // done

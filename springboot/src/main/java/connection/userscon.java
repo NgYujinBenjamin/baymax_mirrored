@@ -14,7 +14,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-public class userscon extends mysqlcon {
+public class userscon extends main.java.connection.mysqlcon {
 
     public RegistrationDetails getUser(String username) throws SQLException, ClassNotFoundException {
         Connection con = super.getConnection();
@@ -116,6 +116,18 @@ public class userscon extends mysqlcon {
         // String pw = TOKEN.generateMD5Hash("password");
         String my_string = "update users set password = '5f4dcc3b5aa765d61d8327deb882cf99' where username = '" + username + "';";
         stmt.executeUpdate(my_string);
+        con.close();
+    }
+
+    public void resetPasswordWithStaffid(String staffid) throws SQLException, ClassNotFoundException {
+        Connection con = super.getConnection();
+        String pw = "5f4dcc3b5aa765d61d8327deb882cf99";
+        String query = "UPDATE users SET password = ? where staff_id = ?";
+        PreparedStatement pstmt = con.prepareStatement(query);
+        pstmt.setString(1, pw);
+        pstmt.setString(2, staffid);
+
+        pstmt.executeUpdate();
         con.close();
     }
 
