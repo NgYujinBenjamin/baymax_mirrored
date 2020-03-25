@@ -77,7 +77,7 @@ const AdminState = (props) => {
         } catch (err) {
             dispatch({
                 type: USER_ERROR,
-                payload: 'Backend Error. Please restart the server'
+                payload: err.response.data.message
             })
         }
     }
@@ -107,7 +107,7 @@ const AdminState = (props) => {
         } catch (err) {
             dispatch({
                 type: USER_ERROR,
-                payload: 'Backend Error. Please restart the server'
+                payload: err.response.data.message
             })
         }
     }
