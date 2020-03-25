@@ -11,7 +11,7 @@ const Admin = () => {
     const alertContext = useContext(AlertContext);
 
     const { setAlert } = alertContext;
-    const { error, adminClearError } = adminContext;
+    const { error, success, adminClearError } = adminContext;
     const { loadUser, updateNavItem } = authContext;
 
     useEffect(() => {
@@ -23,8 +23,13 @@ const Admin = () => {
             adminClearError();
         }
 
+        if(success !== null){
+            setAlert(success, 'success')
+            adminClearError();
+        }
+
         //eslint-disable-next-line
-    }, [error])
+    }, [error, success])
 
     return (
         <Fragment>
