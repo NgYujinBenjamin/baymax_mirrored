@@ -22,6 +22,16 @@ public class BaySchedule{
 
     private  HashMap<Date, Integer> weeklyNewBuild;
 
+    /**
+     * Constructor for the BaySchedule Class.
+     * Assigns base line builds to a bay before allocating future builds to vacant bays.
+     * @param baseLineProduct Base line builds that are currently building
+     * @param allProduct All future builds that have yet to be allocatd to a bay
+     * @param quarterHC Headcount available each quarter. Represents the number of human resources available to start a new build in each week of the quarter.
+     * @param maxBays Maximum number of bays that can be utilised in the allocation.
+     * @param gapDiff Represents the number of days that the tool start dates can potentially be pulled forward.
+     * @throws RuntimeException
+     */
     public BaySchedule(ArrayList<Product> baseLineProduct, ArrayList<Product> allProduct, HashMap<String, Integer> quarterHC, Integer maxBays, Integer gapDiff) throws RuntimeException{
         this.allProduct = allProduct;
         this.baseLineProduct = baseLineProduct;
@@ -46,32 +56,20 @@ public class BaySchedule{
             throw new RuntimeException("Number of Baseline Products exceed Number of Bays allocated");
         }
 
-        generateSchedule(gapDiff);
-    }
-
-    /**
-     * Attempt to fulfill as much of the manufacturing backlog as possible, without exceeding the maximum number of Bays available
-     */
-    private void generateSchedule(Integer gapDiff){
-        weeklyNewBuild = new HashMap<Date,Integer>();
-        
         for (Product p: allProduct){
             bayAssignment(p, gapDiff);
         }
     }
 
     /**
-     * Get the production schedule after generating running generateSchedule()
-     * @return
+     * Returns the recommended production schedule generated
+     * @return ArrayList of Bay Objects. Each Bay object contains a list of Products, representing the order of build for that Bay
      */
     public ArrayList<Bay> getSchedule(){
         return schedule;
     }
 
-    /**
-     * Get the latest MRP completion date for the set of products
-     * @return Latest MRP Date
-     */
+    
     public ArrayList<Product> getAllProduct(){
         return allProduct;
     }
@@ -91,34 +89,36 @@ public class BaySchedule{
         return json;
     }
 
-    /**
-     * Helper method to determine which Bay object to assign the product to, based on the Product's Tool Start Date. Tool Start Date is compared against Bay Available Date (Bay Attribute) to determine if bay is suitable to take on the new product.
-     * @param toolStartDate Tool Start Date of the product to be assigned to the Bay.
-     * @return Integer representing the index position of the Bay to be Assigned in Production Schedule (SchedulerUtils attribute).
-     */
+	/**
+	 * Helper method to assign a Product to a particular Bay. 
+	 * The Bay that the product is assigned to is the earliest available Bay.
+	 * toolStart date of the Product will be updated accordingly: Pulled forward (if possible), or delayed (if there is a lack of available resources)
+	 * @param p Product to be assigned to a bay
+	 * @param gapDiff Represents the number of days that the tool start dates can potentially be pulled forward
+	 */
     private void bayAssignment (Product p, Integer gapDiff){
         Collections.sort(schedule);
         
-        Date toolStartDate = p.getLatestToolStartDate(); // Represents the latest date at which the tool must start
+        Date latestToolStartDate = p.getLatestToolStartDate(); // Represents the latest date at which the tool must start
         Date MRPDate = p.getMRPDate();
         
         Bay b = schedule.get(0); // Earliest bay available
         Date bayAvailDate = b.getAvailableDate(); // Date of when the bay is available
         
-        Date newToolStartDate;
+        Date earliestToolStartDate;
         if (p.getLockMRPDate() != null && p.getLockMRPDate()){
             // Generate new tool start date based on the specified cycle time
-            newToolStartDate = DateUtils.addDays(MRPDate, -p.getCycleTimeDays());
+            earliestToolStartDate = DateUtils.addDays(MRPDate, -p.getCycleTimeDays());
         } else {
             // Pull forward the date as early as possible, or if necessary, delay the toolStart (e.g. if latestToolStart is before today, or before bayAvailDate)
-            newToolStartDate = adjustToolStart(toolStartDate, bayAvailDate, gapDiff);
+            earliestToolStartDate = adjustToolStart(latestToolStartDate, bayAvailDate, gapDiff);
         }
 
         Boolean scheduled = false;
 
         while (!scheduled) {
             // Get the week of the new tool start date
-            Date weekFriday = getFriday(newToolStartDate);
+            Date weekFriday = getFriday(earliestToolStartDate);
 
             // Get the number of new builds in that week
             Integer newBuildCount;
@@ -128,7 +128,7 @@ public class BaySchedule{
                 newBuildCount = 0;
             }
                             
-            p.setToolStartDate(newToolStartDate); // Set the date will update the buildQtr as well
+            p.setToolStartDate(earliestToolStartDate); // Set the date will update the buildQtr as well
             String buildQtr = p.getBuildQtr(); // Get the buildQtr
             Integer currQtrHC = Integer.MAX_VALUE; // Initialize to "unlimited" head count
             if (quarterHC.containsKey(buildQtr)){
@@ -142,43 +142,57 @@ public class BaySchedule{
                 scheduled = true;
             } else {
                 // Delay tool start day to the earliest day of the next working week i.e. next friday
-                newToolStartDate = DateUtils.addDays(weekFriday, 7);
+                earliestToolStartDate = DateUtils.addDays(weekFriday, 7);
             }
         }
     }
 
-    private Date adjustToolStart(Date toolStartDate, Date bayAvailDate, Integer gapDiff){
-        Date newToolStartDate;
-        Date today = new Date();
-        // Date today = new Date(119, 10, 1); // For testing purposes
+    /**
+     * Helper method to obtain the earliest tool start date for the given Product
+     * The earliest toolStartDate is the earliest date that is (1) after today's date and (2) after the date where the bay becomes available
+     * @param latestToolStartDate Latest date at which the Product needs to begin its build for it to meet MFG Commit Date
+     * @param bayAvailDate Earliest date at which the bay becomes available
+     * @param gapDiff Represents the number of days that the tool start dates can potentially be pulled forward
+     * @return Earliest tool start date for the Product
+     */
+    private Date adjustToolStart(Date latestToolStartDate, Date bayAvailDate, Integer gapDiff){
+        Date earliestToolStartDate;
+        // Date today = new Date();
+        Date today = new Date(120, 1, 25); // For testing purposes
         if (bayAvailDate.after(today)){
             // If bayAvailableDate is after current date, we can pull forward up to the maxGap or the date when the bay is available
-            Long diff = toolStartDate.getTime() - bayAvailDate.getTime();
+            Long diff = latestToolStartDate.getTime() - bayAvailDate.getTime();
             Integer diffDays = (int) (diff / (24 * 60 * 60 * 1000));
-                // diffDays +ve if toolStartDate is after bayAvailableDate
-                // diffDays -ve if toolStartDate is before bayAvailableDate
+                // diffDays +ve if latestToolStartDate is after bayAvailableDate
+                // diffDays -ve if latestToolStartDate is before bayAvailableDate
             
-            newToolStartDate = DateUtils.addDays(toolStartDate, -Math.min(diffDays, gapDiff));
+            earliestToolStartDate = DateUtils.addDays(latestToolStartDate, -Math.min(diffDays, gapDiff));
                 // if diffDays is -10 (i.e. toolStart is 10 days before bayAvailDate), then -Math.min(diffDays, gapDiff) will give +10
-                // newToolStartDate will be delayed 10 days
+                // earliestToolStartDate will be delayed 10 days
         }
         else {
             // If bayAvailableDate is before current date, we can pull forward up to the maxGap or current date
-            Long diff = toolStartDate.getTime() - today.getTime();
+            Long diff = latestToolStartDate.getTime() - today.getTime();
             Integer diffDays = (int) (diff / (24 * 60 * 60 * 1000));
-                // diffDays +ve if toolStartDate is after today's date date
-                // diffDays -ve if toolStartDate is before today's date
+                // diffDays +ve if latestToolStartDate is after today's date date
+                // diffDays -ve if latestToolStartDate is before today's date
             
-            newToolStartDate = DateUtils.addDays(toolStartDate, -Math.min(diffDays, gapDiff));
+            earliestToolStartDate = DateUtils.addDays(latestToolStartDate, -Math.min(diffDays, gapDiff));
                 // if diffDays is -10 (i.e. toolStart is 10 days before todayDate), then -Math.min(diffDays, gapDiff) will give +10
-                // newToolStartDate will be delayed 10 days
+                // earliestToolStartDate will be delayed 10 days
         }
-        return newToolStartDate;
+        return earliestToolStartDate;
     }
 
-    private Date getFriday (Date earliestStart){
-        Date friday = earliestStart;
-        int day = earliestStart.getDay();
+    /**
+     * Helper method to obtain the date of the earliest preceding Friday
+     * For instance, if 7 Jan X0 falls on a Sunday, this method will return 5 Jan X0
+     * @param earliestStart
+     * @return The date on which the earliest preceding Friday falls
+     */
+    private Date getFriday (Date earliestToolStartDate){
+        Date friday = earliestToolStartDate;
+        int day = earliestToolStartDate.getDay();
         switch(day){
             case 0: // Sunday
                 friday = DateUtils.addDays(friday, -2);
