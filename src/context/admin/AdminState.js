@@ -99,7 +99,6 @@ const AdminState = (props) => {
 
         try {
             const res = await axios.post('http://localhost:8080/adminconvert', data, config);
-            console.log(res.data)
 
             dispatch({
                 type: CONVERT_ADMIN,
