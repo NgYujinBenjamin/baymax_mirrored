@@ -7,7 +7,8 @@ import { GET_USERS, DELETE_USER, USER_ERROR, RESET_PASSWORD, ADMIN_CLEAR_ERROR, 
 const AdminState = (props) => {
     const initialState = {
         users: null,
-        error: null
+        error: null,
+        success: null
     }
 
     const [state, dispatch] = useReducer(AdminReducer, initialState);
@@ -53,35 +54,61 @@ const AdminState = (props) => {
 
     // @loc     UserItem.js
     // @desc    reset user password
-    // @param   (string)
-    const resetPassword = async (id) => {
+    // @param   (object)
+    const resetPassword = async (resetdata) => {
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'adminToken': 'baymaxFTW'
+            }
+        }
+
+        const data = {
+            'staff_id': resetdata.staff_id
+        }
+
         try {
-            await axios.get(`http://localhost:8080/resetpassword/${id}`)
+            const res = await axios.post('http://localhost:8080/resetpassword', data, config);
+
             dispatch({
-                type: RESET_PASSWORD
+                type: RESET_PASSWORD,
+                payload: `${resetdata.username} password successfully reset`
             })
         } catch (err) {
             dispatch({
                 type: USER_ERROR,
-                payload: err.response
+                payload: 'Backend Error. Please restart the server'
             })
         }
     }
 
     // @loc     UserItem.js
     // @desc    convert user to admin
-    // @param   (string)
-    const convertAdmin = async (id) => {
+    // @param   (object)
+    const convertAdmin = async (convertdata) => {
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'adminToken': 'baymaxFTW'
+            }
+        }
+
+        const data = {
+            'staff_id': convertdata.staff_id
+        }
+
         try {
-            const res = await axios.get(`http://localhost:8080/convertadmin/${id}`)
+            const res = await axios.post('http://localhost:8080/adminconvert', data, config);
+            console.log(res.data)
+
             dispatch({
                 type: CONVERT_ADMIN,
-                payload: res.data
+                payload: { data: res.data, msg: `${convertdata.username} account converted to Admin`}
             })
         } catch (err) {
             dispatch({
                 type: USER_ERROR,
-                payload: err.response
+                payload: 'Backend Error. Please restart the server'
             })
         }
     }
@@ -95,6 +122,7 @@ const AdminState = (props) => {
         value={{
             users: state.users,
             error: state.error,
+            success: state.success,
             getUsers,
             deleteUser,
             resetPassword,

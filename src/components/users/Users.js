@@ -17,7 +17,7 @@ const Users = () => {
         loadUser();
         getUsers();
         //eslint-disable-next-line
-    }, [])
+    }, [users])
 
     if(users !== null && users.length === 0 && !loading){
         return (

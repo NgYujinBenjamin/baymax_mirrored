@@ -18,11 +18,17 @@ const UserItem = ({ user }) => {
     }
 
     const handleReset = () => {
-        resetPassword(staff_id);
+        resetPassword({
+            staff_id,
+            username
+        });
     }
 
     const handleAdmin = () => {
-        convertAdmin(staff_id);
+        convertAdmin({
+            staff_id,
+            username
+        });
     }
 
     return (
