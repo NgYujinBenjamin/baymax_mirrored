@@ -20,7 +20,7 @@ public class BaySchedule{
 
     private ArrayList<Bay> schedule;
 
-    private  HashMap<Date, Integer> weeklyNewBuild;
+    private HashMap<Date, Integer> weeklyNewBuild = new HashMap<Date, Integer>();
 
     /**
      * Constructor for the BaySchedule Class.
@@ -58,6 +58,11 @@ public class BaySchedule{
 
         for (Product p: allProduct){
             bayAssignment(p, gapDiff);
+
+            System.out.print("ArgoID: " + p.getArgoID() + "|");
+            System.out.print("Tool Start Date: " + p.getToolStartDate() + "|");
+            System.out.print("Leave Bay Date: " + p.getMRPDate() + "|");
+            System.out.println("Fab Name: " + p.getCycleTimeDays() + "|");
         }
     }
 
@@ -122,6 +127,7 @@ public class BaySchedule{
 
             // Get the number of new builds in that week
             Integer newBuildCount;
+
             if (weeklyNewBuild.containsKey(weekFriday)){
                 newBuildCount = weeklyNewBuild.get(weekFriday);
             } else {

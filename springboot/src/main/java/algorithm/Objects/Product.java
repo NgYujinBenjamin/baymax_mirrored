@@ -229,7 +229,7 @@ public class Product implements Comparable<Product>{
         
 
         latestToolStartDate = DateUtils.addDays(endDate, -cycleTimeDays);
-        toolStartDate = latestToolStartDate;
+        toolStartDate = DateUtils.addDays(MRPDate, -cycleTimeDays); // Useful for baseline products
         
         if (sendToStorageDate != null){
             leaveBayDate = sendToStorageDate;
