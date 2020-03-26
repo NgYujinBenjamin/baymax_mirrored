@@ -68,21 +68,6 @@ public class userscon extends main.java.connection.mysqlcon {
         stmt.executeUpdate(my_string);
         con.close();
     }
-    
-    /*
-    public void deleteUser(String username) throws SQLException, ClassNotFoundException {
-        if(getUser(username)) {
-          Connection con = super.getConnection();
-          Statement stmt = con.createStatement();
-          //Verify Admin token for extra security if needed
-          String my_string = "DELETE FROM users WHERE username = '" + username + "'";
-          stmt.executeUpdate(my_string);
-          con.close();
-        } else {
-          throw new Exception("User not found!");
-        }
-    }
-    */
 
     public boolean verifyPassword(String username, String password) throws SQLException, ClassNotFoundException {
         Connection con = super.getConnection();
@@ -125,6 +110,18 @@ public class userscon extends main.java.connection.mysqlcon {
         PreparedStatement pstmt = con.prepareStatement(query);
         pstmt.setString(1, defaultPass);
         pstmt.setString(2, staffid);
+
+        int count = pstmt.executeUpdate();
+        con.close();
+
+        return count > 0;
+    }
+
+    public boolean deleteUser(String staffid) throws SQLException, ClassNotFoundException {
+        Connection con = super.getConnection();
+        String query = "DELETE FROM users where staff_id = ?";
+        PreparedStatement pstmt = con.prepareStatement(query);
+        pstmt.setString(1, staffid);
 
         int count = pstmt.executeUpdate();
         con.close();

@@ -49,15 +49,6 @@ public class Controller {
         String token = TOKEN.createToken(userDetails.getUsername());
         return new TokenSuccess(token);
     }
-    
-    /*
-    //Issues with return type
-    //Remove user, Need authentication of admin token for security
-    @RequestMapping(path = "/delete", method = RequestMethod.DELETE)
-    public void deleteUser(@PathVariable("username") String username) throws Exception {
-      return userscon.deleteUser(username);
-    }
-    */
 
     // original by Ben
     @RequestMapping(path = "/getusers", method = RequestMethod.GET, produces = "application/json")
@@ -73,6 +64,15 @@ public class Controller {
         }
         userscon.changePassword(details.getUsername(), TOKEN.generateMD5Hash(details.getOldPassword()), TOKEN.generateMD5Hash(details.getNewPassword()));
         return new JsonSuccess("Password has been updated successfully.");
+    }
+
+    @RequestMapping(path = "/deleteuser", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+    public String deleteUser(@RequestBody UserCredentials details, @RequestHeader(ADMINTOKENPREFIX) String token) throws SQLException, ClassNotFoundException, InvalidTokenException {
+        if (ADMINTOKEN.equals(token)) {
+            String message = userscon.deleteUser(details.staff_id) ? "Success" : "Fail";
+            return message;
+        }
+        throw new InvalidTokenException("Invalid Admin Token");
     }
 
     @RequestMapping(path = "/resetpassword", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
