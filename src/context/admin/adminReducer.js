@@ -11,7 +11,8 @@ export default (state, action) => {
         case DELETE_USER:
             return {
                 ...state,
-                users: state.users.filter(user => user.staff_id !== action.payload),
+                users: state.users.filter(user => user.staff_id !== action.payload.id),
+                success: action.payload.msg,
                 loading: false
             }
         case CONVERT_ADMIN:

@@ -37,17 +37,30 @@ const AdminState = (props) => {
     // @loc     UserItem.js
     // @desc    delete the user
     // @param   (string)
-    const deleteUser = async (id) => {
+    const deleteUser = async (deletedata) => {
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'adminToken': 'baymaxFTW'
+            }
+        }
+
+        const data = {
+            'staff_id': deletedata.staff_id
+        }
+
         try {
-            await axios.delete(`http://localhost:8080/deleteuser/${id}`)
+            // await axios.delete(`http://localhost:8080/deleteuser/${id}`)
+            await axios.post('http://localhost:8080/deleteuser', data, config);
+
             dispatch({
                 type: DELETE_USER,
-                payload: id
+                payload: { id: deletedata.staff_id, msg: `${deletedata.username} account deleted` }
             })
         } catch (err) {
             dispatch({
                 type: USER_ERROR,
-                payload: err.response
+                payload: err.response.data.message
             })
         }
     }
@@ -68,7 +81,7 @@ const AdminState = (props) => {
         }
 
         try {
-            const res = await axios.post('http://localhost:8080/resetpassword', data, config);
+            await axios.post('http://localhost:8080/resetpassword', data, config);
 
             dispatch({
                 type: RESET_PASSWORD,

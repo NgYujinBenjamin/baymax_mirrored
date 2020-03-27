@@ -14,7 +14,10 @@ const UserItem = ({ user }) => {
     const { staff_id, username, firstname, lastname, department, role } = user
 
     const handleDelete = () => {
-        deleteUser(staff_id);
+        deleteUser({
+            staff_id,
+            username
+        });
     }
 
     const handleReset = () => {
