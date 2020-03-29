@@ -5,11 +5,13 @@ import main.java.authentication.json.JsonObject;
 import main.java.authentication.json.users.RegistrationDetails;
 import main.java.authentication.json.users.User;
 import main.java.authentication.json.users.UserCredentials;
+import main.java.authentication.json.Baseline;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
-public class historycon extends mysqlcon {
+public class historycon extends main.java.connection.mysqlcon {
 
     public ArrayList<JsonObject> getAllHistory() throws SQLException, ClassNotFoundException {
         Connection con = super.getConnection();
@@ -165,6 +167,107 @@ public class historycon extends mysqlcon {
         con.close();
 
         return "Success";
+    }
+
+    public int addNewBaseline(List<Baseline> baselines, String staff_id) throws SQLException, ClassNotFoundException {
+        Connection con = super.getConnection();
+
+        con.setAutoCommit(false);
+
+        String query = "insert into baseline (`staff_id`,`Slot Request Date`,`Ship Qtr`,`MS Owner`,`Ship Revenue Type`,`Slot Request Qtr`,`SAP Customer Req Date`,`End Date`,`Ship Recog Qtr`,`New/Used`,`Build Product`,`Caerus PO Qtr`,`MFG Site`,`Division`,`Plant`,`Product Family`,`Change Request #`,`Int. Ops Ship Readiness Date`,`Fab ID`,`Changed On`,`Product PN`,`RMA Tool`,`Delta Days`,`Quantity`,`Slot Status`,`SO Status`,`Region`,`Div Commit Date`,`Forecast ID`,`Ship Recog Date`,`Slot ID/UTID`,`Caerus Commit`,`Changed By`,`Cycle Time Days`,`Fab Name`,`Sold-To Name`,`MFG Commit Date`,`Sales Order`,`Argo ID`,`Caerus Product Type`,`MRP Date`,`Ship Revenue (Int $)`,`Plan Product Type`,`Build Complete`,`Last Changed Time`,`Build Category`,`Created On`,`Committed Ship $`,`Created Time`,`Build Qtr`,`Created By`) ";
+        query += "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        PreparedStatement pstmt = con.prepareStatement(query);
+
+        for (Baseline baseline : baselines) {
+            pstmt.setString(1, staff_id);
+            pstmt.setString(2, baseline.Slot_Request_Date);
+            pstmt.setString(3, baseline.Ship_Qtr);
+            pstmt.setString(4, baseline.MS_Owner);
+            pstmt.setString(5, baseline.Ship_Revenue_Type);
+            pstmt.setString(6, baseline.Slot_Request_Qtr);
+            pstmt.setString(7, baseline.SAP_Customer_Req_Date);
+            pstmt.setString(8, baseline.End_Date);
+            pstmt.setString(9, baseline.Ship_Recog_Qtr);
+            pstmt.setString(10, baseline.New_Used);
+            pstmt.setString(11, baseline.Build_Product);
+            pstmt.setString(12, baseline.Caerus_PO_Qtr);
+            pstmt.setString(13, baseline.MFG_Site);
+            pstmt.setString(14, baseline.Division);
+            pstmt.setString(15, baseline.Plant);
+            pstmt.setString(16, baseline.Product_Family);
+            pstmt.setString(17, baseline.Change_Request_Num);
+            pstmt.setString(18, baseline.Int_Ops_Ship_Readiness_Date);
+            pstmt.setString(19, baseline.Fab_ID);
+            pstmt.setString(20, baseline.Changed_On);
+            pstmt.setString(21, baseline.Product_PN);
+            pstmt.setInt(22, baseline.RMA_Tool);
+            pstmt.setInt(23, baseline.Delta_Days);
+            pstmt.setInt(24, baseline.Quantity);
+            pstmt.setString(25, baseline.Slot_Status);
+            pstmt.setString(26, baseline.SO_Status);
+            pstmt.setString(27, baseline.Region);
+            pstmt.setString(28, baseline.Div_Commit_Date);
+            pstmt.setString(29, baseline.Forecast_ID);
+            pstmt.setString(30, baseline.Ship_Recog_Date);
+            pstmt.setString(31, baseline.Slot_ID_UTID);
+            pstmt.setString(32, baseline.Caerus_Commit);
+            pstmt.setString(33, baseline.Changed_By);
+            pstmt.setInt(34, baseline.Cycle_Time_Days);
+            pstmt.setString(35, baseline.Fab_Name);
+            pstmt.setString(36, baseline.Sold_To_Name);
+            pstmt.setString(37, baseline.MFG_Commit_Date);
+            pstmt.setString(38, baseline.Sales_Order);
+            pstmt.setString(39, baseline.Argo_ID);
+            pstmt.setString(40, baseline.Caerus_Product_Type);
+            pstmt.setString(41, baseline.MRP_Date);
+            pstmt.setInt(42, baseline.Ship_Revenue_$);
+            pstmt.setString(43, baseline.Plan_Product_Type);
+            pstmt.setInt(44, baseline.Build_Complete);
+            pstmt.setString(45, baseline.Last_Changed_Time);
+            pstmt.setString(46, baseline.Build_Category);
+            pstmt.setString(47, baseline.Created_On);
+            pstmt.setInt(48, baseline.Committed_Ship_$);
+            pstmt.setString(49, baseline.Created_Time);
+            pstmt.setString(50, baseline.Build_Qtr);
+            pstmt.setString(51, baseline.Created_By);
+            pstmt.addBatch();
+        }
+
+        int[] updateCounts = pstmt.executeBatch();
+        int status = super.checkUpdateCounts(updateCounts);
+
+        pstmt.close();
+        con.close();
+
+        if (status == 1) {
+            return 200;// successfully added certificates
+        }
+        return 400;
+    }
+
+    public boolean baselinePresentForUser(String staff_id) throws SQLException, ClassNotFoundException {
+        Connection con = super.getConnection();
+
+        String query = "select * from baseline where staff_id = ? ";
+        PreparedStatement pstmt = con.prepareStatement(query);
+        pstmt.setString(1, staff_id);
+
+        ResultSet rs = pstmt.executeQuery();
+        boolean presence = false;
+        if (rs.next()) {
+            presence = true;
+        }
+        con.close();
+        return presence;
+    }
+
+    public void removeBaselineFromUser(String staff_id) throws SQLException, ClassNotFoundException {
+        Connection con = super.getConnection();
+        String query = "DELETE from baseline where staff_id = ?";
+        PreparedStatement pstmt = con.prepareStatement(query);
+        pstmt.setString(1, staff_id);
+        int count = pstmt.executeUpdate();
+        con.close();
     }
 
     // public String addMassSlotUpload(ArrayList<main.java.history.MassSlotUploadDetails> data, int msuId) throws SQLException, ClassNotFoundException {

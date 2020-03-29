@@ -1,0 +1,120 @@
+package main.java.authentication.json;
+
+import main.java.authentication.json.JsonObject;
+
+import java.util.Map;
+
+public class Baseline implements JsonObject {
+    //     variables that was changed
+//    Ship_Revenue_$ = Ship_Revenue_(Int_$);
+//    New_Used = New/Used;
+//    Int_Ops_Ship_Readiness_Date = Int._Ops_Ship_Readiness_Date;
+//    Change_Request_Num Change_Request_#;
+//    Sold_To_Name = Sold-To_Name;
+//    Slot_ID_UTID = Slot_ID/UTID;
+
+    public String Slot_Request_Date;
+    public String Ship_Qtr;
+    public String MS_Owner;
+    public String Ship_Revenue_Type;
+    public String Slot_Request_Qtr;
+    public String SAP_Customer_Req_Date;
+    public String End_Date;
+    public String Ship_Recog_Qtr;
+    public String New_Used;
+    public String Build_Product;
+    public String Caerus_PO_Qtr;
+    public String MFG_Site;
+    public String Division;
+    public String Plant;
+    public String Product_Family;
+    public String Change_Request_Num;
+    public String Int_Ops_Ship_Readiness_Date;
+    public String Fab_ID;
+    public String Changed_On;
+    public String Product_PN;
+    public Integer RMA_Tool;
+    public Integer Delta_Days;
+    public Integer Quantity;
+    public String Slot_Status;
+    public String SO_Status;
+    public String Region;
+    public String Div_Commit_Date;
+    public String Forecast_ID;
+    public String Ship_Recog_Date;
+    public String Slot_ID_UTID;
+    public String Caerus_Commit;
+    public String Changed_By;
+    public Integer Cycle_Time_Days;
+    public String Fab_Name;
+    public String Sold_To_Name;
+    public String MFG_Commit_Date;
+    public String Sales_Order;
+    public String Argo_ID;
+    public String Caerus_Product_Type;
+    public String MRP_Date;
+    public Integer Ship_Revenue_$;
+    public String Plan_Product_Type;
+    public Integer Build_Complete;
+    public String Last_Changed_Time;
+    public String Build_Category;
+    public String Created_On;
+    public Integer Committed_Ship_$;
+    public String Created_Time;
+    public String Build_Qtr;
+    public String Created_By;
+
+    public Baseline(Map<String, Object> row) {
+        this.Slot_Request_Date = row.get("Slot Request Date") == null ? "" : (String) row.get("Slot Request Date");
+        this.Ship_Qtr = row.get("Ship Qtr") == null ? "" : (String) row.get("Ship Qtr");
+        this.MS_Owner = row.get("MS Owner") == null ? "" : (String) row.get("MS Owner");
+        this.Ship_Revenue_Type = row.get("Ship Revenue Type") == null ? "" : (String) row.get("Ship Revenue Type");
+        this.Slot_Request_Qtr = row.get("Slot Request Qtr") == null ? "" : (String) row.get("Slot Request Qtr");
+        this.SAP_Customer_Req_Date = row.get("SAP Customer Req Date") == null ? "" : (String) row.get("SAP Customer Req Date");
+        this.End_Date = row.get("End Date") == null ? "" : (String) row.get("End Date");
+        this.Ship_Recog_Qtr = row.get("Ship Recog Qtr") == null ? "" : (String) row.get("Ship Recog Qtr");
+        this.New_Used = row.get("New/Used") == null ? "" : (String) row.get("New/Used");
+        this.Build_Product = row.get("Build Product") == null ? "" : (String) row.get("Build Product");
+        this.Caerus_PO_Qtr = row.get("Caerus PO Qtr") == null ? "" : (String) row.get("Caerus PO Qtr");
+        this.MFG_Site = row.get("MFG Site") == null ? "" : (String) row.get("MFG Site");
+        this.Division = row.get("Division") == null ? "" : (String) row.get("Division");
+        this.Plant = row.get("Plant") == null ? "" : (String) row.get("Plant");
+        this.Product_Family = row.get("Product Family") == null ? "" : (String) row.get("Product Family");
+        this.Change_Request_Num = row.get("Change Request #") == null ? "" : (String) row.get("Change Request #");
+        this.Int_Ops_Ship_Readiness_Date = row.get("Int. Ops Ship Readiness Date") == null ? "" : (String) row.get("Int. Ops Ship Readiness Date");
+        this.Fab_ID = row.get("Fab ID") == null ? "" : (String) row.get("Fab ID");
+        this.Changed_On = row.get("Changed On") == null ? "" : (String) row.get("Changed On");
+        this.Product_PN = row.get("Product PN") == null ? "" : (String) row.get("Product PN");
+        this.RMA_Tool = (Integer) row.get("RMA Tool");
+        this.Delta_Days = (Integer) row.get("Delta Days");
+        this.Quantity = (Integer) row.get("Quantity");
+        this.Slot_Status = row.get("Slot Status") == null ? "" : (String) row.get("Slot Status");
+        this.SO_Status = row.get("SO Status") == null ? "" : (String) row.get("SO Status");
+        this.Region = row.get("Region") == null ? "" : (String) row.get("Region");
+        this.Div_Commit_Date = row.get("Div Commit Date") == null ? "" : (String) row.get("Div Commit Date");
+        this.Forecast_ID = row.get("Forecast ID") == null ? "" : (String) row.get("Forecast ID");
+        this.Ship_Recog_Date = row.get("Ship Recog Date") == null ? "" : (String) row.get("Ship Recog Date");
+        this.Slot_ID_UTID = row.get("Slot ID/UTID") == null ? "" : (String) row.get("Slot ID/UTID");
+        this.Caerus_Commit = row.get("Caerus Commit") == null ? "" : (String) row.get("Caerus Commit");
+        this.Changed_By = row.get("Changed By") == null ? "" : (String) row.get("Changed By");
+        this.Cycle_Time_Days = (Integer) row.get("Cycle Time Days");
+        this.Fab_Name = row.get("Fab Name") == null ? "" : (String) row.get("Fab Name");
+        this.Sold_To_Name = row.get("Sold-To Name") == null ? "" : (String) row.get("Sold-To Name");
+        this.MFG_Commit_Date = row.get("MFG Commit Date") == null ? "" : (String) row.get("MFG Commit Date");
+        this.Sales_Order = row.get("Sales Order") == null ? "" : (String) row.get("Sales Order");
+        this.Argo_ID = row.get("Argo ID") == null ? "" : (String) row.get("Argo ID");
+        this.Caerus_Product_Type = row.get("Caerus Product Type") == null ? "" : (String) row.get("Caerus Product Type");
+        this.MRP_Date = row.get("MRP Date") == null ? "" : (String) row.get("MRP Date");
+        this.Ship_Revenue_$ = (Integer) row.get("Ship Revenue (Int $)");
+        this.Plan_Product_Type = row.get("Plan Product Type") == null ? "" : (String) row.get("Plan Product Type");
+        this.Build_Complete = (Integer) row.get("Build Complete");
+        this.Last_Changed_Time = row.get("Last Changed Time") == null ? "" : (String) row.get("Last Changed Time");
+        this.Build_Category = row.get("Build Category") == null ? "" : (String) row.get("Build Category");
+        this.Created_On = row.get("Created On") == null ? "" : (String) row.get("Created On");
+        this.Committed_Ship_$ = (Integer) row.get("Committed Ship $");
+        this.Created_Time = row.get("Created Time") == null ? "" : (String) row.get("Created Time");
+        this.Build_Qtr = row.get("Build Qtr") == null ? "" : (String) row.get("Build Qtr");
+        this.Created_By = row.get("Created By") == null ? "" : (String) row.get("Created By");
+    }
+
+}
