@@ -124,11 +124,11 @@ public class Controller {
         return historyscon.removeHistory(msuId);
     }
 
-    @RequestMapping(path = "/msu/{msuId}", method = RequestMethod.GET, produces = "application/json")
-    public ArrayList<JsonObject> getMassSlotUpload(@PathVariable("msuId") String msuId) throws SQLException, ClassNotFoundException {
+    // @RequestMapping(path = "/msu/{msuId}", method = RequestMethod.GET, produces = "application/json")
+    // public ArrayList<JsonObject> getMassSlotUpload(@PathVariable("msuId") String msuId) throws SQLException, ClassNotFoundException {
 //        ArrayList<JsonObject> result = historyscon.getMassSlotUpload(msuId);
-        return historyscon.getMassSlotUpload(msuId);
-    }
+        // return historyscon.getMassSlotUpload(msuId);
+    // }
 
     // @RequestMapping(path = "/msu/{staffId}", method = RequestMethod.POST, produces = "application/json")
     // public String addMassSlotUpload(@RequestBody ArrayList<main.java.authentication.json.MassSlotUploadDetails> data,

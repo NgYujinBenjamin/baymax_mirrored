@@ -5,9 +5,16 @@ import main.java.authentication.json.JsonObject;
 import main.java.authentication.json.users.RegistrationDetails;
 import main.java.authentication.json.users.User;
 import main.java.authentication.json.users.UserCredentials;
+import main.java.history.MassSlotUploadDetails;
 
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.List;
 
 public class historycon extends mysqlcon {
 
@@ -39,17 +46,18 @@ public class historycon extends mysqlcon {
         return rv;
     }
 
-    public int addHistory(String staffId, String minGap, String maxGap, String date) throws SQLException, ClassNotFoundException {
+    public int addHistory(String staffId, String minGap, String maxGap, String numBay,String date) throws SQLException, ClassNotFoundException {
         Connection con = super.getConnection();
         Statement stmt = con.createStatement();
 
-        String query = "insert into history (staff_id, min_gap, max_gap, date_generated)";
-        query += " values (?,?,?,?)";
+        String query = "insert into history (staff_id, min_gap, max_gap, num_bay ,date_generated)";
+        query += " values (?,?,?,?,?)";
         PreparedStatement pstmt = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
         pstmt.setString(1, staffId);
         pstmt.setString(2, minGap);
         pstmt.setString(3, maxGap);
-        pstmt.setString(4, date);
+        pstmt.setString(4, numBay);
+        pstmt.setString(5, date);
         pstmt.executeUpdate();
 
         ResultSet rs = pstmt.getGeneratedKeys();
@@ -76,43 +84,219 @@ public class historycon extends mysqlcon {
         return "Success";
     }
 
-    public ArrayList<JsonObject> getMassSlotUpload(String msuId) throws SQLException, ClassNotFoundException {
+    // to be replaced by getbaseline occupancy and getbayoccupancy
+    public List<Map<String,Object>> getMassSlotUpload(String msuId) throws SQLException, ClassNotFoundException {
         Connection con = super.getConnection();
         Statement stmt = con.createStatement();
-        String my_string = "select * from mass_slot_upload where history_id = '" + msuId + "'";
+        String my_string = "select * from mass_slot_upload where historyID = '" + msuId + "'";
         ResultSet rs = stmt.executeQuery(my_string);
-
-        ArrayList<JsonObject> rv = new ArrayList<>();
+        ResultSetMetaData md = rs.getMetaData();
+        int columns = md.getColumnCount();
+        
+        List<Map<String,Object>> data = new ArrayList<>();
+        ArrayList<main.java.history.MassSlotUploadDetails> rv2 = new ArrayList<>();
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         while (rs.next()) {
-            rv.add(new main.java.authentication.json.GetMassSlotUploadResult(
-                    rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5),
-                    rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10),
-                    rs.getString(11), rs.getString(12), rs.getString(13), rs.getString(14), rs.getString(15),
-                    rs.getString(16), rs.getString(17), rs.getString(18), rs.getString(19), rs.getString(20),
-                    rs.getString(21), rs.getString(22), rs.getString(23), rs.getString(24), rs.getString(25),
-                    rs.getString(26), rs.getString(27), rs.getString(28), rs.getString(29), rs.getString(30),
-                    rs.getString(31), rs.getString(32), rs.getString(33), rs.getString(34), rs.getString(35),
-                    rs.getString(36), rs.getString(37), rs.getString(38), rs.getString(39), rs.getString(40),
-                    rs.getString(41), rs.getString(42), rs.getString(43)
-
-            ));
+            HashMap row = new HashMap(columns);
+            for (int i=3; i<=columns; i++){
+                if (i==39 || i==44 || i==45 || i==46){
+                    continue;
+                } else {
+                    try {
+                        if (rs.getObject(i) instanceof Integer){
+                            row.put(md.getColumnName(i), rs.getObject(i));
+                        } else {
+                            String date = df.format(rs.getObject(i));
+                            row.put(md.getColumnName(i), date);
+                        }                         
+                    } catch (Exception e){
+                        row.put(md.getColumnName(i), rs.getObject(i));
+                        continue;
+                    }
+                    
+                }
+                
+            }
+            data.add(row);
+            // rv2.add(new MassSlotUploadDetails(row));
+            
         }
         con.close();
-        return rv;
+        return data;
+    }
+
+    public List<Map<String,Object>> getBaseLineOccupancy(String msuId) throws SQLException, ClassNotFoundException {
+        Connection con = super.getConnection();
+        Statement stmt = con.createStatement();
+        String my_string = "select * from mass_slot_upload where historyID = '" + msuId + "' AND isBaseLine = '1'";
+        ResultSet rs = stmt.executeQuery(my_string);
+        ResultSetMetaData md = rs.getMetaData();
+        int columns = md.getColumnCount();
+        
+        List<Map<String,Object>> data = new ArrayList<>();
+        ArrayList<main.java.history.MassSlotUploadDetails> rv2 = new ArrayList<>();
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        while (rs.next()) {
+            HashMap row = new HashMap(columns);
+            for (int i=3; i<=columns; i++){
+                //39: product pn
+                //40: send to storage date
+                //45-47 : flex01 - flex03
+                if (i==45 || i==46 || i==47){
+                    continue;
+                } else {
+                    try {
+                        if (rs.getObject(i) instanceof Integer){
+                            row.put(md.getColumnName(i), rs.getObject(i));
+                        } else {
+                            String date = df.format(rs.getObject(i));
+                            row.put(md.getColumnName(i), date);
+                        }                         
+                    } catch (Exception e){
+                        row.put(md.getColumnName(i), rs.getObject(i));
+                        continue;
+                    }
+                    
+                }
+                
+            }
+            data.add(row);
+            // rv2.add(new MassSlotUploadDetails(row));
+            
+        }
+        con.close();
+        return data;
+    }
+
+    
+    public List<Map<String,Object>> getBayOccupancy(String msuId) throws SQLException, ClassNotFoundException {
+        Connection con = super.getConnection();
+        Statement stmt = con.createStatement();
+        String my_string = "select * from mass_slot_upload where historyID = '" + msuId + "' AND isBaseLine = '0'";
+        ResultSet rs = stmt.executeQuery(my_string);
+        ResultSetMetaData md = rs.getMetaData();
+        int columns = md.getColumnCount();
+        
+        List<Map<String,Object>> data = new ArrayList<>();
+        ArrayList<main.java.history.MassSlotUploadDetails> rv2 = new ArrayList<>();
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        while (rs.next()) {
+            HashMap row = new HashMap(columns);
+            for (int i=3; i<=columns; i++){
+                //39: product pn
+                //40: send to storage date
+                //45-47 : flex01 - flex03
+                if (i==45 || i==46 || i==47){
+                    continue;
+                } else {
+                    try {
+                        if (rs.getObject(i) instanceof Integer){
+                            row.put(md.getColumnName(i), rs.getObject(i));
+                        } else {
+                            String date = df.format(rs.getObject(i));
+                            row.put(md.getColumnName(i), date);
+                        }                         
+                    } catch (Exception e){
+                        row.put(md.getColumnName(i), rs.getObject(i));
+                        continue;
+                    }
+                    
+                }
+                
+            }
+            data.add(row);
+            // rv2.add(new MassSlotUploadDetails(row));
+            
+        }
+        con.close();
+        return data;
+    }
+
+    public int getMinGap(String msuId) throws SQLException, ClassNotFoundException{
+        Connection con = super.getConnection();
+        Statement stmt = con.createStatement();
+        String defSql = "select min_gap from history where history_id = '" +msuId+ "';";
+        ResultSet rs = stmt.executeQuery(defSql);
+        int id = 0;
+        if (rs.next()) {
+            id = rs.getInt(1);
+        }
+        return id;
+    }
+
+    public int getMaxGap(String msuId) throws SQLException, ClassNotFoundException{
+        Connection con = super.getConnection();
+        Statement stmt = con.createStatement();
+        String defSql = "select max_gap from history where history_id = '" +msuId+ "';";
+        ResultSet rs = stmt.executeQuery(defSql);
+        int id = 0;
+        if (rs.next()) {
+            id = rs.getInt(1);
+        }
+        return id;
+    }
+    public int getNumBay(String msuId) throws SQLException, ClassNotFoundException{
+        Connection con = super.getConnection();
+        Statement stmt = con.createStatement();
+        String defSql = "select num_bay from history where history_id = '" +msuId+ "';";
+        ResultSet rs = stmt.executeQuery(defSql);
+        int id = 0;
+        if (rs.next()) {
+            id = rs.getInt(1);
+        }
+        return id;
+    }
+
+
+    public int getLastHistoryID() throws SQLException, ClassNotFoundException{
+        Connection con = super.getConnection();
+        Statement stmt = con.createStatement();
+        String defSql = "select MAX(history_id) from history;";
+        ResultSet rs = stmt.executeQuery(defSql);
+        int id = 0;
+        if (rs.next()) {
+            id = rs.getInt(1);
+        }
+
+        return id;
+    }
+
+    public int getHistoryCount() throws SQLException, ClassNotFoundException{
+        Connection con = super.getConnection();
+        Statement stmt = con.createStatement();
+        String defSql = "select COUNT(history_id) from history;";
+        ResultSet rs = stmt.executeQuery(defSql);
+        int id = 0;
+        if (rs.next()) {
+            id = rs.getInt(1);
+        }
+
+        return id;
     }
 
     // public String addMassSlotUpload(ArrayList<main.java.authentication.json.MassSlotUploadDetails> data, int msuId) throws SQLException, ClassNotFoundException {
-    public String addMassSlotUpload(ArrayList<main.java.history.MassSlotUploadDetails> data, int msuId) throws SQLException, ClassNotFoundException {
+    public String addMassSlotUpload(ArrayList<main.java.history.MassSlotUploadDetails> data, int msuId, int isBaseLine) throws SQLException, ClassNotFoundException {
 
         Connection con = super.getConnection();
         // for (main.java.authentication.json.MassSlotUploadDetails row : data) {
         for (main.java.history.MassSlotUploadDetails row : data) {
             Statement stmt = con.createStatement();
-            String defSql = "insert into mass_slot_upload (history_id, argo_id, slot_id, slot_status, ship_rev_type, build_category, build_product, slot_plan_notes, plan_product_type, ship_risk, ship_risk_reason, comment_for_change, committed_ship, secondary_customer_name, fab_id, sales_order, forecast_id, mfg_commit_date, ship_recognition_date, mrp_date, build_complete, int_ops_ship_ready_date, plant, category, core_need_date, core_arrival_date, refurb_start_date, refurb_complete_date, donor_status, core_utid, core_notes, mfg_status, qty, config_note, drop_ship, rma, product_pn, move_to_storage, off_date_to_de, off_date_to_mfg, install_start_date, cycle_time_days, flex, fulfilled) ";
+            String defSql = "insert into mass_slot_upload ("+
+            "historyID, isBaseLine, argoID, slotID_UTID, fabName ,slotStatus, shipRevenueType, buildCategory, "+
+            "buildProduct, slotPlanNote, planProductType, shipRisk_Upside, shipRiskReason, "+
+            "commentFor$Change, committedShip$, secondaryCustomerName, fabID, salesOrder, "+
+            "forecastID, MFGCommitDate, shipRecogDate, MRPDate, buildComplete, "+
+            "intOpsShipReadinessDate, plant, new_Used, coreNeedDate, coreArrivalDate, "+
+            "refurbStartDate, refurbCompleteDate, donorStatus, coreUTID, coreNotes, "+
+            "MFGStatus, quantity, configurationNote, dropShip, RMATool, productPN, sendToStorageDate, "+
+            "handOffDateToDE, handOffDateBackToMFG, installStartDate, cycleTimeDays, flex01, "+
+            "flex02, flex03, flex04, fulfilled, buildQtr, endDate) ";
             defSql += "values (";
             defSql += "'" + msuId + "',";
+            defSql += "'" + isBaseLine + "',";
             defSql += "'" + row.getArgo_id() + "',";
             defSql += "'" + row.getSlot_id() + "',";
+            defSql += '"' + row.getFabName() + '"'+",";
             defSql += "'" + row.getSlot_status() + "',";
             defSql += "'" + row.getShip_rev_type() + "',";
             defSql += "'" + row.getBuild_category() + "',";
@@ -155,7 +339,12 @@ public class historycon extends mysqlcon {
             // defSql += row.getFlex() == null ? "null ," : "'" + row.getFlex() + "',";
             // defSql += "'" + row.getFulfilled() + "'";
             defSql += "null ,";
-            defSql += "0";
+            defSql += "null ,";
+            defSql += "null ,";
+            defSql += "null ,";
+            defSql += "0,";
+            defSql += "'" + row.getBuildQtr() + "',";
+            defSql += "'" + row.getEndDate() + "'";
 
             defSql += ");";
             // return defSql;

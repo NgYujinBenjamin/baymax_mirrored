@@ -76,81 +76,6 @@ public class MassSlotUploadDetails implements Comparable<MassSlotUploadDetails>{
     @Exclude
     private Integer assignedBayID;
 
-
-    public MassSlotUploadDetails (Map<String, Object> rowData){
-        argoID = (rowData.get("Argo ID") == null) ? null : Integer.parseInt((String) rowData.get("Argo ID"));
-        plant = (rowData.get("Plant") == null) ? null : Integer.parseInt((String) rowData.get("Plant"));
-        buildComplete = (Integer) rowData.get("Build Complete");
-        slotStatus = (String) rowData.get("Slot Status");
-        planProductType = (String) rowData.get("Plan Product Type");
-        buildCategory = (String) rowData.get("Build Category");
-        shipRevenueType = (String) rowData.get("Ship Revenue Type");
-        salesOrder = (rowData.get("Sales Order") == null) ? null : Integer.parseInt((String) rowData.get("Sales Order"));
-        forecastID = (String) rowData.get("Forecast ID");
-        slotID_UTID = (String) rowData.get("Slot ID/UTID");
-        fabName = (String) rowData.get("Fab Name");
-        secondaryCustomerName = (String) rowData.get("Secondary Customer Name");
-        buildProduct = (String) rowData.get("Build Product");
-        productPN = (String) rowData.get("Product PN");
-        CommittedShip = (Integer) rowData.get("Committed Ship $");
-        shipRisk_Upside = (String) rowData.get("Ship Risk/Upside");
-        shipRiskReason = (String) rowData.get("Ship Risk Reason");
-        cycleTimeDays = (Integer) rowData.get("Cycle Time Days");
-        slotPlanNote = (String) rowData.get("Slot Plan Note");
-        commentFor$Change = (String) rowData.get("Comment For $ Change");
-        configurationNote = (String) rowData.get("Configuration Note");
-        dropShip = (String) rowData.get("Drop Ship");
-        MFGStatus = (String) rowData.get("MFG Status");
-        quantity = (Integer) rowData.get("Quantity");
-        RMATool = (Integer) rowData.get("RMA Tool");
-        new_Used = (String) rowData.get("New/Used");
-        donorStatus = (String) rowData.get("Donor Status");
-        coreUTID = (String) rowData.get("Core UTID");
-        coreNotes = (String) rowData.get("Core Notes");
-        fabID = (String) rowData.get("Fab ID");
-        flex01 = (String) rowData.get("Flex 01");
-        flex02 = (String) rowData.get("Flex 02");
-        flex03 = (String) rowData.get("Flex 03");
-        flex04 = (String) rowData.get("Flex 04");
-        buildQtr = (String) rowData.get("Build Qtr");
-        lockMRPDate = (Boolean) rowData.get("Lock MRP Date");
-
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-
-        try {
-            MRPDate = GenericValidator.isDate((String)rowData.get("MRP Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("MRP Date")) : null;
-            intOpsShipReadinessDate = GenericValidator.isDate((String) rowData.get("Int. Ops Ship Readiness Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("Int. Ops Ship Readiness Date")) : null;
-            MFGCommitDate = GenericValidator.isDate((String) rowData.get("MFG Commit Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("MFG Commit Date")) : null;
-            shipRecogDate = GenericValidator.isDate((String) rowData.get("Ship Recog Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("Ship Recog Date")): null;
-            handOffDateToDE = GenericValidator.isDate((String) rowData.get("Hand Off Date To DE"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("Hand Off Date To DE")): null;
-            handOffDateBackToMFG = GenericValidator.isDate((String) rowData.get("Hand Off Date Back To MFG"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("Hand Off Date Back To MFG")): null;
-            installStartDate = GenericValidator.isDate((String) rowData.get("Install Start Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String)rowData.get("Install Start Date")): null;
-            coreNeedDate = GenericValidator.isDate((String) rowData.get("Core Need Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("Core Need Date")): null;
-            coreArrivalDate = GenericValidator.isDate((String) rowData.get("Core Arrival Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("Core Arrival Date")): null;
-            refurbStartDate = GenericValidator.isDate((String) rowData.get("Refurb Start Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("Refurb Start Date")): null;
-            refurbCompleteDate = GenericValidator.isDate((String) rowData.get("Refurb Complete Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("Refurb Complete Date")): null;
-            endDate = GenericValidator.isDate((String) rowData.get("End Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("End Date")): MFGCommitDate;
-            sendToStorageDate = GenericValidator.isDate((String) rowData.get("Send To Storage Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("Send To Storage Date")): null;
-        } catch (ParseException e){
-            e.printStackTrace();
-        }
-        
-
-        latestToolStartDate = DateUtils.addDays(endDate, -cycleTimeDays);
-        toolStartDate = latestToolStartDate;
-
-        if (sendToStorageDate != null){
-            leaveBayDate = sendToStorageDate;
-        }
-        else if (fabName.equals("OPEN")){
-            leaveBayDate = intOpsShipReadinessDate;
-        } else {
-            leaveBayDate = endDate;
-        }
-
-        gapDays = (int) ((MFGCommitDate.getTime() - MRPDate.getTime())/ (24 * 60 * 60 * 1000));    
-    }
-
     public MassSlotUploadDetails (Object productRaw){
         HashMap<String, Object> productDetails = null;
         
@@ -172,7 +97,7 @@ public class MassSlotUploadDetails implements Comparable<MassSlotUploadDetails>{
         secondaryCustomerName = (String) productDetails.get("secondaryCustomerName");
         buildProduct = (String) productDetails.get("buildProduct");
         productPN = (String) productDetails.get("productPN");
-        CommittedShip = (Integer) productDetails.get("CommittedShip");
+        CommittedShip = (Integer) productDetails.get("committedShip$");
         shipRisk_Upside = (String) productDetails.get("shipRisk_Upside");
         shipRiskReason = (String) productDetails.get("shipRiskReason");
         cycleTimeDays = (Integer) productDetails.get("cycleTimeDays");
