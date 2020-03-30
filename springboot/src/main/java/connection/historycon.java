@@ -471,6 +471,113 @@ public class historycon extends main.java.connection.mysqlcon {
         return 400;
     }
 
+    public List<Map<String, Object>> getBaselineForUser(String staff_id) throws SQLException, ClassNotFoundException {
+        Connection con = super.getConnection();
+
+        String query = "select `Argo ID`,`Plant`,`Build Complete`,`Slot Status`,`Plan Product Type`,`Build Category`,`Ship Revenue Type`,`Sales Order`,`Forecast ID`,`Slot ID/UTID`,`Sold-To Name`,`Fab Name`,`Secondary Customer Name`,`Product Family`,`Build Product`,`Forecast Product`,`Product PN`,`Committed Ship $`,`Ship Revenue (Int $)`,`Ship Risk/Upside`,`Ship Risk Reason`,`MRP Date`,`Int. Ops Ship Readiness Date`,`MFG Commit Date`,`Ship Recog Date`,`Hand Off Date To DE`,`Hand Off Date Back To MFG`,`SAP Customer Req Date`,`Slot Request Date`,`Div Commit Date`,`Delta Days`,`Region`,`SO Status`,`Caerus PO Qtr`,`Install Start Date`,`Cycle Time Days`,`Slot Plan Note`,`Comment For $ Change`,`Configuration Note`,`Drop Ship`,`MFG Status`,`Quantity`,`RMA Tool`,`New/Used`,`Core Need Date`,`Core Arrival Date`,`Refurb Start Date`,`Refurb Complete Date`,`Donor Status`,`Core UTID`,`Core Notes`,`Fab ID`,`PGI Date`,`Flex 01`,`Flex 02`,`Flex 03`,`Flex 04`,`Build Qtr`,`Ship Qtr`,`Ship Recog Qtr`,`MFG Site`,`Division`,`Holds`,`IncoTerms`,`Sales Slot Identifier`,`MS Owner`,`BU`,`Book Risk Reason`,`Book Risk/Upside`,`Caerus Commit`,`Caerus Description`,`Caerus Product Type`,`Change Request #`,`Delivery #`,`Purchase Order #`,`SBU`,`Sales Ops Slot Notes`,`Segment`,`Slot Gap`,`Slot Request Qtr`,`Sold-To ID`,`Standard COGS`,`Created By`,`Created On`,`Changed On`,`Created Time`,`Changed By`,`Last Changed Time` from baseline where staff_id = ?";
+        PreparedStatement pstmt = con.prepareStatement(query);
+        pstmt.setString(1, staff_id);
+
+        ResultSet rs = pstmt.executeQuery();
+
+        List<Map<String, Object>> list = new ArrayList<>();
+
+        while (rs.next()) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("Argo ID",rs.getString(1));
+            map.put("Plant",rs.getString(2));
+            map.put("Build Complete",rs.getInt(3));
+            map.put("Slot Status",rs.getString(4));
+            map.put("Plan Product Type",rs.getString(5));
+            map.put("Build Category",rs.getString(6));
+            map.put("Ship Revenue Type",rs.getString(7));
+            map.put("Sales Order",rs.getString(8));
+            map.put("Forecast ID",rs.getString(9));
+            map.put("Slot ID/UTID",rs.getString(10));
+            map.put("Sold-To Name",rs.getString(11));
+            map.put("Fab Name",rs.getString(12));
+            map.put("Secondary Customer Name",rs.getString(13));
+            map.put("Product Family",rs.getString(14));
+            map.put("Build Product",rs.getString(15));
+            map.put("Forecast Product",rs.getString(16));
+            map.put("Product PN",rs.getString(17));
+            map.put("Committed Ship $",rs.getInt(18));
+            map.put("Ship Revenue (Int $)",rs.getInt(19));
+            map.put("Ship Risk/Upside",rs.getString(20));
+            map.put("Ship Risk Reason",rs.getString(21));
+            map.put("MRP Date",rs.getString(22));
+            map.put("Int. Ops Ship Readiness Date",rs.getString(23));
+            map.put("MFG Commit Date",rs.getString(24));
+            map.put("Ship Recog Date",rs.getString(25));
+            map.put("Hand Off Date To DE",rs.getString(26));
+            map.put("Hand Off Date Back To MFG",rs.getString(27));
+            map.put("SAP Customer Req Date",rs.getString(28));
+            map.put("Slot Request Date",rs.getString(29));
+            map.put("Div Commit Date",rs.getString(30));
+            map.put("Delta Days",rs.getInt(31));
+            map.put("Region",rs.getString(32));
+            map.put("SO Status",rs.getString(33));
+            map.put("Caerus PO Qtr",rs.getString(34));
+            map.put("Install Start Date",rs.getString(35));
+            map.put("Cycle Time Days",rs.getInt(36));
+            map.put("Slot Plan Note",rs.getString(37));
+            map.put("Comment For $ Change",rs.getString(38));
+            map.put("Configuration Note",rs.getString(39));
+            map.put("Drop Ship",rs.getString(40));
+            map.put("MFG Status",rs.getString(41));
+            map.put("Quantity",rs.getInt(42));
+            map.put("RMA Tool",rs.getInt(43));
+            map.put("New/Used",rs.getString(44));
+            map.put("Core Need Date",rs.getString(45));
+            map.put("Core Arrival Date",rs.getString(46));
+            map.put("Refurb Start Date",rs.getString(47));
+            map.put("Refurb Complete Date",rs.getString(48));
+            map.put("Donor Status",rs.getString(49));
+            map.put("Core UTID",rs.getString(50));
+            map.put("Core Notes",rs.getString(51));
+            map.put("Fab ID",rs.getString(52));
+            map.put("PGI Date",rs.getString(53));
+            map.put("Flex 01",rs.getString(54));
+            map.put("Flex 02",rs.getString(55));
+            map.put("Flex 03",rs.getString(56));
+            map.put("Flex 04",rs.getString(57));
+            map.put("Build Qtr",rs.getString(58));
+            map.put("Ship Qtr",rs.getString(59));
+            map.put("Ship Recog Qtr",rs.getString(60));
+            map.put("MFG Site",rs.getString(61));
+            map.put("Division",rs.getString(62));
+            map.put("Holds",rs.getString(63));
+            map.put("IncoTerms",rs.getString(64));
+            map.put("Sales Slot Identifier",rs.getString(65));
+            map.put("MS Owner",rs.getString(66));
+            map.put("BU",rs.getString(67));
+            map.put("Book Risk Reason",rs.getString(68));
+            map.put("Book Risk/Upside",rs.getString(69));
+            map.put("Caerus Commit",rs.getString(70));
+            map.put("Caerus Description",rs.getString(71));
+            map.put("Caerus Product Type",rs.getString(72));
+            map.put("Change Request #",rs.getString(73));
+            map.put("Delivery #",rs.getString(74));
+            map.put("Purchase Order #",rs.getString(75));
+            map.put("SBU",rs.getString(76));
+            map.put("Sales Ops Slot Notes",rs.getString(77));
+            map.put("Segment",rs.getString(78));
+            map.put("Slot Gap",rs.getString(79));
+            map.put("Slot Request Qtr",rs.getString(80));
+            map.put("Sold-To ID",rs.getString(81));
+            map.put("Standard COGS",rs.getString(82));
+            map.put("Created By",rs.getString(83));
+            map.put("Created On",rs.getString(84));
+            map.put("Changed On",rs.getString(85));
+            map.put("Created Time",rs.getString(86));
+            map.put("Changed By",rs.getString(87));
+            map.put("Last Changed Time",rs.getString(88));
+            list.add(map);
+        }
+        con.close();
+        return list;
+    }
+
     public boolean baselinePresentForUser(String staff_id) throws SQLException, ClassNotFoundException {
         Connection con = super.getConnection();
 
