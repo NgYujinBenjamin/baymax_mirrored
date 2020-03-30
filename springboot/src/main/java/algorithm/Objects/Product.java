@@ -1,14 +1,16 @@
 package main.java.algorithm.Objects;
 
-import main.java.algorithm.ExclusionStrategy.*;
-
-import java.util.*;
-import java.text.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.validator.GenericValidator;
 
-import com.google.gson.Gson;
+import main.java.algorithm.ExclusionStrategy.Exclude;
 
 public class Product implements Comparable<Product>{
     private Integer argoID;
@@ -118,7 +120,13 @@ public class Product implements Comparable<Product>{
     @Exclude
     private Integer assignedBayID;
 
-
+	/**
+	 * Constructor for Product class (used for /firstScheduling). Extracts the relevant attributes from rowData and creates a new Product object with the attributes.
+	 * Relevant attributes are defined as the attributes required for output generation. 
+	 * Attribute values are initialized to null if it is not found in rowData.
+	 * Date values passed in have to be in the format of "dd/MM/yyyy"
+	 * @param rowData
+	 */
     public Product (Map<String, Object> rowData){
         argoID = (rowData.get("Argo ID") == null) ? null : Integer.parseInt((String) rowData.get("Argo ID"));
         plant = (rowData.get("Plant") == null) ? null : Integer.parseInt((String) rowData.get("Plant"));
@@ -221,7 +229,7 @@ public class Product implements Comparable<Product>{
         
 
         latestToolStartDate = DateUtils.addDays(endDate, -cycleTimeDays);
-        toolStartDate = latestToolStartDate;
+        toolStartDate = DateUtils.addDays(MRPDate, -cycleTimeDays); // Useful for baseline products
         
         if (sendToStorageDate != null){
             leaveBayDate = sendToStorageDate;
@@ -232,14 +240,25 @@ public class Product implements Comparable<Product>{
             leaveBayDate = endDate;
         }
 
-        gapDays = (int) ((MFGCommitDate.getTime() - MRPDate.getTime())/ (24 * 60 * 60 * 1000));    
+        gapDays = (int) ((MFGCommitDate.getTime() - MRPDate.getTime())/ (24 * 60 * 60 * 1000));
     }
 
-    public Product (Object productRaw){
+
+    /**
+     * Constructor for Product class (used for /subseqScheduling). Extracts the relevant attributes from object passed and creates a new Product object with the attributes.
+	 * Relevant attributes are defined as the attributes required for output generation. 
+	 * Attribute values are initialized to null if it is not found in rowData.
+	 * Date values passed in have to be in the format of "dd/MM/yyyy"
+     * @param productRaw Object, that is an instanceOf Map, containing the product details in key-value pairs
+     * @throws RuntimeException if there is problem casting the object into type HashMap
+     */
+    public Product (Object productRaw) throws RuntimeException {
         HashMap<String, Object> productDetails = null;
         
         if (productRaw instanceof Map){
             productDetails = (HashMap<String, Object>) productRaw;
+        } else {
+        	throw new RuntimeException("The product details passed in are not in the right format. Product details need to be in key-value pairs.");
         }
 
         argoID = (productDetails.get("argoID") == null) ? null : (Integer) productDetails.get("argoID");
@@ -362,11 +381,16 @@ public class Product implements Comparable<Product>{
         gapDays = (int) ((MFGCommitDate.getTime() - MRPDate.getTime())/ (24 * 60 * 60 * 1000)); 
     }
 
-    public int compareTo(Product other){
+
+    /** Compares 2 products based on toolStart and revenue so as to determine scheduling priority 
+     * @param anotherProduct Another product that is to be compared with
+     * @return Value of 0 if the Products have the same latestToolStart date and committedShip$; A value less than 0 if this Product has a earlier toolStartDate or larger revenue than that of the other Product; A value more than 0 if this Product has a later toolStartDate or smaller revenue than that of the other Product.
+     */
+    public int compareTo(Product anotherProduct){
         Date thisLatestToolStart = latestToolStartDate;
         Integer thisCommittedShip$ = committedShip$;
-        Date otherLatestToolStart = other.latestToolStartDate;
-        Integer otherCommittedShip$ = other.committedShip$;
+        Date otherLatestToolStart = anotherProduct.latestToolStartDate;
+        Integer otherCommittedShip$ = anotherProduct.committedShip$;
 
         if (thisLatestToolStart.compareTo(otherLatestToolStart) == 0){
             return - thisCommittedShip$.compareTo(otherCommittedShip$);
@@ -374,38 +398,74 @@ public class Product implements Comparable<Product>{
         return thisLatestToolStart.compareTo(otherLatestToolStart);
     }
 
+    /**
+     * Returns the ArgoID of the Product
+     * @return ArgoID of the Product
+     */
     public Integer getArgoID() {
         return argoID;
     }
 
+    /**
+     * Returns the Plant of the Product
+     * @return Plant of the Product
+     */
     public Integer getPlant() {
         return plant;
     }
 
+    /**
+     * Returns the Build Complete of the Product
+     * @return Build Complete of the Product
+     */
     public Integer getBuildComplete() {
         return buildComplete;
     }
 
+    /**
+     * Returns the Slot Status of the Product
+     * @return Slot Status of the Product
+     */
     public String getSlotStatus() {
         return slotStatus;
     }
 
+    /**
+     * Returns the Plan Product Type of the Product
+     * @return Plan Product Type of the Product
+     */
     public String getPlanProductType() {
         return planProductType;
     }
 
+    /**
+     * Returns the Build Category of the Product
+     * @return Build Category of the Product
+     */
     public String getBuildCategory() {
         return buildCategory;
     }
-
+    
+    /**
+     * Returns the Ship Revenue Type of the Product
+     * @return Ship Revenue Type of the Product
+     */
     public String getShipRevenueType() {
         return shipRevenueType;
     }
 
+    /**
+     * Returns the Sales Order of the Product
+     * @return Sales Order of the Product
+     */
     public Integer getSalesOrder() {
         return salesOrder;
     }
 
+    /**
+     * Returns the Forecast ID of the Product
+     * @return Forecast ID of the Product
+     */
     public String getForecastID() {
         return forecastID;
     }
@@ -789,9 +849,6 @@ public class Product implements Comparable<Product>{
 
         String buildQtr = "CY" + MRPYear.toString() + MRPQuarter;
         
-        System.out.println(MRPDate);
-        System.out.println(leaveBayDate);
-
         if (MRPDate.after(leaveBayDate)){
             leaveBayDate = MRPDate;
         }

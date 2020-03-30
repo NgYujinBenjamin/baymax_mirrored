@@ -11,13 +11,12 @@ const Users = () => {
     const authContext = useContext(AuthContext);
     
     const { users, getUsers, loading } = adminContext;
-    const { loadUser, user } = authContext;
+    const { user } = authContext;
 
     useEffect(() => {
-        loadUser();
         getUsers();
         //eslint-disable-next-line
-    }, [])
+    }, [users])
 
     if(users !== null && users.length === 0 && !loading){
         return (

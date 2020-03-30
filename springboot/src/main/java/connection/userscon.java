@@ -14,7 +14,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-public class userscon extends mysqlcon {
+public class userscon extends main.java.connection.mysqlcon {
 
     public RegistrationDetails getUser(String username) throws SQLException, ClassNotFoundException {
         Connection con = super.getConnection();
@@ -68,21 +68,6 @@ public class userscon extends mysqlcon {
         stmt.executeUpdate(my_string);
         con.close();
     }
-    
-    /*
-    public void deleteUser(String username) throws SQLException, ClassNotFoundException {
-        if(getUser(username)) {
-          Connection con = super.getConnection();
-          Statement stmt = con.createStatement();
-          //Verify Admin token for extra security if needed
-          String my_string = "DELETE FROM users WHERE username = '" + username + "'";
-          stmt.executeUpdate(my_string);
-          con.close();
-        } else {
-          throw new Exception("User not found!");
-        }
-    }
-    */
 
     public boolean verifyPassword(String username, String password) throws SQLException, ClassNotFoundException {
         Connection con = super.getConnection();
@@ -98,7 +83,6 @@ public class userscon extends mysqlcon {
     }
 
     public void changePassword(String username, String oldpassword, String newpassword) throws SQLException, ClassNotFoundException, Exception {
-
         if (verifyPassword(username, oldpassword)) {
             Connection con = super.getConnection();
             Statement stmt = con.createStatement();
@@ -117,6 +101,61 @@ public class userscon extends mysqlcon {
         String my_string = "update users set password = '5f4dcc3b5aa765d61d8327deb882cf99' where username = '" + username + "';";
         stmt.executeUpdate(my_string);
         con.close();
+    }
+
+    public boolean resetPasswordWithStaffid(String staffid) throws SQLException, ClassNotFoundException {
+        Connection con = super.getConnection();
+        String defaultPass = "5f4dcc3b5aa765d61d8327deb882cf99";
+        String query = "UPDATE users SET password = ? where staff_id = ?";
+        PreparedStatement pstmt = con.prepareStatement(query);
+        pstmt.setString(1, defaultPass);
+        pstmt.setString(2, staffid);
+
+        int count = pstmt.executeUpdate();
+        con.close();
+
+        return count > 0;
+    }
+
+    public boolean deleteUser(String staffid) throws SQLException, ClassNotFoundException {
+        Connection con = super.getConnection();
+        String query = "DELETE FROM users where staff_id = ?";
+        PreparedStatement pstmt = con.prepareStatement(query);
+        pstmt.setString(1, staffid);
+
+        int count = pstmt.executeUpdate();
+        con.close();
+
+        return count > 0;
+    }
+
+    public UserCredentials getUserByStaffId(String staff_id) throws SQLException, ClassNotFoundException {
+        Connection con = super.getConnection();
+        String query = "select * from users WHERE staff_id = ?";
+        PreparedStatement pstmt = con.prepareStatement(query);
+        pstmt.setString(1, staff_id);
+        ResultSet rs = pstmt.executeQuery();
+
+        UserCredentials rv = null;
+
+        while (rs.next()) {
+            rv = new UserCredentials(rs.getString(1), rs.getString(2), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7));
+        }
+        con.close();
+        return rv;
+    }
+
+    public UserCredentials convertStaffToAdmin(String staffid) throws SQLException, ClassNotFoundException {
+        Connection con = super.getConnection();
+        String newRole = "admin";
+        String query = "UPDATE users SET role = ? where staff_id = ?";
+        PreparedStatement pstmt = con.prepareStatement(query);
+        pstmt.setString(1, newRole);
+        pstmt.setString(2, staffid);
+        pstmt.executeUpdate();
+        con.close();
+
+        return getUserByStaffId(staffid);
     }
 
     // following sections of code will have to be redone completely for baseline table

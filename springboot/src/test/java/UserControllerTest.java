@@ -17,6 +17,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.http.ResponseEntity;
 import main.java.authentication.json.JsonObject;
 import main.java.authentication.json.JsonResponse;
+import main.java.authentication.json.users.UserCredentials;
 
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -32,6 +33,7 @@ public class UserControllerTest {
     private Controller controller = new Controller();
     private String token = "";
     private Token TOKEN = new Token();
+    private static final String ADMINTOKEN = "baymaxFTW";
 
     @Test
     @Order(1)
@@ -250,16 +252,8 @@ public class UserControllerTest {
     public void resetPasswordTest() throws SQLException, ClassNotFoundException, NullPointerException, InvalidTokenException, Exception {
         System.out.println("\t ===================== 12 Reset User's Password Test =====================");
         // JsonObject jo = new JsonObject("{\"username\":\"tukiz\"}");
-        ResetPassword reset = new ResetPassword("tukiz");
-
-        JsonSuccess jsonSuccess = (JsonSuccess) controller.resetPass(reset);
-
-
-        String expectedMsg = "Password has been reset successfully";
-        String passwordUpdate = jsonSuccess.getMessage().contains(expectedMsg) ? "Success" : "Fail";
-
-        // check whether reset pass was successful
-        assertTrue(jsonSuccess.getMessage().contains(expectedMsg));
+        UserCredentials userCredentials = new UserCredentials("3","","","","","");
+        controller.resetPassword(userCredentials, ADMINTOKEN);
 
         // To try login with new reset pass and assert if a valid token is generated
         LoginDetails loginDetails = new LoginDetails("tukiz", "password");

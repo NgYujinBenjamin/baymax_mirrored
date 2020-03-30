@@ -33,6 +33,8 @@ public class Controller {
     private static final Token TOKEN = new Token();
     private static final userscon userscon = new userscon();
     private static final historycon historyscon = new historycon();
+    private static final String ADMINTOKENPREFIX = "adminToken";
+    private static final String ADMINTOKEN = "baymaxFTW";
 
     // done
     @RequestMapping(path = "/register", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
@@ -47,15 +49,6 @@ public class Controller {
         String token = TOKEN.createToken(userDetails.getUsername());
         return new TokenSuccess(token);
     }
-    
-    /*
-    //Issues with return type
-    //Remove user, Need authentication of admin token for security
-    @RequestMapping(path = "/delete", method = RequestMethod.DELETE)
-    public void deleteUser(@PathVariable("username") String username) throws Exception {
-      return userscon.deleteUser(username);
-    }
-    */
 
     // original by Ben
     @RequestMapping(path = "/getusers", method = RequestMethod.GET, produces = "application/json")
@@ -73,21 +66,36 @@ public class Controller {
         return new JsonSuccess("Password has been updated successfully.");
     }
 
-    // Need authentication of admin token for security
-    @RequestMapping(path = "/resetpassword", method = RequestMethod.GET)
-    // public JsonObject resetPass(@RequestParam(value = "username")
-    public JsonObject resetPass(@RequestBody ResetPassword details) throws SQLException, ClassNotFoundException {
-        if (details.getUsername().isEmpty()) {
-            throw new NullPointerException("Username cannot be empty.");
+    @RequestMapping(path = "/deleteuser", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+    public String deleteUser(@RequestBody UserCredentials details, @RequestHeader(ADMINTOKENPREFIX) String token) throws SQLException, ClassNotFoundException, InvalidTokenException {
+        if (ADMINTOKEN.equals(token)) {
+            String message = userscon.deleteUser(details.staff_id) ? "Success" : "Fail";
+            return message;
         }
-        userscon.resetPassword(details.getUsername());
-        return new JsonSuccess("Password has been reset successfully");
+        throw new InvalidTokenException("Invalid Admin Token");
+    }
+
+    @RequestMapping(path = "/resetpassword", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+    public String resetPassword(@RequestBody UserCredentials details, @RequestHeader(ADMINTOKENPREFIX) String token) throws SQLException, ClassNotFoundException, InvalidTokenException {
+        if (ADMINTOKEN.equals(token)) {
+            String message = userscon.resetPasswordWithStaffid(details.staff_id) ? "Success" : "Fail";
+            return message;
+        }
+        throw new InvalidTokenException("Invalid Admin Token");
+    }
+
+    @RequestMapping(path = "/adminconvert", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+    public JsonObject convertStaffToAdmin(@RequestBody UserCredentials details, @RequestHeader(ADMINTOKENPREFIX) String token) throws SQLException, ClassNotFoundException, InvalidTokenException {
+        if (ADMINTOKEN.equals(token)) {
+            return userscon.convertStaffToAdmin(details.staff_id);
+        }
+        throw new InvalidTokenException("Invalid Admin Token");
     }
 
     // done
     @RequestMapping(path = "/login", method = RequestMethod.POST)
     public JsonObject login(@RequestBody LoginDetails inputDetails) throws SQLException, ClassNotFoundException, NullPointerException, InvalidTokenException {
-        if ( inputDetails.getUsername().isEmpty() || inputDetails.getPassword().isEmpty() || inputDetails.getUsername() == null || inputDetails.getPassword() == null) {
+        if (inputDetails.getUsername().isEmpty() || inputDetails.getPassword().isEmpty() || inputDetails.getUsername() == null || inputDetails.getPassword() == null) {
             throw new NullPointerException("Username or password cannot be empty.");
         }
         String username = inputDetails.getUsername();

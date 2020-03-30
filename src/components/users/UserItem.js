@@ -14,15 +14,24 @@ const UserItem = ({ user }) => {
     const { staff_id, username, firstname, lastname, department, role } = user
 
     const handleDelete = () => {
-        deleteUser(staff_id);
+        deleteUser({
+            staff_id,
+            username
+        });
     }
 
     const handleReset = () => {
-        resetPassword(staff_id);
+        resetPassword({
+            staff_id,
+            username
+        });
     }
 
     const handleAdmin = () => {
-        convertAdmin(staff_id);
+        convertAdmin({
+            staff_id,
+            username
+        });
     }
 
     return (
