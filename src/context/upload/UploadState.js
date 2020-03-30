@@ -572,6 +572,8 @@ const UploadState = (props) => {
       //update minGap to the newMinGap
       setMinGap(newMinGap);
 
+      console.log(postResultDone)
+
       const config = {
         headers: {
           'Content-Type': 'application/json'
@@ -580,6 +582,8 @@ const UploadState = (props) => {
       
       try {
         const res = await axios.post('http://localhost:8080/subseqScheduling', postResultDone, config);
+        
+        console.log(res);
 
         dispatch({ 
           type: RESCHEDULE_POST_RESULT, 
@@ -858,6 +862,8 @@ const UploadState = (props) => {
 
         let preResult = { baseline: newbaseline,  masterOps: masterops, bay: bays, minGap: mingap, maxGap: maxgap}
 
+        console.log(preResult);
+
         const config = {
             headers: {
                 'Content-Type': 'application/json'
@@ -866,6 +872,8 @@ const UploadState = (props) => {
 
         try {
             const res = await axios.post('http://localhost:8080/firstScheduling', preResult, config);
+
+            console.log(res);
 
             dispatch({
                 type: CREATE_RESULT,
@@ -966,13 +974,15 @@ const UploadState = (props) => {
         checkDatesValue(obj, ['MRP Date','Created On','Created Time','SAP Customer Req Date','Ship Recog Date','Slot Request Date','Int. Ops Ship Readiness Date','MFG Commit Date','Div Commit Date','Changed On','Last Changed Time'])
       })
 
+      console.log(base);
+
       const config = {
         headers: {
           'Content-Type': 'application/json'
         }
       }
 
-      // const res = await axios.post('http://localhost:8080/setbaseline', base, config)
+      const res = await axios.post('http://localhost:8080/setbaseline', base, config)
 
       dispatch({
         type: UPDATE_BASELINE,
