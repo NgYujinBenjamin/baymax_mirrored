@@ -139,7 +139,7 @@ public class Baseline implements JsonObject {
         this.SAP_Customer_Req_Date = row.get("SAP Customer Req Date") == null ? "" : (String) row.get("SAP Customer Req Date");
         this.Slot_Request_Date = row.get("Slot Request Date") == null ? "" : (String) row.get("Slot Request Date");
         this.Div_Commit_Date = row.get("Div Commit Date") == null ? "" : (String) row.get("Div Commit Date");
-        this.Delta_Days = (Integer) row.get("Delta Days");
+        this.Delta_Days = row.get("Delta Days") == null ? null : (Integer) row.get("Delta Days");
         this.Region = row.get("Region") == null ? "" : (String) row.get("Region");
         this.SO_Status = row.get("SO Status") == null ? "" : (String) row.get("SO Status");
         this.Caerus_PO_Qtr = row.get("Caerus PO Qtr") == null ? "" : (String) row.get("Caerus PO Qtr");
