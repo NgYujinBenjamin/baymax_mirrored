@@ -14,6 +14,7 @@ import java.lang.String;
 
 import main.java.algorithm.Objects.*;
 import main.java.algorithm.Calculation.*;
+import main.java.authentication.json.JsonObject;
 
 @CrossOrigin
 @RestController
@@ -86,57 +87,53 @@ public class HistoryController {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         String modifiedDate = formatter.format(date);
 
-        try {
-            // hardcoded historyID to be 1 should be retrieved to see which is the next historyID to be added
-            int id = conn.getLastHistoryID();
-            int next_id = id + 1;
-    
-            conn.addMassSlotUpload(baseLineList, next_id, 1);
-            conn.addMassSlotUpload(MSUList, next_id, 0);
 
-            conn.addHistory(String.valueOf(staffID), String.valueOf(minGap), String.valueOf(maxGap), String.valueOf(bay), modifiedDate);
-        } catch (Exception e) {
-            throw e;
-        }
-        return "Success";
+        // hardcoded historyID to be 1 should be retrieved to see which is the next historyID to be added
+        int id = conn.getLastHistoryID();
+        int next_id = id + 1;
+
+        conn.addMassSlotUpload(baseLineList, next_id, 1);
+        conn.addMassSlotUpload(MSUList, next_id, 0);
+
+        return conn.addHistory(String.valueOf(staffID), String.valueOf(minGap), String.valueOf(maxGap), String.valueOf(bay), modifiedDate);
     }
 
     @RequestMapping(path = "/gethistory/{staffID}/{historyID}", method = RequestMethod.GET, produces = "application/json")
-    public Object retrievePreSchedule(@PathVariable("staffID") String staffID, @PathVariable("historyID") String historyID) throws SQLException, ClassNotFoundException{
+    public Object retrievePreSchedule(@PathVariable("staffID") String staffID, @PathVariable("historyID") String historyID) throws SQLException, ClassNotFoundException, ParseException {
         ArrayList<Product> allProduct = new ArrayList<Product>();
         ArrayList<Product> baseLineProduct = new ArrayList<Product>();
-        
 
-        List<Map<String,Object>> baseLineOccupancy = conn.getBaseLineOccupancy(historyID);
-        List<Map<String,Object>> bayOccupancy = conn.getBayOccupancy(historyID);
+
+        List<Map<String, Object>> baseLineOccupancy = conn.getBaseLineOccupancy(historyID);
+        List<Map<String, Object>> bayOccupancy = conn.getBayOccupancy(historyID);
         Integer numBays = conn.getNumBay(historyID, staffID);
         Integer minGap = conn.getMinGap(historyID, staffID);
         Integer maxGap = conn.getMaxGap(historyID, staffID);
-        
-        for (int i = 0; i < baseLineOccupancy.size(); i++){
+
+        for (int i = 0; i < baseLineOccupancy.size(); i++) {
             Object productRaw = baseLineOccupancy.get(i);
             Product p = new Product(productRaw);
             baseLineProduct.add(p);
         }
 
-        for (int i = 1; i < bayOccupancy.size(); i++){
+        for (int i = 1; i < bayOccupancy.size(); i++) {
             Object productRaw = bayOccupancy.get(i);
             Product p = new Product(productRaw);
-            allProduct.add(p);                   
+            allProduct.add(p);
         }
 
-        
+
         Collections.sort(allProduct);
         Collections.sort(baseLineProduct);
 
-        BayRequirement bayReq =  new BayRequirement(baseLineProduct, allProduct);
+        BayRequirement bayReq = new BayRequirement(baseLineProduct, allProduct);
         getAHistory rv = new getAHistory(bayReq, numBays, minGap, maxGap);
         return rv;
         // return BayRequirement.toJSONString(bayReq);
     }
 
     @RequestMapping(path = "/history/{staffId}", method = RequestMethod.GET, produces = "application/json")
-    public ArrayList<main.java.authentication.json.JsonObject> getHistory(@PathVariable("staffId") String staffId) throws SQLException, ClassNotFoundException {
+    public ArrayList<JsonObject> getHistory(@PathVariable("staffId") String staffId) throws SQLException, ClassNotFoundException, ParseException {
         return conn.getHistory(staffId);
     }
 
