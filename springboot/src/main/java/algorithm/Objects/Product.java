@@ -127,7 +127,7 @@ public class Product implements Comparable<Product>{
 	 * Date values passed in have to be in the format of "dd/MM/yyyy"
 	 * @param rowData
 	 */
-    public Product (Map<String, Object> rowData){
+    public Product (Map<String, Object> rowData) throws RuntimeException{
         argoID = (rowData.get("Argo ID") == null) ? null : Integer.parseInt((String) rowData.get("Argo ID"));
         plant = (rowData.get("Plant") == null) ? null : Integer.parseInt((String) rowData.get("Plant"));
         buildComplete = (Integer) rowData.get("Build Complete");
@@ -227,6 +227,9 @@ public class Product implements Comparable<Product>{
             e.printStackTrace();
         }
         
+        if (MRPDate == null || endDate == null){
+            throw new RuntimeException("Please ensure that MRP Date and End Date is passed in, in dd/mm/yyyy format");
+        }
 
         latestToolStartDate = DateUtils.addDays(endDate, -cycleTimeDays);
         toolStartDate = DateUtils.addDays(MRPDate, -cycleTimeDays); // Useful for baseline products
@@ -235,6 +238,9 @@ public class Product implements Comparable<Product>{
             leaveBayDate = sendToStorageDate;
         }
         else if (fabName != null && fabName.equals("OPEN")){
+            if (intOpsShipReadinessDate == null){
+                throw new RuntimeException("For OPEN products, please fill in the Internal Ops Ship Readiness Date");
+            }
             leaveBayDate = intOpsShipReadinessDate;
         } else {
             leaveBayDate = endDate;
