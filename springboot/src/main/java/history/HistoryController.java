@@ -87,37 +87,32 @@ public class HistoryController {
         String modifiedDate = formatter.format(date);
 
         try {
-            // hardcoded history_id to be 1 should be retrieved to see which is the next history_id to be added
+            // hardcoded historyID to be 1 should be retrieved to see which is the next historyID to be added
             int id = conn.getLastHistoryID();
             int next_id = id + 1;
-            return_message = conn.addMassSlotUpload(baseLineList, next_id, 1);
-            return_message = conn.addMassSlotUpload(MSUList, next_id, 0);
+    
+            conn.addMassSlotUpload(baseLineList, next_id, 1);
+            conn.addMassSlotUpload(MSUList, next_id, 0);
 
             conn.addHistory(String.valueOf(staffID), String.valueOf(minGap), String.valueOf(maxGap), String.valueOf(bay), modifiedDate);
         } catch (Exception e) {
             throw e;
-            // throw new Exception("Upload failed");
         }
-        return return_message;
+        return "Success";
     }
 
-    @RequestMapping(path = "/retrievePreSchedule", method = RequestMethod.GET, produces = "application/json")
-    public Object retrievePreSchedule() throws SQLException, ClassNotFoundException{
-        // return conn.getBaseLineOccupancy("1");
-        
-        //uncomment all below, null pointer for now???
+    @RequestMapping(path = "/gethistory/{staffID}/{historyID}", method = RequestMethod.GET, produces = "application/json")
+    public Object retrievePreSchedule(@PathVariable("staffID") String staffID, @PathVariable("historyID") String historyID) throws SQLException, ClassNotFoundException{
         ArrayList<Product> allProduct = new ArrayList<Product>();
         ArrayList<Product> baseLineProduct = new ArrayList<Product>();
         
 
-        List<Map<String,Object>> baseLineOccupancy = conn.getBaseLineOccupancy("1");
-        List<Map<String,Object>> bayOccupancy = conn.getBayOccupancy("1");
-        Integer numBays = conn.getNumBay("1");
-        Integer minGap = conn.getMinGap("1");
-        Integer maxGap = conn.getMaxGap("1");
-        // return numBays;
-    
-        // return conn.getBaseLineOccupancy("1");
+        List<Map<String,Object>> baseLineOccupancy = conn.getBaseLineOccupancy(historyID);
+        List<Map<String,Object>> bayOccupancy = conn.getBayOccupancy(historyID);
+        Integer numBays = conn.getNumBay(historyID, staffID);
+        Integer minGap = conn.getMinGap(historyID, staffID);
+        Integer maxGap = conn.getMaxGap(historyID, staffID);
+        
         for (int i = 0; i < baseLineOccupancy.size(); i++){
             Object productRaw = baseLineOccupancy.get(i);
             Product p = new Product(productRaw);
@@ -136,6 +131,16 @@ public class HistoryController {
 
         BayRequirement bayReq =  new BayRequirement(baseLineProduct, allProduct);
         return BayRequirement.toJSONString(bayReq);
+    }
+
+    @RequestMapping(path = "/history/{staffId}", method = RequestMethod.GET, produces = "application/json")
+    public ArrayList<main.java.authentication.json.JsonObject> getHistory(@PathVariable("staffId") String staffId) throws SQLException, ClassNotFoundException {
+        return conn.getHistory(staffId);
+    }
+
+    @RequestMapping(path = "/history/{historyID}", method = RequestMethod.DELETE)
+    public String removeHistory(@PathVariable("historyID") String historyID) throws Exception {
+        return conn.removeHistory(historyID);
     }
 
     @RequestMapping(path = "/setbaseline", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
