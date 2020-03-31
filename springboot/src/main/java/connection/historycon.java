@@ -129,13 +129,9 @@ public class historycon extends main.java.connection.mysqlcon {
                         row.put(md.getColumnName(i), rs.getObject(i));
                         continue;
                     }
-                    
                 }
-                
             }
-            data.add(row);
-            // rv2.add(new MassSlotUploadDetails(row));
-            
+            data.add(row);            
         }
         con.close();
         return data;
@@ -173,13 +169,9 @@ public class historycon extends main.java.connection.mysqlcon {
                         row.put(md.getColumnName(i), rs.getObject(i));
                         continue;
                     }
-                    
                 }
-                
             }
             data.add(row);
-            // rv2.add(new MassSlotUploadDetails(row));
-            
         }
         con.close();
         return data;

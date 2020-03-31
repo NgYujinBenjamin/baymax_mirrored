@@ -130,7 +130,9 @@ public class HistoryController {
         Collections.sort(baseLineProduct);
 
         BayRequirement bayReq =  new BayRequirement(baseLineProduct, allProduct);
-        return BayRequirement.toJSONString(bayReq);
+        getAHistory rv = new getAHistory(bayReq, numBays, minGap, maxGap);
+        return rv;
+        // return BayRequirement.toJSONString(bayReq);
     }
 
     @RequestMapping(path = "/history/{staffId}", method = RequestMethod.GET, produces = "application/json")
