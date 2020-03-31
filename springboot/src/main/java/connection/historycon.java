@@ -33,7 +33,7 @@ public class historycon extends main.java.connection.mysqlcon {
         return rv;
     }
 
-    public ArrayList<JsonObject> getHistory(String staffId) throws SQLException, ClassNotFoundException {
+    public ArrayList<JsonObject> getHistory(String staffId) throws SQLException, ClassNotFoundException, ParseException {
         Connection con = super.getConnection();
         Statement stmt = con.createStatement();
         String my_string = "select * from history where staff_id = '" + staffId + "' order by historyID desc";
@@ -46,7 +46,11 @@ public class historycon extends main.java.connection.mysqlcon {
         while (rs.next()) {
             count = count + 1;
             if (count <= 10){
-                rv.add(new HistoryDetails(rs.getString(1), rs.getString(5)));
+                String currentDate = rs.getString(6);
+                SimpleDateFormat formatterForFrontEnd = new SimpleDateFormat("dd MMM yyyy");
+                SimpleDateFormat formatterForBackEnd = new SimpleDateFormat("yyyy-MM-dd");
+                java.util.Date date = formatterForBackEnd.parse(currentDate);
+                rv.add(new HistoryDetails(rs.getString(1), formatterForFrontEnd.format(date)));
             } else {
                 historyId_to_remove.add(rs.getString(1));
             }
