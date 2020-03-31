@@ -572,8 +572,6 @@ const UploadState = (props) => {
       //update minGap to the newMinGap
       setMinGap(newMinGap);
 
-      console.log(postResultDone)
-
       const config = {
         headers: {
           'Content-Type': 'application/json'
@@ -582,8 +580,6 @@ const UploadState = (props) => {
       
       try {
         const res = await axios.post('http://localhost:8080/subseqScheduling', postResultDone, config);
-        
-        console.log(res);
 
         dispatch({ 
           type: RESCHEDULE_POST_RESULT, 
@@ -791,8 +787,6 @@ const UploadState = (props) => {
       postResult.staffID = parseInt(staffID);
       postResult.histID = (histID == null) ? null : parseInt(histID);
 
-      console.log(postResult);
-
       const config = {
           headers: {
               'Content-Type': 'application/json'
@@ -862,8 +856,6 @@ const UploadState = (props) => {
 
         let preResult = { baseline: newbaseline,  masterOps: masterops, bay: bays, minGap: mingap, maxGap: maxgap}
 
-        console.log(preResult);
-
         const config = {
             headers: {
                 'Content-Type': 'application/json'
@@ -872,8 +864,6 @@ const UploadState = (props) => {
 
         try {
             const res = await axios.post('http://localhost:8080/firstScheduling', preResult, config);
-
-            console.log(res);
 
             dispatch({
                 type: CREATE_RESULT,
@@ -954,27 +944,29 @@ const UploadState = (props) => {
     // @loc     Baseline.js
     // @desc    to get baseline from DB
     // @param   ()
-    const getBaseline = async () => {
+    const getBaseline = async (staffID) => {
       setLoading()
-      // const res = await axios.get('http://localhost:8080/getBaseline')
-
+      const res = await axios.get(`http://localhost:8080/getbaseline?staff_id=${staffID}`)
+      
       dispatch({
         type: GET_BASELINE,
-        payload: []
+        payload: res.data
       })
     }
 
     // @loc     Preresult.js
     // @desc    update baseline, format the date for storing to DB
     // @param   (array)
-    const updateBaseline = async base => {
+    const updateBaseline = async (base, staff_id) => {
       base.forEach(obj => {
         obj.hasOwnProperty('emptyToDelete') && delete obj['emptyToDelete'];
         
         checkDatesValue(obj, ['MRP Date','Created On','Created Time','SAP Customer Req Date','Ship Recog Date','Slot Request Date','Int. Ops Ship Readiness Date','MFG Commit Date','Div Commit Date','Changed On','Last Changed Time'])
       })
 
-      console.log(base);
+      let output = {};
+      output.staff_id = parseInt(staff_id);
+      output.baseline = base;
 
       const config = {
         headers: {
@@ -982,7 +974,7 @@ const UploadState = (props) => {
         }
       }
 
-      const res = await axios.post('http://localhost:8080/setbaseline', base, config)
+      const res = await axios.post('http://localhost:8080/setbaseline', output, config);
 
       dispatch({
         type: UPDATE_BASELINE,

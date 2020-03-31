@@ -14,7 +14,7 @@ const Baseline = (props) => {
     const classes = useStyles();
 
     const { setBaseline, stepcount, setStepCount, error, uploadClearError, baseline, getBaseline, success } = uploadContext;
-    const { loadUser, updateNavItem } = authContext;
+    const { loadUser, updateNavItem, user } = authContext;
     const { setAlert } = alertContext;
 
     useEffect(() => {
@@ -53,7 +53,7 @@ const Baseline = (props) => {
     }
 
     const handleSubmit = (event) => {
-        getBaseline();
+        getBaseline(user.staff_id);
         setAlert('Baseline is not imported! Using previously stored Baseline', 'info')
         props.history.push('/schedule');
     }
