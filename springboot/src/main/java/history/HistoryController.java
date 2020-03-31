@@ -4,11 +4,7 @@ import authentication.json.BaselineParam;
 import main.java.connection.historycon;
 import main.java.authentication.json.Baseline;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
 
@@ -48,8 +44,8 @@ public class HistoryController {
 
         ArrayList<main.java.history.MassSlotUploadDetails> MSUList = new ArrayList<>();
         ArrayList<main.java.history.MassSlotUploadDetails> baseLineList = new ArrayList<>();
-        
-        for(String key : baseLineOccupancy.keySet()){
+
+        for (String key : baseLineOccupancy.keySet()) {
             List<List<Object>> baseLineOccupancyList = baseLineOccupancy.get(key);
             for (int i = 0; i < baseLineOccupancyList.size(); i++) {
                 List dates;
@@ -62,7 +58,7 @@ public class HistoryController {
                     //product (CY19Q4's [1,2,3,4,...])
                     p = new MassSlotUploadDetails(baseLineOccupancyList.get(i).get(0));
                     baseLineList.add(p);
-                    
+
                 }
             }
         }
@@ -94,11 +90,11 @@ public class HistoryController {
             // hardcoded history_id to be 1 should be retrieved to see which is the next history_id to be added
             int id = conn.getLastHistoryID();
             int next_id = id + 1;
-            return_message = conn.addMassSlotUpload(baseLineList,next_id, 1);
+            return_message = conn.addMassSlotUpload(baseLineList, next_id, 1);
             return_message = conn.addMassSlotUpload(MSUList, next_id, 0);
 
             conn.addHistory(String.valueOf(staffID), String.valueOf(minGap), String.valueOf(maxGap), String.valueOf(bay), modifiedDate);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw e;
             // throw new Exception("Upload failed");
         }
@@ -134,43 +130,12 @@ public class HistoryController {
             allProduct.add(p);                   
         }
 
-        // return baseLineProduct;
-        // return allProduct;
- 
         
         Collections.sort(allProduct);
         Collections.sort(baseLineProduct);
 
         BayRequirement bayReq =  new BayRequirement(baseLineProduct, allProduct);
         return BayRequirement.toJSONString(bayReq);
-
-        // BayRequirement bayReq = null;
-        // BaySchedule baySchedule = null;
-
-        // Integer gapDiff = maxGap - minGap; // End date alr considers the min gap; Can only pull forward by gapDiff more days
-        
-        // HashMap<String, Integer> quarterHC = new HeadCount(allProduct).getQuarterHC();
-        // Boolean quarterHCChanged = true;
-        
-       
-        // while (quarterHCChanged){
-        //     System.out.println(quarterHC);
-
-        //     baySchedule = new BaySchedule(baseLineProduct, allProduct, quarterHC, numBays, gapDiff);
-
-        //     allProduct = baySchedule.getAllProduct();
-        //     baseLineProduct = baySchedule.getBaseLineProduct();
-        //     bayReq = new BayRequirement(baseLineProduct, allProduct);
-            
-        //     // Check if quarterHC has changed
-        //     HashMap<String, Integer> newQuarterHC = new HeadCount(allProduct).getQuarterHC();
-        //     if (quarterHC.equals(newQuarterHC)){
-        //         quarterHCChanged = false;
-        //     } else {
-        //         quarterHC = newQuarterHC;
-        //     }
-        // }
-        // return BayRequirement.toJSONString(bayReq);
     }
 
     @RequestMapping(path = "/setbaseline", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
@@ -190,6 +155,15 @@ public class HistoryController {
         Map<String, Integer> result = new HashMap<String, Integer>();
         result.put("Code", addedStatus);
         return result;
+    }
+
+    @RequestMapping(path = "/getbaseline", method = RequestMethod.GET, produces = "application/json")
+//    public Map<String, Integer> getbaseline(@RequestParam String staff_id) throws SQLException, ClassNotFoundException, RuntimeException {
+    public List<Map<String, Object>> getbaseline(@RequestParam String staff_id) throws SQLException, ClassNotFoundException, RuntimeException {
+        if (conn.baselinePresentForUser(staff_id)) {
+            return conn.getBaselineForUser(staff_id);
+        }
+        return new ArrayList<>();
     }
 
 }
