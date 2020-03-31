@@ -362,6 +362,10 @@ public class Product implements Comparable<Product>{
 
         }        
 
+        if (toolStartDate == null){
+            toolStartDate = DateUtils.addDays(MRPDate, -cycleTimeDays); // Needed for history, which uses this constructor and does not have toolStartDate value
+        }
+
         if (lockMRPDate != null && lockMRPDate){
             latestToolStartDate = toolStartDate;
         } else {

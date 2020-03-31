@@ -449,6 +449,22 @@ public class historycon extends main.java.connection.mysqlcon {
         return presence;
     }
 
+    public boolean historyPresentForUser(String staff_id) throws SQLException, ClassNotFoundException {
+        Connection con = super.getConnection();
+
+        String query = "select * from history where staff_id = ? ";
+        PreparedStatement pstmt = con.prepareStatement(query);
+        pstmt.setString(1, staff_id);
+
+        ResultSet rs = pstmt.executeQuery();
+        boolean presence = false;
+        if (rs.next()) {
+            presence = true;
+        }
+        con.close();
+        return presence;
+    }
+
     public void removeBaselineFromUser(String staff_id) throws SQLException, ClassNotFoundException {
         Connection con = super.getConnection();
         String query = "DELETE from baseline where staff_id = ?";
@@ -457,6 +473,16 @@ public class historycon extends main.java.connection.mysqlcon {
         int count = pstmt.executeUpdate();
         con.close();
     }
+
+    public void removeHistoryFromUser(String staff_id) throws SQLException, ClassNotFoundException {
+        Connection con = super.getConnection();
+        String query = "DELETE from history where staff_id = ?";
+        PreparedStatement pstmt = con.prepareStatement(query);
+        pstmt.setString(1, staff_id);
+        int count = pstmt.executeUpdate();
+        con.close();
+    }
+
 
     // public String addMassSlotUpload(ArrayList<main.java.history.MassSlotUploadDetails> data, int msuId) throws SQLException, ClassNotFoundException {
 

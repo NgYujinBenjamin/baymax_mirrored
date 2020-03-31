@@ -107,39 +107,42 @@ public class HistoryController {
 
     @RequestMapping(path = "/retrievePreSchedule", method = RequestMethod.GET, produces = "application/json")
     public Object retrievePreSchedule() throws SQLException, ClassNotFoundException{
-        return conn.getBaseLineOccupancy("1");
+        // return conn.getBaseLineOccupancy("1");
         
         //uncomment all below, null pointer for now???
-        // ArrayList<Product> allProduct = new ArrayList<Product>();
-        // ArrayList<Product> baseLineProduct = new ArrayList<Product>();
+        ArrayList<Product> allProduct = new ArrayList<Product>();
+        ArrayList<Product> baseLineProduct = new ArrayList<Product>();
         
 
-        // List<Map<String,Object>> baseLineOccupancy = conn.getBaseLineOccupancy("1");
-        // List<Map<String,Object>> bayOccupancy = conn.getBayOccupancy("1");
-        // Integer numBays = conn.getNumBay("1");
-        // Integer minGap = conn.getMinGap("1");
-        // Integer maxGap = conn.getMaxGap("1");
-        // // return numBays;
+        List<Map<String,Object>> baseLineOccupancy = conn.getBaseLineOccupancy("1");
+        List<Map<String,Object>> bayOccupancy = conn.getBayOccupancy("1");
+        Integer numBays = conn.getNumBay("1");
+        Integer minGap = conn.getMinGap("1");
+        Integer maxGap = conn.getMaxGap("1");
+        // return numBays;
     
-        // // return conn.getBaseLineOccupancy("1");
-        // for (int i = 0; i < baseLineOccupancy.size(); i++){
-        //     Object productRaw = baseLineOccupancy.get(i);
-        //     Product p = new Product(productRaw);
-        //     baseLineProduct.add(p);
-        // }
+        // return conn.getBaseLineOccupancy("1");
+        for (int i = 0; i < baseLineOccupancy.size(); i++){
+            Object productRaw = baseLineOccupancy.get(i);
+            Product p = new Product(productRaw);
+            baseLineProduct.add(p);
+        }
 
-        // for (int i = 1; i < bayOccupancy.size(); i++){
-        //     Object productRaw = bayOccupancy.get(i);
-        //     Product p = new Product(productRaw);
-        //     allProduct.add(p);                   
-        // }
+        for (int i = 1; i < bayOccupancy.size(); i++){
+            Object productRaw = bayOccupancy.get(i);
+            Product p = new Product(productRaw);
+            allProduct.add(p);                   
+        }
 
-        // // return baseLineProduct;
-        // // return allProduct;
+        // return baseLineProduct;
+        // return allProduct;
  
         
-        // Collections.sort(allProduct);
-        // Collections.sort(baseLineProduct);
+        Collections.sort(allProduct);
+        Collections.sort(baseLineProduct);
+
+        BayRequirement bayReq =  new BayRequirement(baseLineProduct, allProduct);
+        return BayRequirement.toJSONString(bayReq);
 
         // BayRequirement bayReq = null;
         // BaySchedule baySchedule = null;
