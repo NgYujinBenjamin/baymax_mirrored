@@ -58,11 +58,6 @@ public class BaySchedule{
 
         for (Product p: allProduct){
             bayAssignment(p, gapDiff);
-
-            System.out.print("ArgoID: " + p.getArgoID() + "|");
-            System.out.print("Tool Start Date: " + p.getToolStartDate() + "|");
-            System.out.print("Leave Bay Date: " + p.getMRPDate() + "|");
-            System.out.println("Fab Name: " + p.getCycleTimeDays() + "|");
         }
     }
 
