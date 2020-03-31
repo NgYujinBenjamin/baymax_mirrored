@@ -150,8 +150,6 @@ public class AlgoController {
         
        
         while (quarterHCChanged){
-            System.out.println(quarterHC);
-
             baySchedule = new BaySchedule(baseLineProduct, allProduct, quarterHC, numBays, gapDiff);
 
             allProduct = baySchedule.getAllProduct();
