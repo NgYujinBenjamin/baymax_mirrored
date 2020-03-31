@@ -1,0 +1,23 @@
+{
+  "baseline": [
+  {
+    "Argo ID": "17362",
+    "Fab Name": "SARSI 3",
+    "Committed Ship $": 856579,
+    "Ship Revenue (Int $)": 856579,
+    "MRP Date": "12/01/2020",
+    "Int. Ops Ship Readiness Date": "29/03/2020",
+    "MFG Commit Date": "29/03/2020",
+    "Cycle Time Days": 43,
+    "Quantity": 1,
+    "Build Qtr": "CY20Q1",
+    "Ship Qtr": "CY20Q1",
+    "End Date": "29/03/2020"
+  }
+  ],
+  "masterOps": [
+  ],
+  "bay": 1,
+  "minGap": 0,
+  "maxGap": 90
+}
