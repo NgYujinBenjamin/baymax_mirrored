@@ -1,4 +1,4 @@
-import { SET_BASELINE, GET_BASELINE, UPDATE_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS, UPDATE_POST_RESULT, UPDATE_QUARTER, UPDATE_DATA, UPDATE_SAVE, UPDATE_POST_RESULT_FORMAT, UPDATE_RESCHEDULE, RESCHEDULE_POST_RESULT, UPDATE_TABCHECKER, CREATE_RESULT_ERROR, SET_MIN_GAP, SET_MAX_GAP, LOAD_ALL_HISTORY, GET_HISTORY, UPDATE_NEW_MIN_GAP, UPDATE_SAVE_RESULT_FORMAT } from '../types';
+import { SET_BASELINE, GET_BASELINE, UPDATE_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS, UPDATE_POST_RESULT, UPDATE_QUARTER, UPDATE_DATA, UPDATE_SAVE, UPDATE_POST_RESULT_FORMAT, UPDATE_RESCHEDULE, RESCHEDULE_POST_RESULT, UPDATE_TABCHECKER, CREATE_RESULT_ERROR, SET_MIN_GAP, SET_MAX_GAP, LOAD_ALL_HISTORY, GET_HISTORY, UPDATE_NEW_MIN_GAP } from '../types';
 
 export default (state, action) => {
     switch(action.type) {
@@ -43,11 +43,6 @@ export default (state, action) => {
             return {
                 ...state,
                 tabUpdate: action.payload
-            }
-        case UPDATE_SAVE_RESULT_FORMAT:
-            return{
-                ...state,
-                postResult: action.payload,
             }
         case UPDATE_SAVE:
             return {
@@ -166,7 +161,8 @@ export default (state, action) => {
                 postResult: null,
                 postResultDone: null,
                 currentQuarter: null,
-                stepcount: 1
+                stepcount: 1,
+                histID: null
             }
         case CLEAR_PRERESULT:
             return {
@@ -196,7 +192,8 @@ export default (state, action) => {
                 scheduleDone: false,
                 error: null,
                 success: null,
-                stepcount: 0
+                stepcount: 0,
+                histID: null
             }
         case LOAD_ALL_HISTORY:
             return {
