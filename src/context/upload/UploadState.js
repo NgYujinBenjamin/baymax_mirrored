@@ -784,7 +784,7 @@ const UploadState = (props) => {
       postResult.maxGap = parseInt(maxgap);
       postResult.staffID = parseInt(staffID);
       postResult.histID = histID;
-      
+
       console.log(postResult);
 
       const config = {
@@ -807,14 +807,14 @@ const UploadState = (props) => {
     }
 
     // get a history
-    const getHistory = async () => {
+    const getHistory = async (staffid, histid) => {
       try {
-          const res = await axios.get(`http://localhost:8080/getHistory`);
-          // console.log(res);
-
+          const res = await axios.get(`http://localhost:8080/gethistory/${staffid}/${histid}`);
+          console.log(res.data);
+          
           dispatch({
               type: GET_HISTORY,
-              payload: res
+              payload: res.data
           })
       } catch (err) {
           
