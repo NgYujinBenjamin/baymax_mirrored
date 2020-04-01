@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 // import main.java.algorithm.*;
 
 import java.util.*;
+import java.io.*;
 import java.text.SimpleDateFormat;
 
 import org.apache.poi.ss.usermodel.Cell;  
@@ -74,20 +75,39 @@ public class AlgoController {
 
         while (quarterHCChanged){
             baySchedule = new BaySchedule(baseLineProduct, allProduct, quarterHC, numBays, gapDiff);
+            
+            // Proving for Felicia
+            // ArrayList<Bay> schedule = baySchedule.getSchedule();
+            
+            // try(PrintStream out = new PrintStream(new FileOutputStream("./masterOps_BayDiagnosis.txt"), true)){
+            
+            //     for (Bay b: schedule){
+            //         ArrayList<Product> productList = b.getBaySchedule();
+            //         out.println("%%%%%%%%%%%%%%%% Bay " + b.getBayID() + " %%%%%%%%%%%%%%%%");
+            //         for (Product p: productList){
+            //             out.print("[ SlotID/UTID:" + p.getSlotID_UTID() + " | ToolStartDate:" + p.getToolStartDate() + " | LeaveBayDate:"  + p.getLeaveBayDate() + "] ->");
+            //             // out.print("[" + p.getArgoID() + " | " + p.getAssignedBayID() + " | "  + p.getGapDays() + "] ->");
+            //         }
+            //         out.println();
+            //     }
+            // } catch (FileNotFoundException e){
+            //     e.printStackTrace();
+            // }
 
-            allProduct = baySchedule.getAllProduct();
-            baseLineProduct = baySchedule.getBaseLineProduct();
-            bayReq = new BayRequirement(baseLineProduct, allProduct);
-    
-            allProduct = baySchedule.getAllProduct();
+                allProduct = baySchedule.getAllProduct();
+                baseLineProduct = baySchedule.getBaseLineProduct();
+                bayReq = new BayRequirement(baseLineProduct, allProduct);
+        
+                allProduct = baySchedule.getAllProduct();
 
-            HashMap<String, Integer> newQuarterHC = new HeadCount(allProduct).getQuarterHC();
-            if (quarterHC.equals(newQuarterHC)){
-                quarterHCChanged = false;
-            } else {
-                quarterHC = newQuarterHC;
-            }
+                HashMap<String, Integer> newQuarterHC = new HeadCount(allProduct).getQuarterHC();
+                if (quarterHC.equals(newQuarterHC)){
+                    quarterHCChanged = false;
+                } else {
+                    quarterHC = newQuarterHC;
+                }
         }
+
         return BayRequirement.toJSONString(bayReq);
     }
 
