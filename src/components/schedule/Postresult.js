@@ -14,7 +14,8 @@ const Postresult = () => {
     const uploadContext = useContext(UploadContext);
     const authContext = useContext(AuthContext);
 
-    const [value, setValue] = useState(0); // this is for tab panel to display quarters
+    const [ value, setValue ] = useState(0); // this is for tab panel to display quarters
+    const [ histCount, sethistCount ] = useState(0);
 
     const { loadUser, updateNavItem } = authContext
     const { histID, setNewMinGap, newMinGap, bays, minGap, maxGap, setBays, setMinGap, setMaxGap, currentQuarter, postResult, postResultDone, postResultErrors, tabChecker, updateReschedule, createExport, createExportSchedule, updateSave, clearAll, updatePostResultEmpties } = uploadContext;
@@ -57,6 +58,7 @@ const Postresult = () => {
     }
 
     const handleSave = () => {
+        sethistCount(1);
         updateSave(true);
     }
 
@@ -67,6 +69,7 @@ const Postresult = () => {
     }
 
     const handleReschedule = () => {
+        sethistCount(0);
         updateReschedule(true);
     }
 
@@ -130,7 +133,11 @@ const Postresult = () => {
                         <Button fullWidth variant='contained' id='clearAll' onClick={handleClearAll} startIcon={<DeleteIcon />} color='secondary'>Clear All</Button>
                     </Grid>
                     <Grid item xs>
-                        <Button fullWidth variant='contained' id='save' onClick={handleSave} startIcon={<SaveIcon />}> {histID == null ? 'Save Result' : 'Update History Result'} </Button>
+                        {histID == null ? 
+                            <Button fullWidth variant='contained' id='save' onClick={handleSave} startIcon={<SaveIcon />}>Save Result</Button> : 
+                            [ histCount == 0 ? <Button fullWidth variant='contained' id='save' onClick={handleSave} startIcon={<SaveIcon />}>Update History Result</Button> :
+                                               <Button disabled fullWidth variant='contained' id='save' startIcon={<SaveIcon />}>Result Saved!</Button> ]
+                        }
                     </Grid>
                     <Grid item xs>
                         <Button fullWidth variant='contained' id='export' onClick={handleExport} startIcon={<GetAppIcon />}>Export to Excel File</Button>
