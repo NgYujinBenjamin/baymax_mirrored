@@ -1,0 +1,37 @@
+{
+  "baseline": [
+  {
+    "Argo ID": "001",
+    "Fab Name": "OPEN",
+    "Committed Ship $": 1,
+    "Ship Revenue (Int $)": 1,
+    "MRP Date": "11/05/2020",
+    "Int. Ops Ship Readiness Date": "11/05/2020",
+    "MFG Commit Date": "11/12/2020",
+    "Cycle Time Days": 60,
+    "Quantity": 1,
+    "Build Qtr": "CY20Q1",
+    "Ship Qtr": "CY20Q4",
+    "End Date": "11/12/2020"
+  }
+  ],
+  "masterOps": [
+  {
+    "Argo ID": "002",
+    "Fab Name": "JASKY",
+    "Committed Ship $": 1,
+    "Ship Revenue (Int $)": 1,
+    "MRP Date": "01/06/2020",
+    "Int. Ops Ship Readiness Date": "01/06/2020",
+    "MFG Commit Date": "15/06/2020",
+    "Cycle Time Days": 10,
+    "Quantity": 1,
+    "Build Qtr": "CY20Q2",
+    "Ship Qtr": "CY20Q2",
+    "End Date": "15/06/2020"
+  }
+  ],
+  "bay": 1,
+  "minGap": 0,
+  "maxGap": 90
+}

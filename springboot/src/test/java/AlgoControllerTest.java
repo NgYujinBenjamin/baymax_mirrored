@@ -238,4 +238,218 @@ public class AlgoControllerTest {
         System.out.println(result.equals(jsonExpectedOutput));
         assertEquals(result, jsonExpectedOutput);
     }
+
+    @Test
+    @Order(4)
+    public void testAlgo4() throws Exception {
+        System.out.println("===================== 4. Test Priority to masterOps Product with higher revenue =====================");
+        Gson gson = new Gson();
+        
+        // To find out where to store the input & output files
+        // File directory = new File("./");
+        // System.out.println(directory.getAbsolutePath());
+
+        String inputPath = "./src/test/AlgoControllerTestFiles/input/04_firstSchedule_input.txt";
+        String jsonInput = null;
+        try {
+            jsonInput = Files.readString(Paths.get(inputPath));
+        } catch (IOException e){
+            System.out.println("Problem Reading Input File");
+        }
+        
+        String outputPath = "./src/test/AlgoControllerTestFiles/output/04_firstSchedule_output.txt";
+        String jsonExpectedOutput = null;
+        try {
+            jsonExpectedOutput = Files.readString(Paths.get(outputPath));
+        } catch (IOException e){
+            System.out.println("Problem Reading Output File");
+        }
+
+        firstSchedulingParam firstSchedulingParam = gson.fromJson(jsonInput, new TypeToken<firstSchedulingParam>() {}.getType());
+        List<Map<String, Object>> newBaseLine = new ArrayList<>();
+
+        // For double values in masterOps & baseLine, we need to change it back to Integer
+        // Limitation of GSON
+        for (Map<String, Object> baseLine : firstSchedulingParam.baseline) {
+            Set<String> baseLineKeys = baseLine.keySet();
+            Map<String, Object> baseLineProduct = new HashMap<>();
+            for (String key : baseLineKeys) {
+                String classType = baseLine.get(key).getClass().getSimpleName();
+                if (classType.equals("Double")) {
+                    Double value = (Double) baseLine.get(key);
+                    baseLineProduct.put(key, value.intValue());
+                } else {
+                    baseLineProduct.put(key, baseLine.get(key));
+                }
+            }
+            newBaseLine.add(baseLineProduct);
+        }
+
+        List<Map<String, Object>> newMasterOps = new ArrayList<>();
+
+        for (Map<String, Object> masterOps : firstSchedulingParam.masterOps) {
+            Set<String> masterOpsKeys = masterOps.keySet();
+            Map<String, Object> masterOpsProduct = new HashMap<>();
+            for (String key : masterOpsKeys) {
+                String classType = masterOps.get(key).getClass().getSimpleName();
+                if (classType.equals("Double")) {
+                    Double value = (Double) masterOps.get(key);
+                    masterOpsProduct.put(key, value.intValue());
+                } else {
+                    masterOpsProduct.put(key, masterOps.get(key));
+                }
+
+            }
+            newMasterOps.add(masterOpsProduct);
+        }
+
+        firstSchedulingParam updatedSchedulingParam = new firstSchedulingParam(newBaseLine, newMasterOps, firstSchedulingParam.bay,firstSchedulingParam.minGap,firstSchedulingParam.maxGap);
+        String result = controller.firstScheduling(updatedSchedulingParam);
+        
+        System.out.println(result.equals(jsonExpectedOutput));
+        assertEquals(result, jsonExpectedOutput);
+    }
+
+    @Test
+    @Order(5)
+    public void testAlgo5() throws Exception {
+        System.out.println("===================== 5. Test masterOps Product would go to earliest available bay =====================");
+        Gson gson = new Gson();
+        
+        // To find out where to store the input & output files
+        // File directory = new File("./");
+        // System.out.println(directory.getAbsolutePath());
+
+        String inputPath = "./src/test/AlgoControllerTestFiles/input/05_firstSchedule_input.txt";
+        String jsonInput = null;
+        try {
+            jsonInput = Files.readString(Paths.get(inputPath));
+        } catch (IOException e){
+            System.out.println("Problem Reading Input File");
+        }
+        
+        String outputPath = "./src/test/AlgoControllerTestFiles/output/05_firstSchedule_output.txt";
+        String jsonExpectedOutput = null;
+        try {
+            jsonExpectedOutput = Files.readString(Paths.get(outputPath));
+        } catch (IOException e){
+            System.out.println("Problem Reading Output File");
+        }
+
+        firstSchedulingParam firstSchedulingParam = gson.fromJson(jsonInput, new TypeToken<firstSchedulingParam>() {}.getType());
+        List<Map<String, Object>> newBaseLine = new ArrayList<>();
+
+        // For double values in masterOps & baseLine, we need to change it back to Integer
+        // Limitation of GSON
+        for (Map<String, Object> baseLine : firstSchedulingParam.baseline) {
+            Set<String> baseLineKeys = baseLine.keySet();
+            Map<String, Object> baseLineProduct = new HashMap<>();
+            for (String key : baseLineKeys) {
+                String classType = baseLine.get(key).getClass().getSimpleName();
+                if (classType.equals("Double")) {
+                    Double value = (Double) baseLine.get(key);
+                    baseLineProduct.put(key, value.intValue());
+                } else {
+                    baseLineProduct.put(key, baseLine.get(key));
+                }
+            }
+            newBaseLine.add(baseLineProduct);
+        }
+
+        List<Map<String, Object>> newMasterOps = new ArrayList<>();
+
+        for (Map<String, Object> masterOps : firstSchedulingParam.masterOps) {
+            Set<String> masterOpsKeys = masterOps.keySet();
+            Map<String, Object> masterOpsProduct = new HashMap<>();
+            for (String key : masterOpsKeys) {
+                String classType = masterOps.get(key).getClass().getSimpleName();
+                if (classType.equals("Double")) {
+                    Double value = (Double) masterOps.get(key);
+                    masterOpsProduct.put(key, value.intValue());
+                } else {
+                    masterOpsProduct.put(key, masterOps.get(key));
+                }
+
+            }
+            newMasterOps.add(masterOpsProduct);
+        }
+
+        firstSchedulingParam updatedSchedulingParam = new firstSchedulingParam(newBaseLine, newMasterOps, firstSchedulingParam.bay,firstSchedulingParam.minGap,firstSchedulingParam.maxGap);
+        String result = controller.firstScheduling(updatedSchedulingParam);
+        
+        System.out.println(result.equals(jsonExpectedOutput));
+        assertEquals(result, jsonExpectedOutput);
+    }
+
+    @Test
+    @Order(6)
+    public void testAlgo6() throws Exception {
+        System.out.println("===================== 6. Test 'OPEN' products leave bay on Internal Ops Readiness Date =====================");
+        Gson gson = new Gson();
+        
+        // To find out where to store the input & output files
+        // File directory = new File("./");
+        // System.out.println(directory.getAbsolutePath());
+
+        String inputPath = "./src/test/AlgoControllerTestFiles/input/06_firstSchedule_input.txt";
+        String jsonInput = null;
+        try {
+            jsonInput = Files.readString(Paths.get(inputPath));
+        } catch (IOException e){
+            System.out.println("Problem Reading Input File");
+        }
+        
+        String outputPath = "./src/test/AlgoControllerTestFiles/output/06_firstSchedule_output.txt";
+        String jsonExpectedOutput = null;
+        try {
+            jsonExpectedOutput = Files.readString(Paths.get(outputPath));
+        } catch (IOException e){
+            System.out.println("Problem Reading Output File");
+        }
+
+        firstSchedulingParam firstSchedulingParam = gson.fromJson(jsonInput, new TypeToken<firstSchedulingParam>() {}.getType());
+        List<Map<String, Object>> newBaseLine = new ArrayList<>();
+
+        // For double values in masterOps & baseLine, we need to change it back to Integer
+        // Limitation of GSON
+        for (Map<String, Object> baseLine : firstSchedulingParam.baseline) {
+            Set<String> baseLineKeys = baseLine.keySet();
+            Map<String, Object> baseLineProduct = new HashMap<>();
+            for (String key : baseLineKeys) {
+                String classType = baseLine.get(key).getClass().getSimpleName();
+                if (classType.equals("Double")) {
+                    Double value = (Double) baseLine.get(key);
+                    baseLineProduct.put(key, value.intValue());
+                } else {
+                    baseLineProduct.put(key, baseLine.get(key));
+                }
+            }
+            newBaseLine.add(baseLineProduct);
+        }
+
+        List<Map<String, Object>> newMasterOps = new ArrayList<>();
+
+        for (Map<String, Object> masterOps : firstSchedulingParam.masterOps) {
+            Set<String> masterOpsKeys = masterOps.keySet();
+            Map<String, Object> masterOpsProduct = new HashMap<>();
+            for (String key : masterOpsKeys) {
+                String classType = masterOps.get(key).getClass().getSimpleName();
+                if (classType.equals("Double")) {
+                    Double value = (Double) masterOps.get(key);
+                    masterOpsProduct.put(key, value.intValue());
+                } else {
+                    masterOpsProduct.put(key, masterOps.get(key));
+                }
+
+            }
+            newMasterOps.add(masterOpsProduct);
+        }
+
+        firstSchedulingParam updatedSchedulingParam = new firstSchedulingParam(newBaseLine, newMasterOps, firstSchedulingParam.bay,firstSchedulingParam.minGap,firstSchedulingParam.maxGap);
+        String result = controller.firstScheduling(updatedSchedulingParam);
+        
+        System.out.println(result.equals(jsonExpectedOutput));
+        assertEquals(result, jsonExpectedOutput);
+    }
+    
 }
