@@ -58,11 +58,6 @@ public class BaySchedule{
 
         for (Product p: allProduct){
             bayAssignment(p, gapDiff);
-
-            System.out.print("ArgoID: " + p.getArgoID() + "|");
-            System.out.print("Tool Start Date: " + p.getToolStartDate() + "|");
-            System.out.print("Leave Bay Date: " + p.getMRPDate() + "|");
-            System.out.println("Fab Name: " + p.getCycleTimeDays() + "|");
         }
     }
 
@@ -163,8 +158,8 @@ public class BaySchedule{
      */
     private Date adjustToolStart(Date latestToolStartDate, Date bayAvailDate, Integer gapDiff){
         Date earliestToolStartDate;
-        // Date today = new Date();
-        Date today = new Date(120, 1, 25); // For testing purposes
+        Date today = new Date();
+        // Date today = new Date(120, 1, 25); // For testing purposes
         if (bayAvailDate.after(today)){
             // If bayAvailableDate is after current date, we can pull forward up to the maxGap or the date when the bay is available
             Long diff = latestToolStartDate.getTime() - bayAvailDate.getTime();

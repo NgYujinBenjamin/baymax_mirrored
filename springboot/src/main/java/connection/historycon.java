@@ -33,17 +33,34 @@ public class historycon extends main.java.connection.mysqlcon {
         return rv;
     }
 
-    public ArrayList<JsonObject> getHistory(String staffId) throws SQLException, ClassNotFoundException {
+    public ArrayList<JsonObject> getHistory(String staffId) throws SQLException, ClassNotFoundException, ParseException {
         Connection con = super.getConnection();
         Statement stmt = con.createStatement();
-        String my_string = "select * from history where staff_id = '" + staffId + "'";
+        String my_string = "select * from history where staff_id = '" + staffId + "' order by historyID desc";
         ResultSet rs = stmt.executeQuery(my_string);
 
         ArrayList<JsonObject> rv = new ArrayList<>();
+        ArrayList<String> historyId_to_remove = new ArrayList<>();
+        int count = 0;
+
         while (rs.next()) {
-            rv.add(new HistoryDetails(rs.getString(1), rs.getString(5)));
+            count = count + 1;
+            if (count <= 10){
+                String currentDate = rs.getString(6);
+                SimpleDateFormat formatterForFrontEnd = new SimpleDateFormat("dd MMM yyyy");
+                SimpleDateFormat formatterForBackEnd = new SimpleDateFormat("yyyy-MM-dd");
+                java.util.Date date = formatterForBackEnd.parse(currentDate);
+                rv.add(new HistoryDetails(rs.getString(1), formatterForFrontEnd.format(date)));
+            } else {
+                historyId_to_remove.add(rs.getString(1));
+            }
         }
         con.close();
+        if (historyId_to_remove.size() > 0){
+            for(String id : historyId_to_remove){
+                removeHistory(id);
+            }
+        }
         return rv;
     }
 
@@ -71,59 +88,18 @@ public class historycon extends main.java.connection.mysqlcon {
         return id;
     }
 
-    public String removeHistory(String msuId) throws SQLException, ClassNotFoundException {
+    public String removeHistory(String historyId) throws SQLException, ClassNotFoundException {
         Connection con = super.getConnection();
         Statement stmt = con.createStatement();
-        String sqlStr = "delete from history where msu_id = '" + msuId + "'";
+        String sqlStr = "delete from history where historyID = '" + historyId + "'";
         stmt.executeUpdate(sqlStr);
 
-        sqlStr = "delete from mass_slot_upload where msu_id = '" + msuId + "'";
+        sqlStr = "delete from mass_slot_upload where historyId = '" + historyId + "'";
         stmt.executeUpdate(sqlStr);
 
         con.close();
 
         return "Success";
-    }
-
-    // to be replaced by getbaseline occupancy and getbayoccupancy
-    public List<Map<String,Object>> getMassSlotUpload(String msuId) throws SQLException, ClassNotFoundException {
-        Connection con = super.getConnection();
-        Statement stmt = con.createStatement();
-        String my_string = "select * from mass_slot_upload where historyID = '" + msuId + "'";
-        ResultSet rs = stmt.executeQuery(my_string);
-        ResultSetMetaData md = rs.getMetaData();
-        int columns = md.getColumnCount();
-        
-        List<Map<String,Object>> data = new ArrayList<>();
-        ArrayList<main.java.history.MassSlotUploadDetails> rv2 = new ArrayList<>();
-        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-        while (rs.next()) {
-            HashMap row = new HashMap(columns);
-            for (int i=3; i<=columns; i++){
-                if (i==39 || i==44 || i==45 || i==46){
-                    continue;
-                } else {
-                    try {
-                        if (rs.getObject(i) instanceof Integer){
-                            row.put(md.getColumnName(i), rs.getObject(i));
-                        } else {
-                            String date = df.format(rs.getObject(i));
-                            row.put(md.getColumnName(i), date);
-                        }                         
-                    } catch (Exception e){
-                        row.put(md.getColumnName(i), rs.getObject(i));
-                        continue;
-                    }
-                    
-                }
-                
-            }
-            data.add(row);
-            // rv2.add(new MassSlotUploadDetails(row));
-            
-        }
-        con.close();
-        return data;
     }
 
     public List<Map<String,Object>> getBaseLineOccupancy(String msuId) throws SQLException, ClassNotFoundException {
@@ -157,13 +133,9 @@ public class historycon extends main.java.connection.mysqlcon {
                         row.put(md.getColumnName(i), rs.getObject(i));
                         continue;
                     }
-                    
                 }
-                
             }
-            data.add(row);
-            // rv2.add(new MassSlotUploadDetails(row));
-            
+            data.add(row);            
         }
         con.close();
         return data;
@@ -201,22 +173,18 @@ public class historycon extends main.java.connection.mysqlcon {
                         row.put(md.getColumnName(i), rs.getObject(i));
                         continue;
                     }
-                    
                 }
-                
             }
             data.add(row);
-            // rv2.add(new MassSlotUploadDetails(row));
-            
         }
         con.close();
         return data;
     }
 
-    public int getMinGap(String msuId) throws SQLException, ClassNotFoundException{
+    public int getMinGap(String msuId, String staffID) throws SQLException, ClassNotFoundException{
         Connection con = super.getConnection();
         Statement stmt = con.createStatement();
-        String defSql = "select min_gap from history where history_id = '" +msuId+ "';";
+        String defSql = "select min_gap from history where historyID = '" +msuId+ "' AND staff_id = '" + staffID + "';";
         ResultSet rs = stmt.executeQuery(defSql);
         int id = 0;
         if (rs.next()) {
@@ -225,10 +193,10 @@ public class historycon extends main.java.connection.mysqlcon {
         return id;
     }
 
-    public int getMaxGap(String msuId) throws SQLException, ClassNotFoundException{
+    public int getMaxGap(String msuId, String staffID) throws SQLException, ClassNotFoundException{
         Connection con = super.getConnection();
         Statement stmt = con.createStatement();
-        String defSql = "select max_gap from history where history_id = '" +msuId+ "';";
+        String defSql = "select max_gap from history where historyID = '" +msuId+ "'  AND staff_id = '" + staffID + "';";
         ResultSet rs = stmt.executeQuery(defSql);
         int id = 0;
         if (rs.next()) {
@@ -236,10 +204,10 @@ public class historycon extends main.java.connection.mysqlcon {
         }
         return id;
     }
-    public int getNumBay(String msuId) throws SQLException, ClassNotFoundException{
+    public int getNumBay(String msuId, String staffID) throws SQLException, ClassNotFoundException{
         Connection con = super.getConnection();
         Statement stmt = con.createStatement();
-        String defSql = "select num_bay from history where history_id = '" +msuId+ "';";
+        String defSql = "select num_bay from history where historyID = '" +msuId+ "' AND staff_id = '" + staffID + "';";
         ResultSet rs = stmt.executeQuery(defSql);
         int id = 0;
         if (rs.next()) {
@@ -252,7 +220,20 @@ public class historycon extends main.java.connection.mysqlcon {
     public int getLastHistoryID() throws SQLException, ClassNotFoundException{
         Connection con = super.getConnection();
         Statement stmt = con.createStatement();
-        String defSql = "select MAX(history_id) from history;";
+        String defSql = "select MAX(historyID) from history;";
+        ResultSet rs = stmt.executeQuery(defSql);
+        int id = 0;
+        if (rs.next()) {
+            id = rs.getInt(1);
+        }
+
+        return id;
+    }
+
+    public int getFirstHistoryID() throws SQLException, ClassNotFoundException{
+        Connection con = super.getConnection();
+        Statement stmt = con.createStatement();
+        String defSql = "select MIN(historyID) from history;";
         ResultSet rs = stmt.executeQuery(defSql);
         int id = 0;
         if (rs.next()) {
@@ -265,7 +246,7 @@ public class historycon extends main.java.connection.mysqlcon {
     public int getHistoryCount() throws SQLException, ClassNotFoundException{
         Connection con = super.getConnection();
         Statement stmt = con.createStatement();
-        String defSql = "select COUNT(history_id) from history;";
+        String defSql = "select COUNT(historyID) from history;";
         ResultSet rs = stmt.executeQuery(defSql);
         int id = 0;
         if (rs.next()) {
@@ -594,6 +575,22 @@ public class historycon extends main.java.connection.mysqlcon {
         return presence;
     }
 
+    public boolean isThereMoreThanTenHistoryRecords(String staff_id) throws SQLException, ClassNotFoundException {
+        Connection con = super.getConnection();
+
+        String query = "select COUNT(*) from history where staff_id = ? ";
+        PreparedStatement pstmt = con.prepareStatement(query);
+        pstmt.setString(1, staff_id);
+
+        ResultSet rs = pstmt.executeQuery();
+        int count = 0;
+        if (rs.next()) {
+            count = rs.getInt(1);
+        }
+        con.close();
+        return (count > 10);
+    }
+
     public void removeBaselineFromUser(String staff_id) throws SQLException, ClassNotFoundException {
         Connection con = super.getConnection();
         String query = "DELETE from baseline where staff_id = ?";
@@ -603,13 +600,23 @@ public class historycon extends main.java.connection.mysqlcon {
         con.close();
     }
 
+    public void removeHistoryFromUser(String staff_id) throws SQLException, ClassNotFoundException {
+        Connection con = super.getConnection();
+        String query = "DELETE from history where staff_id = ?";
+        PreparedStatement pstmt = con.prepareStatement(query);
+        pstmt.setString(1, staff_id);
+        int count = pstmt.executeUpdate();
+        con.close();
+    }
+
+
     // public String addMassSlotUpload(ArrayList<main.java.history.MassSlotUploadDetails> data, int msuId) throws SQLException, ClassNotFoundException {
 
     //     Connection con = super.getConnection();
     //     // for (main.java.authentication.json.MassSlotUploadDetails row : data) {
     //     for (main.java.history.MassSlotUploadDetails row : data) {
     //         Statement stmt = con.createStatement();
-    //         String defSql = "insert into mass_slot_upload (history_id, argo_id, slot_id, slot_status, ship_rev_type, build_category, build_product, slot_plan_notes, plan_product_type, ship_risk, ship_risk_reason, comment_for_change, committed_ship, secondary_customer_name, fab_id, sales_order, forecast_id, mfg_commit_date, ship_recognition_date, mrp_date, build_complete, int_ops_ship_ready_date, plant, category, core_need_date, core_arrival_date, refurb_start_date, refurb_complete_date, donor_status, core_utid, core_notes, mfg_status, qty, config_note, drop_ship, rma, product_pn, move_to_storage, off_date_to_de, off_date_to_mfg, install_start_date, cycle_time_days, flex, fulfilled) ";
+    //         String defSql = "insert into mass_slot_upload (historyID, argo_id, slot_id, slot_status, ship_rev_type, build_category, build_product, slot_plan_notes, plan_product_type, ship_risk, ship_risk_reason, comment_for_change, committed_ship, secondary_customer_name, fab_id, sales_order, forecast_id, mfg_commit_date, ship_recognition_date, mrp_date, build_complete, int_ops_ship_ready_date, plant, category, core_need_date, core_arrival_date, refurb_start_date, refurb_complete_date, donor_status, core_utid, core_notes, mfg_status, qty, config_note, drop_ship, rma, product_pn, move_to_storage, off_date_to_de, off_date_to_mfg, install_start_date, cycle_time_days, flex, fulfilled) ";
     //         defSql += "values (";
     //         defSql += "'" + msuId + "',";
     //         defSql += "'" + row.getArgo_id() + "',";

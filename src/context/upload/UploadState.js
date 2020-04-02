@@ -3,7 +3,7 @@ import UploadContext from './uploadContext';
 import UploadReducer from './uploadReducer';
 import XLSX from 'xlsx';
 import axios from 'axios';
-import { SET_BASELINE, GET_BASELINE, UPDATE_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS, UPDATE_POST_RESULT, UPDATE_QUARTER, UPDATE_DATA, UPDATE_SAVE, UPDATE_POST_RESULT_FORMAT, UPDATE_RESCHEDULE, RESCHEDULE_POST_RESULT, UPDATE_TABCHECKER,CREATE_RESULT_ERROR, SET_MIN_GAP, SET_MAX_GAP, GET_HISTORY, LOAD_ALL_HISTORY, UPDATE_NEW_MIN_GAP, UPDATE_SAVE_RESULT_FORMAT } from '../types';
+import { SET_BASELINE, GET_BASELINE, UPDATE_BASELINE, SET_SCHEDULE, SET_BAYS, CLEAR_PRERESULT, SET_LOADING, UPDATE_SCHEDULE, CREATE_RESULT, EXPORT_RESULT, EXPORT_SCHEDULE, CLEAR_ALL, SAVE_RESULT, UPLOAD_ERROR, UPLOAD_CLEAR_ERROR, CLEAR_ZERO, SET_STEPS, UPDATE_POST_RESULT, UPDATE_QUARTER, UPDATE_DATA, UPDATE_SAVE, UPDATE_POST_RESULT_FORMAT, UPDATE_RESCHEDULE, RESCHEDULE_POST_RESULT, UPDATE_TABCHECKER,CREATE_RESULT_ERROR, SET_MIN_GAP, SET_MAX_GAP, GET_HISTORY, LOAD_ALL_HISTORY, UPDATE_NEW_MIN_GAP } from '../types';
 
 const UploadState = (props) => {
     const initialState = {
@@ -742,11 +742,9 @@ const UploadState = (props) => {
         })
       })
 
-      if(type == 'savetoDB'){
-        dispatch({ 
-          type: UPDATE_SAVE_RESULT_FORMAT,
-          payload: postResultDone 
-        })
+      // This is for history - no updates to app level state required!
+      if(type !== ''){
+        return postResultDone;
       }
 
       dispatch({ 
@@ -777,15 +775,17 @@ const UploadState = (props) => {
     // ##################################################################################################
 
     //save to history
-    const saveResult = async (postResult, bays, mingap, maxgap, staffID, histID) => {
+    const saveResult = async (postResult, bays, mingap, maxgap, staffID, histID, type) => {
       setLoading();
-      setPostResult(postResult, mingap, 'savetoDB');
 
+      setPostResult(postResult, mingap, type);
       postResult.numBays = parseInt(bays);
       postResult.minGap = parseInt(mingap);
       postResult.maxGap = parseInt(maxgap);
       postResult.staffID = parseInt(staffID);
-      postResult.histID = (histID == null) ? null : parseInt(histID);
+      postResult.histID = histID;
+
+      console.log(postResult);
 
       const config = {
           headers: {
@@ -798,7 +798,7 @@ const UploadState = (props) => {
 
           dispatch({
               type: SAVE_RESULT,
-              payload: res
+              payload: res.data
           })
       } catch (err) {
           //prompt error
@@ -807,14 +807,14 @@ const UploadState = (props) => {
     }
 
     // get a history
-    const getHistory = async () => {
+    const getHistory = async (staffid, histid) => {
       try {
-          const res = await axios.get(`http://localhost:8080/getHistory`);
-          // console.log(res);
-
+          const res = await axios.get(`http://localhost:8080/gethistory/${staffid}/${histid}`);
+          console.log(res.data);
+          
           dispatch({
               type: GET_HISTORY,
-              payload: res
+              payload: res.data
           })
       } catch (err) {
           

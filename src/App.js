@@ -44,7 +44,7 @@ const App = () => {
                   <PrivateRoute exact path='/admin' component={Admin} />
                   <PrivateRoute exact path='/profile' component={Profile} />
                   <PrivateRoute exact path='/history' component={History} />
-                  <PrivateRoute exact path='/history/:id' component={HistoryDetails} />
+                  <PrivateRoute exact path='/historyDetails/:staffid/:histid' component={HistoryDetails} />
                   <Route exact path='/login' component={Login} />
                   <Route exact path='/register' component={Register} />
                 </Switch>

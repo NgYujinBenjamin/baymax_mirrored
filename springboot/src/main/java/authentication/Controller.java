@@ -122,32 +122,7 @@ public class Controller {
     }
 
     // to be discussed
-    @RequestMapping(path = "/history/{staffId}", method = RequestMethod.GET, produces = "application/json")
-    public ArrayList<main.java.authentication.json.JsonObject> getHistory(@PathVariable("staffId") String staffId) throws SQLException, ClassNotFoundException {
-        return historyscon.getHistory(staffId);
-    }
 
-    @RequestMapping(path = "/history/{msuId}", method = RequestMethod.DELETE)
-    public String removeHistory(@PathVariable("msuId") String msuId) throws Exception {
-        return historyscon.removeHistory(msuId);
-    }
-
-    // @RequestMapping(path = "/msu/{msuId}", method = RequestMethod.GET, produces = "application/json")
-    // public ArrayList<JsonObject> getMassSlotUpload(@PathVariable("msuId") String msuId) throws SQLException, ClassNotFoundException {
-//        ArrayList<JsonObject> result = historyscon.getMassSlotUpload(msuId);
-        // return historyscon.getMassSlotUpload(msuId);
-    // }
-
-    // @RequestMapping(path = "/msu/{staffId}", method = RequestMethod.POST, produces = "application/json")
-    // public String addMassSlotUpload(@RequestBody ArrayList<main.java.authentication.json.MassSlotUploadDetails> data,
-    //                                 @PathVariable("staffId") String staffId) {
-    //     try {
-    //         int newHistoryId = historyscon.addHistory(staffId, getCurrentDateTime());
-    //         return historyscon.addMassSlotUpload(data, newHistoryId);
-    //     } catch (Exception e) {
-    //         return "Fail";
-    //     }
-    // }
 
     public String getCurrentDateTime() {
         SimpleDateFormat formatter = new SimpleDateFormat("MMM d, yyyy, HH:mm:ss a");
@@ -155,53 +130,4 @@ public class Controller {
         return formatter.format(date);
     }
 
-    // following are api endpoints written for baseline table (previous known as facility_util)
-    // have to be redon, can use the above code as reference
-
-//    @RequestMapping(path = "/facility/{staffId}", method = RequestMethod.GET, produces = "application/json")
-//    public ResponseEntity getFacilityUtil(@PathVariable("staffId") String staffId) {
-//        try {
-//            ArrayList<GetFacilityUtilResult> staffUsage = userscon.readFacilityUtil(staffId);
-//            ArrayList<JsonObject> result = new ArrayList<JsonObject>();
-//            for (JsonObject row : staffUsage) {
-//                result.add(row);
-//            }
-//
-//            return new ResponseEntity(new JsonResponses("SUCCESS", result), HttpStatus.OK);
-//        } catch (Exception e) {
-//            return new ResponseEntity(new JsonError("ERROR", "Backend Issue: Exception occured at getFacilityUtil method in Controller.java. Database usersconection may be lost."), HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
-//
-//    @RequestMapping(path = "/facility/{staffId}", method = RequestMethod.POST, produces = "application/json")
-//    public String updateFacilityUtil(@RequestBody ArrayList<FacilityUtil> data,
-//                                     @PathVariable("staffId") String staffId) {
-//        int faci_id = 0; // default faci_id
-//        try {
-//            ArrayList<GetFacilityUtilResult> staffUsage = userscon.readFacilityUtil(staffId);
-//
-//            if (staffUsage.size() == 0) { // no usage exist for specific user
-//                faci_id = userscon.getNextFaciId();
-//                String out = userscon.createFacilityUtil(data, staffId, faci_id);
-//                return "created facility, next faci_id => " + faci_id;
-//            } else if (staffUsage.size() > 0) {
-//                faci_id = Integer.parseInt(staffUsage.get(0).getFaci_id());
-//                userscon.removeUsage(staffId);
-////                String out = userscon.createFacilityUtil(data, staffId, faci_id);
-//                return userscon.createFacilityUtil(data, staffId, faci_id);
-//            }
-//            return "x";
-//        } catch (Exception e) {
-//            return "y";
-//        }
-//    }
-//
-//    @RequestMapping(path = "/facility/{staffId}", method = RequestMethod.DELETE, produces = "application/json")
-//    public String removeUsage(@PathVariable("staffId") String staffId) {
-//        try {
-//            return userscon.removeHistory(staffId);
-//        } catch (Exception e) {
-//            return "Fail";
-//        }
-//    }
 }
