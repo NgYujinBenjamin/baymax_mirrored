@@ -363,24 +363,6 @@ public class Product implements Comparable<Product>{
             endDate = GenericValidator.isDate((String)productDetails.get("endDate"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("endDate")): MFGCommitDate;
             sendToStorageDate = GenericValidator.isDate((String) productDetails.get("sendToStorageDate"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("sendToStorageDate")): null;
             toolStartDate = GenericValidator.isDate((String) productDetails.get("toolStartDate"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("toolStartDate")): null;
-
-
-
-            // String pattern = "yyyy-MM-dd";
-            // MRPDate = GenericValidator.isDate((String) productDetails.get("MRPDate"), pattern, true) ? dateFormat.parse((String) productDetails.get("MRPDate")): MRPDate;
-            // intOpsShipReadinessDate = GenericValidator.isDate((String) productDetails.get("intOpsShipReadinessDate"), pattern, true) ? dateFormat.parse((String) productDetails.get("intOpsShipReadinessDate")): intOpsShipReadinessDate;
-            // MFGCommitDate = GenericValidator.isDate((String) productDetails.get("MFGCommitDate"), pattern, true) ? dateFormat.parse((String) productDetails.get("MFGCommitDate")): MFGCommitDate;
-            // shipRecogDate = GenericValidator.isDate((String) productDetails.get("shipRecogDate"), pattern, true) ? dateFormat.parse((String) productDetails.get("shipRecogDate")): shipRecogDate;
-            // handOffDateToDE = GenericValidator.isDate((String) productDetails.get("handOffDateToDE"), pattern, true) ? dateFormat.parse((String) productDetails.get("handOffDateToDE")): handOffDateToDE;
-            // handOffDateBackToMFG = GenericValidator.isDate((String) productDetails.get("handOffDateBackToMFG"), pattern, true) ? dateFormat.parse((String) productDetails.get("handOffDateBackToMFG")): handOffDateBackToMFG;
-            // installStartDate = GenericValidator.isDate((String) productDetails.get("installStartDate"), pattern, true) ? dateFormat.parse((String)productDetails.get("installStartDate")): installStartDate;
-            // coreNeedDate = GenericValidator.isDate((String) productDetails.get("coreNeedDate"), pattern, true) ? dateFormat.parse((String) productDetails.get("coreNeedDate")): coreNeedDate;
-            // coreArrivalDate = GenericValidator.isDate((String) productDetails.get("coreArrivalDate"), pattern, true) ? dateFormat.parse((String) productDetails.get("coreArrivalDate")): coreArrivalDate;
-            // refurbStartDate = GenericValidator.isDate((String) productDetails.get("refurbStartDate"), pattern, true) ? dateFormat.parse((String) productDetails.get("refurbStartDate")): refurbStartDate;
-            // refurbCompleteDate = GenericValidator.isDate((String) productDetails.get("refurbCompleteDate"), pattern, true) ? dateFormat.parse((String) productDetails.get("refurbCompleteDate")): refurbCompleteDate;
-            // endDate = GenericValidator.isDate((String)productDetails.get("endDate"), pattern, true) ? dateFormat.parse((String) productDetails.get("endDate")): MFGCommitDate;
-            // sendToStorageDate = GenericValidator.isDate((String) productDetails.get("sendToStorageDate"), pattern, true) ? dateFormat.parse((String) productDetails.get("sendToStorageDate")): sendToStorageDate;
-            // toolStartDate = GenericValidator.isDate((String) productDetails.get("toolStartDate"), pattern, true) ? dateFormat.parse((String) productDetails.get("toolStartDate")): toolStartDate;
         } catch (ParseException e){
             e.printStackTrace();
 
