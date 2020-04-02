@@ -123,11 +123,11 @@ public class historycon extends main.java.connection.mysqlcon {
                     continue;
                 } else {
                     try {
-                        if (rs.getObject(i) instanceof Integer){
-                            row.put(md.getColumnName(i), rs.getObject(i));
-                        } else {
+                        if (rs.getObject(i) instanceof Date){
                             String date = df.format(rs.getObject(i));
                             row.put(md.getColumnName(i), date);
+                        } else {
+                            row.put(md.getColumnName(i), rs.getObject(i));
                         }                         
                     } catch (Exception e){
                         row.put(md.getColumnName(i), rs.getObject(i));

@@ -49,7 +49,7 @@ public class BayRequirement{
             Date latestEnd = baseLine_earliestStartLatestEnd.get(qtr).get("Latest End");
 
             ArrayList<Object> qtrWeekOf = generateWeekOf(earliestStart, latestEnd);
-
+            // System.out.println(qtrWeekOf);
             baseLineQtrBayOccupancy.add(qtrWeekOf);
 
             baseLineOccupancy.put(qtr, baseLineQtrBayOccupancy);

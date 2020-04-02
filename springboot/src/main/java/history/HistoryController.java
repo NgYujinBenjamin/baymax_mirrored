@@ -12,6 +12,8 @@ import java.util.*;
 import java.text.*;
 import java.lang.String;
 
+import com.google.gson.*;
+
 import main.java.algorithm.Objects.*;
 import main.java.algorithm.Calculation.*;
 import main.java.authentication.json.JsonObject;
@@ -113,6 +115,7 @@ public class HistoryController {
         for (int i = 0; i < baseLineOccupancy.size(); i++) {
             Object productRaw = baseLineOccupancy.get(i);
             Product p = new Product(productRaw);
+            // System.out.println(p.getMRPDate());
             baseLineProduct.add(p);
         }
 
@@ -128,7 +131,14 @@ public class HistoryController {
 
         BayRequirement bayReq = new BayRequirement(baseLineProduct, allProduct);
         getAHistory rv = new getAHistory(bayReq, numBays, minGap, maxGap);
-        return rv;
+        // System.out.println(bayReq.getBayOccupancy().get("CY20Q1").get(0));
+        // System.out.println(rv.baseLineOccupancy.get("CY20Q1").get(0));
+        // return rv;
+        
+        Gson gson = new GsonBuilder().create();
+        String json = gson.toJson(rv);
+        return json;
+
         // return BayRequirement.toJSONString(bayReq);
     }
 
