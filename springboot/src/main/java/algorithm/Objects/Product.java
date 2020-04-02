@@ -148,7 +148,7 @@ public class Product implements Comparable<Product>{
         committedShip$ = (Integer) rowData.get("Committed Ship $");
 
         if (committedShip$ == null){
-            throw new RuntimeException("Please fill in a value for the column Committed Ship $");
+            throw new RuntimeException("Please fill in all values for the column Committed Ship $");
         }
 
         // shipRevenueInt$ = (String) rowData.get("Ship Revenue (Int $)");
@@ -242,8 +242,12 @@ public class Product implements Comparable<Product>{
             e.printStackTrace();
         }
         
-        if (MRPDate == null || MFGCommitDate == null || endDate == null){
-            throw new RuntimeException("Please ensure that MRP Date, MFG Commit Date and End Date is passed in, in dd/mm/yyyy format");
+        if (MRPDate == null){
+            throw new RuntimeException("Please ensure that MRP Date is not empty, and in dd/mm/yyyy format");
+        }
+
+        if (MFGCommitDate == null){
+            throw new RuntimeException("Please ensure that MFG Commit Date is not empty, and in dd/mm/yyyy format");
         }
 
         latestToolStartDate = DateUtils.addDays(endDate, -cycleTimeDays);
