@@ -71,6 +71,7 @@ public class AlgoController {
         Integer gapDiff = maxGap - minGap; // End date alr considers the min gap; Can only pull forward by gapDiff more days
 
         HashMap<String, Integer> quarterHC = new HeadCount(allProduct).getQuarterHC();
+
         Boolean quarterHCChanged = true;
 
         while (quarterHCChanged){
@@ -107,7 +108,6 @@ public class AlgoController {
                     quarterHC = newQuarterHC;
                 }
         }
-
         return BayRequirement.toJSONString(bayReq);
     }
 
