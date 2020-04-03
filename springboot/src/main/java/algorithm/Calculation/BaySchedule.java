@@ -138,7 +138,8 @@ public class BaySchedule{
 
             // Sufficient HC to start new job
             if (newBuildCount < currQtrHC){
-                weeklyNewBuild.put(weekFriday, newBuildCount++); // Update the weekly new build
+                newBuildCount += 1;
+                weeklyNewBuild.put(weekFriday, newBuildCount); // Update the weekly new build
                 b.addToBaySchedule(p);
                 scheduled = true;
             } else {

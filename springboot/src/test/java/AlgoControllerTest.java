@@ -695,5 +695,150 @@ public class AlgoControllerTest {
             assertEquals("Please ensure that MFG Commit Date is not empty, and in dd/mm/yyyy format", exception.getMessage());
             System.out.println(true);
           }
-          
+
+        @Test
+        @Order(13)
+        public void testAlgo13() throws Exception {
+            System.out.println("===================== 13. Test Product Exception: Missing Build Quarter =====================");
+    
+            ObjectMapper objectMapper = new ObjectMapper();
+    
+            String inputPath = "./src/test/AlgoControllerTestFiles/input/13_productException_input.txt";
+            
+            File input = new File(inputPath);
+    
+            Map<String, Object> allData = null;
+            
+            try {
+                allData= objectMapper.readValue(input, new TypeReference<Map<String, Object>>(){});
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+    
+            Object masterOps = allData.get("masterOps");
+    
+            List<Map<String, Object>> masterOpsData = (List<Map<String, Object>>) masterOps;
+            
+            ArrayList<Product> allProduct = new ArrayList<Product>();
+    
+    
+            Throwable exception = assertThrows(RuntimeException.class, () -> {
+                for (int i = 0; i < masterOpsData.size(); i++){
+                    Product p = new Product(masterOpsData.get(i));
+                    allProduct.add(p);
+                }
+            });
+            assertEquals("Please ensure that there are no empty Build Qtrs", exception.getMessage());
+            System.out.println(true);
+        }
+
+        @Test
+        @Order(14)
+        public void testAlgo14() throws Exception {
+            System.out.println("===================== 14. Test Product Exception: Missing Cycle Time =====================");
+    
+            ObjectMapper objectMapper = new ObjectMapper();
+    
+            String inputPath = "./src/test/AlgoControllerTestFiles/input/14_productException_input.txt";
+            
+            File input = new File(inputPath);
+    
+            Map<String, Object> allData = null;
+            
+            try {
+                allData= objectMapper.readValue(input, new TypeReference<Map<String, Object>>(){});
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+    
+            Object masterOps = allData.get("masterOps");
+    
+            List<Map<String, Object>> masterOpsData = (List<Map<String, Object>>) masterOps;
+            
+            ArrayList<Product> allProduct = new ArrayList<Product>();
+    
+    
+            Throwable exception = assertThrows(RuntimeException.class, () -> {
+                for (int i = 0; i < masterOpsData.size(); i++){
+                    Product p = new Product(masterOpsData.get(i));
+                    allProduct.add(p);
+                }
+            });
+            assertEquals("Please ensure that all Cycle Time is filled in", exception.getMessage());
+            System.out.println(true);
+        }
+
+        @Test
+        @Order(15)
+        public void testAlgo15() throws Exception {
+            System.out.println("===================== 15. Test Product Exception: Non-numerical Cycle Time =====================");
+    
+            ObjectMapper objectMapper = new ObjectMapper();
+    
+            String inputPath = "./src/test/AlgoControllerTestFiles/input/15_productException_input.txt";
+            
+            File input = new File(inputPath);
+    
+            Map<String, Object> allData = null;
+            
+            try {
+                allData= objectMapper.readValue(input, new TypeReference<Map<String, Object>>(){});
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+    
+            Object masterOps = allData.get("masterOps");
+    
+            List<Map<String, Object>> masterOpsData = (List<Map<String, Object>>) masterOps;
+            
+            ArrayList<Product> allProduct = new ArrayList<Product>();
+    
+    
+            Throwable exception = assertThrows(RuntimeException.class, () -> {
+                for (int i = 0; i < masterOpsData.size(); i++){
+                    Product p = new Product(masterOpsData.get(i));
+                    allProduct.add(p);
+                }
+            });
+            assertEquals("Please ensure that Cycle Time is in numerical format, and is a whole number", exception.getMessage());
+            System.out.println(true);
+        }
+
+
+        @Test
+        @Order(16)
+        public void testAlgo16() throws Exception {
+            System.out.println("===================== 16. Test Product Exception: Non-numerical Revenue (Committed Ship $) =====================");
+    
+            ObjectMapper objectMapper = new ObjectMapper();
+    
+            String inputPath = "./src/test/AlgoControllerTestFiles/input/16_productException_input.txt";
+            
+            File input = new File(inputPath);
+    
+            Map<String, Object> allData = null;
+            
+            try {
+                allData= objectMapper.readValue(input, new TypeReference<Map<String, Object>>(){});
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+    
+            Object masterOps = allData.get("masterOps");
+    
+            List<Map<String, Object>> masterOpsData = (List<Map<String, Object>>) masterOps;
+            
+            ArrayList<Product> allProduct = new ArrayList<Product>();
+    
+    
+            Throwable exception = assertThrows(RuntimeException.class, () -> {
+                for (int i = 0; i < masterOpsData.size(); i++){
+                    Product p = new Product(masterOpsData.get(i));
+                    allProduct.add(p);
+                }
+            });
+            assertEquals("Please ensure that Committed Ship $ is in numerical format, and is a whole number", exception.getMessage());
+            System.out.println(true);
+        }
+
 }

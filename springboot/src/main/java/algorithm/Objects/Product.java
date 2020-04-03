@@ -145,7 +145,12 @@ public class Product implements Comparable<Product>{
         buildProduct = (String) rowData.get("Build Product");
         // forecastProduct = (String) rowData.get("Forecast Product");
         productPN = (String) rowData.get("Product PN");
-        committedShip$ = (Integer) rowData.get("Committed Ship $");
+        try{
+            committedShip$ = (Integer) rowData.get("Committed Ship $");
+        } catch (Exception e){
+            throw new RuntimeException("Please ensure that Committed Ship $ is in numerical format, and is a whole number");
+        }
+        
 
         if (committedShip$ == null){
             throw new RuntimeException("Please fill in all values for the column Committed Ship $");
@@ -158,10 +163,14 @@ public class Product implements Comparable<Product>{
         // region = (String) rowData.get("Region");
         // SOStatus = (String) rowData.get("SO Status");
         // caerusPOQtr = (String) rowData.get("Caerus PO Qtr");
-        cycleTimeDays = (Integer) rowData.get("Cycle Time Days");
-
+        try {
+            cycleTimeDays = (Integer) rowData.get("Cycle Time Days");
+        } catch (Exception e){
+            throw new RuntimeException("Please ensure that Cycle Time is in numerical format, and is a whole number");
+        }
+        
         if (cycleTimeDays == null){
-            throw new RuntimeException("Please ensure that all Cycle Time Days are filled in");
+            throw new RuntimeException("Please ensure that all Cycle Time is filled in");
         }
         
         slotPlanNote = (String) rowData.get("Slot Plan Note");
@@ -183,7 +192,7 @@ public class Product implements Comparable<Product>{
         buildQtr = (String) rowData.get("Build Qtr");
 
         if (buildQtr == null){
-            throw new RuntimeException("Please ensure that all Build Qtr are filled in");
+            throw new RuntimeException("Please ensure that there are no empty Build Qtrs");
         }
 
         // shipQtr = (String) rowData.get("Ship Qtr");
@@ -880,7 +889,7 @@ public class Product implements Comparable<Product>{
             MRPQuarter = "Q4";
         }
 
-        String buildQtr = "CY" + MRPYear.toString() + MRPQuarter;
+        buildQtr = "CY" + MRPYear.toString() + MRPQuarter;
         
         if (MRPDate.after(leaveBayDate)){
             leaveBayDate = MRPDate;
