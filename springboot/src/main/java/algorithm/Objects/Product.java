@@ -146,6 +146,11 @@ public class Product implements Comparable<Product>{
         // forecastProduct = (String) rowData.get("Forecast Product");
         productPN = (String) rowData.get("Product PN");
         committedShip$ = (Integer) rowData.get("Committed Ship $");
+
+        if (committedShip$ == null){
+            throw new RuntimeException("Please fill in all values for the column Committed Ship $");
+        }
+
         // shipRevenueInt$ = (String) rowData.get("Ship Revenue (Int $)");
         shipRisk_Upside = (String) rowData.get("Ship Risk/Upside");
         shipRiskReason = (String) rowData.get("Ship Risk Reason");
@@ -154,6 +159,11 @@ public class Product implements Comparable<Product>{
         // SOStatus = (String) rowData.get("SO Status");
         // caerusPOQtr = (String) rowData.get("Caerus PO Qtr");
         cycleTimeDays = (Integer) rowData.get("Cycle Time Days");
+
+        if (cycleTimeDays == null){
+            throw new RuntimeException("Please ensure that all Cycle Time Days are filled in");
+        }
+        
         slotPlanNote = (String) rowData.get("Slot Plan Note");
         commentFor$Change = (String) rowData.get("Comment For $ Change");
         configurationNote = (String) rowData.get("Configuration Note");
@@ -171,6 +181,11 @@ public class Product implements Comparable<Product>{
         flex03 = (String) rowData.get("Flex 03");
         flex04 = (String) rowData.get("Flex 04");
         buildQtr = (String) rowData.get("Build Qtr");
+
+        if (buildQtr == null){
+            throw new RuntimeException("Please ensure that all Build Qtr are filled in");
+        }
+
         // shipQtr = (String) rowData.get("Ship Qtr");
         // shipRecogQtr = (String) rowData.get("Ship Recog Qtr");
         // MFGSite = (String) rowData.get("MFG Site");
@@ -227,8 +242,12 @@ public class Product implements Comparable<Product>{
             e.printStackTrace();
         }
         
-        if (MRPDate == null || endDate == null){
-            throw new RuntimeException("Please ensure that MRP Date and End Date is passed in, in dd/mm/yyyy format");
+        if (MRPDate == null){
+            throw new RuntimeException("Please ensure that MRP Date is not empty, and in dd/mm/yyyy format");
+        }
+
+        if (MFGCommitDate == null){
+            throw new RuntimeException("Please ensure that MFG Commit Date is not empty, and in dd/mm/yyyy format");
         }
 
         latestToolStartDate = DateUtils.addDays(endDate, -cycleTimeDays);

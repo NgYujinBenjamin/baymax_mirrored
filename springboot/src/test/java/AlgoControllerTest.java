@@ -1,6 +1,10 @@
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import main.java.algorithm.AlgoController;
+import main.java.algorithm.Calculation.*;
+import main.java.algorithm.Objects.*;
+
 import main.java.algorithm.firstSchedulingParam;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -16,6 +20,11 @@ import java.sql.SQLException;
 import java.util.*;
 import java.nio.file.*;
 import java.io.*;
+
+import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.core.type.*;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.annotation.*;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -452,4 +461,239 @@ public class AlgoControllerTest {
         assertEquals(result, jsonExpectedOutput);
     }
     
+    @Test
+    @Order(7)
+    public void testAlgo7() throws Exception {
+        System.out.println("===================== 7. Test Future Quarter HeadCount =====================");
+        
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String inputPath = "./src/test/AlgoControllerTestFiles/input/07_headCount_input.txt";
+        String outputPath = "./src/test/AlgoControllerTestFiles/output/07_headCount_output.txt";
+        
+        File input = new File(inputPath);
+
+        Map<String, Object> allData = null;
+        
+        try {
+            allData= objectMapper.readValue(input, new TypeReference<Map<String, Object>>(){});
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        Object masterOps = allData.get("masterOps");
+        Object baseLine = allData.get("baseline");
+
+        List<Map<String, Object>> masterOpsData = (List<Map<String, Object>>) masterOps;
+        
+        ArrayList<Product> allProduct = new ArrayList<Product>();
+        
+        for (int i = 0; i < masterOpsData.size(); i++){
+            Product p = new Product(masterOpsData.get(i));
+            allProduct.add(p);
+        }
+
+        HashMap<String, Integer> quarterHC = new HeadCount(allProduct).getQuarterHC();
+
+        String expectedOutput = null;
+        try {
+            expectedOutput = Files.readString(Paths.get(outputPath));
+        } catch (IOException e){
+            System.out.println("Problem Reading Output File");
+        }
+        
+        System.out.println(expectedOutput.equals(quarterHC.toString()));
+        assertEquals(quarterHC.toString(), expectedOutput);
+    }
+
+    @Test
+    @Order(8)
+    public void testAlgo8() throws Exception {
+        System.out.println("===================== 8. Test Current Quarter HeadCount =====================");
+        
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String inputPath = "./src/test/AlgoControllerTestFiles/input/08_headCount_input.txt";
+        
+        File input = new File(inputPath);
+
+        Map<String, Object> allData = null;
+        
+        try {
+            allData= objectMapper.readValue(input, new TypeReference<Map<String, Object>>(){});
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        Object masterOps = allData.get("masterOps");
+
+        List<Map<String, Object>> masterOpsData = (List<Map<String, Object>>) masterOps;
+        
+        ArrayList<Product> allProduct = new ArrayList<Product>();
+        
+        for (int i = 0; i < masterOpsData.size(); i++){
+            Product p = new Product(masterOpsData.get(i));
+            allProduct.add(p);
+        }
+
+        HashMap<String, Integer> quarterHC = new HeadCount(allProduct).getQuarterHC();
+
+        HashMap<String, Integer> expectedOutput = new HashMap<>();
+        Date today = new Date(); // Note: Window of testing: 01 Apr 2020 to 01 May 2020
+
+        // Based on calculations, 01 Apr to 21 Apr 2020, HC = 3; 22 Apr to 01 May, HC = 4        
+        if (today.before(new Date(120,3,22))){
+            expectedOutput.put("CY20Q2", 3);
+        } else{
+            expectedOutput.put("CY20Q2", 4);
+        }
+        
+        System.out.println(expectedOutput.equals(quarterHC));
+        assertEquals(quarterHC, expectedOutput);
+    }
+
+    @Test
+    @Order(9)
+    public void testAlgo9() throws Exception {
+        System.out.println("===================== 9. Test Product Exception: No Revenue (Committed Ship $) =====================");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String inputPath = "./src/test/AlgoControllerTestFiles/input/09_productException_input.txt";
+        
+        File input = new File(inputPath);
+
+        Map<String, Object> allData = null;
+        
+        try {
+            allData= objectMapper.readValue(input, new TypeReference<Map<String, Object>>(){});
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        Object masterOps = allData.get("masterOps");
+
+        List<Map<String, Object>> masterOpsData = (List<Map<String, Object>>) masterOps;
+        
+        ArrayList<Product> allProduct = new ArrayList<Product>();
+
+
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+            for (int i = 0; i < masterOpsData.size(); i++){
+                Product p = new Product(masterOpsData.get(i));
+                allProduct.add(p);
+            }
+        });
+        assertEquals("Please fill in all values for the column Committed Ship $", exception.getMessage());
+        System.out.println(true);
+      }
+
+      @Test
+      @Order(10)
+      public void testAlgo10() throws Exception {
+          System.out.println("===================== 10. Test Product Exception: Missing MRP Date =====================");
+  
+          ObjectMapper objectMapper = new ObjectMapper();
+  
+          String inputPath = "./src/test/AlgoControllerTestFiles/input/10_productException_input.txt";
+          
+          File input = new File(inputPath);
+  
+          Map<String, Object> allData = null;
+          
+          try {
+              allData= objectMapper.readValue(input, new TypeReference<Map<String, Object>>(){});
+          } catch (IOException e){
+              e.printStackTrace();
+          }
+  
+          Object masterOps = allData.get("masterOps");
+  
+          List<Map<String, Object>> masterOpsData = (List<Map<String, Object>>) masterOps;
+          
+          ArrayList<Product> allProduct = new ArrayList<Product>();
+  
+  
+          Throwable exception = assertThrows(RuntimeException.class, () -> {
+              for (int i = 0; i < masterOpsData.size(); i++){
+                  Product p = new Product(masterOpsData.get(i));
+                  allProduct.add(p);
+              }
+          });
+          assertEquals("Please ensure that MRP Date is not empty, and in dd/mm/yyyy format", exception.getMessage());
+          System.out.println(true);
+        }
+
+        @Test
+        @Order(11)
+        public void testAlgo11() throws Exception {
+            System.out.println("===================== 11. Test Product Exception: MRP Date Incorrect Format =====================");
+    
+            ObjectMapper objectMapper = new ObjectMapper();
+    
+            String inputPath = "./src/test/AlgoControllerTestFiles/input/10_productException_input.txt";
+            
+            File input = new File(inputPath);
+    
+            Map<String, Object> allData = null;
+            
+            try {
+                allData= objectMapper.readValue(input, new TypeReference<Map<String, Object>>(){});
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+    
+            Object masterOps = allData.get("masterOps");
+    
+            List<Map<String, Object>> masterOpsData = (List<Map<String, Object>>) masterOps;
+            
+            ArrayList<Product> allProduct = new ArrayList<Product>();
+    
+    
+            Throwable exception = assertThrows(RuntimeException.class, () -> {
+                for (int i = 0; i < masterOpsData.size(); i++){
+                    Product p = new Product(masterOpsData.get(i));
+                    allProduct.add(p);
+                }
+            });
+            assertEquals("Please ensure that MRP Date is not empty, and in dd/mm/yyyy format", exception.getMessage());
+            System.out.println(true);
+          }
+
+        @Test
+        @Order(12)
+        public void testAlgo12() throws Exception {
+            System.out.println("===================== 12. Test Product Exception: Missing MFG Commit Date =====================");
+    
+            ObjectMapper objectMapper = new ObjectMapper();
+    
+            String inputPath = "./src/test/AlgoControllerTestFiles/input/12_productException_input.txt";
+            
+            File input = new File(inputPath);
+    
+            Map<String, Object> allData = null;
+            
+            try {
+                allData= objectMapper.readValue(input, new TypeReference<Map<String, Object>>(){});
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+    
+            Object masterOps = allData.get("masterOps");
+    
+            List<Map<String, Object>> masterOpsData = (List<Map<String, Object>>) masterOps;
+            
+            ArrayList<Product> allProduct = new ArrayList<Product>();
+    
+    
+            Throwable exception = assertThrows(RuntimeException.class, () -> {
+                for (int i = 0; i < masterOpsData.size(); i++){
+                    Product p = new Product(masterOpsData.get(i));
+                    allProduct.add(p);
+                }
+            });
+            assertEquals("Please ensure that MFG Commit Date is not empty, and in dd/mm/yyyy format", exception.getMessage());
+            System.out.println(true);
+          }
+          
 }
