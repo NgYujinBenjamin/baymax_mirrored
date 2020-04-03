@@ -886,6 +886,8 @@ const UploadState = (props) => {
         let data = await convertExcelToJSON(file);
         let scheduleCounter = false;
 
+        console.log(data)
+
         data[data.length - 1]['Argo ID'] === undefined && data.pop();
 
         //check masterops have the necessary keys for the UI to be displayed
@@ -1036,7 +1038,16 @@ const UploadState = (props) => {
     // @desc    check date value if undefined and change date format
     // @param   (object, array)
     const checkDatesValue = (obj, arr) => {
-      arr.forEach(val => obj[val] = obj[val] === undefined ? '' : obj[val].toLocaleDateString('en-GB'))
+      // arr.forEach(val => obj[val] = obj[val] === undefined ? '' : obj[val].toLocaleDateString('en-GB'))
+      arr.forEach(val => {
+        if(obj[val] === undefined){
+          obj[val] = '';
+        } else {
+          let output = new Date(obj[val])
+          output.setDate(output.getDate() + 1)
+          obj[val] = output.toLocaleDateString('en-GB')
+        }
+      })
     }
 
     // @loc     Preresult.js
