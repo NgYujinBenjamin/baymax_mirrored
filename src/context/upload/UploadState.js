@@ -920,19 +920,32 @@ const UploadState = (props) => {
 
               //check date in right format & setup for end date
               filtered.forEach(obj => {
+                // checkDatesValue(obj, ['MRP Date','Created On','Created Time','SAP Customer Req Date','Ship Recog Date','Slot Request Date','Int. Ops Ship Readiness Date','MFG Commit Date','Div Commit Date','Changed On','Last Changed Time'])
+
+                // obj['Lock MRP Date'] = false
+
+                // let output = obj['Fab Name'] === 'OPEN' ? obj['Int. Ops Ship Readiness Date'] : obj['MFG Commit Date']
+                // let outDates = output.split('/')
+                // let outYear = parseInt(outDates[2])
+                // let outMonth = parseInt(outDates[1]) - 1
+                // let outDay = parseInt(outDates[0])
+                // let outcurrentDate = new Date(outYear, outMonth, outDay)
+                // outcurrentDate.setDate(outcurrentDate.getDate() - minGap)
+                
+                // obj['End Date'] = obj['Lock MRP Date'] === false ? outcurrentDate.toLocaleDateString() : obj['MRP Date']
+
+                //method 2
+                obj['Lock MRP Date'] = false;
+
+                let output = obj['Fab Name'] === 'OPEN' ? obj['Int. Ops Ship Readiness Date'] : obj['MFG Commit Date'];
+                let out_two = new Date(output);
+                out_two.setDate(out_two.getDate() + 1)
+                out_two.setDate(out_two.getDate() - minGap)
+
                 checkDatesValue(obj, ['MRP Date','Created On','Created Time','SAP Customer Req Date','Ship Recog Date','Slot Request Date','Int. Ops Ship Readiness Date','MFG Commit Date','Div Commit Date','Changed On','Last Changed Time'])
 
-                obj['Lock MRP Date'] = false
+                obj['End Date'] = obj['Lock MRP Date'] === false ? out_two.toLocaleDateString('en-GB') : obj['MRP Date']
 
-                let output = obj['Fab Name'] === 'OPEN' ? obj['Int. Ops Ship Readiness Date'] : obj['MFG Commit Date']
-                let outDates = output.split('/')
-                let outYear = parseInt(outDates[2])
-                let outMonth = parseInt(outDates[1]) - 1
-                let outDay = parseInt(outDates[0])
-                let outcurrentDate = new Date(outYear, outMonth, outDay)
-                outcurrentDate.setDate(outcurrentDate.getDate() - minGap)
-                
-                obj['End Date'] = obj['Lock MRP Date'] === false ? outcurrentDate.toLocaleDateString() : obj['MRP Date']
               })
 
               dispatch({
