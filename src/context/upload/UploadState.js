@@ -657,7 +657,8 @@ const UploadState = (props) => {
 
       // update bays and gaps for history
       if("minGap" in postResultUpdate){
-        setMinGap(postResultUpdate.minGap);
+        // setMinGap(postResultUpdate.minGap);
+        minGapDays = postResultUpdate.minGap;
       }
       
       if("maxGap" in postResultUpdate){
@@ -667,22 +668,27 @@ const UploadState = (props) => {
       if("numBays" in postResultUpdate){
         setBays(postResultUpdate.numBays);
       }
-
+      
       setPostResult(postResultUpdate, minGapDays, '');
     }
 
     //update post result data when user click "Save"
     const updatePostResult = (postResultDone, objs, quarter) => {
       objs = JSON.parse(objs);
-      const dates = postResultDone.bayOccupancy[quarter][0];
+      
+      let dates;
 
-      objs.unshift(dates);
-      postResultDone.bayOccupancy[quarter] = objs;
+      if( quarter in postResultDone.bayOccupancy ){
+        dates = postResultDone.bayOccupancy[quarter][0];
 
-      dispatch({ 
-        type: UPDATE_POST_RESULT,
-        payload: postResultDone 
-      })
+        objs.unshift(dates);
+        postResultDone.bayOccupancy[quarter] = objs;
+
+        dispatch({ 
+          type: UPDATE_POST_RESULT,
+          payload: postResultDone 
+        })
+      }
     }
 
     const dateConversion = (dateString) => {
@@ -709,37 +715,38 @@ const UploadState = (props) => {
       const objItemsToChange = ["sendToStorageDate", "MRPDate", "intOpsShipReadinessDate", "MFGCommitDate", "shipRecogDate", "toolStartDate", 'endDate'];
 
       Object.keys(postResultDone).map( occupancy => {
-        Object.keys(postResultDone[occupancy]).map( quarter => {
-          
-          let currentQtr = postResultDone[occupancy][quarter];
-          for(let i=0; i<currentQtr[0].length; i++){
+        if(occupancy == "baseLineOccupancy" || occupancy == "bayOccupancy"){
+          Object.keys(postResultDone[occupancy]).map( quarter => {
             
-            // sort the dates in ascending order for table header to output
-            currentQtr[0].sort(function(a,b){
-              return new Date(a) - new Date(b);
-            });
-            
-            const month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
-            let eachDate = new Date(currentQtr[0][i]);
-            currentQtr[0][i] = eachDate.getDate() + " " + month[eachDate.getMonth()] + " " + eachDate.getFullYear();
-          }
+            let currentQtr = postResultDone[occupancy][quarter];
+            for(let i=0; i<currentQtr[0].length; i++){
+              
+              // sort the dates in ascending order for table header to output
+              currentQtr[0].sort(function(a,b){
+                return new Date(a) - new Date(b);
+              });
+              
+              const month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+              let eachDate = new Date(currentQtr[0][i]);
+              currentQtr[0][i] = eachDate.getDate() + " " + month[eachDate.getMonth()] + " " + eachDate.getFullYear();
+            }
 
-          for(let i=1; i<currentQtr.length; i++){
-            objItemsToChange.forEach(key => {
-              if(key !== "endDate"){
-                if(currentQtr[i][0][key] !== null){
-                  currentQtr[i][0][key] = new Date(currentQtr[i][0][key]).toLocaleDateString('en-GB');
-                } else {
-                  currentQtr[i][0][key] = "";
+            for(let i=1; i<currentQtr.length; i++){
+              objItemsToChange.forEach(key => {
+                if(key !== "endDate"){
+                  if(currentQtr[i][0][key] !== null){
+                    currentQtr[i][0][key] = new Date(currentQtr[i][0][key]).toLocaleDateString('en-GB');
+                  } else {
+                    currentQtr[i][0][key] = "";
+                  }
+                } else{
+                  endDateCheck(currentQtr[i][0], key, minGap);
                 }
-              } else{
-                endDateCheck(currentQtr[i][0], key, minGap);
-              }
 
-            })
-          }
-
-        })
+              })
+            }
+          })
+        }
       })
 
       // This is for history - no updates to app level state required!
@@ -795,6 +802,7 @@ const UploadState = (props) => {
 
       try {
           let res = await axios.post('http://localhost:8080/savePreSchedule', postResult, config);
+          console.log(res);
 
           dispatch({
               type: SAVE_RESULT,
@@ -840,6 +848,8 @@ const UploadState = (props) => {
       }
     }
 
+    const updateHistID = (histID) => dispatch({ type: SAVE_RESULT, payload: histID });
+
     // ##################################################################################################
     // ########################################### HISTORY END ##########################################
     // ##################################################################################################
@@ -870,10 +880,10 @@ const UploadState = (props) => {
                 payload: res.data
             })
         } catch (err) {
-            dispatch({
-              type: CREATE_RESULT_ERROR,
-              payload: err.response.data.message
-            })
+            // dispatch({
+            //   type: CREATE_RESULT_ERROR,
+            //   payload: err.response.data.message
+            // })
         }
     }
 
@@ -1208,7 +1218,8 @@ const UploadState = (props) => {
             getHistory,
             loadHistories,
             checkNewBaselineAndBays,
-            setNewMinGap
+            setNewMinGap,
+            updateHistID
         }}>
         {props.children}
     </UploadContext.Provider>

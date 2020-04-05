@@ -12,7 +12,7 @@ const HistoryDetails = (props) => {
     const uploadContext = useContext(UploadContext);
 
     const { loadUser, updateNavItem } = authContext;
-    const { getHistory } = uploadContext;
+    const { getHistory, updateHistID } = uploadContext;
 
     useEffect(() => {
         loadUser();
@@ -20,6 +20,7 @@ const HistoryDetails = (props) => {
         
         const path = props.location.pathname.split('/');
         getHistory(path[2],path[3]);
+        updateHistID(path[3]);
         //eslint-disable-next-line
     }, [])
 
