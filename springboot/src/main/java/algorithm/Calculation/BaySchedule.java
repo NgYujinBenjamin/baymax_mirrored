@@ -161,6 +161,7 @@ public class BaySchedule{
         Date earliestToolStartDate;
         Date today = new Date();
         // Date today = new Date(120, 2, 24); // For testing purposes
+        
         if (bayAvailDate.after(today)){
             // If bayAvailableDate is after current date, we can pull forward up to the maxGap or the date when the bay is available
             Long diff = latestToolStartDate.getTime() - bayAvailDate.getTime();
