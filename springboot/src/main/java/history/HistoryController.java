@@ -85,7 +85,6 @@ public class HistoryController {
             }
         }
 
-        String return_message = "Failed";
 
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -96,6 +95,8 @@ public class HistoryController {
         int id = conn.getLastHistoryID();
         int next_id = id + 1;
         if (histID != null){
+            conn.removeSpecificMSU(histID);
+            
             conn.updateMSU(baseLineList, histID, 1);
             conn.updateMSU(MSUList, histID, 0);
 

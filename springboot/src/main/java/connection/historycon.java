@@ -88,13 +88,22 @@ public class historycon extends main.java.connection.mysqlcon {
         return id;
     }
 
-    public String updateMSU(ArrayList<main.java.history.MassSlotUploadDetails> data, int historyId, int isBaseLine) throws SQLException, ClassNotFoundException {
+    public removeSpecificMSU(int historyId) throws SQLException, ClassNotFoundException{
         Connection con = super.getConnection();
         Statement stmt = con.createStatement();
         
         String sqlStr = "delete from mass_slot_upload where historyId = '" + historyId + "'";
         stmt.executeUpdate(sqlStr);
 
+        con.close();
+
+        return "Success";
+    }
+
+    public String updateMSU(ArrayList<main.java.history.MassSlotUploadDetails> data, int historyId, int isBaseLine) throws SQLException, ClassNotFoundException {
+        Connection con = super.getConnection();
+        Statement stmt = con.createStatement();
+        
         for (main.java.history.MassSlotUploadDetails row : data) {
             stmt = con.createStatement();
             String defSql = "insert into mass_slot_upload ("+
