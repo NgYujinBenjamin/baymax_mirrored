@@ -79,7 +79,8 @@ public class AlgoController {
 
         while (quarterHCChanged && !pastQuarterHC){
             baySchedule = new BaySchedule(baseLineProduct, allProduct, quarterHC, numBays, gapDiff);
-            System.out.println(quarterHC);
+            // System.out.println(quarterHC);
+
             // Debugging
             // ArrayList<Bay> schedule = baySchedule.getSchedule();
             
@@ -101,8 +102,6 @@ public class AlgoController {
                 allProduct = baySchedule.getAllProduct();
                 baseLineProduct = baySchedule.getBaseLineProduct();
                 bayReq = new BayRequirement(baseLineProduct, allProduct);
-        
-                allProduct = baySchedule.getAllProduct();
 
                 HashMap<String, Integer> newQuarterHC = new HeadCount(allProduct).getQuarterHC();
                 Integer prevHistoryQuarterHCSize = historyQuarterHC.size();
@@ -182,7 +181,7 @@ public class AlgoController {
         Boolean pastQuarterHC = false;
 
         while (quarterHCChanged && !pastQuarterHC){
-            System.out.println(quarterHC);
+            // System.out.println(quarterHC);
             
             baySchedule = new BaySchedule(baseLineProduct, allProduct, quarterHC, numBays, gapDiff);
 

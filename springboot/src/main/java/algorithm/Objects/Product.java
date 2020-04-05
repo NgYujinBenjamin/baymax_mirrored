@@ -873,12 +873,13 @@ public class Product implements Comparable<Product>{
 
     public void setToolStartDate(Date toolStartDate) {
         this.toolStartDate = toolStartDate;
-        MRPDate = DateUtils.addDays(toolStartDate, cycleTimeDays);
-        gapDays = (int) ((MFGCommitDate.getTime() - MRPDate.getTime())/ (24 * 60 * 60 * 1000));
+        this.MRPDate = DateUtils.addDays(toolStartDate, cycleTimeDays);
+        this.gapDays = (int) ((MFGCommitDate.getTime() - MRPDate.getTime())/ (24 * 60 * 60 * 1000));
         
         Integer MRPYear = MRPDate.getYear() - 100;
         Integer MRPMonth = MRPDate.getMonth();
         String MRPQuarter;
+        
         if (MRPMonth < 3){
             MRPQuarter = "Q1";
         } else if (MRPMonth < 6){
@@ -889,7 +890,7 @@ public class Product implements Comparable<Product>{
             MRPQuarter = "Q4";
         }
 
-        buildQtr = "CY" + MRPYear.toString() + MRPQuarter;
+        this.buildQtr = "CY" + MRPYear.toString() + MRPQuarter;
         
         if (MRPDate.after(leaveBayDate)){
             leaveBayDate = MRPDate;
