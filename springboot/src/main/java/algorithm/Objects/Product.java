@@ -145,7 +145,17 @@ public class Product implements Comparable<Product>{
         buildProduct = (String) rowData.get("Build Product");
         // forecastProduct = (String) rowData.get("Forecast Product");
         productPN = (String) rowData.get("Product PN");
-        committedShip$ = (Integer) rowData.get("Committed Ship $");
+        try{
+            committedShip$ = (Integer) rowData.get("Committed Ship $");
+        } catch (Exception e){
+            throw new RuntimeException("Please ensure that Committed Ship $ is in numerical format, and is a whole number");
+        }
+        
+
+        if (committedShip$ == null){
+            throw new RuntimeException("Please fill in all values for the column Committed Ship $");
+        }
+
         // shipRevenueInt$ = (String) rowData.get("Ship Revenue (Int $)");
         shipRisk_Upside = (String) rowData.get("Ship Risk/Upside");
         shipRiskReason = (String) rowData.get("Ship Risk Reason");
@@ -153,7 +163,16 @@ public class Product implements Comparable<Product>{
         // region = (String) rowData.get("Region");
         // SOStatus = (String) rowData.get("SO Status");
         // caerusPOQtr = (String) rowData.get("Caerus PO Qtr");
-        cycleTimeDays = (Integer) rowData.get("Cycle Time Days");
+        try {
+            cycleTimeDays = (Integer) rowData.get("Cycle Time Days");
+        } catch (Exception e){
+            throw new RuntimeException("Please ensure that Cycle Time is in numerical format, and is a whole number");
+        }
+        
+        if (cycleTimeDays == null){
+            throw new RuntimeException("Please ensure that all Cycle Time is filled in");
+        }
+        
         slotPlanNote = (String) rowData.get("Slot Plan Note");
         commentFor$Change = (String) rowData.get("Comment For $ Change");
         configurationNote = (String) rowData.get("Configuration Note");
@@ -171,6 +190,11 @@ public class Product implements Comparable<Product>{
         flex03 = (String) rowData.get("Flex 03");
         flex04 = (String) rowData.get("Flex 04");
         buildQtr = (String) rowData.get("Build Qtr");
+
+        if (buildQtr == null){
+            throw new RuntimeException("Please ensure that there are no empty Build Qtrs");
+        }
+
         // shipQtr = (String) rowData.get("Ship Qtr");
         // shipRecogQtr = (String) rowData.get("Ship Recog Qtr");
         // MFGSite = (String) rowData.get("MFG Site");
@@ -227,8 +251,12 @@ public class Product implements Comparable<Product>{
             e.printStackTrace();
         }
         
-        if (MRPDate == null || endDate == null){
-            throw new RuntimeException("Please ensure that MRP Date and End Date is passed in, in dd/mm/yyyy format");
+        if (MRPDate == null){
+            throw new RuntimeException("Please ensure that MRP Date is not empty, and in dd/mm/yyyy format");
+        }
+
+        if (MFGCommitDate == null){
+            throw new RuntimeException("Please ensure that MFG Commit Date is not empty, and in dd/mm/yyyy format");
         }
 
         latestToolStartDate = DateUtils.addDays(endDate, -cycleTimeDays);
@@ -363,24 +391,6 @@ public class Product implements Comparable<Product>{
             endDate = GenericValidator.isDate((String)productDetails.get("endDate"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("endDate")): MFGCommitDate;
             sendToStorageDate = GenericValidator.isDate((String) productDetails.get("sendToStorageDate"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("sendToStorageDate")): null;
             toolStartDate = GenericValidator.isDate((String) productDetails.get("toolStartDate"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("toolStartDate")): null;
-
-
-
-            // String pattern = "yyyy-MM-dd";
-            // MRPDate = GenericValidator.isDate((String) productDetails.get("MRPDate"), pattern, true) ? dateFormat.parse((String) productDetails.get("MRPDate")): MRPDate;
-            // intOpsShipReadinessDate = GenericValidator.isDate((String) productDetails.get("intOpsShipReadinessDate"), pattern, true) ? dateFormat.parse((String) productDetails.get("intOpsShipReadinessDate")): intOpsShipReadinessDate;
-            // MFGCommitDate = GenericValidator.isDate((String) productDetails.get("MFGCommitDate"), pattern, true) ? dateFormat.parse((String) productDetails.get("MFGCommitDate")): MFGCommitDate;
-            // shipRecogDate = GenericValidator.isDate((String) productDetails.get("shipRecogDate"), pattern, true) ? dateFormat.parse((String) productDetails.get("shipRecogDate")): shipRecogDate;
-            // handOffDateToDE = GenericValidator.isDate((String) productDetails.get("handOffDateToDE"), pattern, true) ? dateFormat.parse((String) productDetails.get("handOffDateToDE")): handOffDateToDE;
-            // handOffDateBackToMFG = GenericValidator.isDate((String) productDetails.get("handOffDateBackToMFG"), pattern, true) ? dateFormat.parse((String) productDetails.get("handOffDateBackToMFG")): handOffDateBackToMFG;
-            // installStartDate = GenericValidator.isDate((String) productDetails.get("installStartDate"), pattern, true) ? dateFormat.parse((String)productDetails.get("installStartDate")): installStartDate;
-            // coreNeedDate = GenericValidator.isDate((String) productDetails.get("coreNeedDate"), pattern, true) ? dateFormat.parse((String) productDetails.get("coreNeedDate")): coreNeedDate;
-            // coreArrivalDate = GenericValidator.isDate((String) productDetails.get("coreArrivalDate"), pattern, true) ? dateFormat.parse((String) productDetails.get("coreArrivalDate")): coreArrivalDate;
-            // refurbStartDate = GenericValidator.isDate((String) productDetails.get("refurbStartDate"), pattern, true) ? dateFormat.parse((String) productDetails.get("refurbStartDate")): refurbStartDate;
-            // refurbCompleteDate = GenericValidator.isDate((String) productDetails.get("refurbCompleteDate"), pattern, true) ? dateFormat.parse((String) productDetails.get("refurbCompleteDate")): refurbCompleteDate;
-            // endDate = GenericValidator.isDate((String)productDetails.get("endDate"), pattern, true) ? dateFormat.parse((String) productDetails.get("endDate")): MFGCommitDate;
-            // sendToStorageDate = GenericValidator.isDate((String) productDetails.get("sendToStorageDate"), pattern, true) ? dateFormat.parse((String) productDetails.get("sendToStorageDate")): sendToStorageDate;
-            // toolStartDate = GenericValidator.isDate((String) productDetails.get("toolStartDate"), pattern, true) ? dateFormat.parse((String) productDetails.get("toolStartDate")): toolStartDate;
         } catch (ParseException e){
             e.printStackTrace();
 
@@ -863,12 +873,13 @@ public class Product implements Comparable<Product>{
 
     public void setToolStartDate(Date toolStartDate) {
         this.toolStartDate = toolStartDate;
-        MRPDate = DateUtils.addDays(toolStartDate, cycleTimeDays);
-        gapDays = (int) ((MFGCommitDate.getTime() - MRPDate.getTime())/ (24 * 60 * 60 * 1000));
+        this.MRPDate = DateUtils.addDays(toolStartDate, cycleTimeDays);
+        this.gapDays = (int) ((MFGCommitDate.getTime() - MRPDate.getTime())/ (24 * 60 * 60 * 1000));
         
         Integer MRPYear = MRPDate.getYear() - 100;
         Integer MRPMonth = MRPDate.getMonth();
         String MRPQuarter;
+        
         if (MRPMonth < 3){
             MRPQuarter = "Q1";
         } else if (MRPMonth < 6){
@@ -879,7 +890,7 @@ public class Product implements Comparable<Product>{
             MRPQuarter = "Q4";
         }
 
-        String buildQtr = "CY" + MRPYear.toString() + MRPQuarter;
+        this.buildQtr = "CY" + MRPYear.toString() + MRPQuarter;
         
         if (MRPDate.after(leaveBayDate)){
             leaveBayDate = MRPDate;

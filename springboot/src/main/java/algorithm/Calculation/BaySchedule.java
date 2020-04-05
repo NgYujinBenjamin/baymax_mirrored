@@ -138,7 +138,8 @@ public class BaySchedule{
 
             // Sufficient HC to start new job
             if (newBuildCount < currQtrHC){
-                weeklyNewBuild.put(weekFriday, newBuildCount++); // Update the weekly new build
+                newBuildCount += 1;
+                weeklyNewBuild.put(weekFriday, newBuildCount); // Update the weekly new build
                 b.addToBaySchedule(p);
                 scheduled = true;
             } else {
@@ -159,7 +160,7 @@ public class BaySchedule{
     private Date adjustToolStart(Date latestToolStartDate, Date bayAvailDate, Integer gapDiff){
         Date earliestToolStartDate;
         Date today = new Date();
-        // Date today = new Date(120, 1, 25); // For testing purposes
+        // Date today = new Date(120, 2, 24); // For testing purposes
         if (bayAvailDate.after(today)){
             // If bayAvailableDate is after current date, we can pull forward up to the maxGap or the date when the bay is available
             Long diff = latestToolStartDate.getTime() - bayAvailDate.getTime();

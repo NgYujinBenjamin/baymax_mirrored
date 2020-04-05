@@ -886,6 +886,8 @@ const UploadState = (props) => {
         let data = await convertExcelToJSON(file);
         let scheduleCounter = false;
 
+        console.log(data)
+
         data[data.length - 1]['Argo ID'] === undefined && data.pop();
 
         //check masterops have the necessary keys for the UI to be displayed
@@ -918,19 +920,17 @@ const UploadState = (props) => {
 
               //check date in right format & setup for end date
               filtered.forEach(obj => {
+                obj['Lock MRP Date'] = false;
+
+                let output = obj['Fab Name'] === 'OPEN' ? obj['Int. Ops Ship Readiness Date'] : obj['MFG Commit Date'];
+                let out_two = new Date(output);
+                out_two.setDate(out_two.getDate() + 1)
+                out_two.setDate(out_two.getDate() - minGap)
+
                 checkDatesValue(obj, ['MRP Date','Created On','Created Time','SAP Customer Req Date','Ship Recog Date','Slot Request Date','Int. Ops Ship Readiness Date','MFG Commit Date','Div Commit Date','Changed On','Last Changed Time'])
 
-                obj['Lock MRP Date'] = false
+                obj['End Date'] = obj['Lock MRP Date'] === false ? out_two.toLocaleDateString('en-GB') : obj['MRP Date']
 
-                let output = obj['Fab Name'] === 'OPEN' ? obj['Int. Ops Ship Readiness Date'] : obj['MFG Commit Date']
-                let outDates = output.split('/')
-                let outYear = parseInt(outDates[2])
-                let outMonth = parseInt(outDates[1]) - 1
-                let outDay = parseInt(outDates[0])
-                let outcurrentDate = new Date(outYear, outMonth, outDay)
-                outcurrentDate.setDate(outcurrentDate.getDate() - minGap)
-                
-                obj['End Date'] = obj['Lock MRP Date'] === false ? outcurrentDate.toLocaleDateString() : obj['MRP Date']
               })
 
               dispatch({
@@ -1036,7 +1036,16 @@ const UploadState = (props) => {
     // @desc    check date value if undefined and change date format
     // @param   (object, array)
     const checkDatesValue = (obj, arr) => {
-      arr.forEach(val => obj[val] = obj[val] === undefined ? '' : obj[val].toLocaleDateString('en-GB'))
+      // arr.forEach(val => obj[val] = obj[val] === undefined ? '' : obj[val].toLocaleDateString('en-GB'))
+      arr.forEach(val => {
+        if(obj[val] === undefined){
+          obj[val] = '';
+        } else {
+          let output = new Date(obj[val])
+          output.setDate(output.getDate() + 1)
+          obj[val] = output.toLocaleDateString('en-GB')
+        }
+      })
     }
 
     // @loc     Preresult.js
