@@ -88,6 +88,116 @@ public class historycon extends main.java.connection.mysqlcon {
         return id;
     }
 
+    public String updateMSU(ArrayList<main.java.history.MassSlotUploadDetails> data, int historyId, int isBaseLine) throws SQLException, ClassNotFoundException {
+        Connection con = super.getConnection();
+        Statement stmt = con.createStatement();
+        
+        String sqlStr = "delete from mass_slot_upload where historyId = '" + historyId + "'";
+        stmt.executeUpdate(sqlStr);
+
+        for (main.java.history.MassSlotUploadDetails row : data) {
+            stmt = con.createStatement();
+            String defSql = "insert into mass_slot_upload ("+
+            "historyID, isBaseLine, argoID, slotID_UTID, fabName ,slotStatus, shipRevenueType, buildCategory, "+
+            "buildProduct, slotPlanNote, planProductType, shipRisk_Upside, shipRiskReason, "+
+            "commentFor$Change, committedShip$, secondaryCustomerName, fabID, salesOrder, "+
+            "forecastID, MFGCommitDate, shipRecogDate, MRPDate, buildComplete, "+
+            "intOpsShipReadinessDate, plant, new_Used, coreNeedDate, coreArrivalDate, "+
+            "refurbStartDate, refurbCompleteDate, donorStatus, coreUTID, coreNotes, "+
+            "MFGStatus, quantity, configurationNote, dropShip, RMATool, productPN, sendToStorageDate, "+
+            "handOffDateToDE, handOffDateBackToMFG, installStartDate, cycleTimeDays, flex01, "+
+            "flex02, flex03, flex04, fulfilled, buildQtr, endDate) ";
+            defSql += "values (";
+            defSql += "'" + historyId + "',";
+            defSql += "'" + isBaseLine + "',";
+            defSql += "'" + row.getArgo_id() + "',";
+            defSql += "'" + row.getSlot_id() + "',";
+            defSql += '"' + row.getFabName() + '"'+",";
+            defSql += "'" + row.getSlot_status() + "',";
+            defSql += "'" + row.getShip_rev_type() + "',";
+            defSql += "'" + row.getBuild_category() + "',";
+            defSql += "'" + row.getBuild_product() + "',";
+            defSql += "'" + row.getSlot_plan_notes() + "',";
+            defSql += "'" + row.getPlan_product_type() + "',";
+            defSql += "'" + row.getShip_risk() + "',";
+            defSql += "'" + row.getShip_risk_reason() + "',";
+            defSql += "'" + row.getComment_for_change() + "',";
+            defSql += "'" + row.getCommited_ship() + "',";
+            defSql += "'" + row.getSecondary_customer_name() + "',";
+            defSql += row.getFab_id() == null ? "null ," : "'" + row.getFab_id() + "',";
+            defSql += row.getSales_order() == null ? "null ," : "'" + row.getSales_order() + "',";
+            defSql += row.getForecast_id() == null ? "null ," : "'" + row.getForecast_id() + "',";
+            defSql += "'" + row.getMfg_commit_date() + "',";
+            defSql += "'" + row.getShip_recognition_date() + "',";
+            defSql += "'" + row.getMrp_date() + "',";
+            defSql += "'" + row.getBuild_complete() + "',";
+            defSql += "'" + row.getInt_ops_ship_ready_date() + "',";
+            defSql += "'" + row.getPlant() + "',";
+            defSql += "'" + row.getCategory() + "',";
+            defSql += row.getCore_need_date() == null ? "null ," : "'" + row.getCore_need_date() + "',";
+            defSql += row.getCore_arrival_date() == null ? "null ," : "'" + row.getCore_arrival_date() + "',";
+            defSql += row.getRefurb_start_date() == null ? "null ," : "'" + row.getRefurb_start_date() + "',";
+            defSql += row.getRefurb_complete_date() == null ? "null ," : "'" + row.getRefurb_complete_date() + "',";
+            defSql += "'" + row.getDonor_status() + "',";
+            defSql += row.getCore_utid() == null ? "null ," : "'" + row.getCore_utid() + "',";
+            defSql += "'" + row.getCore_notes() + "',";
+            defSql += "'" + row.getMfg_status() + "',";
+            defSql += row.getQty() == null ? "null ," : "'" + row.getQty() + "',";
+            defSql += "'" + row.getConfig_note() + "',";
+            defSql += "'" + row.getDrop_ship() + "',";
+            defSql += "'" + row.getRma() + "',";
+            defSql += "'" + row.getProduct_pn() + "',";
+            defSql += "null ,";
+            defSql += row.getOff_date_to_de() == null ? "null ," : "'" + row.getOff_date_to_de() + "',";
+            defSql += row.getOff_date_to_mfg() == null ? "null ," : "'" + row.getOff_date_to_mfg() + "',";
+            defSql += row.getInstall_start_date() == null ? "null ," : "'" + row.getInstall_start_date() + "',";
+            defSql += "'" + row.getCycle_time_days() + "',";
+            // defSql += row.getFlex() == null ? "null ," : "'" + row.getFlex() + "',";
+            // defSql += "'" + row.getFulfilled() + "'";
+            defSql += "null ,";
+            defSql += "null ,";
+            defSql += "null ,";
+            defSql += "null ,";
+            defSql += "0,";
+            defSql += "'" + row.getBuildQtr() + "',";
+            defSql += "'" + row.getEndDate() + "'";
+
+            defSql += ");";
+            // return defSql;
+            stmt.executeUpdate(defSql);
+        }
+        con.close();
+
+        return "Success";
+    }
+
+    public int updateHistory(String histID, String staffId, String minGap, String maxGap, String numBay,String date) throws SQLException, ClassNotFoundException{
+        Connection con = super.getConnection();
+        Statement stmt = con.createStatement();
+        String sqlStr = "delete from history where historyID = '" + histID + "'";
+        stmt.executeUpdate(sqlStr);
+
+        String query = "insert into history (historyID, staff_id, min_gap, max_gap, num_bay ,date_generated)";
+        query += " values (?,?,?,?,?,?)";
+        PreparedStatement pstmt = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+        pstmt.setString(1, histID);
+        pstmt.setString(2, staffId);
+        pstmt.setString(3, minGap);
+        pstmt.setString(4, maxGap);
+        pstmt.setString(5, numBay);
+        pstmt.setString(6, date);
+        pstmt.executeUpdate();
+
+        ResultSet rs = pstmt.getGeneratedKeys();
+        int id = 0;
+        if (rs.next()) {
+            id = rs.getInt(1);
+        }
+
+        con.close();
+        return id;
+    }
+
     public String removeHistory(String historyId) throws SQLException, ClassNotFoundException {
         Connection con = super.getConnection();
         Statement stmt = con.createStatement();
@@ -204,6 +314,7 @@ public class historycon extends main.java.connection.mysqlcon {
         }
         return id;
     }
+    
     public int getNumBay(String msuId, String staffID) throws SQLException, ClassNotFoundException{
         Connection con = super.getConnection();
         Statement stmt = con.createStatement();
@@ -215,7 +326,6 @@ public class historycon extends main.java.connection.mysqlcon {
         }
         return id;
     }
-
 
     public int getLastHistoryID() throws SQLException, ClassNotFoundException{
         Connection con = super.getConnection();

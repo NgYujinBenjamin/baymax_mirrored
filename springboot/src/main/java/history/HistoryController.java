@@ -32,6 +32,7 @@ public class HistoryController {
         Integer minGap;
         Integer maxGap;
         Integer staffID;
+        Integer histID;
 
 
         try {
@@ -41,6 +42,7 @@ public class HistoryController {
             minGap = param.minGap;
             maxGap = param.maxGap;
             staffID = param.staffID;
+            histID = param.histID;
         } catch (Exception e) {
             throw new Exception("JSON Reading Error");
         }
@@ -93,7 +95,13 @@ public class HistoryController {
         // hardcoded historyID to be 1 should be retrieved to see which is the next historyID to be added
         int id = conn.getLastHistoryID();
         int next_id = id + 1;
+        if (histID != null){
+            conn.updateMSU(baseLineList, histID, 1);
+            conn.updateMSU(MSUList, histID, 0);
 
+            return conn.updateHistory(String.valueOf(histID),String.valueOf(staffID), String.valueOf(minGap), String.valueOf(maxGap), String.valueOf(bay), modifiedDate);
+            // return histID;
+        }
         conn.addMassSlotUpload(baseLineList, next_id, 1);
         conn.addMassSlotUpload(MSUList, next_id, 0);
 
