@@ -134,7 +134,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
                     { baseline !== null && baseline.map((obj, index) =>
                         <PostresultItem result={obj} id="baseline" key={index} />
                     )}
-                    { objs.map((obj, index) =>
+                    { result !== null && objs.map((obj, index) =>
                         <PostresultItem result={obj} id="predicted" onChange={handleChange(obj, postResultErrors)} key={index} />
                     )}
                 </TableBody>
