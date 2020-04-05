@@ -88,7 +88,7 @@ public class historycon extends main.java.connection.mysqlcon {
         return id;
     }
 
-    public removeSpecificMSU(int historyId) throws SQLException, ClassNotFoundException{
+    public String removeSpecificMSU(int historyId) throws SQLException, ClassNotFoundException{
         Connection con = super.getConnection();
         Statement stmt = con.createStatement();
         
