@@ -147,7 +147,7 @@ public class MassSlotUploadDetails implements Comparable<MassSlotUploadDetails>{
         if (sendToStorageDate != null){
             leaveBayDate = sendToStorageDate;
         }
-        else if (fabName.equals("OPEN")){
+        else if (fabName != null && fabName.equals("OPEN")){
             leaveBayDate = intOpsShipReadinessDate;
         } else {
             leaveBayDate = endDate;
