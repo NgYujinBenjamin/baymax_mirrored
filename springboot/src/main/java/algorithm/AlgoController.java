@@ -116,6 +116,7 @@ public class AlgoController {
                     quarterHC = newQuarterHC;
                 }
         }
+        // System.out.println(BayRequirement.toJSONString(bayReq));
         return BayRequirement.toJSONString(bayReq);
     }
 
@@ -137,7 +138,7 @@ public class AlgoController {
         } catch(Exception e) {
             return "JSON Reading Error";
         }
-
+        
         ArrayList<Product> allProduct = new ArrayList<Product>();
         ArrayList<Product> baseLineProduct = new ArrayList<Product>();
         
@@ -221,6 +222,7 @@ public class AlgoController {
                 quarterHC = newQuarterHC;
             }
         }
+        // System.out.println(BayRequirement.toJSONString(bayReq));
         return BayRequirement.toJSONString(bayReq);
     }
 }

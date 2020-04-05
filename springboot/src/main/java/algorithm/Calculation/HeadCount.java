@@ -51,11 +51,12 @@ public class HeadCount{
      * @return Current Quarter in the form of "CY_ _Q _" (e.g CY20Q1)
      */
     private String getCurrentQtr(){
-    	String quarter = "";
-        // Date today = new Date(120, 2, 24); // For testing purposes
+        String quarter = "";
         
+        // Date today = new Date(120, 2, 24); // For testing purposes
     	Date today = new Date();
-    	Integer year = today.getYear() - 100;
+        
+        Integer year = today.getYear() - 100;
     	quarter += "CY" + year.toString();
     	
     	int month = today.getMonth();
@@ -77,9 +78,10 @@ public class HeadCount{
      */
     private int getCurrentQtrRemWeeks(){
     	Date quarterEnd = null;
+        
         // Date today = new Date(120, 2, 24); // For testing purposes
-
-    	Date today = new Date();
+        Date today = new Date();
+        
     	int year = today.getYear();
     	int month = today.getMonth();
     	

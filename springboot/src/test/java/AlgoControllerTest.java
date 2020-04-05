@@ -6,6 +6,7 @@ import main.java.algorithm.Calculation.*;
 import main.java.algorithm.Objects.*;
 
 import main.java.algorithm.firstSchedulingParam;
+import main.java.algorithm.subseqSchedulingParam;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -839,6 +840,110 @@ public class AlgoControllerTest {
             });
             assertEquals("Please ensure that Committed Ship $ is in numerical format, and is a whole number", exception.getMessage());
             System.out.println(true);
+        }
+    
+        @Test
+        @Order(17)
+        public void testAlgo17() throws Exception {
+            System.out.println("===================== 17. Test if same results are returned if no edits (Usual scenario) =====================");
+            Gson gson = new Gson();
+            
+            // To find out where to store the input & output files
+            // File directory = new File("./");
+            // System.out.println(directory.getAbsolutePath());
+    
+            String inputPath = "./src/test/AlgoControllerTestFiles/input/17_subseqSchedule_input.txt";
+            String jsonInput = null;
+            try {
+                jsonInput = Files.readString(Paths.get(inputPath));
+            } catch (IOException e){
+                System.out.println("Problem Reading Input File");
+            }
+            
+            String outputPath = "./src/test/AlgoControllerTestFiles/output/17_subseqSchedule_output.txt";
+            String jsonExpectedOutput = null;
+            try {
+                jsonExpectedOutput = Files.readString(Paths.get(outputPath));
+            } catch (IOException e){
+                System.out.println("Problem Reading Output File");
+            }
+    
+            subseqSchedulingParam subseqSchedulingParam = gson.fromJson(jsonInput, new TypeToken<subseqSchedulingParam>() {}.getType());
+            Map<String, List<List<Object>>> newBaseLine = new HashMap<String, List<List<Object>>>();
+    
+            // For double values in masterOps & baseLine, we need to change it back to Integer
+            // Limitation of GSON
+            Set<String> baseLineQtrs = subseqSchedulingParam.baseLineOccupancy.keySet();
+
+            for (String qtr : baseLineQtrs) {
+                List<List<Object>> oldBaseLineData = subseqSchedulingParam.baseLineOccupancy.get(qtr);
+                List<List<Object>> newBaseLineData = new ArrayList<List<Object>>();
+
+                newBaseLineData.add(oldBaseLineData.get(0));
+
+                for (int i = 1; i < oldBaseLineData.size(); i++){
+                    List<Object> baseLineProductDetails = oldBaseLineData.get(i);
+
+                    Map<String, Object> oldBaseLineProduct = (Map<String, Object>) baseLineProductDetails.get(0);
+                    Map<String, Object> newBaseLineProduct = new HashMap<>();
+
+                    Set<String> productKeys = oldBaseLineProduct.keySet();
+
+                    for (String key : productKeys) {
+                        Object value = oldBaseLineProduct.get(key);
+                        if (value != null && value.getClass().getSimpleName().equals("Double")){
+                            Double valueDouble = (Double) value;
+                            newBaseLineProduct.put(key, valueDouble.intValue());
+                        } else {
+                            newBaseLineProduct.put(key, value);
+                        }
+                    }
+                    baseLineProductDetails.set(0, newBaseLineProduct);
+                    
+                    newBaseLineData.add(baseLineProductDetails);
+                }
+                newBaseLine.put(qtr, newBaseLineData);
+            }
+
+            Map<String, List<List<Object>>> newBayOccupancy = new HashMap<String, List<List<Object>>>();
+
+            Set<String> bayOccupancyQtrs = subseqSchedulingParam.bayOccupancy.keySet();
+
+            for (String qtr : bayOccupancyQtrs) {
+                List<List<Object>> oldBayOccupancyData = subseqSchedulingParam.bayOccupancy.get(qtr);
+                List<List<Object>> newBayOccupancyData = new ArrayList<List<Object>>();
+
+                newBayOccupancyData.add(oldBayOccupancyData.get(0));
+
+                for (int i = 1; i < oldBayOccupancyData.size(); i++){
+                    List<Object> bayOccupancyProductDetails = oldBayOccupancyData.get(i);
+
+                    Map<String, Object> oldBayOccupancyProduct = (Map<String, Object>) bayOccupancyProductDetails.get(0);
+                    Map<String, Object> newBayOccupancyProduct = new HashMap<>();
+
+                    Set<String> productKeys = oldBayOccupancyProduct.keySet();
+
+                    for (String key : productKeys) {
+                        Object value = oldBayOccupancyProduct.get(key);
+                        if (value != null && value.getClass().getSimpleName().equals("Double")){
+                            Double valueDouble = (Double) value;
+                            newBayOccupancyProduct.put(key, valueDouble.intValue());
+                        } else {
+                            newBayOccupancyProduct.put(key, value);
+                        }
+                    }
+                    bayOccupancyProductDetails.set(0, newBayOccupancyProduct);
+
+                    newBayOccupancyData.add(bayOccupancyProductDetails);
+                }
+                newBayOccupancy.put(qtr, newBayOccupancyData);
+            }
+
+            subseqSchedulingParam updatedSchedulingParam = new subseqSchedulingParam(newBaseLine, newBayOccupancy, subseqSchedulingParam.numBays,subseqSchedulingParam.minGap,subseqSchedulingParam.maxGap);
+
+            String result = controller.subseqScheduling(updatedSchedulingParam);
+            System.out.println(result.equals(jsonExpectedOutput));
+            assertEquals(result, jsonExpectedOutput);
         }
 
 }
