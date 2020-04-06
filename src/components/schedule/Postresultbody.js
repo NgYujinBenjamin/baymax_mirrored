@@ -86,15 +86,21 @@ const Postresultbody = ({ result, baseline, quarter }) => {
             errorMsg = validateNum(value);
         }
 
-        // check pull in MRPDate 
-        let dateParts, MRPfield, MRPoriginal;
-        if( type == 'MRPDate' && validateDate(value) == null){
+        // Special checks
+        let dateParts, fieldCheck, MRPoriginal;
+        if( (type == 'MRPDate' || type == 'sendToStorageDate') && validateDate(value) == null){
             dateParts = value.split("/");
-            MRPfield = new Date(dateParts[2], (dateParts[1] - 1), dateParts[0]);
+            fieldCheck = new Date(dateParts[2], (dateParts[1] - 1), dateParts[0]);
             MRPoriginal = new Date(postResult.bayOccupancy[quarter][index+1][0].MRPDate);
-        
-            if(MRPfield !== MRPoriginal && MRPfield < MRPoriginal){
+            
+            // check pull in MRPDate 
+            if(type == 'MRPDate' && fieldCheck !== MRPoriginal && fieldCheck < MRPoriginal){
                 errorMsg = "Cannot pull earlier than " + MRPoriginal.toLocaleDateString('en-GB');
+            }
+            
+            // sendToStorage cannot be earlier than MRP Date
+            if(type == 'sendToStorageDate' && fieldCheck < MRPoriginal){
+                errorMsg = "Storage date cannot be earlier than MRP date";
             }
         }
         
@@ -114,7 +120,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
                         return [ {...obj[0], [name]: value}, ...obj.slice(1) ];
                     } 
                     if (name == 'sendToStorageDate'){
-                        validateFields(postResultErrors, value, obj[0].argoID, name); // validation check
+                        validateFields(postResultErrors, value, obj[0].argoID, name, index); // validation check
                         return [ {...obj[0], [name]: value}, ...obj.slice(1) ];
                     }
                     if (name == 'lockMRPDate'){
