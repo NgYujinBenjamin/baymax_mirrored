@@ -331,7 +331,11 @@ public class MassSlotUploadDetails implements Comparable<MassSlotUploadDetails>{
     }
 
     public String getSendToStorage() {
-        return sendToStorageDate != null ? formatter.format(sendToStorageDate) : null;
+        String rv = sendToStorageDate != null ? formatter.format(sendToStorageDate) : null;
+        if (rv == null){
+            return "(NULL)";
+        }
+        return "'" + rv + "'";
         // return refurbCompleteDate;
     }
 
