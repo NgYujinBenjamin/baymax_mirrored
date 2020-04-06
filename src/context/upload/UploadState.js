@@ -607,23 +607,30 @@ const UploadState = (props) => {
       }
     }
     
-    // get all quarters
+    // @loc     called in functions: getUniqueDates & updatePostResultEmpties
+    // @desc    return quarters
+    // @param   (object)
     const getQtrs = (postResult) => {
       const qtrs = new Array();
       Object.keys(postResult.bayOccupancy).map(quarterName => 
           qtrs.push(quarterName)
       )
-
       return qtrs;
     }
 
-    // first quarter unique dates
+    // @loc     called in updatePostResultEmpties function
+    // @desc    compile an array of unique dates for the first quarter. Required for the initial load
+    // @param   (object)
     const getUniqueDates = (postResult) => {
       const qtrs = getQtrs(postResult);
       const firstQtr = qtrs[0];
-      const SfirstQtrDates = postResult.bayOccupancy[firstQtr][0];
+
+      let SfirstQtrDates = [];
+      if( firstQtr in postResult.bayOccupancy){
+        SfirstQtrDates = postResult.bayOccupancy[firstQtr][0];
+      }
+
       let BfirstQtrDates = [];
-      // console.log(postResult.baseLineOccupancy)
       if (firstQtr in postResult.baseLineOccupancy){
         BfirstQtrDates = postResult.baseLineOccupancy[firstQtr][0];
       }
@@ -659,16 +666,18 @@ const UploadState = (props) => {
 
       // update scheduled
       result = postResultUpdate.bayOccupancy[qtrs[0]];
-      for( let i = 1; i < result.length; i++){
-        let EOcount = result[i].slice(1).length;
-        for (let j = EOcount; j < firstQtrDates.length; j++){
-          result[i].splice(1, 0, "E");
-          result[i].join();
+      if( result > 0 ){ // ensure that it is not null object
+        for( let i = 1; i < result.length; i++){
+          let EOcount = result[i].slice(1).length;
+          for (let j = EOcount; j < firstQtrDates.length; j++){
+            result[i].splice(1, 0, "E");
+            result[i].join();
+          }
         }
+
+        result[0] = firstQtrDates;
+        postResultUpdate.bayOccupancy[qtrs[0]] = result;
       }
-      
-      result[0] = firstQtrDates;
-      postResultUpdate.bayOccupancy[qtrs[0]] = result;
 
       // update bays and gaps for history
       if("minGap" in postResultUpdate){
@@ -859,7 +868,7 @@ const UploadState = (props) => {
     // @param   (int)
     const loadHistories = async (staffID) => {
       try {
-        const res = await axios.get(`http://localhost:8080/history/${staffID}`);\
+        const res = await axios.get(`http://localhost:8080/history/${staffID}`);
 
         dispatch({
             type: LOAD_ALL_HISTORY,
