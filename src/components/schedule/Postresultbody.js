@@ -73,7 +73,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
         localStorage.setItem('postResultEdit', null);
     }
 
-    const validateFields = (postResultErrors, value, argoID, type) => {
+    const validateFields = (postResultErrors, value, argoID, type, index) => {
         let uniqueID = argoID + "_" + type;
         let errorMsg = validateDate(value);
 
@@ -86,10 +86,22 @@ const Postresultbody = ({ result, baseline, quarter }) => {
             errorMsg = validateNum(value);
         }
 
-        handlePostResultError(postResultErrors, uniqueID, errorMsg, type);
+        // check pull in MRPDate 
+        let dateParts, MRPfield, MRPoriginal;
+        if( type == 'MRPDate' && validateDate(value) == null){
+            dateParts = value.split("/");
+            MRPfield = new Date(dateParts[2], (dateParts[1] - 1), dateParts[0]);
+            MRPoriginal = new Date(postResult.bayOccupancy[quarter][index+1][0].MRPDate);
+        
+            if(MRPfield !== MRPoriginal && MRPfield < MRPoriginal){
+                errorMsg = "Cannot pull earlier than " + MRPoriginal.toLocaleDateString('en-GB');
+            }
+        }
+        
+        handlePostResultError(postResultErrors, uniqueID, errorMsg);
     }
 
-    const handleChange = (obj, postResultErrors) => {
+    const handleChange = (obj, postResultErrors, index) => {
         return (event) => {
             const value = event.target.value;
             const name = event.target.name;
@@ -115,7 +127,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
                         return [ {...obj[0], [name]: checked}, ...obj.slice(1) ];
                     }
                     if (name == 'MRPDate'){
-                        validateFields(postResultErrors, value, obj[0].argoID, name); // validation check
+                        validateFields(postResultErrors, value, obj[0].argoID, name, index); // validation check
                         if (obj[0].lockMRPDate){
                             obj = [ {...obj[0], 'endDate': value}, ...obj.slice(1) ];
                         }
@@ -135,7 +147,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
                         <PostresultItem result={obj} id="baseline" key={index} />
                     )}
                     { result !== null && objs.map((obj, index) =>
-                        <PostresultItem result={obj} id="predicted" onChange={handleChange(obj, postResultErrors)} key={index} />
+                        <PostresultItem result={obj} id="predicted" onChange={handleChange(obj, postResultErrors, index)} key={index} />
                     )}
                 </TableBody>
             }

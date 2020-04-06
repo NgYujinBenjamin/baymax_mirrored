@@ -761,12 +761,12 @@ const UploadState = (props) => {
 
     }
 
-    const handlePostResultError = (postResultErrors, uniqueID, errorMsg, type) => {
+    const handlePostResultError = (postResultErrors, uniqueID, errorMsg) => {
       if(errorMsg == null && uniqueID in postResultErrors){
         delete postResultErrors[uniqueID];
       } 
 
-      if(errorMsg !== null && !(uniqueID in postResultErrors)){
+      if((errorMsg !== null && !(uniqueID in postResultErrors)) || uniqueID in postResultErrors){
         postResultErrors[uniqueID] = errorMsg;
       }
 
