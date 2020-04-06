@@ -19,11 +19,17 @@ const Postresult = () => {
 
     const { loadUser, updateNavItem } = authContext
     const { histID, setNewMinGap, newMinGap, bays, minGap, maxGap, setBays, setMinGap, setMaxGap, currentQuarter, postResult, postResultDone, postResultErrors, tabChecker, updateReschedule, createExport, createExportSchedule, updateSave, clearAll, updatePostResultEmpties } = uploadContext;
+    
+    // console.log(postResult)
 
     useEffect(() => {
         updateNavItem(0);
         if(postResult !== null){
-            setNewMinGap(minGap);
+            if(! ("minGap" in postResult) ){
+                setNewMinGap(minGap);
+            } else{
+                setNewMinGap(postResult.minGap);
+            }
             updatePostResultEmpties(postResult, minGap);
         }
         //eslint-disable-next-line
@@ -31,9 +37,15 @@ const Postresult = () => {
 
     const qtrs = new Array();
     if(postResult !== null){
-        Object.keys(postResult.bayOccupancy).map(quarterName => 
-            qtrs.push(quarterName)
-        )
+        Object.keys(postResult).map(type => {
+            if(type == 'baseLineOccupancy' || type == 'bayOccupancy'){
+                Object.keys(postResult[type]).map(quarterName => {
+                    if( !(qtrs.includes(quarterName)) ){
+                        qtrs.push(quarterName)
+                    }
+                })
+            }
+        })
     }
 
     const a11yProps = (index) => {
@@ -123,7 +135,7 @@ const Postresult = () => {
                 </AppBar>
                             
                 {postResultDone !== null && qtrs.map((qtr, index) =>
-                    <Postresultqtr schedule={postResultDone.bayOccupancy} baseline={postResultDone.baseLineOccupancy} value={value} num={index} quarter={qtr} key={index}/>
+                    <Postresultqtr schedule={postResultDone.bayOccupancy} baseline={postResultDone.baseLineOccupancy} value={value} num={index} qtrs={qtrs} quarter={qtr} key={index}/>
                 )}
             </div>
             

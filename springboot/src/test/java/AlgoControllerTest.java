@@ -6,6 +6,7 @@ import main.java.algorithm.Calculation.*;
 import main.java.algorithm.Objects.*;
 
 import main.java.algorithm.firstSchedulingParam;
+import main.java.algorithm.subseqSchedulingParam;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -588,257 +589,569 @@ public class AlgoControllerTest {
         System.out.println(true);
       }
 
-      @Test
-      @Order(10)
-      public void testAlgo10() throws Exception {
-          System.out.println("===================== 10. Test Product Exception: Missing MRP Date =====================");
-  
-          ObjectMapper objectMapper = new ObjectMapper();
-  
-          String inputPath = "./src/test/AlgoControllerTestFiles/input/10_productException_input.txt";
-          
-          File input = new File(inputPath);
-  
-          Map<String, Object> allData = null;
-          
-          try {
-              allData= objectMapper.readValue(input, new TypeReference<Map<String, Object>>(){});
-          } catch (IOException e){
-              e.printStackTrace();
-          }
-  
-          Object masterOps = allData.get("masterOps");
-  
-          List<Map<String, Object>> masterOpsData = (List<Map<String, Object>>) masterOps;
-          
-          ArrayList<Product> allProduct = new ArrayList<Product>();
-  
-  
-          Throwable exception = assertThrows(RuntimeException.class, () -> {
-              for (int i = 0; i < masterOpsData.size(); i++){
-                  Product p = new Product(masterOpsData.get(i));
-                  allProduct.add(p);
-              }
-          });
-          assertEquals("Please ensure that MRP Date is not empty, and in dd/mm/yyyy format", exception.getMessage());
-          System.out.println(true);
+    @Test
+    @Order(10)
+    public void testAlgo10() throws Exception {
+        System.out.println("===================== 10. Test Product Exception: Missing MRP Date =====================");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String inputPath = "./src/test/AlgoControllerTestFiles/input/10_productException_input.txt";
+        
+        File input = new File(inputPath);
+
+        Map<String, Object> allData = null;
+        
+        try {
+            allData= objectMapper.readValue(input, new TypeReference<Map<String, Object>>(){});
+        } catch (IOException e){
+            e.printStackTrace();
         }
 
-        @Test
-        @Order(11)
-        public void testAlgo11() throws Exception {
-            System.out.println("===================== 11. Test Product Exception: MRP Date Incorrect Format =====================");
-    
-            ObjectMapper objectMapper = new ObjectMapper();
-    
-            String inputPath = "./src/test/AlgoControllerTestFiles/input/10_productException_input.txt";
-            
-            File input = new File(inputPath);
-    
-            Map<String, Object> allData = null;
-            
-            try {
-                allData= objectMapper.readValue(input, new TypeReference<Map<String, Object>>(){});
-            } catch (IOException e){
-                e.printStackTrace();
-            }
-    
-            Object masterOps = allData.get("masterOps");
-    
-            List<Map<String, Object>> masterOpsData = (List<Map<String, Object>>) masterOps;
-            
-            ArrayList<Product> allProduct = new ArrayList<Product>();
-    
-    
-            Throwable exception = assertThrows(RuntimeException.class, () -> {
-                for (int i = 0; i < masterOpsData.size(); i++){
-                    Product p = new Product(masterOpsData.get(i));
-                    allProduct.add(p);
-                }
-            });
-            assertEquals("Please ensure that MRP Date is not empty, and in dd/mm/yyyy format", exception.getMessage());
-            System.out.println(true);
-          }
+        Object masterOps = allData.get("masterOps");
 
-        @Test
-        @Order(12)
-        public void testAlgo12() throws Exception {
-            System.out.println("===================== 12. Test Product Exception: Missing MFG Commit Date =====================");
-    
-            ObjectMapper objectMapper = new ObjectMapper();
-    
-            String inputPath = "./src/test/AlgoControllerTestFiles/input/12_productException_input.txt";
-            
-            File input = new File(inputPath);
-    
-            Map<String, Object> allData = null;
-            
-            try {
-                allData= objectMapper.readValue(input, new TypeReference<Map<String, Object>>(){});
-            } catch (IOException e){
-                e.printStackTrace();
-            }
-    
-            Object masterOps = allData.get("masterOps");
-    
-            List<Map<String, Object>> masterOpsData = (List<Map<String, Object>>) masterOps;
-            
-            ArrayList<Product> allProduct = new ArrayList<Product>();
-    
-    
-            Throwable exception = assertThrows(RuntimeException.class, () -> {
-                for (int i = 0; i < masterOpsData.size(); i++){
-                    Product p = new Product(masterOpsData.get(i));
-                    allProduct.add(p);
-                }
-            });
-            assertEquals("Please ensure that MFG Commit Date is not empty, and in dd/mm/yyyy format", exception.getMessage());
-            System.out.println(true);
-          }
+        List<Map<String, Object>> masterOpsData = (List<Map<String, Object>>) masterOps;
+        
+        ArrayList<Product> allProduct = new ArrayList<Product>();
 
-        @Test
-        @Order(13)
-        public void testAlgo13() throws Exception {
-            System.out.println("===================== 13. Test Product Exception: Missing Build Quarter =====================");
-    
-            ObjectMapper objectMapper = new ObjectMapper();
-    
-            String inputPath = "./src/test/AlgoControllerTestFiles/input/13_productException_input.txt";
-            
-            File input = new File(inputPath);
-    
-            Map<String, Object> allData = null;
-            
-            try {
-                allData= objectMapper.readValue(input, new TypeReference<Map<String, Object>>(){});
-            } catch (IOException e){
-                e.printStackTrace();
+
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+            for (int i = 0; i < masterOpsData.size(); i++){
+                Product p = new Product(masterOpsData.get(i));
+                allProduct.add(p);
             }
-    
-            Object masterOps = allData.get("masterOps");
-    
-            List<Map<String, Object>> masterOpsData = (List<Map<String, Object>>) masterOps;
-            
-            ArrayList<Product> allProduct = new ArrayList<Product>();
-    
-    
-            Throwable exception = assertThrows(RuntimeException.class, () -> {
-                for (int i = 0; i < masterOpsData.size(); i++){
-                    Product p = new Product(masterOpsData.get(i));
-                    allProduct.add(p);
-                }
-            });
-            assertEquals("Please ensure that there are no empty Build Qtrs", exception.getMessage());
-            System.out.println(true);
+        });
+        assertEquals("Please ensure that MRP Date is not empty, and in dd/mm/yyyy format", exception.getMessage());
+        System.out.println(true);
+    }
+
+    @Test
+    @Order(11)
+    public void testAlgo11() throws Exception {
+        System.out.println("===================== 11. Test Product Exception: MRP Date Incorrect Format =====================");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String inputPath = "./src/test/AlgoControllerTestFiles/input/10_productException_input.txt";
+        
+        File input = new File(inputPath);
+
+        Map<String, Object> allData = null;
+        
+        try {
+            allData= objectMapper.readValue(input, new TypeReference<Map<String, Object>>(){});
+        } catch (IOException e){
+            e.printStackTrace();
         }
 
-        @Test
-        @Order(14)
-        public void testAlgo14() throws Exception {
-            System.out.println("===================== 14. Test Product Exception: Missing Cycle Time =====================");
-    
-            ObjectMapper objectMapper = new ObjectMapper();
-    
-            String inputPath = "./src/test/AlgoControllerTestFiles/input/14_productException_input.txt";
-            
-            File input = new File(inputPath);
-    
-            Map<String, Object> allData = null;
-            
-            try {
-                allData= objectMapper.readValue(input, new TypeReference<Map<String, Object>>(){});
-            } catch (IOException e){
-                e.printStackTrace();
-            }
-    
-            Object masterOps = allData.get("masterOps");
-    
-            List<Map<String, Object>> masterOpsData = (List<Map<String, Object>>) masterOps;
-            
-            ArrayList<Product> allProduct = new ArrayList<Product>();
-    
-    
-            Throwable exception = assertThrows(RuntimeException.class, () -> {
-                for (int i = 0; i < masterOpsData.size(); i++){
-                    Product p = new Product(masterOpsData.get(i));
-                    allProduct.add(p);
-                }
-            });
-            assertEquals("Please ensure that all Cycle Time is filled in", exception.getMessage());
-            System.out.println(true);
-        }
+        Object masterOps = allData.get("masterOps");
 
-        @Test
-        @Order(15)
-        public void testAlgo15() throws Exception {
-            System.out.println("===================== 15. Test Product Exception: Non-numerical Cycle Time =====================");
-    
-            ObjectMapper objectMapper = new ObjectMapper();
-    
-            String inputPath = "./src/test/AlgoControllerTestFiles/input/15_productException_input.txt";
-            
-            File input = new File(inputPath);
-    
-            Map<String, Object> allData = null;
-            
-            try {
-                allData= objectMapper.readValue(input, new TypeReference<Map<String, Object>>(){});
-            } catch (IOException e){
-                e.printStackTrace();
-            }
-    
-            Object masterOps = allData.get("masterOps");
-    
-            List<Map<String, Object>> masterOpsData = (List<Map<String, Object>>) masterOps;
-            
-            ArrayList<Product> allProduct = new ArrayList<Product>();
-    
-    
-            Throwable exception = assertThrows(RuntimeException.class, () -> {
-                for (int i = 0; i < masterOpsData.size(); i++){
-                    Product p = new Product(masterOpsData.get(i));
-                    allProduct.add(p);
-                }
-            });
-            assertEquals("Please ensure that Cycle Time is in numerical format, and is a whole number", exception.getMessage());
-            System.out.println(true);
-        }
+        List<Map<String, Object>> masterOpsData = (List<Map<String, Object>>) masterOps;
+        
+        ArrayList<Product> allProduct = new ArrayList<Product>();
 
 
-        @Test
-        @Order(16)
-        public void testAlgo16() throws Exception {
-            System.out.println("===================== 16. Test Product Exception: Non-numerical Revenue (Committed Ship $) =====================");
-    
-            ObjectMapper objectMapper = new ObjectMapper();
-    
-            String inputPath = "./src/test/AlgoControllerTestFiles/input/16_productException_input.txt";
-            
-            File input = new File(inputPath);
-    
-            Map<String, Object> allData = null;
-            
-            try {
-                allData= objectMapper.readValue(input, new TypeReference<Map<String, Object>>(){});
-            } catch (IOException e){
-                e.printStackTrace();
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+            for (int i = 0; i < masterOpsData.size(); i++){
+                Product p = new Product(masterOpsData.get(i));
+                allProduct.add(p);
             }
-    
-            Object masterOps = allData.get("masterOps");
-    
-            List<Map<String, Object>> masterOpsData = (List<Map<String, Object>>) masterOps;
-            
-            ArrayList<Product> allProduct = new ArrayList<Product>();
-    
-    
-            Throwable exception = assertThrows(RuntimeException.class, () -> {
-                for (int i = 0; i < masterOpsData.size(); i++){
-                    Product p = new Product(masterOpsData.get(i));
-                    allProduct.add(p);
-                }
-            });
-            assertEquals("Please ensure that Committed Ship $ is in numerical format, and is a whole number", exception.getMessage());
-            System.out.println(true);
+        });
+        assertEquals("Please ensure that MRP Date is not empty, and in dd/mm/yyyy format", exception.getMessage());
+        System.out.println(true);
         }
+
+    @Test
+    @Order(12)
+    public void testAlgo12() throws Exception {
+        System.out.println("===================== 12. Test Product Exception: Missing MFG Commit Date =====================");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String inputPath = "./src/test/AlgoControllerTestFiles/input/12_productException_input.txt";
+        
+        File input = new File(inputPath);
+
+        Map<String, Object> allData = null;
+        
+        try {
+            allData= objectMapper.readValue(input, new TypeReference<Map<String, Object>>(){});
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        Object masterOps = allData.get("masterOps");
+
+        List<Map<String, Object>> masterOpsData = (List<Map<String, Object>>) masterOps;
+        
+        ArrayList<Product> allProduct = new ArrayList<Product>();
+
+
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+            for (int i = 0; i < masterOpsData.size(); i++){
+                Product p = new Product(masterOpsData.get(i));
+                allProduct.add(p);
+            }
+        });
+        assertEquals("Please ensure that MFG Commit Date is not empty, and in dd/mm/yyyy format", exception.getMessage());
+        System.out.println(true);
+        }
+
+    @Test
+    @Order(13)
+    public void testAlgo13() throws Exception {
+        System.out.println("===================== 13. Test Product Exception: Missing Build Quarter =====================");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String inputPath = "./src/test/AlgoControllerTestFiles/input/13_productException_input.txt";
+        
+        File input = new File(inputPath);
+
+        Map<String, Object> allData = null;
+        
+        try {
+            allData= objectMapper.readValue(input, new TypeReference<Map<String, Object>>(){});
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        Object masterOps = allData.get("masterOps");
+
+        List<Map<String, Object>> masterOpsData = (List<Map<String, Object>>) masterOps;
+        
+        ArrayList<Product> allProduct = new ArrayList<Product>();
+
+
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+            for (int i = 0; i < masterOpsData.size(); i++){
+                Product p = new Product(masterOpsData.get(i));
+                allProduct.add(p);
+            }
+        });
+        assertEquals("Please ensure that there are no empty Build Qtrs", exception.getMessage());
+        System.out.println(true);
+    }
+
+    @Test
+    @Order(14)
+    public void testAlgo14() throws Exception {
+        System.out.println("===================== 14. Test Product Exception: Missing Cycle Time =====================");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String inputPath = "./src/test/AlgoControllerTestFiles/input/14_productException_input.txt";
+        
+        File input = new File(inputPath);
+
+        Map<String, Object> allData = null;
+        
+        try {
+            allData= objectMapper.readValue(input, new TypeReference<Map<String, Object>>(){});
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        Object masterOps = allData.get("masterOps");
+
+        List<Map<String, Object>> masterOpsData = (List<Map<String, Object>>) masterOps;
+        
+        ArrayList<Product> allProduct = new ArrayList<Product>();
+
+
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+            for (int i = 0; i < masterOpsData.size(); i++){
+                Product p = new Product(masterOpsData.get(i));
+                allProduct.add(p);
+            }
+        });
+        assertEquals("Please ensure that all Cycle Time is filled in", exception.getMessage());
+        System.out.println(true);
+    }
+
+    @Test
+    @Order(15)
+    public void testAlgo15() throws Exception {
+        System.out.println("===================== 15. Test Product Exception: Non-numerical Cycle Time =====================");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String inputPath = "./src/test/AlgoControllerTestFiles/input/15_productException_input.txt";
+        
+        File input = new File(inputPath);
+
+        Map<String, Object> allData = null;
+        
+        try {
+            allData= objectMapper.readValue(input, new TypeReference<Map<String, Object>>(){});
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        Object masterOps = allData.get("masterOps");
+
+        List<Map<String, Object>> masterOpsData = (List<Map<String, Object>>) masterOps;
+        
+        ArrayList<Product> allProduct = new ArrayList<Product>();
+
+
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+            for (int i = 0; i < masterOpsData.size(); i++){
+                Product p = new Product(masterOpsData.get(i));
+                allProduct.add(p);
+            }
+        });
+        assertEquals("Please ensure that Cycle Time is in numerical format, and is a whole number", exception.getMessage());
+        System.out.println(true);
+    }
+
+
+    @Test
+    @Order(16)
+    public void testAlgo16() throws Exception {
+        System.out.println("===================== 16. Test Product Exception: Non-numerical Revenue (Committed Ship $) =====================");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String inputPath = "./src/test/AlgoControllerTestFiles/input/16_productException_input.txt";
+        
+        File input = new File(inputPath);
+
+        Map<String, Object> allData = null;
+        
+        try {
+            allData= objectMapper.readValue(input, new TypeReference<Map<String, Object>>(){});
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        Object masterOps = allData.get("masterOps");
+
+        List<Map<String, Object>> masterOpsData = (List<Map<String, Object>>) masterOps;
+        
+        ArrayList<Product> allProduct = new ArrayList<Product>();
+
+
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+            for (int i = 0; i < masterOpsData.size(); i++){
+                Product p = new Product(masterOpsData.get(i));
+                allProduct.add(p);
+            }
+        });
+        assertEquals("Please ensure that Committed Ship $ is in numerical format, and is a whole number", exception.getMessage());
+        System.out.println(true);
+    }
+
+    @Test
+    @Order(17)
+    public void testAlgo17() throws Exception {
+        System.out.println("===================== 17. Test if same results are returned if no edits (Usual scenario) =====================");
+        Gson gson = new Gson();
+        
+        // To find out where to store the input & output files
+        // File directory = new File("./");
+        // System.out.println(directory.getAbsolutePath());
+
+        String inputPath = "./src/test/AlgoControllerTestFiles/input/17_subseqSchedule_input.txt";
+        String jsonInput = null;
+        try {
+            jsonInput = Files.readString(Paths.get(inputPath));
+        } catch (IOException e){
+            System.out.println("Problem Reading Input File");
+        }
+        
+        String outputPath = "./src/test/AlgoControllerTestFiles/output/17_subseqSchedule_output.txt";
+        String jsonExpectedOutput = null;
+        try {
+            jsonExpectedOutput = Files.readString(Paths.get(outputPath));
+        } catch (IOException e){
+            System.out.println("Problem Reading Output File");
+        }
+
+        subseqSchedulingParam subseqSchedulingParam = gson.fromJson(jsonInput, new TypeToken<subseqSchedulingParam>() {}.getType());
+        Map<String, List<List<Object>>> newBaseLine = new HashMap<String, List<List<Object>>>();
+
+        // For double values in masterOps & baseLine, we need to change it back to Integer
+        // Limitation of GSON
+        Set<String> baseLineQtrs = subseqSchedulingParam.baseLineOccupancy.keySet();
+
+        for (String qtr : baseLineQtrs) {
+            List<List<Object>> oldBaseLineData = subseqSchedulingParam.baseLineOccupancy.get(qtr);
+            List<List<Object>> newBaseLineData = new ArrayList<List<Object>>();
+
+            newBaseLineData.add(oldBaseLineData.get(0));
+
+            for (int i = 1; i < oldBaseLineData.size(); i++){
+                List<Object> baseLineProductDetails = oldBaseLineData.get(i);
+
+                Map<String, Object> oldBaseLineProduct = (Map<String, Object>) baseLineProductDetails.get(0);
+                Map<String, Object> newBaseLineProduct = new HashMap<>();
+
+                Set<String> productKeys = oldBaseLineProduct.keySet();
+
+                for (String key : productKeys) {
+                    Object value = oldBaseLineProduct.get(key);
+                    if (value != null && value.getClass().getSimpleName().equals("Double")){
+                        Double valueDouble = (Double) value;
+                        newBaseLineProduct.put(key, valueDouble.intValue());
+                    } else {
+                        newBaseLineProduct.put(key, value);
+                    }
+                }
+                baseLineProductDetails.set(0, newBaseLineProduct);
+                
+                newBaseLineData.add(baseLineProductDetails);
+            }
+            newBaseLine.put(qtr, newBaseLineData);
+        }
+
+        Map<String, List<List<Object>>> newBayOccupancy = new HashMap<String, List<List<Object>>>();
+
+        Set<String> bayOccupancyQtrs = subseqSchedulingParam.bayOccupancy.keySet();
+
+        for (String qtr : bayOccupancyQtrs) {
+            List<List<Object>> oldBayOccupancyData = subseqSchedulingParam.bayOccupancy.get(qtr);
+            List<List<Object>> newBayOccupancyData = new ArrayList<List<Object>>();
+
+            newBayOccupancyData.add(oldBayOccupancyData.get(0));
+
+            for (int i = 1; i < oldBayOccupancyData.size(); i++){
+                List<Object> bayOccupancyProductDetails = oldBayOccupancyData.get(i);
+
+                Map<String, Object> oldBayOccupancyProduct = (Map<String, Object>) bayOccupancyProductDetails.get(0);
+                Map<String, Object> newBayOccupancyProduct = new HashMap<>();
+
+                Set<String> productKeys = oldBayOccupancyProduct.keySet();
+
+                for (String key : productKeys) {
+                    Object value = oldBayOccupancyProduct.get(key);
+                    if (value != null && value.getClass().getSimpleName().equals("Double")){
+                        Double valueDouble = (Double) value;
+                        newBayOccupancyProduct.put(key, valueDouble.intValue());
+                    } else {
+                        newBayOccupancyProduct.put(key, value);
+                    }
+                }
+                bayOccupancyProductDetails.set(0, newBayOccupancyProduct);
+
+                newBayOccupancyData.add(bayOccupancyProductDetails);
+            }
+            newBayOccupancy.put(qtr, newBayOccupancyData);
+        }
+
+        subseqSchedulingParam updatedSchedulingParam = new subseqSchedulingParam(newBaseLine, newBayOccupancy, subseqSchedulingParam.numBays,subseqSchedulingParam.minGap,subseqSchedulingParam.maxGap);
+
+        String result = controller.subseqScheduling(updatedSchedulingParam);
+        System.out.println(result.equals(jsonExpectedOutput));
+        assertEquals(result, jsonExpectedOutput);
+    }
+
+    @Test
+    @Order(18)
+    public void testAlgo18() throws Exception {
+        System.out.println("===================== 18. Ensure that bay is made available for next product from specified 'Send to Storage' date =====================");
+        Gson gson = new Gson();
+        
+        // To find out where to store the input & output files
+        // File directory = new File("./");
+        // System.out.println(directory.getAbsolutePath());
+
+        String inputPath = "./src/test/AlgoControllerTestFiles/input/18_subseqSchedule_input.txt";
+        String jsonInput = null;
+        try {
+            jsonInput = Files.readString(Paths.get(inputPath));
+        } catch (IOException e){
+            System.out.println("Problem Reading Input File");
+        }
+        
+        String outputPath = "./src/test/AlgoControllerTestFiles/output/18_subseqSchedule_output.txt";
+        String jsonExpectedOutput = null;
+        try {
+            jsonExpectedOutput = Files.readString(Paths.get(outputPath));
+        } catch (IOException e){
+            System.out.println("Problem Reading Output File");
+        }
+
+        subseqSchedulingParam subseqSchedulingParam = gson.fromJson(jsonInput, new TypeToken<subseqSchedulingParam>() {}.getType());
+        Map<String, List<List<Object>>> newBaseLine = new HashMap<String, List<List<Object>>>();
+
+        // For double values in masterOps & baseLine, we need to change it back to Integer
+        // Limitation of GSON
+        Set<String> baseLineQtrs = subseqSchedulingParam.baseLineOccupancy.keySet();
+
+        for (String qtr : baseLineQtrs) {
+            List<List<Object>> oldBaseLineData = subseqSchedulingParam.baseLineOccupancy.get(qtr);
+            List<List<Object>> newBaseLineData = new ArrayList<List<Object>>();
+
+            newBaseLineData.add(oldBaseLineData.get(0));
+
+            for (int i = 1; i < oldBaseLineData.size(); i++){
+                List<Object> baseLineProductDetails = oldBaseLineData.get(i);
+
+                Map<String, Object> oldBaseLineProduct = (Map<String, Object>) baseLineProductDetails.get(0);
+                Map<String, Object> newBaseLineProduct = new HashMap<>();
+
+                Set<String> productKeys = oldBaseLineProduct.keySet();
+
+                for (String key : productKeys) {
+                    Object value = oldBaseLineProduct.get(key);
+                    if (value != null && value.getClass().getSimpleName().equals("Double")){
+                        Double valueDouble = (Double) value;
+                        newBaseLineProduct.put(key, valueDouble.intValue());
+                    } else {
+                        newBaseLineProduct.put(key, value);
+                    }
+                }
+                baseLineProductDetails.set(0, newBaseLineProduct);
+                
+                newBaseLineData.add(baseLineProductDetails);
+            }
+            newBaseLine.put(qtr, newBaseLineData);
+        }
+
+        Map<String, List<List<Object>>> newBayOccupancy = new HashMap<String, List<List<Object>>>();
+
+        Set<String> bayOccupancyQtrs = subseqSchedulingParam.bayOccupancy.keySet();
+
+        for (String qtr : bayOccupancyQtrs) {
+            List<List<Object>> oldBayOccupancyData = subseqSchedulingParam.bayOccupancy.get(qtr);
+            List<List<Object>> newBayOccupancyData = new ArrayList<List<Object>>();
+
+            newBayOccupancyData.add(oldBayOccupancyData.get(0));
+
+            for (int i = 1; i < oldBayOccupancyData.size(); i++){
+                List<Object> bayOccupancyProductDetails = oldBayOccupancyData.get(i);
+
+                Map<String, Object> oldBayOccupancyProduct = (Map<String, Object>) bayOccupancyProductDetails.get(0);
+                Map<String, Object> newBayOccupancyProduct = new HashMap<>();
+
+                Set<String> productKeys = oldBayOccupancyProduct.keySet();
+
+                for (String key : productKeys) {
+                    Object value = oldBayOccupancyProduct.get(key);
+                    if (value != null && value.getClass().getSimpleName().equals("Double")){
+                        Double valueDouble = (Double) value;
+                        newBayOccupancyProduct.put(key, valueDouble.intValue());
+                    } else {
+                        newBayOccupancyProduct.put(key, value);
+                    }
+                }
+                bayOccupancyProductDetails.set(0, newBayOccupancyProduct);
+
+                newBayOccupancyData.add(bayOccupancyProductDetails);
+            }
+            newBayOccupancy.put(qtr, newBayOccupancyData);
+        }
+
+        subseqSchedulingParam updatedSchedulingParam = new subseqSchedulingParam(newBaseLine, newBayOccupancy, subseqSchedulingParam.numBays,subseqSchedulingParam.minGap,subseqSchedulingParam.maxGap);
+
+        String result = controller.subseqScheduling(updatedSchedulingParam);
+        System.out.println(result.equals(jsonExpectedOutput));
+        assertEquals(result, jsonExpectedOutput);
+    }
+
+    @Test
+    @Order(19)
+    public void testAlgo19() throws Exception {
+        System.out.println("===================== 19. Ensure that bay respect the lockMRP date (after original MRP Date) =====================");
+        Gson gson = new Gson();
+        
+        // To find out where to store the input & output files
+        // File directory = new File("./");
+        // System.out.println(directory.getAbsolutePath());
+
+        String inputPath = "./src/test/AlgoControllerTestFiles/input/19_subseqSchedule_input.txt";
+        String jsonInput = null;
+        try {
+            jsonInput = Files.readString(Paths.get(inputPath));
+        } catch (IOException e){
+            System.out.println("Problem Reading Input File");
+        }
+        
+        String outputPath = "./src/test/AlgoControllerTestFiles/output/19_subseqSchedule_output.txt";
+        String jsonExpectedOutput = null;
+        try {
+            jsonExpectedOutput = Files.readString(Paths.get(outputPath));
+        } catch (IOException e){
+            System.out.println("Problem Reading Output File");
+        }
+
+        subseqSchedulingParam subseqSchedulingParam = gson.fromJson(jsonInput, new TypeToken<subseqSchedulingParam>() {}.getType());
+        Map<String, List<List<Object>>> newBaseLine = new HashMap<String, List<List<Object>>>();
+
+        // For double values in masterOps & baseLine, we need to change it back to Integer
+        // Limitation of GSON
+        Set<String> baseLineQtrs = subseqSchedulingParam.baseLineOccupancy.keySet();
+
+        for (String qtr : baseLineQtrs) {
+            List<List<Object>> oldBaseLineData = subseqSchedulingParam.baseLineOccupancy.get(qtr);
+            List<List<Object>> newBaseLineData = new ArrayList<List<Object>>();
+
+            newBaseLineData.add(oldBaseLineData.get(0));
+
+            for (int i = 1; i < oldBaseLineData.size(); i++){
+                List<Object> baseLineProductDetails = oldBaseLineData.get(i);
+
+                Map<String, Object> oldBaseLineProduct = (Map<String, Object>) baseLineProductDetails.get(0);
+                Map<String, Object> newBaseLineProduct = new HashMap<>();
+
+                Set<String> productKeys = oldBaseLineProduct.keySet();
+
+                for (String key : productKeys) {
+                    Object value = oldBaseLineProduct.get(key);
+                    if (value != null && value.getClass().getSimpleName().equals("Double")){
+                        Double valueDouble = (Double) value;
+                        newBaseLineProduct.put(key, valueDouble.intValue());
+                    } else {
+                        newBaseLineProduct.put(key, value);
+                    }
+                }
+                baseLineProductDetails.set(0, newBaseLineProduct);
+                
+                newBaseLineData.add(baseLineProductDetails);
+            }
+            newBaseLine.put(qtr, newBaseLineData);
+        }
+
+        Map<String, List<List<Object>>> newBayOccupancy = new HashMap<String, List<List<Object>>>();
+
+        Set<String> bayOccupancyQtrs = subseqSchedulingParam.bayOccupancy.keySet();
+
+        for (String qtr : bayOccupancyQtrs) {
+            List<List<Object>> oldBayOccupancyData = subseqSchedulingParam.bayOccupancy.get(qtr);
+            List<List<Object>> newBayOccupancyData = new ArrayList<List<Object>>();
+
+            newBayOccupancyData.add(oldBayOccupancyData.get(0));
+
+            for (int i = 1; i < oldBayOccupancyData.size(); i++){
+                List<Object> bayOccupancyProductDetails = oldBayOccupancyData.get(i);
+
+                Map<String, Object> oldBayOccupancyProduct = (Map<String, Object>) bayOccupancyProductDetails.get(0);
+                Map<String, Object> newBayOccupancyProduct = new HashMap<>();
+
+                Set<String> productKeys = oldBayOccupancyProduct.keySet();
+
+                for (String key : productKeys) {
+                    Object value = oldBayOccupancyProduct.get(key);
+                    if (value != null && value.getClass().getSimpleName().equals("Double")){
+                        Double valueDouble = (Double) value;
+                        newBayOccupancyProduct.put(key, valueDouble.intValue());
+                    } else {
+                        newBayOccupancyProduct.put(key, value);
+                    }
+                }
+                bayOccupancyProductDetails.set(0, newBayOccupancyProduct);
+
+                newBayOccupancyData.add(bayOccupancyProductDetails);
+            }
+            newBayOccupancy.put(qtr, newBayOccupancyData);
+        }
+
+        subseqSchedulingParam updatedSchedulingParam = new subseqSchedulingParam(newBaseLine, newBayOccupancy, subseqSchedulingParam.numBays,subseqSchedulingParam.minGap,subseqSchedulingParam.maxGap);
+
+        String result = controller.subseqScheduling(updatedSchedulingParam);
+        System.out.println(result.equals(jsonExpectedOutput));
+        assertEquals(result, jsonExpectedOutput);
+    }
 
 }
