@@ -1154,4 +1154,177 @@ public class AlgoControllerTest {
         assertEquals(result, jsonExpectedOutput);
     }
 
+    @Test
+    @Order(20)
+    public void testAlgo20() throws Exception {
+        System.out.println("===================== 20. Test Product Exception: Missing Cycle Time =====================");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String inputPath = "./src/test/AlgoControllerTestFiles/input/20_productException2_input.txt";
+        
+        File input = new File(inputPath);
+
+        Object productRaw = null;
+        
+        try {
+            productRaw = objectMapper.readValue(input, Object.class);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        final Object product = productRaw;
+
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+            Product p = new Product(product);
+        });
+
+        assertEquals("Please ensure that Cycle Time is not empty and in a numerical format", exception.getMessage());
+        System.out.println(true);
+    }
+
+    @Test
+    @Order(21)
+    public void testAlgo21() throws Exception {
+        System.out.println("===================== 21. Test Product Exception: Non-numerical Cycle Time =====================");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String inputPath = "./src/test/AlgoControllerTestFiles/input/21_productException2_input.txt";
+        
+        File input = new File(inputPath);
+
+        Object productRaw = null;
+        
+        try {
+            productRaw = objectMapper.readValue(input, Object.class);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        final Object product = productRaw;
+
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+            Product p = new Product(product);
+        });
+
+        assertEquals("Please ensure that Cycle Time is not empty and in a numerical format", exception.getMessage());
+        System.out.println(true);
+    }
+
+    @Test
+    @Order(22)
+    public void testAlgo22() throws Exception {
+        System.out.println("===================== 22. Test Product Exception: Missing MRP Date  =====================");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String inputPath = "./src/test/AlgoControllerTestFiles/input/22_productException2_input.txt";
+        
+        File input = new File(inputPath);
+
+        Object productRaw = null;
+        
+        try {
+            productRaw = objectMapper.readValue(input, Object.class);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        final Object product = productRaw;
+
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+            Product p = new Product(product);
+        });
+
+        assertEquals("Please ensure that MRP Date is not empty, and in dd/mm/yyyy format", exception.getMessage());
+        System.out.println(true);
+    }
+
+    @Test
+    @Order(23)
+    public void testAlgo23() throws Exception {
+        System.out.println("===================== 23. Test Product Exception: Wrong Format MRP Date  =====================");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String inputPath = "./src/test/AlgoControllerTestFiles/input/23_productException2_input.txt";
+        
+        File input = new File(inputPath);
+
+        Object productRaw = null;
+        
+        try {
+            productRaw = objectMapper.readValue(input, Object.class);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        final Object product = productRaw;
+
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+            Product p = new Product(product);
+        });
+
+        assertEquals("Please ensure that MRP Date is not empty, and in dd/mm/yyyy format", exception.getMessage());
+        System.out.println(true);
+    }
+
+    @Test
+    @Order(24)
+    public void testAlgo24() throws Exception {
+        System.out.println("===================== 24. Test Product Exception: Locked MRP Date is earlier than suggested  =====================");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String inputPath = "./src/test/AlgoControllerTestFiles/input/24_productException2_input.txt";
+        
+        File input = new File(inputPath);
+
+        Object productRaw = null;
+        
+        try {
+            productRaw = objectMapper.readValue(input, Object.class);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        final Object product = productRaw;
+
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+            Product p = new Product(product);
+        });
+
+        assertEquals("The locked MRP date of a product (Slot ID: 888888) cannot be brought forward earlier than the recommended MRP date of Thu May 28 00:00:00 SGT 2020", exception.getMessage());
+        System.out.println(true);
+    }
+
+    @Test
+    @Order(25)
+    public void testAlgo25() throws Exception {
+        System.out.println("===================== 25. Test Product Exception: Send To Storage Date is earlier than MRP Date  =====================");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String inputPath = "./src/test/AlgoControllerTestFiles/input/25_productException2_input.txt";
+        
+        File input = new File(inputPath);
+
+        Object productRaw = null;
+        
+        try {
+            productRaw = objectMapper.readValue(input, Object.class);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        final Object product = productRaw;
+
+        Throwable exception = assertThrows(RuntimeException.class, () -> {
+            Product p = new Product(product);
+        });
+
+        assertEquals("The product with Slot ID: 888888 cannot be sent to storage before the earliest MRP date of Thu May 28 00:00:00 SGT 2020", exception.getMessage());
+        System.out.println(true);
+    }
 }
