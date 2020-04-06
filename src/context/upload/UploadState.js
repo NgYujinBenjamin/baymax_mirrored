@@ -893,6 +893,8 @@ const UploadState = (props) => {
     const createResult = async (newbaseline, masterops, bays, mingap, maxgap) => {
         setLoading();
 
+        console.time('time');
+
         masterops.forEach(obj => {
             obj['Cycle Time Days'] = parseInt(obj['Cycle Time Days'])
         })
@@ -918,6 +920,7 @@ const UploadState = (props) => {
             payload: err.response.data.message
           })
         }
+        console.timeEnd('time');
     }
 
     // @loc     Preresult.js
