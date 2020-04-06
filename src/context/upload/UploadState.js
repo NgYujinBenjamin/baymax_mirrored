@@ -545,7 +545,7 @@ const UploadState = (props) => {
     }
 
     const validateNum = (value) => {
-        let errorMsg = isNaN(value) ? 'Invalid number' : null;
+        let errorMsg = isNaN(value) || value == '' ? 'Invalid number' : null;
 
         return errorMsg;
     }
