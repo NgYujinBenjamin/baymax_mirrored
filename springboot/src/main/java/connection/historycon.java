@@ -432,7 +432,7 @@ public class historycon extends main.java.connection.mysqlcon {
             defSql += "'" + row.getDrop_ship() + "',";
             defSql += "'" + row.getRma() + "',";
             defSql += "'" + row.getProduct_pn() + "',";
-            defSql += "null ,";
+            defSql += "'" + row.getSendToStorage() + "' ,";
             defSql += row.getOff_date_to_de() == null ? "null ," : "'" + row.getOff_date_to_de() + "',";
             defSql += row.getOff_date_to_mfg() == null ? "null ," : "'" + row.getOff_date_to_mfg() + "',";
             defSql += row.getInstall_start_date() == null ? "null ," : "'" + row.getInstall_start_date() + "',";
