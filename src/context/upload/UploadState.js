@@ -943,7 +943,7 @@ const UploadState = (props) => {
         if(scheduleCounter){
             dispatch({
                 type: UPLOAD_ERROR,
-                payload: 'Please upload a proper Masterops excel file'
+                payload: 'Please upload a proper Masterops excel file. Argo ID, Slot ID/UTID, Build Product, Cycle Time Days, MRP Date and MFG Commit Date column headers are required and cells in those columns must not be empty.'
             })
         } else {
             //filter by Tool
@@ -1153,7 +1153,7 @@ const UploadState = (props) => {
         if(baselineChecker){
           dispatch({
             type: UPLOAD_ERROR,
-            payload: 'Please upload a proper bay requirement file'
+            payload: `Please upload a proper bay requirement file. Slot ID/UTID column header is required and cells in that column must not be empty.`
           })
         } else {
           data.forEach(obj => obj['Slot ID/UTID'] = obj['Slot ID/UTID'].toString())
