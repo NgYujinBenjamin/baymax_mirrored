@@ -57,6 +57,7 @@ public class MassSlotUploadDetails implements Comparable<MassSlotUploadDetails>{
     private String flex03;
     private String flex04;
     private String buildQtr;
+    private Date sendToStorageDate;
     @Exclude
     private Date latestToolStartDate;
     
@@ -71,7 +72,6 @@ public class MassSlotUploadDetails implements Comparable<MassSlotUploadDetails>{
     
     private Boolean lockMRPDate = null;
     
-    private Date sendToStorageDate;
     
     @Exclude
     private Integer assignedBayID;
@@ -481,6 +481,11 @@ public class MassSlotUploadDetails implements Comparable<MassSlotUploadDetails>{
 
     public void setMFGCommitDate(Date MFGCommitDate) {
         this.MFGCommitDate = MFGCommitDate;
+    }
+
+    public void setSendToStorage(Date sendToStorageDate) {
+        this.sendToStorageDate = sendToStorageDate;
+        // return refurbCompleteDate;
     }
 
     public void setShipRecogDate(Date shipRecogDate) {
