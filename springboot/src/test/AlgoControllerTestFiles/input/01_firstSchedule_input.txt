@@ -1,0 +1,23 @@
+{
+  "baseline": [
+  {
+    "Argo ID": "001",
+    "Fab Name": "BRYAN",
+    "Committed Ship $": 1,
+    "Ship Revenue (Int $)": 1,
+    "MRP Date": "01/05/2020",
+    "Int. Ops Ship Readiness Date": "01/05/2020",
+    "MFG Commit Date": "08/05/2020",
+    "Cycle Time Days": 45,
+    "Quantity": 1,
+    "Build Qtr": "CY20Q1",
+    "Ship Qtr": "CY20Q2",
+    "End Date": "08/05/2020"
+  }
+  ],
+  "masterOps": [
+  ],
+  "bay": 1,
+  "minGap": 0,
+  "maxGap": 90
+}

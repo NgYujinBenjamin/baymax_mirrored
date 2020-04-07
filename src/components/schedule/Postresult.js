@@ -14,25 +14,35 @@ const Postresult = () => {
     const uploadContext = useContext(UploadContext);
     const authContext = useContext(AuthContext);
 
-    const [value, setValue] = useState(0); // this is for tab panel to display quarters
+    const [ value, setValue ] = useState(0); // this is for tab panel to display quarters
+    const [ histCount, sethistCount ] = useState(0);
 
     const { loadUser, updateNavItem } = authContext
     const { histID, setNewMinGap, newMinGap, bays, minGap, maxGap, setBays, setMinGap, setMaxGap, currentQuarter, postResult, postResultDone, postResultErrors, tabChecker, updateReschedule, createExport, createExportSchedule, updateSave, clearAll, updatePostResultEmpties } = uploadContext;
-
+    
     useEffect(() => {
         updateNavItem(0);
         if(postResult !== null){
+            if("minGap" in postResult){
+                setMinGap(postResult.minGap);
+            }
             setNewMinGap(minGap);
             updatePostResultEmpties(postResult, minGap);
         }
         //eslint-disable-next-line
-    }, [postResult])
+    }, [postResult, minGap])
 
     const qtrs = new Array();
     if(postResult !== null){
-        Object.keys(postResult.bayOccupancy).map(quarterName => 
-            qtrs.push(quarterName)
-        )
+        Object.keys(postResult).map(type => {
+            if(type == 'baseLineOccupancy' || type == 'bayOccupancy'){
+                Object.keys(postResult[type]).map(quarterName => {
+                    if( !(qtrs.includes(quarterName)) ){
+                        qtrs.push(quarterName)
+                    }
+                })
+            }
+        })
     }
 
     const a11yProps = (index) => {
@@ -57,6 +67,7 @@ const Postresult = () => {
     }
 
     const handleSave = () => {
+        sethistCount(1);
         updateSave(true);
     }
 
@@ -67,6 +78,7 @@ const Postresult = () => {
     }
 
     const handleReschedule = () => {
+        sethistCount(0);
         updateReschedule(true);
     }
 
@@ -120,23 +132,27 @@ const Postresult = () => {
                 </AppBar>
                             
                 {postResultDone !== null && qtrs.map((qtr, index) =>
-                    <Postresultqtr schedule={postResultDone.bayOccupancy} baseline={postResultDone.baseLineOccupancy} value={value} num={index} quarter={qtr} key={index}/>
+                    <Postresultqtr schedule={postResultDone.bayOccupancy} baseline={postResultDone.baseLineOccupancy} value={value} num={index} qtrs={qtrs} quarter={qtr} key={index}/>
                 )}
             </div>
             
             <Box className={classes.marginTop}>
                 <Grid container spacing={1}>
                     <Grid item xs>
-                        <Button fullWidth variant='contained' onClick={handleClearAll} startIcon={<DeleteIcon />} color='secondary'>Clear All</Button>
+                        <Button fullWidth variant='contained' id='clearAll' onClick={handleClearAll} startIcon={<DeleteIcon />} color='secondary'>Clear All</Button>
                     </Grid>
                     <Grid item xs>
-                        <Button fullWidth variant='contained' onClick={handleSave} startIcon={<SaveIcon />}> {histID == null ? 'Save Result' : 'Update History Result'} </Button>
+                        {histID == null ? 
+                            <Button fullWidth variant='contained' id='save' onClick={handleSave} startIcon={<SaveIcon />}>Save Result</Button> : 
+                            [ histCount == 0 ? <Button fullWidth variant='contained' id='save' onClick={handleSave} startIcon={<SaveIcon />}>Update History Result</Button> :
+                                               <Button disabled fullWidth variant='contained' id='save' startIcon={<SaveIcon />}>Result Saved!</Button> ]
+                        }
                     </Grid>
                     <Grid item xs>
-                        <Button fullWidth variant='contained' onClick={handleExport} startIcon={<GetAppIcon />}>Export to Excel File</Button>
+                        <Button fullWidth variant='contained' id='export' onClick={handleExport} startIcon={<GetAppIcon />}>Export to Excel File</Button>
                     </Grid>
                     <Grid item xs>
-                        <Button fullWidth variant='contained' onClick={handleReschedule} startIcon={<TrendingUpIcon />} color='primary'>Generate Schedule Again</Button>
+                        <Button fullWidth variant='contained' id='scheduleAgain' onClick={handleReschedule} startIcon={<TrendingUpIcon />} color='primary'>Generate Schedule Again</Button>
                     </Grid>
                 </Grid>
             </Box>

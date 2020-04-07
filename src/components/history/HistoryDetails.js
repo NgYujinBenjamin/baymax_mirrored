@@ -2,17 +2,25 @@ import React, { Fragment, useContext, useEffect } from 'react';
 import { Card, CardContent, Button } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import AuthContext from '../../context/auth/authContext';
+import UploadContext from '../../context/upload/uploadContext';
 import Postresult from '../schedule/Postresult';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
-const HistoryDetails = () => {
+const HistoryDetails = (props) => {
     
     const authContext = useContext(AuthContext);
+    const uploadContext = useContext(UploadContext);
 
     const { loadUser, updateNavItem } = authContext;
+    const { getHistory, updateHistID } = uploadContext;
+
     useEffect(() => {
         loadUser();
         updateNavItem(1);
+        
+        const path = props.location.pathname.split('/');
+        getHistory(path[2],path[3]);
+        updateHistID(path[3]);
         //eslint-disable-next-line
     }, [])
 
@@ -23,7 +31,6 @@ const HistoryDetails = () => {
                     <Link to={'/history'} style={{ textDecoration:'none' }}>
                         <Button size="small" color="primary" style={{ padding:0, marginBottom: 15 }} startIcon={<ArrowBackIcon />}> Back to History </Button>
                     </Link>
-                    {/* Returns nth now since the endpoints are not working */}
                     <Postresult></Postresult> 
                 </CardContent>
             </Card>

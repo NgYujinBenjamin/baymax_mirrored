@@ -1,5 +1,7 @@
 package main.java.authentication.json;
 
+import main.java.authentication.json.JsonObject;
+
 import java.util.*;
 import java.text.*;
 

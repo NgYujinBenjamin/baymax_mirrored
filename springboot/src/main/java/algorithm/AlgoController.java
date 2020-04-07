@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 // import main.java.algorithm.*;
 
 import java.util.*;
+import java.io.*;
 import java.text.SimpleDateFormat;
 
 import org.apache.poi.ss.usermodel.Cell;  
@@ -68,26 +69,55 @@ public class AlgoController {
         BaySchedule baySchedule = null;
 
         Integer gapDiff = maxGap - minGap; // End date alr considers the min gap; Can only pull forward by gapDiff more days
-
+        
+        HashSet<HashMap<String, Integer>> historyQuarterHC = new HashSet<HashMap<String, Integer>>();
         HashMap<String, Integer> quarterHC = new HeadCount(allProduct).getQuarterHC();
-        Boolean quarterHCChanged = true;
+        historyQuarterHC.add(quarterHC);
 
-        while (quarterHCChanged){
+        Boolean quarterHCChanged = true;
+        Boolean pastQuarterHC = false;
+
+        while (quarterHCChanged && !pastQuarterHC){
             baySchedule = new BaySchedule(baseLineProduct, allProduct, quarterHC, numBays, gapDiff);
+            // System.out.println(quarterHC);
+
+            // For Logging
+            ArrayList<Bay> schedule = baySchedule.getSchedule();
+            
+            try(PrintStream out = new PrintStream(new FileOutputStream("./firstScheduling_BayDiagnosis_LOG.txt"), true)){
+                out.println("HeadCount Availability:" + quarterHC);
+                for (Bay b: schedule){
+                    ArrayList<Product> productList = b.getBaySchedule();
+                    out.println("%%%%%%%%%%%%%%%% Bay " + b.getBayID() + " %%%%%%%%%%%%%%%%");
+                    for (Product p: productList){
+                        out.print("[ SlotID/UTID:" + p.getSlotID_UTID() + " | ToolStartDate:" + p.getToolStartDate() + " | LeaveBayDate:"  + p.getLeaveBayDate() + "] ->");
+                        // out.print("[" + p.getArgoID() + " | " + p.getAssignedBayID() + " | "  + p.getGapDays() + "] ->");
+                    }
+                    out.println();
+                }
+            } catch (FileNotFoundException e){
+                e.printStackTrace();
+            }
+            // End of debugging
 
             allProduct = baySchedule.getAllProduct();
             baseLineProduct = baySchedule.getBaseLineProduct();
             bayReq = new BayRequirement(baseLineProduct, allProduct);
-    
-            allProduct = baySchedule.getAllProduct();
 
             HashMap<String, Integer> newQuarterHC = new HeadCount(allProduct).getQuarterHC();
+            Integer prevHistoryQuarterHCSize = historyQuarterHC.size();
+            historyQuarterHC.add(newQuarterHC);
+            Integer currHistoryQuarterHCSize = historyQuarterHC.size();
+
             if (quarterHC.equals(newQuarterHC)){
                 quarterHCChanged = false;
+            } else if (prevHistoryQuarterHCSize == currHistoryQuarterHCSize){
+                pastQuarterHC = true;
             } else {
                 quarterHC = newQuarterHC;
             }
         }
+        // System.out.println(BayRequirement.toJSONString(bayReq));
         return BayRequirement.toJSONString(bayReq);
     }
 
@@ -109,7 +139,7 @@ public class AlgoController {
         } catch(Exception e) {
             return "JSON Reading Error";
         }
-
+        
         ArrayList<Product> allProduct = new ArrayList<Product>();
         ArrayList<Product> baseLineProduct = new ArrayList<Product>();
         
@@ -145,14 +175,37 @@ public class AlgoController {
 
         Integer gapDiff = maxGap - minGap; // End date alr considers the min gap; Can only pull forward by gapDiff more days
         
+        HashSet<HashMap<String, Integer>> historyQuarterHC = new HashSet<HashMap<String, Integer>>();
         HashMap<String, Integer> quarterHC = new HeadCount(allProduct).getQuarterHC();
-        Boolean quarterHCChanged = true;
-        
-       
-        while (quarterHCChanged){
-            System.out.println(quarterHC);
+        historyQuarterHC.add(quarterHC);
 
+        Boolean quarterHCChanged = true;
+        Boolean pastQuarterHC = false;
+
+        while (quarterHCChanged && !pastQuarterHC){
+            // System.out.println(quarterHC);
+            
             baySchedule = new BaySchedule(baseLineProduct, allProduct, quarterHC, numBays, gapDiff);
+
+            // For Logging
+            ArrayList<Bay> schedule = baySchedule.getSchedule();
+            
+            try(PrintStream out = new PrintStream(new FileOutputStream("./subseqScheduling_BayDiagnosis_LOG.txt"), true)){
+                out.println("HeadCount Availability:" + quarterHC);
+                for (Bay b: schedule){
+                    ArrayList<Product> productList = b.getBaySchedule();
+                    out.println("%%%%%%%%%%%%%%%% Bay " + b.getBayID() + " %%%%%%%%%%%%%%%%");
+                    for (Product p: productList){
+                        out.print("[ SlotID/UTID:" + p.getSlotID_UTID() + " | ToolStartDate:" + p.getToolStartDate() + " | LeaveBayDate:"  + p.getLeaveBayDate() + "] ->");
+                        // out.print("[" + p.getArgoID() + " | " + p.getAssignedBayID() + " | "  + p.getGapDays() + "] ->");
+                    }
+                    out.println();
+                }
+            } catch (FileNotFoundException e){
+                e.printStackTrace();
+            }
+            // End of debugging
+
 
             allProduct = baySchedule.getAllProduct();
             baseLineProduct = baySchedule.getBaseLineProduct();
@@ -160,43 +213,19 @@ public class AlgoController {
             
             // Check if quarterHC has changed
             HashMap<String, Integer> newQuarterHC = new HeadCount(allProduct).getQuarterHC();
+            Integer prevHistoryQuarterHCSize = historyQuarterHC.size();
+            historyQuarterHC.add(newQuarterHC);
+            Integer currHistoryQuarterHCSize = historyQuarterHC.size();
+
             if (quarterHC.equals(newQuarterHC)){
                 quarterHCChanged = false;
+            } else if (prevHistoryQuarterHCSize == currHistoryQuarterHCSize){
+                pastQuarterHC = true;
             } else {
                 quarterHC = newQuarterHC;
             }
         }
+        // System.out.println(BayRequirement.toJSONString(bayReq));
         return BayRequirement.toJSONString(bayReq);
     }
-
-    // @RequestMapping(path = "/algo", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
-    // public String algo(@RequestBody List<Map<String, Object>> data) throws Exception{
-    //     // JsonElement jsonElement = new JsonParser().parse(data);
-    //     // List<Map<String, Object>> allData= new ArrayList<Map<String, Object>>();
-    //     // allData = new Gson().fromJson(data, new TypeToken<List<Map<String, Object>>>() {}.getType());
-        
-    //     List<Map<String, Object>> allData = data;
-        
-    //     ArrayList<Product> allProduct = new ArrayList<Product>();
-        
-    //     for (int i = 0; i < allData.size(); i++){
-    //         Product p = new Product(allData.get(i));
-    //         allProduct.add(p);
-    //     }
-
-    //     BayRequirement bayReq = null;
-
-    //     for (int i = 0; i < 10; i++){
-    //         HashMap<String, Integer> quarterHC = new HeadCount(allProduct).getQuarterHC();
-
-    //         BaySchedule baySchedule = new BaySchedule(allProduct, quarterHC, 26, 90);
-
-    //         bayReq = new BayRequirement(baySchedule);
-    
-    //         allProduct = baySchedule.getAllProduct();
-    //     }
-    //     return BayRequirement.toJSONString(bayReq);
-        
-    // }
-
 }

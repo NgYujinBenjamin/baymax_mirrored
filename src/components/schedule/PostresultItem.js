@@ -52,7 +52,7 @@ const PostresultItem = memo(({ result, id, onChange }) => {
                 <TableCell> {config == null ? "NA" : config} </TableCell>
                 <TableCell style={id==='baseline' ? {backgroundColor: '#1cc61c'} : {backgroundColor: '#00b8ff'}}> {toolStart} </TableCell>
                 <TableCell> 
-                    { id === 'predicted' ? <Input error={MRPUnique in postResultErrors} style={{width: '140px'}} type='text' name={MRPName} value={MRPDate} onChange={onChange} required /> : MRPDate } 
+                    { id === 'predicted' ? <Input error={MRPUnique in postResultErrors} style={{width: '140px'}} id={slotID_UTID + "_mrpDate"} type='text' name={MRPName} value={MRPDate} onChange={onChange} required /> : MRPDate } 
                     { MRPUnique in postResultErrors && <FormHelperText className={classes.errorText}>{postResultErrors[MRPUnique]}</FormHelperText>}
                 </TableCell>
                 <TableCell style={fabName ? {backgroundColor: 'yellow'} : null}> {MFGCommit} </TableCell>
@@ -60,12 +60,12 @@ const PostresultItem = memo(({ result, id, onChange }) => {
                 <TableCell> {endDate} </TableCell>
                 <TableCell style={gapDays >= 0 ? null : {backgroundColor: 'red'}}> {gapDays} </TableCell>
                 <TableCell> 
-                    { id === 'predicted' ? <Input error={cycleTimeUnique in postResultErrors} type='text' name={cycleName} value={cycleTime} onChange={onChange} required /> : cycleTime }
+                    { id === 'predicted' ? <Input error={cycleTimeUnique in postResultErrors} id={slotID_UTID + "_cycleTime"} type='text' name={cycleName} value={cycleTime} onChange={onChange} required /> : cycleTime }
                     { cycleTimeUnique in postResultErrors && <FormHelperText className={classes.errorText}>{postResultErrors[cycleTimeUnique]}</FormHelperText>}
                 </TableCell>
-                <TableCell align='center'> {id === 'predicted' ? <Checkbox name={lockMRPName} checked={lockMRPCheck} onChange={onChange} color="primary" /> : null} </TableCell>
+                <TableCell align='center'> {id === 'predicted' ? <Checkbox name={lockMRPName} id={slotID_UTID + "_lockMRPDate"} checked={lockMRPCheck} onChange={onChange} color="primary" /> : null} </TableCell>
                 <TableCell> 
-                    { id === 'predicted' ? <Input error={storageUnique in postResultErrors} type='text' name={storageName} value={storageDate} onChange={onChange} /> : null }
+                    { id === 'predicted' ? <Input error={storageUnique in postResultErrors} id={slotID_UTID + "_storageDate"} type='text' name={storageName} value={storageDate} onChange={onChange} /> : null }
                     { storageUnique in postResultErrors && <FormHelperText className={classes.errorText}>{postResultErrors[storageUnique]}</FormHelperText>}                     
                 </TableCell>
                 { result.map((obj, index) => (typeof(obj) === "object") ?

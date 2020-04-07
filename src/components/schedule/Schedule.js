@@ -194,7 +194,7 @@ const Schedule = (props) => {
                                     value={bayFileValue}
                                 />
                                 <label htmlFor='schedule-file'>
-                                    <Button variant='contained' color='primary' component='span' disabled={schedule !== null} startIcon={<CloudUploadIcon />}>
+                                    <Button variant='contained' id='upload' color='primary' component='span' disabled={schedule !== null} startIcon={<CloudUploadIcon />}>
                                         Upload
                                     </Button>
                                 </label>
@@ -202,8 +202,8 @@ const Schedule = (props) => {
                                     {fileName !== '' && fileName}
                                 </Typography>
                             </Box>
-                            {(bayFile && fileName !== '' && schedule === null) && <Button color='primary' variant='contained' fullWidth onClick={handleConfirm}>Confirm</Button>}
-                            {(schedule !== null && !scheduleDone) && <Button fullWidth color='default' variant='contained' className={classes.marginTop} onClick={handleClearPreresult}>Clear</Button>}
+                            {(bayFile && fileName !== '' && schedule === null) && <Button color='primary' id='confirm' variant='contained' fullWidth onClick={handleConfirm}>Confirm</Button>}
+                            {(schedule !== null && !scheduleDone) && <Button fullWidth color='default' id='clear' variant='contained' className={classes.marginTop} onClick={handleClearPreresult}>Clear</Button>}
                         </Box>
                     }  
                     <Box>

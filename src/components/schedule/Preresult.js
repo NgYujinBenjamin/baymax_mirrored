@@ -12,7 +12,7 @@ const Preresult = () => {
     const authContext = useContext(AuthContext);
     const classes = useStyles();
 
-    const { updateNavItem } = authContext;
+    const { updateNavItem, user } = authContext;
     const { setAlert } = alertContext;
     const { schedule, updateSchedule, createResult, bays, stepcount, setStepCount, updateBaseline, minGap, maxGap, newBaseline } = uploadContext;
 
@@ -101,7 +101,7 @@ const Preresult = () => {
             updateSchedule(objs);
 
             if(newBaseline.length > 0){
-                updateBaseline(newBaseline);
+                updateBaseline(newBaseline, user.staff_id);
             }
     
             createResult(newBaseline, objs, bays, minGap, maxGap);
@@ -135,6 +135,7 @@ const Preresult = () => {
             </TableContainer>
             <Button 
                 className={classes.marginTop} 
+                id='beginSchedule'
                 fullWidth color='primary' 
                 variant='contained' 
                 onClick={handleSchedule}

@@ -13,6 +13,20 @@ public class BayRequirement{
     private TreeMap<String, ArrayList<ArrayList<Object>>> baseLineOccupancy;
     private TreeMap<String, ArrayList<ArrayList<Object>>> bayOccupancy;
 
+    /**
+     * @return the baseLineOccupancy
+     */
+    public TreeMap<String, ArrayList<ArrayList<Object>>> getBaseLineOccupancy() {
+        return baseLineOccupancy;
+    }
+    
+    /**
+     * @return the bayOccupancy
+     */
+    public TreeMap<String, ArrayList<ArrayList<Object>>> getBayOccupancy() {
+        return this.bayOccupancy;
+    }
+
     public BayRequirement(ArrayList<Product> baseLineProduct, ArrayList<Product> allProduct){
       
         HashMap<String, HashMap<String, Date>> baseLine_earliestStartLatestEnd = findEarliestStartLatestEnd(baseLineProduct);
@@ -35,7 +49,7 @@ public class BayRequirement{
             Date latestEnd = baseLine_earliestStartLatestEnd.get(qtr).get("Latest End");
 
             ArrayList<Object> qtrWeekOf = generateWeekOf(earliestStart, latestEnd);
-
+            // System.out.println(qtrWeekOf);
             baseLineQtrBayOccupancy.add(qtrWeekOf);
 
             baseLineOccupancy.put(qtr, baseLineQtrBayOccupancy);
@@ -92,6 +106,7 @@ public class BayRequirement{
                 HashMap<String, Date> qtrEarliestStartLatestEnd = earliestStartLatestEnd.get(buildQtr);
                 Date qtrEarliestStart = qtrEarliestStartLatestEnd.get("Earliest Start");
                 Date qtrLatestEnd = qtrEarliestStartLatestEnd.get("Latest End");
+
                 if (toolStartDate.before(qtrEarliestStart)){
                     qtrEarliestStart = toolStartDate;
                 }

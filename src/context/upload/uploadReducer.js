@@ -161,7 +161,8 @@ export default (state, action) => {
                 postResult: null,
                 postResultDone: null,
                 currentQuarter: null,
-                stepcount: 1
+                stepcount: 1,
+                histID: null
             }
         case CLEAR_PRERESULT:
             return {
@@ -191,7 +192,8 @@ export default (state, action) => {
                 scheduleDone: false,
                 error: null,
                 success: null,
-                stepcount: 0
+                stepcount: 0,
+                histID: null
             }
         case LOAD_ALL_HISTORY:
             return {

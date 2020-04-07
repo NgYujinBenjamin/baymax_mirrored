@@ -11,26 +11,36 @@ export default (state, action) => {
         case DELETE_USER:
             return {
                 ...state,
-                users: state.users.filter(user => user.staff_id !== action.payload),
+                users: state.users.filter(user => user.staff_id !== action.payload.id),
+                success: action.payload.msg,
                 loading: false
             }
         case CONVERT_ADMIN:
             return {
                 ...state,
-                users: state.users.map(user => user.staff_id === action.payload.staff_id ? action.payload : user),
+                users: state.users.map(user => user.staff_id === action.payload.data.staff_id ? action.payload.data : user),
+                success: action.payload.msg,
                 loading: false
             }
         case USER_ERROR:
             return {
                 ...state,
-                error: action.payload
+                error: action.payload,
+                loading: false
             }
         case ADMIN_CLEAR_ERROR:
             return {
                 ...state,
-                error: null
+                error: null,
+                success: null,
+                loading: false
             }
         case RESET_PASSWORD:
+            return {
+                ...state,
+                success: action.payload,
+                loading: false
+            }
         default:
             return state
     }
