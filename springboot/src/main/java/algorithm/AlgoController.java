@@ -81,40 +81,41 @@ public class AlgoController {
             baySchedule = new BaySchedule(baseLineProduct, allProduct, quarterHC, numBays, gapDiff);
             // System.out.println(quarterHC);
 
-            // Debugging
-            // ArrayList<Bay> schedule = baySchedule.getSchedule();
+            // For Logging
+            ArrayList<Bay> schedule = baySchedule.getSchedule();
             
-            // try(PrintStream out = new PrintStream(new FileOutputStream("./masterOps_BayDiagnosis.txt"), true)){
-            //     out.println(quarterHC);
-            //     for (Bay b: schedule){
-            //         ArrayList<Product> productList = b.getBaySchedule();
-            //         out.println("%%%%%%%%%%%%%%%% Bay " + b.getBayID() + " %%%%%%%%%%%%%%%%");
-            //         for (Product p: productList){
-            //             out.print("[ SlotID/UTID:" + p.getSlotID_UTID() + " | ToolStartDate:" + p.getToolStartDate() + " | LeaveBayDate:"  + p.getLeaveBayDate() + "] ->");
-            //             // out.print("[" + p.getArgoID() + " | " + p.getAssignedBayID() + " | "  + p.getGapDays() + "] ->");
-            //         }
-            //         out.println();
-            //     }
-            // } catch (FileNotFoundException e){
-            //     e.printStackTrace();
-            // }
-
-                allProduct = baySchedule.getAllProduct();
-                baseLineProduct = baySchedule.getBaseLineProduct();
-                bayReq = new BayRequirement(baseLineProduct, allProduct);
-
-                HashMap<String, Integer> newQuarterHC = new HeadCount(allProduct).getQuarterHC();
-                Integer prevHistoryQuarterHCSize = historyQuarterHC.size();
-                historyQuarterHC.add(newQuarterHC);
-                Integer currHistoryQuarterHCSize = historyQuarterHC.size();
-
-                if (quarterHC.equals(newQuarterHC)){
-                    quarterHCChanged = false;
-                } else if (prevHistoryQuarterHCSize == currHistoryQuarterHCSize){
-                    pastQuarterHC = true;
-                } else {
-                    quarterHC = newQuarterHC;
+            try(PrintStream out = new PrintStream(new FileOutputStream("./firstScheduling_BayDiagnosis_LOG.txt"), true)){
+                out.println("HeadCount Availability:" + quarterHC);
+                for (Bay b: schedule){
+                    ArrayList<Product> productList = b.getBaySchedule();
+                    out.println("%%%%%%%%%%%%%%%% Bay " + b.getBayID() + " %%%%%%%%%%%%%%%%");
+                    for (Product p: productList){
+                        out.print("[ SlotID/UTID:" + p.getSlotID_UTID() + " | ToolStartDate:" + p.getToolStartDate() + " | LeaveBayDate:"  + p.getLeaveBayDate() + "] ->");
+                        // out.print("[" + p.getArgoID() + " | " + p.getAssignedBayID() + " | "  + p.getGapDays() + "] ->");
+                    }
+                    out.println();
                 }
+            } catch (FileNotFoundException e){
+                e.printStackTrace();
+            }
+            // End of debugging
+
+            allProduct = baySchedule.getAllProduct();
+            baseLineProduct = baySchedule.getBaseLineProduct();
+            bayReq = new BayRequirement(baseLineProduct, allProduct);
+
+            HashMap<String, Integer> newQuarterHC = new HeadCount(allProduct).getQuarterHC();
+            Integer prevHistoryQuarterHCSize = historyQuarterHC.size();
+            historyQuarterHC.add(newQuarterHC);
+            Integer currHistoryQuarterHCSize = historyQuarterHC.size();
+
+            if (quarterHC.equals(newQuarterHC)){
+                quarterHCChanged = false;
+            } else if (prevHistoryQuarterHCSize == currHistoryQuarterHCSize){
+                pastQuarterHC = true;
+            } else {
+                quarterHC = newQuarterHC;
+            }
         }
         // System.out.println(BayRequirement.toJSONString(bayReq));
         return BayRequirement.toJSONString(bayReq);
@@ -186,23 +187,25 @@ public class AlgoController {
             
             baySchedule = new BaySchedule(baseLineProduct, allProduct, quarterHC, numBays, gapDiff);
 
-            // Debugging
-            // ArrayList<Bay> schedule = baySchedule.getSchedule();
+            // For Logging
+            ArrayList<Bay> schedule = baySchedule.getSchedule();
             
-            // try(PrintStream out = new PrintStream(new FileOutputStream("./masterOps_BayDiagnosis02.txt"), true)){
-            //     out.println(quarterHC);
-            //     for (Bay b: schedule){
-            //         ArrayList<Product> productList = b.getBaySchedule();
-            //         out.println("%%%%%%%%%%%%%%%% Bay " + b.getBayID() + " %%%%%%%%%%%%%%%%");
-            //         for (Product p: productList){
-            //             out.print("[ SlotID/UTID:" + p.getSlotID_UTID() + " | ToolStartDate:" + p.getToolStartDate() + " | LeaveBayDate:"  + p.getLeaveBayDate() + "] ->");
-            //             // out.print("[" + p.getArgoID() + " | " + p.getAssignedBayID() + " | "  + p.getGapDays() + "] ->");
-            //         }
-            //         out.println();
-            //     }
-            // } catch (FileNotFoundException e){
-            //     e.printStackTrace();
-            // }
+            try(PrintStream out = new PrintStream(new FileOutputStream("./subseqScheduling_BayDiagnosis_LOG.txt"), true)){
+                out.println("HeadCount Availability:" + quarterHC);
+                for (Bay b: schedule){
+                    ArrayList<Product> productList = b.getBaySchedule();
+                    out.println("%%%%%%%%%%%%%%%% Bay " + b.getBayID() + " %%%%%%%%%%%%%%%%");
+                    for (Product p: productList){
+                        out.print("[ SlotID/UTID:" + p.getSlotID_UTID() + " | ToolStartDate:" + p.getToolStartDate() + " | LeaveBayDate:"  + p.getLeaveBayDate() + "] ->");
+                        // out.print("[" + p.getArgoID() + " | " + p.getAssignedBayID() + " | "  + p.getGapDays() + "] ->");
+                    }
+                    out.println();
+                }
+            } catch (FileNotFoundException e){
+                e.printStackTrace();
+            }
+            // End of debugging
+
 
             allProduct = baySchedule.getAllProduct();
             baseLineProduct = baySchedule.getBaseLineProduct();

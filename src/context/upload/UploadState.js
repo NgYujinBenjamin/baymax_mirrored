@@ -529,11 +529,10 @@ const UploadState = (props) => {
         payload: result 
       })
     }
-
-    // ##################################################################################################
-    // ######################################## FIELD VALIDATIONS #######################################
-    // ##################################################################################################
-
+    
+    // @loc     Postresultbody.js
+    // @desc    check if field has valid date format in "dd/mm/yyyy"
+    // @param   (string)
     const validateDate = (value) => {
       const dateParts = value.split("/");
       // const date = new Date(dateParts[2], (dateParts[1] - 1), dateParts[0]);
@@ -544,17 +543,31 @@ const UploadState = (props) => {
       return 'Invalid Date (dd/mm/yyyy)';
     }
 
+    // @loc     Postresultbody.js
+    // @desc    check if field has valid number format
+    // @param   (string)
     const validateNum = (value) => {
-        let errorMsg = isNaN(value) ? 'Invalid number' : null;
-
+        let errorMsg = isNaN(value) || value == '' ? 'Invalid number' : null;
         return errorMsg;
     }
 
-    // ##################################################################################################
-    // ######################################## POST RESULT START #######################################
-    // ##################################################################################################
+    // @loc     Postresultbody.js
+    // @desc    updates the validation field object
+    // @param   (object, string, string)
+    const handlePostResultError = (postResultErrors, uniqueID, errorMsg) => {
+      if(errorMsg == null && uniqueID in postResultErrors){
+        delete postResultErrors[uniqueID];
+      } 
 
-    // send to backend for rescheduling (Have not implemented this!)
+      if((errorMsg !== null && !(uniqueID in postResultErrors)) || uniqueID in postResultErrors){
+        postResultErrors[uniqueID] = errorMsg;
+      }
+      // no need to dispatch since it's for instant check
+    }
+
+    // @loc     Postresultbody.js
+    // @desc    Re-generate the schedule
+    // @param   (object, int, int, int)
     const reschedulePostResult = async (postResultDone, bays, newMinGap, maxgap) => {
       Object.keys(postResultDone).map(type => {
         Object.keys(postResultDone[type]).map(qtr => {
@@ -593,24 +606,31 @@ const UploadState = (props) => {
         })
       }
     }
-
-    // get all quarters
+    
+    // @loc     called in functions: getUniqueDates & updatePostResultEmpties
+    // @desc    return quarters
+    // @param   (object)
     const getQtrs = (postResult) => {
       const qtrs = new Array();
       Object.keys(postResult.bayOccupancy).map(quarterName => 
           qtrs.push(quarterName)
       )
-
       return qtrs;
     }
 
-    // first quarter unique dates
+    // @loc     called in updatePostResultEmpties function
+    // @desc    compile an array of unique dates for the first quarter. Required for the initial load
+    // @param   (object)
     const getUniqueDates = (postResult) => {
       const qtrs = getQtrs(postResult);
       const firstQtr = qtrs[0];
-      const SfirstQtrDates = postResult.bayOccupancy[firstQtr][0];
+
+      let SfirstQtrDates = [];
+      if( firstQtr in postResult.bayOccupancy){
+        SfirstQtrDates = postResult.bayOccupancy[firstQtr][0];
+      }
+
       let BfirstQtrDates = [];
-      // console.log(postResult.baseLineOccupancy)
       if (firstQtr in postResult.baseLineOccupancy){
         BfirstQtrDates = postResult.baseLineOccupancy[firstQtr][0];
       }
@@ -621,7 +641,9 @@ const UploadState = (props) => {
       return allDates;
     }
 
-    // update post result data "E"s
+    // @loc     Postresult.js
+    // @desc    Update postResult data to be filled with the right number of "E" since baseline and algo can have overlapping quarters
+    // @param   (object, int)
     const updatePostResultEmpties = (postResult, minGapDays) => {
       let postResultUpdate = JSON.parse(JSON.stringify(postResult));
 
@@ -644,16 +666,18 @@ const UploadState = (props) => {
 
       // update scheduled
       result = postResultUpdate.bayOccupancy[qtrs[0]];
-      for( let i = 1; i < result.length; i++){
-        let EOcount = result[i].slice(1).length;
-        for (let j = EOcount; j < firstQtrDates.length; j++){
-          result[i].splice(1, 0, "E");
-          result[i].join();
+      if( result > 0 ){ // ensure that it is not null object
+        for( let i = 1; i < result.length; i++){
+          let EOcount = result[i].slice(1).length;
+          for (let j = EOcount; j < firstQtrDates.length; j++){
+            result[i].splice(1, 0, "E");
+            result[i].join();
+          }
         }
+
+        result[0] = firstQtrDates;
+        postResultUpdate.bayOccupancy[qtrs[0]] = result;
       }
-      
-      result[0] = firstQtrDates;
-      postResultUpdate.bayOccupancy[qtrs[0]] = result;
 
       // update bays and gaps for history
       if("minGap" in postResultUpdate){
@@ -672,7 +696,9 @@ const UploadState = (props) => {
       setPostResult(postResultUpdate, minGapDays, '');
     }
 
-    //update post result data when user click "Save"
+    // @loc     Postresultbody.js
+    // @desc    Update postResult when user save to history
+    // @param   (object, object (localStorage), string)
     const updatePostResult = (postResultDone, objs, quarter) => {
       objs = JSON.parse(objs);
       
@@ -691,12 +717,15 @@ const UploadState = (props) => {
       }
     }
 
-    const dateConversion = (dateString) => {
-      let output = dateString.split("/");
-      return new Date(output[2], output[1]-1, output[0]); 
-    }
-
+    // @loc     called in functions: setPostResult & reschedulePostResult
+    // @desc    set the initial conditions for endDate column
+    // @param   (object, string, int)
     const endDateCheck = (qtrObj, key, minGap) => {
+      const dateConversion = (dateString) => {
+        let output = dateString.split("/");
+        return new Date(output[2], output[1]-1, output[0]); 
+      }
+
       let intRedDate = dateConversion(qtrObj.intOpsShipReadinessDate);
       let MFGCommit = dateConversion(qtrObj.MFGCommitDate);
       
@@ -709,7 +738,9 @@ const UploadState = (props) => {
       }
     }
 
-    //set post result dates
+    // @loc     called in functions: saveResult & updatePostResultEmpties
+    // @desc    set the initial conditions for dates and date format to be "dd/mm/yyyy"
+    // @param   (object, int, string)
     const setPostResult = (postResultDone, minGapDays, type) => {
       const minGap = (24*60*60*1000) * minGapDays;
       const objItemsToChange = ["sendToStorageDate", "MRPDate", "intOpsShipReadinessDate", "MFGCommitDate", "shipRecogDate", "toolStartDate", 'endDate'];
@@ -758,30 +789,26 @@ const UploadState = (props) => {
         type: UPDATE_POST_RESULT_FORMAT,
         payload: postResultDone 
       })
-
-    }
-
-    const handlePostResultError = (postResultErrors, uniqueID, errorMsg, type) => {
-      if(errorMsg == null && uniqueID in postResultErrors){
-        delete postResultErrors[uniqueID];
-      } 
-
-      if(errorMsg !== null && !(uniqueID in postResultErrors)){
-        postResultErrors[uniqueID] = errorMsg;
-      }
-
-      // no need to dispatch since it's for instant check
     }
     
+    // @loc     PostResult.js
+    // @desc    Update the min gap field to state
+    // @param   (int)
     const setNewMinGap = (res) => dispatch({ type: UPDATE_NEW_MIN_GAP, payload: res })
+
+    // @loc     PostResultbody.js
+    // @desc    Check if reschedule button has been clicked
+    // @param   (bool)
     const updateReschedule = (res) => dispatch({ type: UPDATE_RESCHEDULE, payload: res })
+
+    // @loc     PostResultbody.js
+    // @desc    Check if quarter tab has been clicked
+    // @param   (bool)
     const tabChecker = (res) => dispatch({ type: UPDATE_TABCHECKER, payload: res })
 
-    // ##################################################################################################
-    // ########################################## HISTORY START #########################################
-    // ##################################################################################################
-
-    //save to history
+    // @loc     Postresultbody.js
+    // @desc    Save schedule to history
+    // @param   (object, int, int, int, int, int, string)
     const saveResult = async (postResult, bays, mingap, maxgap, staffID, histID, type) => {
       setLoading();
 
@@ -809,12 +836,16 @@ const UploadState = (props) => {
               payload: res.data
           })
       } catch (err) {
-          //prompt error
-
+        dispatch({
+          type: CREATE_RESULT_ERROR,
+          payload: err.response.data.message
+        })
       }
     }
 
-    // get a history
+    // @loc     HistoryDetails.js
+    // @desc    Return a schedule saved in history
+    // @param   (int, int)
     const getHistory = async (staffid, histid) => {
       try {
           const res = await axios.get(`http://localhost:8080/gethistory/${staffid}/${histid}`);
@@ -825,22 +856,6 @@ const UploadState = (props) => {
               payload: res.data
           })
       } catch (err) {
-          
-      }
-    }
-
-    // get ALL histories
-    const loadHistories = async (staffID) => {
-      try {
-        const res = await axios.get(`http://localhost:8080/history/${staffID}`);
-        // console.log(res);
-        
-        dispatch({
-            type: LOAD_ALL_HISTORY,
-            payload: res.data
-        })
-      } catch (err) {
-        // console.log(err);
         dispatch({
           type: CREATE_RESULT_ERROR,
           payload: err.response.data.message
@@ -848,17 +863,37 @@ const UploadState = (props) => {
       }
     }
 
-    const updateHistID = (histID) => dispatch({ type: SAVE_RESULT, payload: histID });
+    // @loc     History.js
+    // @desc    Return all schedules saved in history
+    // @param   (int)
+    const loadHistories = async (staffID) => {
+      try {
+        const res = await axios.get(`http://localhost:8080/history/${staffID}`);
 
-    // ##################################################################################################
-    // ########################################### HISTORY END ##########################################
-    // ##################################################################################################
+        dispatch({
+            type: LOAD_ALL_HISTORY,
+            payload: res.data
+        })
+      } catch (err) {
+        dispatch({
+          type: CREATE_RESULT_ERROR,
+          payload: err.response.data.message
+        })
+      }
+    }
+
+    // @loc     HistoryDetails.js
+    // @desc    Update histID retrieved to state
+    // @param   (int)
+    const updateHistID = (histID) => dispatch({ type: SAVE_RESULT, payload: histID });
 
     // @loc     Preresult.js
     // @desc    to create the first post schedule output result
     // @param   (array, array, int, int, int)
     const createResult = async (newbaseline, masterops, bays, mingap, maxgap) => {
         setLoading();
+
+        console.time('time');
 
         masterops.forEach(obj => {
             obj['Cycle Time Days'] = parseInt(obj['Cycle Time Days'])
@@ -880,11 +915,12 @@ const UploadState = (props) => {
                 payload: res.data
             })
         } catch (err) {
-            // dispatch({
-            //   type: CREATE_RESULT_ERROR,
-            //   payload: err.response.data.message
-            // })
+          dispatch({
+            type: CREATE_RESULT_ERROR,
+            payload: err.response.data.message
+          })
         }
+        console.timeEnd('time');
     }
 
     // @loc     Preresult.js
@@ -910,7 +946,7 @@ const UploadState = (props) => {
         if(scheduleCounter){
             dispatch({
                 type: UPLOAD_ERROR,
-                payload: 'Please upload a proper Masterops excel file'
+                payload: 'Please upload a proper Masterops excel file. Argo ID, Slot ID/UTID, Build Product, Cycle Time Days, MRP Date and MFG Commit Date column headers are required and cells in those columns must not be empty.'
             })
         } else {
             //filter by Tool
@@ -1120,7 +1156,7 @@ const UploadState = (props) => {
         if(baselineChecker){
           dispatch({
             type: UPLOAD_ERROR,
-            payload: 'Please upload a proper bay requirement file'
+            payload: `Please upload a proper bay requirement file. Slot ID/UTID column header is required and cells in that column must not be empty.`
           })
         } else {
           data.forEach(obj => obj['Slot ID/UTID'] = obj['Slot ID/UTID'].toString())

@@ -320,7 +320,12 @@ public class Product implements Comparable<Product>{
         // region = (String) productDetails.get("Region");
         // SOStatus = (String) productDetails.get("SO Status");
         // caerusPOQtr = (String) productDetails.get("Caerus PO Qtr");
-        cycleTimeDays = (Integer) productDetails.get("cycleTimeDays");
+        try {
+            cycleTimeDays = (Integer) productDetails.get("cycleTimeDays");
+        } catch (Exception e){
+            throw new RuntimeException("Please ensure that Cycle Time is not empty and in a numerical format");
+        }
+
         slotPlanNote = (String) productDetails.get("slotPlanNote");
         commentFor$Change = (String) productDetails.get("commentFor$Change");
         configurationNote = (String) productDetails.get("configurationNote");
@@ -393,21 +398,34 @@ public class Product implements Comparable<Product>{
             toolStartDate = GenericValidator.isDate((String) productDetails.get("toolStartDate"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("toolStartDate")): null;
         } catch (ParseException e){
             e.printStackTrace();
-
-        }        
+        }
 
         if (toolStartDate == null){
             toolStartDate = DateUtils.addDays(MRPDate, -cycleTimeDays); // Needed for history, which uses this constructor and does not have toolStartDate value
         }
 
+        if (MRPDate == null){
+            throw new RuntimeException("Please ensure that MRP Date is not empty, and in dd/mm/yyyy format");
+        }
+
         if (lockMRPDate != null && lockMRPDate){
-            latestToolStartDate = toolStartDate;
+            // Check if pulled forward beyond the initial recommended MRP Date
+            Date originalMRPDate = DateUtils.addDays(toolStartDate, cycleTimeDays);
+            if (MRPDate.before(originalMRPDate)){
+                throw new RuntimeException("The locked MRP date of a product (Slot ID: " +  slotID_UTID + ") cannot be brought forward earlier than the recommended MRP date of " + originalMRPDate);
+            }
+            latestToolStartDate = toolStartDate; // This is to 'reserve' the resources available to it first
         } else {
             latestToolStartDate = DateUtils.addDays(endDate, -cycleTimeDays);
         }
         
-        
+        // Special leave bay earlier than MFG Date Scenarios        
         if (sendToStorageDate != null){
+            Date originalMRPDate = DateUtils.addDays(toolStartDate, cycleTimeDays);
+
+            if (sendToStorageDate.before(MRPDate)){
+                throw new RuntimeException("The product with Slot ID: " +  slotID_UTID + " cannot be sent to storage before the earliest MRP date of " + originalMRPDate);
+            }
             leaveBayDate = sendToStorageDate;
         }
         else if (fabName != null && fabName.equals("OPEN")){
