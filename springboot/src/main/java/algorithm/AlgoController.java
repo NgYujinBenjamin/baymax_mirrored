@@ -16,7 +16,7 @@ import java.util.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
 
-import org.apache.poi.ss.usermodel.Cell;  
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.DateUtil;
 
@@ -31,33 +31,33 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RestController
 public class AlgoController {
 
-    @RequestMapping(path = "/firstScheduling", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
-    public String firstScheduling(@RequestBody firstSchedulingParam param) throws RuntimeException, Exception{
+    @RequestMapping(path = "/firstScheduling", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+    public String firstScheduling(@RequestBody firstSchedulingParam param) throws RuntimeException, Exception {
         List<Map<String, Object>> baseLineData;
         List<Map<String, Object>> data;
         Integer numBays;
         Integer minGap;
         Integer maxGap;
-        
+
         try {
             baseLineData = param.baseline;
             data = param.masterOps;
-            numBays = param.bay == null? 16: param.bay;
-            minGap = param.minGap == null? 0: param.minGap;
-            maxGap = param.maxGap == null? 90: param.maxGap;
-        } catch(Exception e) {
+            numBays = param.bay == null ? 16 : param.bay;
+            minGap = param.minGap == null ? 0 : param.minGap;
+            maxGap = param.maxGap == null ? 90 : param.maxGap;
+        } catch (Exception e) {
             return "JSON Reading Error";
         }
 
         ArrayList<Product> allProduct = new ArrayList<Product>();
         ArrayList<Product> baseLineProduct = new ArrayList<Product>();
-        
-        for (int i = 0; i < data.size(); i++){
+
+        for (int i = 0; i < data.size(); i++) {
             Product p = new Product(data.get(i));
             allProduct.add(p);
         }
 
-        for (int i = 0; i < baseLineData.size(); i++){
+        for (int i = 0; i < baseLineData.size(); i++) {
             Product p = new Product(baseLineData.get(i));
             baseLineProduct.add(p);
         }
@@ -69,7 +69,7 @@ public class AlgoController {
         BaySchedule baySchedule = null;
 
         Integer gapDiff = maxGap - minGap; // End date alr considers the min gap; Can only pull forward by gapDiff more days
-        
+
         HashSet<HashMap<String, Integer>> historyQuarterHC = new HashSet<HashMap<String, Integer>>();
         HashMap<String, Integer> quarterHC = new HeadCount(allProduct).getQuarterHC();
         historyQuarterHC.add(quarterHC);
@@ -77,25 +77,25 @@ public class AlgoController {
         Boolean quarterHCChanged = true;
         Boolean pastQuarterHC = false;
 
-        while (quarterHCChanged && !pastQuarterHC){
+        while (quarterHCChanged && !pastQuarterHC) {
             baySchedule = new BaySchedule(baseLineProduct, allProduct, quarterHC, numBays, gapDiff);
             // System.out.println(quarterHC);
 
             // For Logging
             ArrayList<Bay> schedule = baySchedule.getSchedule();
-            
-            try(PrintStream out = new PrintStream(new FileOutputStream("./firstScheduling_BayDiagnosis_LOG.txt"), true)){
+
+            try (PrintStream out = new PrintStream(new FileOutputStream("./firstScheduling_BayDiagnosis_LOG.txt"), true)) {
                 out.println("HeadCount Availability:" + quarterHC);
-                for (Bay b: schedule){
+                for (Bay b : schedule) {
                     ArrayList<Product> productList = b.getBaySchedule();
                     out.println("%%%%%%%%%%%%%%%% Bay " + b.getBayID() + " %%%%%%%%%%%%%%%%");
-                    for (Product p: productList){
-                        out.print("[ SlotID/UTID:" + p.getSlotID_UTID() + " | ToolStartDate:" + p.getToolStartDate() + " | LeaveBayDate:"  + p.getLeaveBayDate() + "] ->");
+                    for (Product p : productList) {
+                        out.print("[ SlotID/UTID:" + p.getSlotID_UTID() + " | ToolStartDate:" + p.getToolStartDate() + " | LeaveBayDate:" + p.getLeaveBayDate() + "] ->");
                         // out.print("[" + p.getArgoID() + " | " + p.getAssignedBayID() + " | "  + p.getGapDays() + "] ->");
                     }
                     out.println();
                 }
-            } catch (FileNotFoundException e){
+            } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
             // End of debugging
@@ -109,9 +109,9 @@ public class AlgoController {
             historyQuarterHC.add(newQuarterHC);
             Integer currHistoryQuarterHCSize = historyQuarterHC.size();
 
-            if (quarterHC.equals(newQuarterHC)){
+            if (quarterHC.equals(newQuarterHC)) {
                 quarterHCChanged = false;
-            } else if (prevHistoryQuarterHCSize == currHistoryQuarterHCSize){
+            } else if (prevHistoryQuarterHCSize == currHistoryQuarterHCSize) {
                 pastQuarterHC = true;
             } else {
                 quarterHC = newQuarterHC;
@@ -121,8 +121,8 @@ public class AlgoController {
         return BayRequirement.toJSONString(bayReq);
     }
 
-    @RequestMapping(path = "/subseqScheduling", method = RequestMethod.POST, consumes="application/json", produces= "application/json")
-    public String subseqScheduling(@RequestBody subseqSchedulingParam param) throws Exception{
+    @RequestMapping(path = "/subseqScheduling", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+    public String subseqScheduling(@RequestBody subseqSchedulingParam param) throws Exception {
         Map<String, List<List<Object>>> baseLineOccupancy;
         Map<String, List<List<Object>>> bayOccupancy;
         Integer numBays;
@@ -132,41 +132,41 @@ public class AlgoController {
         try {
             baseLineOccupancy = param.baseLineOccupancy;
             bayOccupancy = param.bayOccupancy;
-            numBays = param.numBays;
-            minGap = param.minGap;
-            maxGap = param.maxGap;
+            numBays = param.numBays == null ? 16 : param.numBays;
+            minGap = param.minGap == null ? 0 : param.minGap;
+            maxGap = param.maxGap == null ? 90 : param.maxGap;
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             return "JSON Reading Error";
         }
-        
+
         ArrayList<Product> allProduct = new ArrayList<Product>();
         ArrayList<Product> baseLineProduct = new ArrayList<Product>();
-        
+
         Set<String> baseLineQtrs = baseLineOccupancy.keySet();
-        for (String qtr: baseLineQtrs){
+        for (String qtr : baseLineQtrs) {
             List<List<Object>> qtrOccupancy = baseLineOccupancy.get(qtr);
             // Within each quarter
-            for (int i = 1; i < qtrOccupancy.size(); i++){
+            for (int i = 1; i < qtrOccupancy.size(); i++) {
                 // Skip index 0 because it is the [weekOf]
                 Object productRaw = qtrOccupancy.get(i).get(0);
                 Product p = new Product(productRaw);
-                baseLineProduct.add(p);                   
+                baseLineProduct.add(p);
             }
         }
-        
+
         Set<String> futureQtrs = bayOccupancy.keySet();
-        for (String qtr: futureQtrs){
+        for (String qtr : futureQtrs) {
             List<List<Object>> qtrOccupancy = bayOccupancy.get(qtr);
             // Within each quarter
-            for (int i = 1; i < qtrOccupancy.size(); i++){
+            for (int i = 1; i < qtrOccupancy.size(); i++) {
                 // Skip index 0 because it is the [weekOf]
                 Object productRaw = qtrOccupancy.get(i).get(0);
                 Product p = new Product(productRaw);
-                allProduct.add(p);                   
+                allProduct.add(p);
             }
         }
-        
+
         Collections.sort(allProduct);
         Collections.sort(baseLineProduct);
 
@@ -174,7 +174,7 @@ public class AlgoController {
         BaySchedule baySchedule = null;
 
         Integer gapDiff = maxGap - minGap; // End date alr considers the min gap; Can only pull forward by gapDiff more days
-        
+
         HashSet<HashMap<String, Integer>> historyQuarterHC = new HashSet<HashMap<String, Integer>>();
         HashMap<String, Integer> quarterHC = new HeadCount(allProduct).getQuarterHC();
         historyQuarterHC.add(quarterHC);
@@ -182,26 +182,26 @@ public class AlgoController {
         Boolean quarterHCChanged = true;
         Boolean pastQuarterHC = false;
 
-        while (quarterHCChanged && !pastQuarterHC){
+        while (quarterHCChanged && !pastQuarterHC) {
             // System.out.println(quarterHC);
-            
+
             baySchedule = new BaySchedule(baseLineProduct, allProduct, quarterHC, numBays, gapDiff);
 
             // For Logging
             ArrayList<Bay> schedule = baySchedule.getSchedule();
-            
-            try(PrintStream out = new PrintStream(new FileOutputStream("./subseqScheduling_BayDiagnosis_LOG.txt"), true)){
+
+            try (PrintStream out = new PrintStream(new FileOutputStream("./subseqScheduling_BayDiagnosis_LOG.txt"), true)) {
                 out.println("HeadCount Availability:" + quarterHC);
-                for (Bay b: schedule){
+                for (Bay b : schedule) {
                     ArrayList<Product> productList = b.getBaySchedule();
                     out.println("%%%%%%%%%%%%%%%% Bay " + b.getBayID() + " %%%%%%%%%%%%%%%%");
-                    for (Product p: productList){
-                        out.print("[ SlotID/UTID:" + p.getSlotID_UTID() + " | ToolStartDate:" + p.getToolStartDate() + " | LeaveBayDate:"  + p.getLeaveBayDate() + "] ->");
+                    for (Product p : productList) {
+                        out.print("[ SlotID/UTID:" + p.getSlotID_UTID() + " | ToolStartDate:" + p.getToolStartDate() + " | LeaveBayDate:" + p.getLeaveBayDate() + "] ->");
                         // out.print("[" + p.getArgoID() + " | " + p.getAssignedBayID() + " | "  + p.getGapDays() + "] ->");
                     }
                     out.println();
                 }
-            } catch (FileNotFoundException e){
+            } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
             // End of debugging
@@ -210,16 +210,16 @@ public class AlgoController {
             allProduct = baySchedule.getAllProduct();
             baseLineProduct = baySchedule.getBaseLineProduct();
             bayReq = new BayRequirement(baseLineProduct, allProduct);
-            
+
             // Check if quarterHC has changed
             HashMap<String, Integer> newQuarterHC = new HeadCount(allProduct).getQuarterHC();
             Integer prevHistoryQuarterHCSize = historyQuarterHC.size();
             historyQuarterHC.add(newQuarterHC);
             Integer currHistoryQuarterHCSize = historyQuarterHC.size();
 
-            if (quarterHC.equals(newQuarterHC)){
+            if (quarterHC.equals(newQuarterHC)) {
                 quarterHCChanged = false;
-            } else if (prevHistoryQuarterHCSize == currHistoryQuarterHCSize){
+            } else if (prevHistoryQuarterHCSize == currHistoryQuarterHCSize) {
                 pastQuarterHC = true;
             } else {
                 quarterHC = newQuarterHC;
