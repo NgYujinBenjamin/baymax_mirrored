@@ -58,6 +58,7 @@ public class MassSlotUploadDetails implements Comparable<MassSlotUploadDetails>{
     private String flex04;
     private String buildQtr;
     private Date sendToStorageDate;
+    private Boolean lockMRPDate;
     @Exclude
     private Date latestToolStartDate;
     
@@ -70,7 +71,6 @@ public class MassSlotUploadDetails implements Comparable<MassSlotUploadDetails>{
     
     private Integer gapDays;
     
-    private Boolean lockMRPDate = null;
     
     
     @Exclude
@@ -404,6 +404,14 @@ public class MassSlotUploadDetails implements Comparable<MassSlotUploadDetails>{
         return assignedBayID;
     }
 
+    public int getlockMRPDate(){
+        if (lockMRPDate == null || lockMRPDate == false){
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+
     /**
      * Setters
      */
@@ -627,5 +635,9 @@ public class MassSlotUploadDetails implements Comparable<MassSlotUploadDetails>{
 
     public void setAssignedBayID(Integer bayID){
         this.assignedBayID = bayID;
+    }
+
+    public void setlockMRPDate(Boolean lockMRPDate){
+        this.lockMRPDate = lockMRPDate;
     }
 }
