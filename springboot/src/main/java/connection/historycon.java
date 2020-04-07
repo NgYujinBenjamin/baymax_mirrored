@@ -115,7 +115,7 @@ public class historycon extends main.java.connection.mysqlcon {
             "refurbStartDate, refurbCompleteDate, donorStatus, coreUTID, coreNotes, "+
             "MFGStatus, quantity, configurationNote, dropShip, RMATool, productPN, sendToStorageDate, "+
             "handOffDateToDE, handOffDateBackToMFG, installStartDate, cycleTimeDays, flex01, "+
-            "flex02, flex03, flex04, fulfilled, buildQtr, endDate) ";
+            "flex02, flex03, flex04, fulfilled, buildQtr, endDate, lockMRPDate) ";
             defSql += "values (";
             defSql += "'" + historyId + "',";
             defSql += "'" + isBaseLine + "',";
@@ -169,7 +169,8 @@ public class historycon extends main.java.connection.mysqlcon {
             defSql += "null ,";
             defSql += "0,";
             defSql += "'" + row.getBuildQtr() + "',";
-            defSql += "'" + row.getEndDate() + "'";
+            defSql += "'" + row.getEndDate() + "',";
+            defSql += "'" + row.getlockMRPDate() + "'";
 
             defSql += ");";
             // return defSql;
@@ -240,6 +241,19 @@ public class historycon extends main.java.connection.mysqlcon {
                 //45-47 : flex01 - flex03
                 if (i==45 || i==46 || i==47){
                     continue;
+                } else if(i==52){
+                    try{
+                        //52: lockMRPDate
+                        if ((int)rs.getObject(i) == 0){
+                            row.put(md.getColumnName(i), false);
+                        } else if((int)rs.getObject(i) == 1){
+                            row.put(md.getColumnName(i), true);
+                        }
+                    } catch(Exception e){
+                        row.put(md.getColumnName(i), rs.getObject(i));
+                        continue;
+                    }
+                    
                 } else {
                     try {
                         if (rs.getObject(i) instanceof Date){
@@ -280,6 +294,18 @@ public class historycon extends main.java.connection.mysqlcon {
                 //45-47 : flex01 - flex03
                 if (i==45 || i==46 || i==47){
                     continue;
+                } else if(i==52){
+                    try{
+                        //52: lockMRPDate
+                        if ((int)rs.getObject(i) == 0){
+                            row.put(md.getColumnName(i), false);
+                        } else if((int)rs.getObject(i) == 1){
+                            row.put(md.getColumnName(i), true);
+                        }
+                    } catch(Exception e){
+                        row.put(md.getColumnName(i), rs.getObject(i));
+                        continue;
+                    }
                 } else {
                     try {
                         if (rs.getObject(i) instanceof Integer){
@@ -391,7 +417,7 @@ public class historycon extends main.java.connection.mysqlcon {
             "refurbStartDate, refurbCompleteDate, donorStatus, coreUTID, coreNotes, "+
             "MFGStatus, quantity, configurationNote, dropShip, RMATool, productPN, sendToStorageDate, "+
             "handOffDateToDE, handOffDateBackToMFG, installStartDate, cycleTimeDays, flex01, "+
-            "flex02, flex03, flex04, fulfilled, buildQtr, endDate) ";
+            "flex02, flex03, flex04, fulfilled, buildQtr, endDate, lockMRPDate) ";
             defSql += "values (";
             defSql += "'" + msuId + "',";
             defSql += "'" + isBaseLine + "',";
@@ -445,7 +471,8 @@ public class historycon extends main.java.connection.mysqlcon {
             defSql += "null ,";
             defSql += "0,";
             defSql += "'" + row.getBuildQtr() + "',";
-            defSql += "'" + row.getEndDate() + "'";
+            defSql += "'" + row.getEndDate() + "',";
+            defSql += "'" + row.getlockMRPDate() + "'";
 
             defSql += ");";
             // return defSql;
