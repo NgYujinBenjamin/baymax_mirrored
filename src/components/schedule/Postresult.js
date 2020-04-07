@@ -30,7 +30,7 @@ const Postresult = () => {
             updatePostResultEmpties(postResult, minGap);
         }
         //eslint-disable-next-line
-    }, [postResult])
+    }, [postResult, minGap])
 
     const qtrs = new Array();
     if(postResult !== null){
