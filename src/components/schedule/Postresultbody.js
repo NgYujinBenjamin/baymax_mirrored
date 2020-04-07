@@ -90,7 +90,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
         let dateParts, fieldCheck, MRPoriginal;
         if( (type == 'MRPDate' || type == 'sendToStorageDate') && validateDate(value) == null){
             dateParts = value.split("/");
-            fieldCheck = new Date(dateParts[2], (dateParts[1] - 1), dateParts[0]);
+            fieldCheck = new Date(parseInt(dateParts[2]), parseInt((dateParts[1] - 1)), parseInt(dateParts[0]));
             MRPoriginal = new Date(postResult.bayOccupancy[quarter][index+1][0].MRPDate);
             
             // check pull in MRPDate 
@@ -128,7 +128,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
                         if (checked){
                             obj[0].endDate = obj[0].MRPDate;
                         } else{
-                            endDateCheck(obj[0], 'endDate', (24*60*60*1000) * minGap);
+                            endDateCheck(obj[0], 'endDate', minGap, 'postResultCheck');
                         }
                         return [ {...obj[0], [name]: checked}, ...obj.slice(1) ];
                     }

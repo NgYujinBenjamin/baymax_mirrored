@@ -20,16 +20,13 @@ const Postresult = () => {
     const { loadUser, updateNavItem } = authContext
     const { histID, setNewMinGap, newMinGap, bays, minGap, maxGap, setBays, setMinGap, setMaxGap, currentQuarter, postResult, postResultDone, postResultErrors, tabChecker, updateReschedule, createExport, createExportSchedule, updateSave, clearAll, updatePostResultEmpties } = uploadContext;
     
-    // console.log(postResult)
-
     useEffect(() => {
         updateNavItem(0);
         if(postResult !== null){
-            if(! ("minGap" in postResult) ){
-                setNewMinGap(minGap);
-            } else{
-                setNewMinGap(postResult.minGap);
+            if("minGap" in postResult){
+                setMinGap(postResult.minGap);
             }
+            setNewMinGap(minGap);
             updatePostResultEmpties(postResult, minGap);
         }
         //eslint-disable-next-line

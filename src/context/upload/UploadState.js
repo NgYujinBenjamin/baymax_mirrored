@@ -572,7 +572,7 @@ const UploadState = (props) => {
       Object.keys(postResultDone).map(type => {
         Object.keys(postResultDone[type]).map(qtr => {
           for(let i = 1; i < postResultDone[type][qtr].length; i++){
-            endDateCheck(postResultDone[type][qtr][i][0], 'endDate', newMinGap); // set the new endDate based on the newMinGap
+            endDateCheck(postResultDone[type][qtr][i][0], 'endDate', newMinGap, ''); // set the new endDate based on the newMinGap
             postResultDone[type][qtr][i][0].cycleTimeDays = parseInt(postResultDone[type][qtr][i][0].cycleTimeDays);
           }
         })
@@ -720,7 +720,8 @@ const UploadState = (props) => {
     // @loc     called in functions: setPostResult & reschedulePostResult
     // @desc    set the initial conditions for endDate column
     // @param   (object, string, int)
-    const endDateCheck = (qtrObj, key, minGap) => {
+    const endDateCheck = (qtrObj, key, minGap, checker) => {
+      minGap = (24*60*60*1000) * minGap;
       const dateConversion = (dateString) => {
         let output = dateString.split("/");
         return new Date(output[2], output[1]-1, output[0]); 
@@ -729,12 +730,14 @@ const UploadState = (props) => {
       let intRedDate = dateConversion(qtrObj.intOpsShipReadinessDate);
       let MFGCommit = dateConversion(qtrObj.MFGCommitDate);
       
-      if (qtrObj.lockMRPDate){ // if true, endDate == MRPDate
+      if ((checker !== 'postResultCheck' && qtrObj.lockMRPDate) || (checker == 'postResultCheck' && !qtrObj.lockMRPDate)){ // if true, endDate == MRPDate
         qtrObj[key] = qtrObj.MRPDate;
-      } else if (qtrObj.fabName == "OPEN"){ // if OPEN status, endDate == IRR - mingap
-        qtrObj[key] = new Date(intRedDate.setTime(intRedDate.getTime() - minGap)).toLocaleDateString('en-GB')
-      } else { // normal situation - endDate == MFG - mingap
-        qtrObj[key] = new Date(MFGCommit.setTime(MFGCommit.getTime() - minGap)).toLocaleDateString('en-GB');
+      } else {
+        if (qtrObj.fabName == "OPEN"){ // if OPEN status, endDate == IRR - mingap
+          qtrObj[key] = new Date(intRedDate.setTime(intRedDate.getTime() - minGap)).toLocaleDateString('en-GB');
+        } else { // normal situation - endDate == MFG - mingap
+          qtrObj[key] = new Date(MFGCommit.setTime(MFGCommit.getTime() - minGap)).toLocaleDateString('en-GB');
+        }
       }
     }
 
@@ -742,7 +745,6 @@ const UploadState = (props) => {
     // @desc    set the initial conditions for dates and date format to be "dd/mm/yyyy"
     // @param   (object, int, string)
     const setPostResult = (postResultDone, minGapDays, type) => {
-      const minGap = (24*60*60*1000) * minGapDays;
       const objItemsToChange = ["sendToStorageDate", "MRPDate", "intOpsShipReadinessDate", "MFGCommitDate", "shipRecogDate", "toolStartDate", 'endDate'];
 
       Object.keys(postResultDone).map( occupancy => {
@@ -771,7 +773,7 @@ const UploadState = (props) => {
                     currentQtr[i][0][key] = "";
                   }
                 } else{
-                  endDateCheck(currentQtr[i][0], key, minGap);
+                  endDateCheck(currentQtr[i][0], key, minGapDays, '');
                 }
 
               })
@@ -819,7 +821,7 @@ const UploadState = (props) => {
       postResult.staffID = parseInt(staffID);
       postResult.histID = histID;
 
-      console.log(postResult);
+      // console.log(postResult);
 
       const config = {
           headers: {
@@ -932,7 +934,7 @@ const UploadState = (props) => {
         let data = await convertExcelToJSON(file);
         let scheduleCounter = false;
 
-        console.log(data)
+        // console.log(data)
 
         data[data.length - 1]['Argo ID'] === undefined && data.pop();
 
