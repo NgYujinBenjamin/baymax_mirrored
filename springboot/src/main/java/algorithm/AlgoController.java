@@ -42,9 +42,9 @@ public class AlgoController {
         try {
             baseLineData = param.baseline;
             data = param.masterOps;
-            numBays = param.bay;
-            minGap = param.minGap;
-            maxGap = param.maxGap;
+            numBays = param.bay == null? 16: param.bay;
+            minGap = param.minGap == null? 0: param.minGap;
+            maxGap = param.maxGap == null? 90: param.maxGap;
         } catch(Exception e) {
             return "JSON Reading Error";
         }
