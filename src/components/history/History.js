@@ -19,7 +19,7 @@ const History = () => {
             loadHistories(user['staff_id']);
         }
         //eslint-disable-next-line
-    }, [])
+    }, [user])
 
     return (
         <Fragment>
