@@ -38,9 +38,9 @@ public class HistoryController {
         try {
             baseLineOccupancy = param.baseLineOccupancy;
             bayOccupancy = param.bayOccupancy;
-            bay = param.numBays;
-            minGap = param.minGap;
-            maxGap = param.maxGap;
+            bay = param.numBays == null ? 16 : param.numBays;
+            minGap = param.minGap == null ? 0 : param.minGap;
+            maxGap = param.maxGap == null ? 90 : param.maxGap;
             staffID = param.staffID;
             histID = param.histID;
         } catch (Exception e) {
@@ -93,13 +93,13 @@ public class HistoryController {
         // hardcoded historyID to be 1 should be retrieved to see which is the next historyID to be added
         int id = conn.getLastHistoryID();
         int next_id = id + 1;
-        if (histID != null){
+        if (histID != null) {
             conn.removeSpecificMSU(histID);
 
             conn.updateMSU(baseLineList, histID, 1);
             conn.updateMSU(MSUList, histID, 0);
 
-            return conn.updateHistory(String.valueOf(histID),String.valueOf(staffID), String.valueOf(minGap), String.valueOf(maxGap), String.valueOf(bay), modifiedDate);
+            return conn.updateHistory(String.valueOf(histID), String.valueOf(staffID), String.valueOf(minGap), String.valueOf(maxGap), String.valueOf(bay), modifiedDate);
             // return histID;
         }
         conn.addMassSlotUpload(baseLineList, next_id, 1);
@@ -142,7 +142,7 @@ public class HistoryController {
         // System.out.println(bayReq.getBayOccupancy().get("CY20Q1").get(0));
         // System.out.println(rv.baseLineOccupancy.get("CY20Q1").get(0));
         // return rv;
-        
+
         Gson gson = new GsonBuilder().serializeNulls().create();
         String json = gson.toJson(rv);
         return json;
