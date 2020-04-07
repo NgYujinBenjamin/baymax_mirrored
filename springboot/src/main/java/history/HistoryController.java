@@ -63,7 +63,6 @@ public class HistoryController {
                     //product (CY19Q4's [1,2,3,4,...])
                     p = new MassSlotUploadDetails(baseLineOccupancyList.get(i).get(0));
                     baseLineList.add(p);
-
                 }
             }
         }
@@ -96,7 +95,7 @@ public class HistoryController {
         int next_id = id + 1;
         if (histID != null){
             conn.removeSpecificMSU(histID);
-            
+
             conn.updateMSU(baseLineList, histID, 1);
             conn.updateMSU(MSUList, histID, 0);
 
@@ -144,7 +143,7 @@ public class HistoryController {
         // System.out.println(rv.baseLineOccupancy.get("CY20Q1").get(0));
         // return rv;
         
-        Gson gson = new GsonBuilder().create();
+        Gson gson = new GsonBuilder().serializeNulls().create();
         String json = gson.toJson(rv);
         return json;
 
