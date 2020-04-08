@@ -24,6 +24,7 @@ const Baseline = (props) => {
 
         if(error !== null){
             setAlert(error, 'error')
+            setFile(null)
             uploadClearError()
         }
 
@@ -41,14 +42,12 @@ const Baseline = (props) => {
 
     const [expanded, setExpanded] = useState(false);
     const [file, setFile] = useState(null);
-    const [name, setName] = useState(null);
 
     const handleExpandBtn = (event) => {
         setExpanded(!expanded);
     }
 
     const handleFileChange = (event) => {
-        setName(event.target.files[0].name);
         setFile(event.target.files[0]);
     }
 
@@ -59,10 +58,11 @@ const Baseline = (props) => {
     }
 
     const handleCollapseSubmit = (event) => {
-        const splitFilename = name.split('.')
+        const splitFilename = file.name.split('.')
 
         if(splitFilename[splitFilename.length - 1] !== 'xlsx' && splitFilename[splitFilename.length -1] !== 'xlsm'){
             setAlert('Please upload a .xlsx or .xlsm excel file', 'error')
+            setFile(null);
         } else {
             setBaseline(file);
         }
@@ -115,9 +115,9 @@ const Baseline = (props) => {
                                 </Button>
                             </label>
                             <Typography component='span' variant='body2' style={{ marginLeft: '12px'}}>
-                                {name !== null && name}
+                                {file && file.name}
                             </Typography>
-                            {(file && name) && <Button className={classes.collapseButton} fullWidth variant='contained' color='primary' onClick={handleCollapseSubmit}>Submit</Button>}
+                            {file && <Button className={classes.collapseButton} fullWidth variant='contained' color='primary' onClick={handleCollapseSubmit}>Submit</Button>}
                         </Box>
                     </Collapse>
                 </CardContent>
