@@ -96,8 +96,6 @@ const Schedule = (props) => {
         } else if(splitFilename[splitFilename.length - 1] !== 'xlsx' && splitFilename[splitFilename.length - 1] !== 'xlsm') {
             setAlert('Please upload a .xlsx or .xlsm excel file', 'error');
         } else {
-            setStepCount(stepcount + 1);
-
             setBays(parseInt(bayComponent));
             setMinGap(parseInt(minGapTime));
             setMaxGap(parseInt(maxGapTime));
