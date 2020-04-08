@@ -892,7 +892,13 @@ public class Product implements Comparable<Product>{
     public void setToolStartDate(Date toolStartDate) {
         this.toolStartDate = toolStartDate;
         this.MRPDate = DateUtils.addDays(toolStartDate, cycleTimeDays);
-        this.gapDays = (int) ((MFGCommitDate.getTime() - MRPDate.getTime())/ (24 * 60 * 60 * 1000));
+
+        if (this.fabName.equals("OPEN")){
+            this.gapDays = (int) ((intOpsShipReadinessDate.getTime() - MRPDate.getTime())/ (24 * 60 * 60 * 1000));
+        } else {
+            this.gapDays = (int) ((MFGCommitDate.getTime() - MRPDate.getTime())/ (24 * 60 * 60 * 1000));
+        }
+
         
         Integer MRPYear = MRPDate.getYear() - 100;
         Integer MRPMonth = MRPDate.getMonth();
