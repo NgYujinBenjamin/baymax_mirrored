@@ -1,22 +1,8 @@
 {
-  "name": "cra-electron-app",
+  "name": "baymax-application",
   "version": "0.1.0",
   "private": true,
   "homepage": "./",
-  "build": {
-    "appId": "some.id.ofyours",
-    "directories": {
-      "buildResources": "assets"
-    },
-    "win": {
-      "category": "your.app.category.type",
-      "iconUrl": "path-to-icon.png"
-    },
-    "mac": {
-      "category": "your.app.category.type",
-      "iconUrl": "path-to-icon.png"
-    }
-  },
   "dependencies": {
     "@material-ui/core": "^4.9.5",
     "@material-ui/icons": "^4.5.1",
@@ -27,9 +13,6 @@
     "axios": "^0.19.1",
     "concurrently": "^5.0.2",
     "cross-env": "^6.0.3",
-    "electron": "^7.1.7",
-    "electron-builder": "^21.2.0",
-    "electron-reload": "^1.5.0",
     "nodemon": "^2.0.2",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
@@ -41,14 +24,10 @@
     "xlsx": "^0.15.4"
   },
   "scripts": {
-    "electron-nodemon": "cross-env NODE_ENV=development nodemon --exec \"\"electron electron.js\"\"",
-    "electron": "cross-env NODE_ENV=development electron electron.js",
-    "react-start": "cross-env BROWSER=none react-scripts start",
     "react": "react-scripts start",
     "react-build": "react-scripts build",
     "react-test": "react-scripts test",
     "react-eject": "react-scripts eject",
-    "electron-start": "concurrently \"npm run react-start\" \"wait-on http://localhost:3000 && npm run electron\"",
     "start": "npm run react",
     "server": "cd springboot && mvn spring-boot:run",
     "dev": "concurrently \"npm run server\" \"npm start\""

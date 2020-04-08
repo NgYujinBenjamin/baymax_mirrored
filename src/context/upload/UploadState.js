@@ -38,8 +38,12 @@ const UploadState = (props) => {
     // @loc     PostResult.js
     // @desc    export of Bay_Requirement excel file
     // @param   (object)
-    const createExportSchedule = file => {
+    const createExportSchedule = postOutput => {
         setLoading();
+
+        //clone the postOutput so it won't affect the saving of results
+        //const file = {...postOutput};
+        let file = JSON.parse(JSON.stringify(postOutput))
 
         dispatch({
           type: EXPORT_RESULT,
@@ -386,8 +390,12 @@ const UploadState = (props) => {
     // @loc     PostResult.js
     // @desc    export of Mass_Slot_Upload excel file
     // @param   (object)
-    const createExport = file => {
+    const createExport = postOutput => {
         setLoading();
+
+        //clone the postOutput so it won't affect the saving of results
+        //const file = {...postOutput};
+        let file = JSON.parse(JSON.stringify(postOutput))
 
         dispatch({ type: EXPORT_SCHEDULE })
 
