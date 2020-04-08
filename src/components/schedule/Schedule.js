@@ -18,7 +18,7 @@ const Schedule = (props) => {
 
     const { setAlert } = alertContext;
     const { loadUser, updateNavItem } = authContext
-    const { setSchedule, setBays, clearPreresult, schedule, loading, scheduleDone, postResult, error, uploadClearError, stepcount, setStepCount, baseline, setMinGap, setMaxGap, success } = uploadContext;
+    const { setSchedule, setBays, postResultDone, clearPreresult, schedule, loading, scheduleDone, postResult, error, uploadClearError, stepcount, setStepCount, baseline, setMinGap, setMaxGap, success } = uploadContext;
 
     useEffect(() => {
         loadUser();
@@ -129,7 +129,7 @@ const Schedule = (props) => {
             <ScheduleStep/>
             <Card>
                 <CardContent>
-                    {schedule === null && 
+                    {schedule === null && postResultDone == null && 
                         <Box className={classes.box}>
                             <Grid container spacing={3}>
                                 <Grid item xs>
