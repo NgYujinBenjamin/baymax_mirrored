@@ -108,7 +108,11 @@ public class BaySchedule{
         Date earliestToolStartDate;
         if (p.getLockMRPDate() != null && p.getLockMRPDate()){
             // Generate new tool start date based on the specified cycle time
-            earliestToolStartDate = DateUtils.addDays(MRPDate, -p.getCycleTimeDays());
+            earliestToolStartDate = latestToolStartDate;
+            Date today = new Date();
+            if (earliestToolStartDate.before(today)){
+                earliestToolStartDate = today;
+            }
         } else {
             // Pull forward the date as early as possible, or if necessary, delay the toolStart (e.g. if latestToolStart is before today, or before bayAvailDate)
             earliestToolStartDate = adjustToolStart(latestToolStartDate, bayAvailDate, gapDiff);

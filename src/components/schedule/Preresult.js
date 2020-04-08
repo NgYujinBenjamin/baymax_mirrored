@@ -19,6 +19,7 @@ const Preresult = () => {
     const [objs, setObjects] = useState(schedule);
 
     useEffect(() => {
+        setStepCount(stepcount + 1);
         updateNavItem(0)
         //eslint-disable-next-line
     }, [])

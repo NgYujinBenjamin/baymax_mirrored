@@ -63,7 +63,7 @@ const PostresultItem = memo(({ result, id, onChange }) => {
                     { id === 'predicted' ? <Input error={cycleTimeUnique in postResultErrors} id={slotID_UTID + "_cycleTime"} type='text' name={cycleName} value={cycleTime} onChange={onChange} required /> : cycleTime }
                     { cycleTimeUnique in postResultErrors && <FormHelperText className={classes.errorText}>{postResultErrors[cycleTimeUnique]}</FormHelperText>}
                 </TableCell>
-                <TableCell align='center'> {id === 'predicted' ? <Checkbox name={lockMRPName} id={slotID_UTID + "_lockMRPDate"} checked={lockMRPCheck} onChange={onChange} color="primary" /> : null} </TableCell>
+                <TableCell align='center'> {id === 'predicted' ? <Checkbox name={lockMRPName} disabled={new Date(endDate) > new Date(MRPDate)} id={slotID_UTID + "_lockMRPDate"} checked={lockMRPCheck} onChange={onChange} color="primary" /> : null} </TableCell>
                 <TableCell> 
                     { id === 'predicted' ? <Input error={storageUnique in postResultErrors} id={slotID_UTID + "_storageDate"} type='text' name={storageName} value={storageDate} onChange={onChange} /> : null }
                     { storageUnique in postResultErrors && <FormHelperText className={classes.errorText}>{postResultErrors[storageUnique]}</FormHelperText>}                     

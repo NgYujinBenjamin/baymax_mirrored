@@ -59,6 +59,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
                 // rescheduling
                 if(reschedule){
                     reschedulePostResult(postResultDone, bays, newMinGap, maxGap);
+                    setAlert("Schedule has been regenerated!", 'success');
                     updateReschedule(false);
                 }
             }

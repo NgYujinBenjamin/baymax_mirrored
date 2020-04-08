@@ -139,7 +139,7 @@ const Postresult = () => {
             <Box className={classes.marginTop}>
                 <Grid container spacing={1}>
                     <Grid item xs>
-                        <Button fullWidth variant='contained' id='clearAll' onClick={handleClearAll} startIcon={<DeleteIcon />} color='secondary'>Clear All</Button>
+                        <Button fullWidth disabled={!(histID == null)} variant='contained' id='clearAll' onClick={handleClearAll} startIcon={<DeleteIcon />} color='secondary'>Clear All</Button>
                     </Grid>
                     <Grid item xs>
                         {histID == null ? 
