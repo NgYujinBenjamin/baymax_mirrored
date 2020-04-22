@@ -17,6 +17,7 @@ import com.google.gson.*;
 import main.java.algorithm.Objects.*;
 import main.java.algorithm.Calculation.*;
 import main.java.authentication.json.JsonObject;
+import main.java.authentication.json.HistoryDetails;
 
 @CrossOrigin
 @RestController
@@ -154,7 +155,7 @@ public class HistoryController {
     }
 
     @RequestMapping(path = "/history/{staffId}", method = RequestMethod.GET, produces = "application/json")
-    public ArrayList<JsonObject> getHistory(@PathVariable("staffId") String staffId) throws SQLException, ClassNotFoundException, ParseException {
+    public ArrayList<HistoryDetails> getHistory(@PathVariable("staffId") String staffId) throws SQLException, ClassNotFoundException, ParseException {
         return conn.getHistory(staffId);
     }
 

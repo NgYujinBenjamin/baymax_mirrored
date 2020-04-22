@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 public class userscon extends main.java.connection.mysqlcon {
 
+
     public RegistrationDetails getUser(String username) throws SQLException, ClassNotFoundException {
         Connection con = super.getConnection();
         Statement stmt = con.createStatement();
@@ -117,16 +118,67 @@ public class userscon extends main.java.connection.mysqlcon {
         return count > 0;
     }
 
-    public boolean deleteUser(String staffid) throws SQLException, ClassNotFoundException {
+    /**
+     * Remove user related data from all the database tables
+     *
+     * @param staffid
+     * @param historyDetails
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public boolean deleteUser(String staffid, ArrayList<HistoryDetails> historyDetails) throws SQLException, ClassNotFoundException {
         Connection con = super.getConnection();
-        String query = "DELETE FROM users where staff_id = ?";
-        PreparedStatement pstmt = con.prepareStatement(query);
-        pstmt.setString(1, staffid);
 
-        int count = pstmt.executeUpdate();
-        con.close();
+        con.setAutoCommit(false);
 
-        return count > 0;
+        // delete mass slot upload data
+        String queryDeleteMassSlotUpload = "DELETE FROM mass_slot_upload where historyID = ?";
+        PreparedStatement pstmtDeleteMSU = con.prepareStatement(queryDeleteMassSlotUpload);
+        for (HistoryDetails historyDetail : historyDetails) {
+            pstmtDeleteMSU.setString(1, historyDetail.getHistID());
+            pstmtDeleteMSU.addBatch();
+        }
+
+        // delete baseline data
+        String queryDeleteBaseline = "DELETE FROM baseline where staff_id = ?";
+        PreparedStatement pstmtDeleteBaseline = con.prepareStatement(queryDeleteBaseline);
+        pstmtDeleteBaseline.setString(1, staffid);
+        pstmtDeleteBaseline.addBatch();
+
+        // delete history data
+        String queryDeleteHistory = "DELETE FROM history where staff_id = ?";
+        PreparedStatement pstmtDeleteHistory = con.prepareStatement(queryDeleteHistory);
+        pstmtDeleteHistory.setString(1, staffid);
+        pstmtDeleteHistory.addBatch();
+
+        // delete user data
+        String queryDeleteUser = "DELETE FROM users where staff_id = ?";
+        PreparedStatement pstmtDeleteUser = con.prepareStatement(queryDeleteUser);
+        pstmtDeleteUser.setString(1, staffid);
+        pstmtDeleteUser.addBatch();
+
+        int[] deleteCount = pstmtDeleteMSU.executeBatch();
+        int deleteMSUStatus = super.checkUpdateCounts(deleteCount);
+
+        int[] deleteBaselineCount = pstmtDeleteBaseline.executeBatch();
+        int deleteBaselineStatus = super.checkUpdateCounts(deleteBaselineCount);
+
+        int[] deleteHistoryCount = pstmtDeleteHistory.executeBatch();
+        int deleteHistoryStatus = super.checkUpdateCounts(deleteHistoryCount);
+
+        int[] deleteUserCount = pstmtDeleteUser.executeBatch();
+        int deleteUserStatus = super.checkUpdateCounts(deleteUserCount);
+
+        if (deleteMSUStatus == 1 && deleteBaselineStatus == 1 && deleteHistoryStatus == 1 && deleteUserStatus == 1){
+            con.commit();
+            con.close();
+            return true;
+        } else{
+            con.rollback();
+            con.close();
+            return false;
+        }
     }
 
     public UserCredentials getUserByStaffId(String staff_id) throws SQLException, ClassNotFoundException {
@@ -157,94 +209,4 @@ public class userscon extends main.java.connection.mysqlcon {
 
         return getUserByStaffId(staffid);
     }
-
-    // following sections of code will have to be redone completely for baseline table
-    // please use the following for reference
-//    public ArrayList<main.java.authentication.json.GetFacilityUtilResult> readFacilityUtil(String staffId) throws SQLException, ClassNotFoundException {
-//        Connection con = super.getConnection();
-//        Statement stmt = con.createStatement();
-//        String my_string = "select * from facility_util where staff_id = '" + staffId + "'";
-//        ResultSet rs = stmt.executeQuery(my_string);
-//
-//        ArrayList<main.java.authentication.json.GetFacilityUtilResult> rv = new ArrayList<>();
-//        while (rs.next()) {
-//            rv.add(new main.java.authentication.json.GetFacilityUtilResult(
-//                    rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5),
-//                    rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9), rs.getString(10),
-//                    rs.getString(11)
-//            ));
-//        }
-//        con.close();
-//
-//        if (rv.size() == 0) {
-//            return new ArrayList<main.java.authentication.json.GetFacilityUtilResult>();
-//        }
-//
-//        return rv;
-//    }
-//
-//    /**
-//     * @return -1 if there is an error
-//     */
-//    public int getNextFaciId() {
-//        try {
-//            Connection con = super.getConnection();
-//            Statement stmt = con.createStatement();
-//            String my_string = "select max(faci_id) from facility_util";
-//            ResultSet rs = stmt.executeQuery(my_string);
-//
-//            if (rs.next()) {
-//                return rs.getInt(1) + 1;
-//            }
-//
-//            return 1;
-//        } catch (Exception e) {
-//            return -1;
-//        }
-//    }
-//
-//    public String createFacilityUtil(ArrayList<main.java.authentication.json.FacilityUtil> data, String staff_id, int faci_id) throws SQLException, ClassNotFoundException {
-//        Connection con = super.getConnection();
-//        con.setAutoCommit(false);
-//        Statement stmt = con.createStatement();
-//        String sql = "insert into facility_util (faci_id, staff_id, slot_id_utid, sales_order, customer, configuration, model, tool_start, mfg_commit_ship_date, bay, week_of_friday) ";
-//        sql += "values (?,?,?,?,?,?,?,?,?,?,?)";
-//        PreparedStatement pstmt = con.prepareStatement(sql);
-//
-//        for (main.java.authentication.json.FacilityUtil row : data) {
-//            pstmt.setString(1, Integer.toString(faci_id));
-//            pstmt.setString(2, staff_id);
-//            pstmt.setString(3, row.getSlot_id_utid().equals("") ? null : row.getSlot_id_utid());
-//            pstmt.setString(4, row.getSales_order());
-//            pstmt.setString(5, row.getCustomer());
-//            pstmt.setString(6, row.getConfiguration().equals("") ? null : row.getConfiguration());
-//            pstmt.setString(7, row.getModel());
-//            pstmt.setString(8, row.getTool_start());
-//            pstmt.setString(9, row.getMfg_commit_ship_date());
-//            pstmt.setString(10, row.getBay());
-//            pstmt.setString(11, row.getWeek_of_friday());
-//            pstmt.addBatch();
-//        }
-//
-//        // execute the batch
-//        int[] updateCounts = pstmt.executeBatch();
-//        int status = super.checkUpdateCounts(updateCounts);
-//
-//        pstmt.close();
-//        con.close();
-//        if (status == -1) {
-//            return "Failed adding facility usage";
-//        }
-//        return "Successfully added facility usage";
-//    }
-//
-//    public String removeUsage(String staff_id) throws SQLException, ClassNotFoundException {
-//        Connection con = super.getConnection();
-//        Statement stmt = con.createStatement();
-//        String sqlStr = "delete from facility_util where staff_id = '" + staff_id + "'";
-//        stmt.executeUpdate(sqlStr);
-//        con.close();
-//
-//        return "Successfully deleted facility usage";
-//    }
 }

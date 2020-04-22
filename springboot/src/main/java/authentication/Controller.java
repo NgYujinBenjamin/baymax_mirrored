@@ -25,6 +25,8 @@ import main.java.authentication.json.JsonObject;
 import main.java.authentication.json.JsonResponses;
 import main.java.authentication.json.users.NewPassword;
 
+import main.java.history.HistoryController;
+import main.java.authentication.json.HistoryDetails;
 
 @CrossOrigin
 @RestController
@@ -32,11 +34,18 @@ public class Controller {
 
     private static final Token TOKEN = new Token();
     private static final userscon userscon = new userscon();
-    private static final historycon historyscon = new historycon();
+    private static final historycon historycon = new historycon();
     private static final String ADMINTOKENPREFIX = "adminToken";
     private static final String ADMINTOKEN = "baymaxFTW";
+    private static final HistoryController historyController = new HistoryController();
 
-    // done
+    /**
+     * Registers a new user and automatically signs him in
+     * @param userDetails
+     * @return a JWT token of successful login
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
     @RequestMapping(path = "/register", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
     public JsonObject register(@RequestBody RegistrationDetails userDetails) throws SQLException, ClassNotFoundException {
         userscon.addUser(userDetails.getUsername(),
@@ -50,7 +59,12 @@ public class Controller {
         return new TokenSuccess(token);
     }
 
-    // original by Ben
+    /**
+     *
+     * @return list of every registered user
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
     @RequestMapping(path = "/getusers", method = RequestMethod.GET, produces = "application/json")
     public ArrayList<User> getUsers() throws SQLException, ClassNotFoundException {
         return userscon.getAllUsers();
@@ -67,9 +81,10 @@ public class Controller {
     }
 
     @RequestMapping(path = "/deleteuser", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-    public String deleteUser(@RequestBody UserCredentials details, @RequestHeader(ADMINTOKENPREFIX) String token) throws SQLException, ClassNotFoundException, InvalidTokenException {
+    public String deleteUser(@RequestBody UserCredentials details, @RequestHeader(ADMINTOKENPREFIX) String token) throws SQLException, ClassNotFoundException, InvalidTokenException, Exception {
         if (ADMINTOKEN.equals(token)) {
-            String message = userscon.deleteUser(details.staff_id) ? "Success" : "Fail";
+            ArrayList<HistoryDetails> historyDetails = historyController.getHistory(details.staff_id);
+            String message = userscon.deleteUser(details.staff_id, historyDetails) ? "Success" : "Fail";
             return message;
         }
         throw new InvalidTokenException("Invalid Admin Token");
@@ -120,8 +135,6 @@ public class Controller {
         // be thrown from Token class
         return new ResponseEntity<JsonObject>(new JsonResponse("SUCCESS", TOKEN.retrieveUserObject(token)), HttpStatus.OK);
     }
-
-    // to be discussed
 
 
     public String getCurrentDateTime() {

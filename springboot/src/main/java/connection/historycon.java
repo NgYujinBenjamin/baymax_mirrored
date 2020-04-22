@@ -33,13 +33,13 @@ public class historycon extends main.java.connection.mysqlcon {
         return rv;
     }
 
-    public ArrayList<JsonObject> getHistory(String staffId) throws SQLException, ClassNotFoundException, ParseException {
+    public ArrayList<HistoryDetails> getHistory(String staffId) throws SQLException, ClassNotFoundException, ParseException {
         Connection con = super.getConnection();
         Statement stmt = con.createStatement();
         String my_string = "select * from history where staff_id = '" + staffId + "' order by historyID desc";
         ResultSet rs = stmt.executeQuery(my_string);
 
-        ArrayList<JsonObject> rv = new ArrayList<>();
+        ArrayList<HistoryDetails> rv = new ArrayList<>();
         ArrayList<String> historyId_to_remove = new ArrayList<>();
         int count = 0;
 
@@ -756,68 +756,4 @@ public class historycon extends main.java.connection.mysqlcon {
     }
 
 
-    // public String addMassSlotUpload(ArrayList<main.java.history.MassSlotUploadDetails> data, int msuId) throws SQLException, ClassNotFoundException {
-
-    //     Connection con = super.getConnection();
-    //     // for (main.java.authentication.json.MassSlotUploadDetails row : data) {
-    //     for (main.java.history.MassSlotUploadDetails row : data) {
-    //         Statement stmt = con.createStatement();
-    //         String defSql = "insert into mass_slot_upload (historyID, argo_id, slot_id, slot_status, ship_rev_type, build_category, build_product, slot_plan_notes, plan_product_type, ship_risk, ship_risk_reason, comment_for_change, committed_ship, secondary_customer_name, fab_id, sales_order, forecast_id, mfg_commit_date, ship_recognition_date, mrp_date, build_complete, int_ops_ship_ready_date, plant, category, core_need_date, core_arrival_date, refurb_start_date, refurb_complete_date, donor_status, core_utid, core_notes, mfg_status, qty, config_note, drop_ship, rma, product_pn, move_to_storage, off_date_to_de, off_date_to_mfg, install_start_date, cycle_time_days, flex, fulfilled) ";
-    //         defSql += "values (";
-    //         defSql += "'" + msuId + "',";
-    //         defSql += "'" + row.getArgo_id() + "',";
-    //         defSql += "'" + row.getSlot_id() + "',";
-    //         defSql += "'" + row.getSlot_status() + "',";
-    //         defSql += "'" + row.getShip_rev_type() + "',";
-    //         defSql += "'" + row.getBuild_category() + "',";
-    //         defSql += "'" + row.getBuild_product() + "',";
-    //         defSql += "'" + row.getSlot_plan_notes() + "',";
-    //         defSql += "'" + row.getPlan_product_type() + "',";
-    //         defSql += "'" + row.getShip_risk() + "',";
-    //         defSql += "'" + row.getShip_risk_reason() + "',";
-    //         defSql += "'" + row.getComment_for_change() + "',";
-    //         defSql += "'" + row.getCommited_ship() + "',";
-    //         defSql += "'" + row.getSecondary_customer_name() + "',";
-    //         defSql += row.getFab_id() == null ? "null ," : "'" + row.getFab_id() + "',";
-    //         defSql += row.getSales_order() == null ? "null ," : "'" + row.getSales_order() + "',";
-    //         defSql += row.getForecast_id() == null ? "null ," : "'" + row.getForecast_id() + "',";
-    //         defSql += "'" + row.getMfg_commit_date() + "',";
-    //         defSql += "'" + row.getShip_recognition_date() + "',";
-    //         defSql += "'" + row.getMrp_date() + "',";
-    //         defSql += "'" + row.getBuild_complete() + "',";
-    //         defSql += "'" + row.getInt_ops_ship_ready_date() + "',";
-    //         defSql += "'" + row.getPlant() + "',";
-    //         defSql += "'" + row.getCategory() + "',";
-    //         defSql += row.getCore_need_date() == null ? "null ," : "'" + row.getCore_need_date() + "',";
-    //         defSql += row.getCore_arrival_date() == null ? "null ," : "'" + row.getCore_arrival_date() + "',";
-    //         defSql += row.getRefurb_start_date() == null ? "null ," : "'" + row.getRefurb_start_date() + "',";
-    //         defSql += row.getRefurb_complete_date() == null ? "null ," : "'" + row.getRefurb_complete_date() + "',";
-    //         defSql += "'" + row.getDonor_status() + "',";
-    //         defSql += row.getCore_utid() == null ? "null ," : "'" + row.getCore_utid() + "',";
-    //         defSql += "'" + row.getCore_notes() + "',";
-    //         defSql += "'" + row.getMfg_status() + "',";
-    //         defSql += row.getQty() == null ? "null ," : "'" + row.getQty() + "',";
-    //         defSql += "'" + row.getConfig_note() + "',";
-    //         defSql += "'" + row.getDrop_ship() + "',";
-    //         defSql += "'" + row.getRma() + "',";
-    //         defSql += "'" + row.getProduct_pn() + "',";
-    //         defSql += "null ,";
-    //         defSql += row.getOff_date_to_de() == null ? "null ," : "'" + row.getOff_date_to_de() + "',";
-    //         defSql += row.getOff_date_to_mfg() == null ? "null ," : "'" + row.getOff_date_to_mfg() + "',";
-    //         defSql += row.getInstall_start_date() == null ? "null ," : "'" + row.getInstall_start_date() + "',";
-    //         defSql += "'" + row.getCycle_time_days() + "',";
-    //         // defSql += row.getFlex() == null ? "null ," : "'" + row.getFlex() + "',";
-    //         // defSql += "'" + row.getFulfilled() + "'";
-    //         defSql += "null ,";
-    //         defSql += "0";
-
-    //         defSql += ");";
-    //         // return defSql;
-    //         stmt.executeUpdate(defSql);
-    //     }
-
-    //     con.close();
-
-    //     return "Success";
-    // }
 }
