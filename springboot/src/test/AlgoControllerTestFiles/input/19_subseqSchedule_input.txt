@@ -145,7 +145,7 @@
           "flex04": null,
           "buildQtr": "CY20Q2",
           "toolStartDate": "18/05/2020",
-          "endDate": "15/06/2020",
+          "endDate": "01/06/2020",
           "gapDays": 18,
           "lockMRPDate": true,
           "sendToStorageDate": null

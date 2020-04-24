@@ -17,6 +17,7 @@ import com.google.gson.*;
 import main.java.algorithm.Objects.*;
 import main.java.algorithm.Calculation.*;
 import main.java.authentication.json.JsonObject;
+import main.java.authentication.json.HistoryDetails;
 
 @CrossOrigin
 @RestController
@@ -116,13 +117,15 @@ public class HistoryController {
 
         List<Map<String, Object>> baseLineOccupancy = conn.getBaseLineOccupancy(historyID);
         List<Map<String, Object>> bayOccupancy = conn.getBayOccupancy(historyID);
+
         Integer numBays = conn.getNumBay(historyID, staffID);
         Integer minGap = conn.getMinGap(historyID, staffID);
         Integer maxGap = conn.getMaxGap(historyID, staffID);
 
-        for (int i = 0; i < baseLineOccupancy.size(); i++) {
-            Object productRaw = baseLineOccupancy.get(i);
+        for (Object productRaw : baseLineOccupancy) {
+//            System.out.println(productRaw);
             Product p = new Product(productRaw);
+            p.updateStringFields();
             // System.out.println(p.getMRPDate());
             baseLineProduct.add(p);
         }
@@ -130,6 +133,7 @@ public class HistoryController {
         for (int i = 1; i < bayOccupancy.size(); i++) {
             Object productRaw = bayOccupancy.get(i);
             Product p = new Product(productRaw);
+            p.updateStringFields();
             allProduct.add(p);
         }
 
@@ -151,7 +155,7 @@ public class HistoryController {
     }
 
     @RequestMapping(path = "/history/{staffId}", method = RequestMethod.GET, produces = "application/json")
-    public ArrayList<JsonObject> getHistory(@PathVariable("staffId") String staffId) throws SQLException, ClassNotFoundException, ParseException {
+    public ArrayList<HistoryDetails> getHistory(@PathVariable("staffId") String staffId) throws SQLException, ClassNotFoundException, ParseException {
         return conn.getHistory(staffId);
     }
 
