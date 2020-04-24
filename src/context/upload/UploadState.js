@@ -620,31 +620,51 @@ const UploadState = (props) => {
     // @param   (object)
     const getQtrs = (postResult) => {
       const qtrs = new Array();
-      Object.keys(postResult.bayOccupancy).map(quarterName => 
-          qtrs.push(quarterName)
-      )
+
+      if(postResult != null){
+        Object.keys(postResult).map(type => {
+          Object.keys(postResult[type]).map(quarterName => {
+            if (!qtrs.includes(quarterName)){
+              qtrs.push(quarterName)
+            }
+          })
+        })
+      }
+
       return qtrs;
     }
 
+    // @loc     called in getUniqueDates function
+    // @desc    sort the dates in ascending order
+    // @param   (object)
+    const sortDate = (dateArr) => {
+      for(let i=0; i<dateArr.length; i++){
+        dateArr.sort(function(a,b){
+          return new Date(a) - new Date(b);
+        });
+      }
+    }
+
     // @loc     called in updatePostResultEmpties function
-    // @desc    compile an array of unique dates for the first quarter. Required for the initial load
+    // @desc    compile an array of unique dates. Required for the initial load
     // @param   (object)
     const getUniqueDates = (postResult) => {
-      const qtrs = getQtrs(postResult);
-      const firstQtr = qtrs[0];
+      const qtrs = getQtrs(postResult);      
+      let newQtrDates, newQtrDatesUnique, allDates = [];
 
-      let SfirstQtrDates = [];
-      if( firstQtr in postResult.bayOccupancy){
-        SfirstQtrDates = postResult.bayOccupancy[firstQtr][0];
+      for(let i = 0; i < qtrs.length; i++){
+        newQtrDates = []
+        Object.keys(postResult).map(type => {
+          if(postResult[type].hasOwnProperty(qtrs[i])){
+            let obj = postResult[type][qtrs[i]][0];
+            newQtrDates = obj.concat(newQtrDates);
+            sortDate(newQtrDates);
+          }
+        })
+        
+        newQtrDatesUnique = Array.from(new Set(newQtrDates));
+        allDates.push(newQtrDatesUnique);
       }
-
-      let BfirstQtrDates = [];
-      if (firstQtr in postResult.baseLineOccupancy){
-        BfirstQtrDates = postResult.baseLineOccupancy[firstQtr][0];
-      }
-
-      let allDates = SfirstQtrDates.concat(BfirstQtrDates);
-      allDates = Array.from(new Set(allDates));
 
       return allDates;
     }
@@ -654,38 +674,37 @@ const UploadState = (props) => {
     // @param   (object, int)
     const updatePostResultEmpties = (postResult, minGapDays) => {
       let postResultUpdate = JSON.parse(JSON.stringify(postResult));
+      let qtrDates = getUniqueDates(postResultUpdate);
+      const allQtrs = getQtrs(postResultUpdate);
 
-      const qtrs = getQtrs(postResultUpdate);
-      const firstQtrDates = getUniqueDates(postResultUpdate);
-      let result = []
+      Object.keys(postResultUpdate).map(type => {
+        Object.keys(postResultUpdate[type]).map(qtrName => {
+          if(qtrName in postResultUpdate.baseLineOccupancy && qtrName in postResultUpdate.bayOccupancy){
+            let index = allQtrs.indexOf(qtrName);
+            let actualDates = qtrDates[index];
 
-      // update baseline 
-      if(qtrs in postResultUpdate.baseLineOccupancy){
-        result = postResultUpdate.baseLineOccupancy[qtrs[0]];
-        for( let i = 1; i < result.length; i++){
-          let EOcount = result[i].slice(1).length;
-          for (let j = EOcount; j < firstQtrDates.length; j++){
-            result[i].push("E");
+            // retabulate all the EOs according to dates
+            let obj = postResultUpdate[type][qtrName];
+        
+            // obj[0] will always be the array of dates
+            for(let i = 1; i < obj.length; i++){
+              let EO = [];
+              for(let j = 0; j < actualDates.length; j++){
+                if(obj[0].includes(actualDates[j])){
+                  // find index of this date in obj[0]
+                  index = obj[0].indexOf(actualDates[j]);
+                  EO.push(obj[i][index+1]);
+                } else{
+                  EO.push("E");
+                }
+              }
+              
+              obj[i].splice(1, obj[i].length);
+              Array.prototype.push.apply(obj[i], EO);
+            }
           }
-        }
-        result[0] = firstQtrDates;
-        postResultUpdate.baseLineOccupancy[qtrs[0]] = result;
-      }
-
-      // update scheduled
-      result = postResultUpdate.bayOccupancy[qtrs[0]];
-      if( result > 0 ){ // ensure that it is not null object
-        for( let i = 1; i < result.length; i++){
-          let EOcount = result[i].slice(1).length;
-          for (let j = EOcount; j < firstQtrDates.length; j++){
-            result[i].splice(1, 0, "E");
-            result[i].join();
-          }
-        }
-
-        result[0] = firstQtrDates;
-        postResultUpdate.bayOccupancy[qtrs[0]] = result;
-      }
+        })
+      })
 
       // update bays and gaps for history
       if("minGap" in postResultUpdate){
@@ -760,13 +779,7 @@ const UploadState = (props) => {
           Object.keys(postResultDone[occupancy]).map( quarter => {
             
             let currentQtr = postResultDone[occupancy][quarter];
-            for(let i=0; i<currentQtr[0].length; i++){
-              
-              // sort the dates in ascending order for table header to output
-              currentQtr[0].sort(function(a,b){
-                return new Date(a) - new Date(b);
-              });
-              
+            for(let i=0; i<currentQtr[0].length; i++){              
               const month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
               let eachDate = new Date(currentQtr[0][i]);
               currentQtr[0][i] = eachDate.getDate() + " " + month[eachDate.getMonth()] + " " + eachDate.getFullYear();
@@ -829,8 +842,6 @@ const UploadState = (props) => {
       postResult.staffID = parseInt(staffID);
       postResult.histID = histID;
 
-      // console.log(postResult);
-
       const config = {
           headers: {
               'Content-Type': 'application/json'
@@ -839,7 +850,6 @@ const UploadState = (props) => {
 
       try {
           let res = await axios.post('http://localhost:8080/savePreSchedule', postResult, config);
-          console.log(res);
 
           dispatch({
               type: SAVE_RESULT,
@@ -859,7 +869,6 @@ const UploadState = (props) => {
     const getHistory = async (staffid, histid) => {
       try {
           const res = await axios.get(`http://localhost:8080/gethistory/${staffid}/${histid}`);
-          console.log(res.data);
           
           dispatch({
               type: GET_HISTORY,
@@ -941,8 +950,6 @@ const UploadState = (props) => {
 
         let data = await convertExcelToJSON(file);
         let scheduleCounter = false;
-
-        // console.log(data)
 
         data[data.length - 1]['Argo ID'] === undefined && data.pop();
 
@@ -1265,7 +1272,9 @@ const UploadState = (props) => {
             loadHistories,
             checkNewBaselineAndBays,
             setNewMinGap,
-            updateHistID
+            updateHistID,
+            getUniqueDates,
+            getQtrs
         }}>
         {props.children}
     </UploadContext.Provider>
