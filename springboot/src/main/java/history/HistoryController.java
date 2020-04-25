@@ -184,12 +184,19 @@ public class HistoryController {
     }
 
     @RequestMapping(path = "/getbaseline", method = RequestMethod.GET, produces = "application/json")
-//    public Map<String, Integer> getbaseline(@RequestParam String staff_id) throws SQLException, ClassNotFoundException, RuntimeException {
     public List<Map<String, Object>> getbaseline(@RequestParam String staff_id) throws SQLException, ClassNotFoundException, RuntimeException {
         if (conn.baselinePresentForUser(staff_id)) {
             return conn.getBaselineForUser(staff_id);
         }
         return new ArrayList<>();
+    }
+
+    @RequestMapping(path = "/getbaselinecount", method = RequestMethod.GET, produces = "application/json")
+    public int getbaselinecount(@RequestParam String staff_id) throws SQLException, ClassNotFoundException, RuntimeException {
+        if (conn.baselinePresentForUser(staff_id)) {
+            return conn.getBaselineForUser(staff_id).size();
+        }
+        return 0;
     }
 
 }
