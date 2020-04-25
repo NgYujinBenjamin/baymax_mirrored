@@ -191,12 +191,4 @@ public class HistoryController {
         return new ArrayList<>();
     }
 
-    @RequestMapping(path = "/getbaselinecount", method = RequestMethod.GET, produces = "application/json")
-    public int getbaselinecount(@RequestParam String staff_id) throws SQLException, ClassNotFoundException, RuntimeException {
-        if (conn.baselinePresentForUser(staff_id)) {
-            return conn.getBaselineForUser(staff_id).size();
-        }
-        return 0;
-    }
-
 }
