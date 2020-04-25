@@ -22,7 +22,7 @@ const Postresult = () => {
     
     useEffect(() => {
         updateNavItem(0);
-        if(postResult !== null){
+        if(postResult !== null && postResultDone == null){
             if("minGap" in postResult){
                 setMinGap(postResult.minGap);
             }
