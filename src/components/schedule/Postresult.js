@@ -17,8 +17,8 @@ const Postresult = () => {
     const [ value, setValue ] = useState(0); // this is for tab panel to display quarters
     const [ histCount, sethistCount ] = useState(0);
 
-    const { loadUser, updateNavItem } = authContext
-    const { getQtrs, getUniqueDates, histID, setNewMinGap, newMinGap, bays, minGap, maxGap, setBays, setMinGap, setMaxGap, currentQuarter, postResult, postResultDone, postResultErrors, tabChecker, updateReschedule, createExport, createExportSchedule, updateSave, clearAll, updatePostResultEmpties } = uploadContext;
+    const { user, loadUser, updateNavItem } = authContext
+    const { getBaseline, getQtrs, getUniqueDates, histID, setNewMinGap, newMinGap, bays, minGap, maxGap, setBays, setMinGap, setMaxGap, currentQuarter, postResult, postResultDone, postResultErrors, tabChecker, updateReschedule, createExport, createExportSchedule, updateSave, clearAll, updatePostResultEmpties } = uploadContext;
     
     useEffect(() => {
         updateNavItem(0);
@@ -26,6 +26,7 @@ const Postresult = () => {
             if("minGap" in postResult){
                 setMinGap(postResult.minGap);
             }
+            getBaseline(user.staff_id);
             setNewMinGap(minGap);
             updatePostResultEmpties(postResult, minGap);
         }

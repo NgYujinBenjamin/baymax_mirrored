@@ -54,7 +54,7 @@ const Postresultqtr = ({ schedule, baseline, date, value, num, qtrs, quarter }) 
                         </TableHead>
                         {/* TableRow */}
                         { qtrs.map((quarterName, index) => (quarterName === quarter) ?
-                            <Postresultbody result={quarterName in schedule ? schedule[quarterName].slice(1) : null} baseline={quarterName in baseline ? baseline[quarterName].slice(1) : null } key={index} quarter={quarterName}/> : null
+                            <Postresultbody result={quarterName in schedule ? schedule[quarterName].slice(1) : null} base={quarterName in baseline ? baseline[quarterName].slice(1) : null } key={index} quarter={quarterName}/> : null
                         )}
                     </Table>
                 </TableContainer>

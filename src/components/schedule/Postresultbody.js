@@ -5,7 +5,7 @@ import AuthContext from '../../context/auth/authContext';
 import UploadContext from '../../context/upload/uploadContext';
 import AlertContext from '../../context/alert/alertContext';
 
-const Postresultbody = ({ result, baseline, quarter }) => {
+const Postresultbody = ({ result, base, quarter }) => {
     const [ objs, setObjects ] = useState(result);
     
     const uploadContext = useContext(UploadContext);
@@ -13,7 +13,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
     const authContext = useContext(AuthContext);
     
     const { setAlert } = alertContext;
-    const { histID, newMinGap, bays, minGap, maxGap, validateDate, validateNum, currentQuarter, updateCurrentQuarter, reschedule, tabUpdate, tabChecker, reschedulePostResult, saveResult, updateReschedule, updatePostResult, postResultDone, postResult, saveHistory, updateSave, endDateCheck, postResultErrors, handlePostResultError } = uploadContext;
+    const { baseline, histID, newMinGap, bays, minGap, maxGap, validateDate, validateNum, currentQuarter, updateCurrentQuarter, reschedule, tabUpdate, tabChecker, reschedulePostResult, saveResult, updateReschedule, updatePostResult, postResultDone, postResult, saveHistory, updateSave, endDateCheck, postResultErrors, handlePostResultError } = uploadContext;
     const { user } = authContext;
 
     useEffect(() => {
@@ -22,10 +22,12 @@ const Postresultbody = ({ result, baseline, quarter }) => {
         } 
 
         if( (currentQuarter !== null && currentQuarter !== quarter) || saveHistory || reschedule || tabUpdate ){
-            appLevelSave(postResultDone, currentQuarter); // save local copy only
+            appLevelSave(postResultDone, currentQuarter, bays, baseline.length, postResultErrors); // save local copy only
             
             if( Object.keys(postResultErrors).length !== 0 ){
-                if(reschedule){
+                if( bays < baseline.length ){
+                    setAlert("Number of Baseline Products exceed Number of Bays allocated.", 'error');
+                } else if(reschedule){
                     setAlert("Please fix existing errors in this table quarter! Failed to send for reschedule.", 'error');
                 } else if(saveHistory){
                     setAlert("Please fix existing errors in this table quarter! Failed to save.", 'error');
@@ -69,7 +71,13 @@ const Postresultbody = ({ result, baseline, quarter }) => {
         //eslint-disable-next-line
     }, [currentQuarter, objs, tabUpdate, saveHistory, reschedule])
 
-    const appLevelSave = (postResultDone, currentQuarter) => {
+    const appLevelSave = (postResultDone, currentQuarter, bays, baseline, postResultErrors) => {
+        if( bays < baseline ){
+            postResultErrors['bay'] = "";
+        } else{
+            delete postResultErrors['bay'];
+        }
+
         updatePostResult(postResultDone, localStorage.getItem('postResultEdit'), currentQuarter);
         localStorage.setItem('postResultEdit', null);
     }
@@ -150,7 +158,7 @@ const Postresultbody = ({ result, baseline, quarter }) => {
         <Fragment>
             {!reschedule &&
                 <TableBody style={{whiteSpace: "nowrap"}}>
-                    { baseline !== null && baseline.map((obj, index) =>
+                    { base !== null && base.map((obj, index) =>
                         <PostresultItem result={obj} id="baseline" key={index} />
                     )}
                     { result !== null && objs.map((obj, index) =>
