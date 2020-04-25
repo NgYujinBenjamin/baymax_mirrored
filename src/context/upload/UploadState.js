@@ -623,11 +623,13 @@ const UploadState = (props) => {
 
       if(postResult != null){
         Object.keys(postResult).map(type => {
-          Object.keys(postResult[type]).map(quarterName => {
-            if (!qtrs.includes(quarterName)){
-              qtrs.push(quarterName)
-            }
-          })
+          if( type == "baseLineOccupancy" || type == "bayOccupancy" ){
+            Object.keys(postResult[type]).map(quarterName => {
+              if (!qtrs.includes(quarterName)){
+                qtrs.push(quarterName)
+              }
+            })
+          }
         })
       }
 
