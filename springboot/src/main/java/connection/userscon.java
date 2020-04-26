@@ -98,7 +98,6 @@ public class userscon extends main.java.connection.mysqlcon {
     public void resetPassword(String username) throws SQLException, ClassNotFoundException {
         Connection con = super.getConnection();
         Statement stmt = con.createStatement();
-        // String pw = TOKEN.generateMD5Hash("password");
         String my_string = "update users set password = '5f4dcc3b5aa765d61d8327deb882cf99' where username = '" + username + "';";
         stmt.executeUpdate(my_string);
         con.close();

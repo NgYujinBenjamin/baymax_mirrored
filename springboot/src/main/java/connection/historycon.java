@@ -161,8 +161,6 @@ public class historycon extends main.java.connection.mysqlcon {
             defSql += row.getOff_date_to_mfg() == null ? "null ," : "'" + row.getOff_date_to_mfg() + "',";
             defSql += row.getInstall_start_date() == null ? "null ," : "'" + row.getInstall_start_date() + "',";
             defSql += "'" + row.getCycle_time_days() + "',";
-            // defSql += row.getFlex() == null ? "null ," : "'" + row.getFlex() + "',";
-            // defSql += "'" + row.getFulfilled() + "'";
             defSql += "null ,";
             defSql += "null ,";
             defSql += "null ,";
@@ -173,7 +171,6 @@ public class historycon extends main.java.connection.mysqlcon {
             defSql += "'" + row.getlockMRPDate() + "'";
 
             defSql += ");";
-            // return defSql;
             stmt.executeUpdate(defSql);
         }
         con.close();
@@ -401,11 +398,9 @@ public class historycon extends main.java.connection.mysqlcon {
         return id;
     }
 
-    // public String addMassSlotUpload(ArrayList<main.java.authentication.json.MassSlotUploadDetails> data, int msuId) throws SQLException, ClassNotFoundException {
     public String addMassSlotUpload(ArrayList<main.java.history.MassSlotUploadDetails> data, int msuId, int isBaseLine) throws SQLException, ClassNotFoundException {
 
         Connection con = super.getConnection();
-        // for (main.java.authentication.json.MassSlotUploadDetails row : data) {
         for (main.java.history.MassSlotUploadDetails row : data) {
             Statement stmt = con.createStatement();
             String defSql = "insert into mass_slot_upload ("+
@@ -463,8 +458,6 @@ public class historycon extends main.java.connection.mysqlcon {
             defSql += row.getOff_date_to_mfg() == null ? "null ," : "'" + row.getOff_date_to_mfg() + "',";
             defSql += row.getInstall_start_date() == null ? "null ," : "'" + row.getInstall_start_date() + "',";
             defSql += "'" + row.getCycle_time_days() + "',";
-            // defSql += row.getFlex() == null ? "null ," : "'" + row.getFlex() + "',";
-            // defSql += "'" + row.getFulfilled() + "'";
             defSql += "null ,";
             defSql += "null ,";
             defSql += "null ,";
@@ -475,7 +468,6 @@ public class historycon extends main.java.connection.mysqlcon {
             defSql += "'" + row.getlockMRPDate() + "'";
 
             defSql += ");";
-            // return defSql;
             stmt.executeUpdate(defSql);
         }
 

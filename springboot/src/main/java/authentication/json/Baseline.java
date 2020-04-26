@@ -6,17 +6,19 @@ import java.util.Map;
 
 public class Baseline implements JsonObject {
     //     variables that was changed
-//    private String Slot_ID/UTID = public String Slot_ID_UTID;;
-//    private String Sold-To_Name = public String Sold_To_Name;;
-//    private String Ship_Revenue_(Int_$) = public String Ship_Revenue_Int_$;;
-//    private String Ship_Risk/Upside = public String Ship_Risk_Upside;;
-//    private String Int._Ops_Ship_Readiness_Date = public String Int_Ops_Ship_Readiness_Date;;
-//    private String New/Used = public String New_Used;;
-//    private String Book_Risk/Upside = public String Book_Risk_Upside;;
-//    private String Change_Request_# = public String Change_Request;;
-//    private String Delivery_# = public String Delivery;;
-//    private String Purchase_Order_# = public String Purchase_Order;;
-//    private String Sold-To_ID = public String Sold_To_ID;;
+    //    the left variable represent the column name from masterops
+    //    while the right variable represent the java variable name used
+    //    private String Slot_ID/UTID = public String Slot_ID_UTID;
+    //    private String Sold-To_Name = public String Sold_To_Name;
+    //    private String Ship_Revenue_(Int_$) = public String Ship_Revenue_Int_$;
+    //    private String Ship_Risk/Upside = public String Ship_Risk_Upside;
+    //    private String Int._Ops_Ship_Readiness_Date = public String Int_Ops_Ship_Readiness_Date;
+    //    private String New/Used = public String New_Used;
+    //    private String Book_Risk/Upside = public String Book_Risk_Upside;
+    //    private String Change_Request_# = public String Change_Request;
+    //    private String Delivery_# = public String Delivery;
+    //    private String Purchase_Order_# = public String Purchase_Order;
+    //    private String Sold-To_ID = public String Sold_To_ID;
 
     public String Argo_ID;
     public String Plant;

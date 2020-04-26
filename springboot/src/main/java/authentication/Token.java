@@ -41,8 +41,6 @@ public class Token {
                 .getSubject();
     }
 
-    //modify code - inform Ben
-    //@MODIFY - add staffid
     public UserCredentials retrieveUserObject(String user_token) throws Exception {
         String username = getJWTSubject(user_token);
         UserCredentials userObject = conn.getUserCredentials(username);
