@@ -57,11 +57,8 @@ public class HistoryController {
                 List dates;
                 MassSlotUploadDetails p;
                 if (i == 0) {
-                    //dates (CY19Q4's [0])
-                    // dates = baseLineOccupancyList.get(i);
                     continue;
                 } else {
-                    //product (CY19Q4's [1,2,3,4,...])
                     p = new MassSlotUploadDetails(baseLineOccupancyList.get(i).get(0));
                     baseLineList.add(p);
                 }
@@ -74,11 +71,8 @@ public class HistoryController {
                 List dates;
                 MassSlotUploadDetails p;
                 if (i == 0) {
-                    //dates (CY19Q4's [0])
-                    // dates = bayOccupancyList.get(i);
                     continue;
                 } else {
-                    //product (CY19Q4's [1,2,3,4,...])
                     p = new MassSlotUploadDetails(bayOccupancyList.get(i).get(0));
                     MSUList.add(p);
                 }
@@ -101,7 +95,6 @@ public class HistoryController {
             conn.updateMSU(MSUList, histID, 0);
 
             return conn.updateHistory(String.valueOf(histID), String.valueOf(staffID), String.valueOf(minGap), String.valueOf(maxGap), String.valueOf(bay), modifiedDate);
-            // return histID;
         }
         conn.addMassSlotUpload(baseLineList, next_id, 1);
         conn.addMassSlotUpload(MSUList, next_id, 0);
@@ -123,10 +116,8 @@ public class HistoryController {
         Integer maxGap = conn.getMaxGap(historyID, staffID);
 
         for (Object productRaw : baseLineOccupancy) {
-//            System.out.println(productRaw);
             Product p = new Product(productRaw);
             p.updateStringFields();
-            // System.out.println(p.getMRPDate());
             baseLineProduct.add(p);
         }
 
@@ -143,15 +134,10 @@ public class HistoryController {
 
         BayRequirement bayReq = new BayRequirement(baseLineProduct, allProduct);
         getAHistory rv = new getAHistory(bayReq, numBays, minGap, maxGap);
-        // System.out.println(bayReq.getBayOccupancy().get("CY20Q1").get(0));
-        // System.out.println(rv.baseLineOccupancy.get("CY20Q1").get(0));
-        // return rv;
 
         Gson gson = new GsonBuilder().serializeNulls().create();
         String json = gson.toJson(rv);
         return json;
-
-        // return BayRequirement.toJSONString(bayReq);
     }
 
     @RequestMapping(path = "/history/{staffId}", method = RequestMethod.GET, produces = "application/json")

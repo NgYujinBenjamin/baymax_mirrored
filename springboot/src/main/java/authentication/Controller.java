@@ -70,7 +70,6 @@ public class Controller {
         return userscon.getAllUsers();
     }
 
-    // done
     @RequestMapping(path = "/changepassword", method = RequestMethod.POST)
     public JsonObject changePass(@RequestBody NewPassword details) throws SQLException, ClassNotFoundException, Exception {
         if (details.getOldPassword().isEmpty() || details.getNewPassword().isEmpty() || details.getUsername().isEmpty() || details.getOldPassword() == null || details.getNewPassword() == null || details.getUsername() == null) {
@@ -107,7 +106,6 @@ public class Controller {
         throw new InvalidTokenException("Invalid Admin Token");
     }
 
-    // done
     @RequestMapping(path = "/login", method = RequestMethod.POST)
     public JsonObject login(@RequestBody LoginDetails inputDetails) throws SQLException, ClassNotFoundException, NullPointerException, InvalidTokenException {
         if (inputDetails.getUsername().isEmpty() || inputDetails.getPassword().isEmpty() || inputDetails.getUsername() == null || inputDetails.getPassword() == null) {
@@ -125,7 +123,6 @@ public class Controller {
         throw new NullPointerException("Username or password is invalid");
     }
 
-    // done
     @RequestMapping(path = "/verify", method = RequestMethod.GET)
     public ResponseEntity<JsonObject> verifyToken(@RequestHeader("x-auth-token") String token) throws Exception {
         TOKEN.validateToken(token);
