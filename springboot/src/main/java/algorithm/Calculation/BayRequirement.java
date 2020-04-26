@@ -31,11 +31,9 @@ public class BayRequirement{
       
         HashMap<String, HashMap<String, Date>> baseLine_earliestStartLatestEnd = findEarliestStartLatestEnd(baseLineProduct);
         HashMap<String, HashMap<String, Date>> bayOccupancy_earliestStartLatestEnd = findEarliestStartLatestEnd(allProduct);
-        // {Q1: {"Earliest start": Date1, "Latest End": Date2}, Q2: ...}
 
         baseLineOccupancy = new TreeMap<String, ArrayList<ArrayList<Object>>>();
         bayOccupancy = new TreeMap<String, ArrayList<ArrayList<Object>>>();
-        // {Q1: [ (weekOf)[Date1, Date2...], (Product1)[Product1, E, E, E, O...], (Product2)[Product2, E, O, O, E...], ...], Q2:...}
         
         Set<String> baseLineProductionQtr = baseLine_earliestStartLatestEnd.keySet();
         Set<String> allProductionQtr = bayOccupancy_earliestStartLatestEnd.keySet();
@@ -49,7 +47,6 @@ public class BayRequirement{
             Date latestEnd = baseLine_earliestStartLatestEnd.get(qtr).get("Latest End");
 
             ArrayList<Object> qtrWeekOf = generateWeekOf(earliestStart, latestEnd);
-            // System.out.println(qtrWeekOf);
             baseLineQtrBayOccupancy.add(qtrWeekOf);
 
             baseLineOccupancy.put(qtr, baseLineQtrBayOccupancy);

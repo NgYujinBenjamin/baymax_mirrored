@@ -39,7 +39,6 @@ public class HeadCount{
             	int currQtrRemWeeks = getCurrentQtrRemWeeks();
             	numHeadCount = (int) Math.ceil((double) numQtrJobs/currQtrRemWeeks);
             } else {
-            	// Subsequent Quarters
             	numHeadCount = (int) Math.ceil((double) numQtrJobs/12);
             } 
             quarterHC.put(q, numHeadCount);
@@ -53,7 +52,6 @@ public class HeadCount{
     private String getCurrentQtr(){
         String quarter = "";
         
-        // Date today = new Date(120, 2, 24); // For testing purposes
     	Date today = new Date();
         
         Integer year = today.getYear() - 100;
@@ -79,23 +77,18 @@ public class HeadCount{
     private int getCurrentQtrRemWeeks(){
     	Date quarterEnd = null;
         
-        // Date today = new Date(120, 2, 24); // For testing purposes
         Date today = new Date();
         
     	int year = today.getYear();
     	int month = today.getMonth();
     	
     	if (month <= 2) {
-    		// Mar 31st
     		quarterEnd = new Date(year, 2, 31);
     	} else if (month <= 5) {
-    		// June 30
     		quarterEnd = new Date(year, 5, 30);
     	} else if (month <= 8) {
-    		// Sep 30
     		quarterEnd = new Date(year, 8, 30);
     	} else {
-    		// Dec 31
     		quarterEnd = new Date(year, 1, 31);
     	}
     	

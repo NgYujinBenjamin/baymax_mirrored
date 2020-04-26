@@ -23,15 +23,11 @@ public class Product implements Comparable<Product> {
     private Integer salesOrder;
     private String forecastID;
     private String slotID_UTID;
-    // private String soldToName;
     private String fabName;
     private String secondaryCustomerName;
-    // private String productFamily;
     private String buildProduct;
-    // private String forecastProduct;
     private String productPN;
     private Integer committedShip$;
-    // private String shipRevenueInt$;
     private String shipRisk_Upside;
     private String shipRiskReason;
     private Date MRPDate;
@@ -40,13 +36,6 @@ public class Product implements Comparable<Product> {
     private Date shipRecogDate;
     private Date handOffDateToDE;
     private Date handOffDateBackToMFG;
-    // private Date SAPCustomerReqDate;
-    // private Date slotRequestDate;
-    // private Date divCommitDate;
-    // private Integer deltaDays;
-    // private String region;
-    // private String SOStatus;
-    // private String caerusPOQtr;
     private Date installStartDate;
     private Integer cycleTimeDays;
     private String slotPlanNote;
@@ -65,42 +54,11 @@ public class Product implements Comparable<Product> {
     private String coreUTID;
     private String coreNotes;
     private String fabID;
-    // private Date PGIDate;
     private String flex01;
     private String flex02;
     private String flex03;
     private String flex04;
     private String buildQtr;
-    // private String shipQtr;
-    // private String shipRecogQtr;
-    // private String MFGSite;
-    // private String division;
-    // private String holds;
-    // private String incoTerms;
-    // private String salesSlotIdentifier;
-    // private String MSOwner;
-    // private String BU;
-    // private String bookRiskReason;
-    // private String bookRisk_Upside;
-    // private String caerusCommit;
-    // private String caerusDescription;
-    // private String caerusProductType;
-    // private Integer changeRequestNumber;
-    // private Integer deliveryNumber;
-    // private Integer purchaseOrderNumber;
-    // private String SBU;
-    // private String salesOpsSlotNotes;
-    // private String segment;
-    // private String slotGap;
-    // private String slotRequestQtr;
-    // private String soldToID;
-    // private String standardCOGS;
-    // private String createdBy;
-    // private Date createdOn;
-    // private Date changedOn;
-    // private Date createdTime;
-    // private String changedBy;
-    // private Date lastChangedTime;
     @Exclude
     private Date latestToolStartDate;
 
@@ -139,12 +97,9 @@ public class Product implements Comparable<Product> {
         salesOrder = (rowData.get("Sales Order") == null) ? null : Integer.parseInt((String) rowData.get("Sales Order"));
         forecastID = (String) rowData.get("Forecast ID");
         slotID_UTID = (String) rowData.get("Slot ID/UTID");
-        // soldToName = (String) rowData.get("Sold-To Name");
         fabName = (String) rowData.get("Fab Name");
         secondaryCustomerName = (String) rowData.get("Secondary Customer Name");
-        // productFamily = (String) rowData.get("Product Family");
         buildProduct = (String) rowData.get("Build Product");
-        // forecastProduct = (String) rowData.get("Forecast Product");
         productPN = (String) rowData.get("Product PN");
         try {
             committedShip$ = (Integer) rowData.get("Committed Ship $");
@@ -157,13 +112,8 @@ public class Product implements Comparable<Product> {
             throw new RuntimeException("Please fill in all values for the column Committed Ship $");
         }
 
-        // shipRevenueInt$ = (String) rowData.get("Ship Revenue (Int $)");
         shipRisk_Upside = (String) rowData.get("Ship Risk/Upside");
         shipRiskReason = (String) rowData.get("Ship Risk Reason");
-        // deltaDays = (Integer) rowData.get("Delta Days");
-        // region = (String) rowData.get("Region");
-        // SOStatus = (String) rowData.get("SO Status");
-        // caerusPOQtr = (String) rowData.get("Caerus PO Qtr");
         try {
             cycleTimeDays = (Integer) rowData.get("Cycle Time Days");
         } catch (Exception e) {
@@ -196,32 +146,6 @@ public class Product implements Comparable<Product> {
             throw new RuntimeException("Please ensure that there are no empty Build Qtrs");
         }
 
-        // shipQtr = (String) rowData.get("Ship Qtr");
-        // shipRecogQtr = (String) rowData.get("Ship Recog Qtr");
-        // MFGSite = (String) rowData.get("MFG Site");
-        // division = (String) rowData.get("Division");
-        // holds = (String) rowData.get("Holds");
-        // incoTerms = (String) rowData.get("IncoTerms");
-        // salesSlotIdentifier = (String) rowData.get("Sales Slot Identifier");
-        // MSOwner = (String) rowData.get("MS Owner");
-        // BU = (String) rowData.get("BU");
-        // bookRiskReason = (String) rowData.get("Book Risk Reason");
-        // bookRisk_Upside = (String) rowData.get("Book Risk/Upside");
-        // caerusCommit = (String) rowData.get("Caerus Commit");
-        // caerusDescription = (String) rowData.get("Caerus Description");
-        // caerusProductType = (String) rowData.get("Caerus Product Type");
-        // changeRequestNumber = (rowData.get("Change Request #") == null) ? null : Integer.parseInt((String) rowData.get("Change Request #"));
-        // deliveryNumber = (rowData.get("Delivery #") == null) ? null : Integer.parseInt((String) rowData.get("Delivery #"));
-        // purchaseOrderNumber = (rowData.get("Purchase Order #") == null) ? null : Integer.parseInt((String) rowData.get("Purchase Order #"));
-        // SBU = (String) rowData.get("SBU");
-        // salesOpsSlotNotes = (String) rowData.get("Sales Ops Slot Notes");
-        // segment = (String) rowData.get("Segment");
-        // slotGap = (String) rowData.get("Slot Gap");
-        // slotRequestQtr = (String) rowData.get("Slot Request Qtr");
-        // soldToID = (String) rowData.get("Sold-To ID");
-        // standardCOGS = (String) rowData.get("Standard COGS");
-        // createdBy = (String) rowData.get("Created By");
-        // changedBy = (String) rowData.get("Changed By");
         lockMRPDate = (Boolean) rowData.get("Lock MRP Date");
 
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -233,19 +157,11 @@ public class Product implements Comparable<Product> {
             shipRecogDate = GenericValidator.isDate((String) rowData.get("Ship Recog Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("Ship Recog Date")) : null;
             handOffDateToDE = GenericValidator.isDate((String) rowData.get("Hand Off Date To DE"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("Hand Off Date To DE")) : null;
             handOffDateBackToMFG = GenericValidator.isDate((String) rowData.get("Hand Off Date Back To MFG"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("Hand Off Date Back To MFG")) : null;
-            // SAPCustomerReqDate = GenericValidator.isDate((String) rowData.get("SAP Customer Req Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("SAP Customer Req Date")): null;
-            // slotRequestDate = GenericValidator.isDate((String) rowData.get("Slot Request Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("Slot Request Date")): null;
-            // divCommitDate = GenericValidator.isDate((String) rowData.get("Div Commit Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("Div Commit Date")): null;
             installStartDate = GenericValidator.isDate((String) rowData.get("Install Start Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("Install Start Date")) : null;
             coreNeedDate = GenericValidator.isDate((String) rowData.get("Core Need Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("Core Need Date")) : null;
             coreArrivalDate = GenericValidator.isDate((String) rowData.get("Core Arrival Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("Core Arrival Date")) : null;
             refurbStartDate = GenericValidator.isDate((String) rowData.get("Refurb Start Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("Refurb Start Date")) : null;
             refurbCompleteDate = GenericValidator.isDate((String) rowData.get("Refurb Complete Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("Refurb Complete Date")) : null;
-            // PGIDate = GenericValidator.isDate((String) rowData.get("PGI Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("PGI Date")): null;
-            // createdOn = GenericValidator.isDate((String) rowData.get("Created On"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("Created On")): null;
-            // changedOn = GenericValidator.isDate((String) rowData.get("Changed On"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("Changed On")): null;
-            // createdTime = GenericValidator.isDate((String) rowData.get("Created Time"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("Created Time")): null;
-            // lastChangedTime = GenericValidator.isDate((String) rowData.get("Last Changed Time"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("Last Changed Time")): null;
             endDate = GenericValidator.isDate((String) rowData.get("End Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("End Date")) : MFGCommitDate;
             sendToStorageDate = GenericValidator.isDate((String) rowData.get("Send To Storage Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String) rowData.get("Send To Storage Date")) : null;
         } catch (ParseException e) {
@@ -261,7 +177,7 @@ public class Product implements Comparable<Product> {
         }
 
         latestToolStartDate = DateUtils.addDays(endDate, -cycleTimeDays);
-        toolStartDate = DateUtils.addDays(MRPDate, -cycleTimeDays); // Useful for baseline products
+        toolStartDate = DateUtils.addDays(MRPDate, -cycleTimeDays);
 
         if (sendToStorageDate != null) {
             leaveBayDate = sendToStorageDate;
@@ -306,21 +222,13 @@ public class Product implements Comparable<Product> {
         salesOrder = (productDetails.get("salesOrder") == null) ? null : (Integer) productDetails.get("salesOrder");
         forecastID = (String) productDetails.get("forecastID");
         slotID_UTID = (String) productDetails.get("slotID_UTID");
-        // soldToName = (String) productDetails.get("Sold-To Name");
         fabName = (String) productDetails.get("fabName");
         secondaryCustomerName = (String) productDetails.get("secondaryCustomerName");
-        // productFamily = (String) productDetails.get("Product Family");
         buildProduct = (String) productDetails.get("buildProduct");
-        // forecastProduct = (String) productDetails.get("Forecast Product");
         productPN = (String) productDetails.get("productPN");
         committedShip$ = (Integer) productDetails.get("committedShip$");
-        // shipRevenueInt$ = (String) productDetails.get("Ship Revenue (Int $)");
         shipRisk_Upside = (String) productDetails.get("shipRisk_Upside");
         shipRiskReason = (String) productDetails.get("shipRiskReason");
-        // deltaDays = (Integer) productDetails.get("Delta Days");
-        // region = (String) productDetails.get("Region");
-        // SOStatus = (String) productDetails.get("SO Status");
-        // caerusPOQtr = (String) productDetails.get("Caerus PO Qtr");
         try {
             cycleTimeDays = (Integer) productDetails.get("cycleTimeDays");
         } catch (Exception e) {
@@ -344,32 +252,6 @@ public class Product implements Comparable<Product> {
         flex03 = (String) productDetails.get("flex03");
         flex04 = (String) productDetails.get("flex04");
         buildQtr = (String) productDetails.get("buildQtr");
-        // shipQtr = (String) productDetails.get("Ship Qtr");
-        // shipRecogQtr = (String) productDetails.get("Ship Recog Qtr");
-        // MFGSite = (String) productDetails.get("MFG Site");
-        // division = (String) productDetails.get("Division");
-        // holds = (String) productDetails.get("Holds");
-        // incoTerms = (String) productDetails.get("IncoTerms");
-        // salesSlotIdentifier = (String) productDetails.get("Sales Slot Identifier");
-        // MSOwner = (String) productDetails.get("MS Owner");
-        // BU = (String) productDetails.get("BU");
-        // bookRiskReason = (String) productDetails.get("Book Risk Reason");
-        // bookRisk_Upside = (String) productDetails.get("Book Risk/Upside");
-        // caerusCommit = (String) productDetails.get("Caerus Commit");
-        // caerusDescription = (String) productDetails.get("Caerus Description");
-        // caerusProductType = (String) productDetails.get("Caerus Product Type");
-        // changeRequestNumber = (productDetails.get("Change Request #") == null) ? null : (Integer) productDetails.get("Change Request #");
-        // deliveryNumber = (productDetails.get("Delivery #") == null) ? null : (Integer) productDetails.get("Delivery #"));
-        // purchaseOrderNumber = (productDetails.get("Purchase Order #") == null) ? null : (Integer) productDetails.get("Purchase Order #");
-        // SBU = (String) productDetails.get("SBU");
-        // salesOpsSlotNotes = (String) productDetails.get("Sales Ops Slot Notes");
-        // segment = (String) productDetails.get("Segment");
-        // slotGap = (String) productDetails.get("Slot Gap");
-        // slotRequestQtr = (String) productDetails.get("Slot Request Qtr");
-        // soldToID = (String) productDetails.get("Sold-To ID");
-        // standardCOGS = (String) productDetails.get("Standard COGS");
-        // createdBy = (String) productDetails.get("Created By");
-        // changedBy = (String) productDetails.get("Changed By");
         lockMRPDate = (Boolean) productDetails.get("lockMRPDate");
 
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -381,19 +263,11 @@ public class Product implements Comparable<Product> {
             shipRecogDate = GenericValidator.isDate((String) productDetails.get("shipRecogDate"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("shipRecogDate")) : null;
             handOffDateToDE = GenericValidator.isDate((String) productDetails.get("handOffDateToDE"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("handOffDateToDE")) : null;
             handOffDateBackToMFG = GenericValidator.isDate((String) productDetails.get("handOffDateBackToMFG"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("handOffDateBackToMFG")) : null;
-            // SAPCustomerReqDate = GenericValidator.isDate((String) productDetails.get("SAP Customer Req Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("SAP Customer Req Date")): null;
-            // slotRequestDate = GenericValidator.isDate((String) productDetails.get("Slot Request Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("Slot Request Date")): null;
-            // divCommitDate = GenericValidator.isDate((String) productDetails.get("Div Commit Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("Div Commit Date")): null;
             installStartDate = GenericValidator.isDate((String) productDetails.get("installStartDate"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("installStartDate")) : null;
             coreNeedDate = GenericValidator.isDate((String) productDetails.get("coreNeedDate"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("coreNeedDate")) : null;
             coreArrivalDate = GenericValidator.isDate((String) productDetails.get("coreArrivalDate"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("coreArrivalDate")) : null;
             refurbStartDate = GenericValidator.isDate((String) productDetails.get("refurbStartDate"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("refurbStartDate")) : null;
             refurbCompleteDate = GenericValidator.isDate((String) productDetails.get("refurbCompleteDate"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("refurbCompleteDate")) : null;
-            // PGIDate = GenericValidator.isDate((String) productDetails.get("PGI Date"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("PGI Date")): null;
-            // createdOn = GenericValidator.isDate((String) productDetails.get("Created On"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("Created On")): null;
-            // changedOn = GenericValidator.isDate((String) productDetails.get("Changed On"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("Changed On")): null;
-            // createdTime = GenericValidator.isDate((String) productDetails.get("Created Time"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("Created Time")): null;
-            // lastChangedTime = GenericValidator.isDate((String) productDetails.get("Last Changed Time"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("Last Changed Time")): null: null;
             endDate = GenericValidator.isDate((String) productDetails.get("endDate"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("endDate")) : MFGCommitDate;
             sendToStorageDate = GenericValidator.isDate((String) productDetails.get("sendToStorageDate"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("sendToStorageDate")) : null;
             toolStartDate = GenericValidator.isDate((String) productDetails.get("toolStartDate"), "dd/MM/yyyy", true) ? dateFormat.parse((String) productDetails.get("toolStartDate")) : null;
@@ -402,7 +276,7 @@ public class Product implements Comparable<Product> {
         }
 
         if (toolStartDate == null) {
-            toolStartDate = DateUtils.addDays(MRPDate, -cycleTimeDays); // Needed for history, which uses this constructor and does not have toolStartDate value
+            toolStartDate = DateUtils.addDays(MRPDate, -cycleTimeDays);
         }
 
         if (MRPDate == null) {
@@ -410,17 +284,15 @@ public class Product implements Comparable<Product> {
         }
 
         if (lockMRPDate != null && lockMRPDate) {
-            // Check if pulled forward beyond the initial recommended MRP Date
             Date originalMRPDate = DateUtils.addDays(toolStartDate, cycleTimeDays);
             if (MRPDate.before(originalMRPDate)) {
                 throw new RuntimeException("The locked MRP date of a product (Slot ID: " + slotID_UTID + ") cannot be brought forward earlier than the recommended MRP date of " + originalMRPDate);
             }
-            latestToolStartDate = toolStartDate; // This is to 'reserve' the resources available to it first
+            latestToolStartDate = toolStartDate;
         } else {
             latestToolStartDate = DateUtils.addDays(endDate, -cycleTimeDays);
         }
 
-        // Special leave bay earlier than MFG Date Scenarios        
         if (sendToStorageDate != null) {
             Date originalMRPDate = DateUtils.addDays(toolStartDate, cycleTimeDays);
 
@@ -455,10 +327,6 @@ public class Product implements Comparable<Product> {
         }
         return thisLatestToolStart.compareTo(otherLatestToolStart);
     }
-
-    // String pattern = "yyyy-MM-dd";
-    // SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-    // Date date = simpleDateFormat.parse("12-01-2018");
 
     /**
      * Returns the ArgoID of the Product

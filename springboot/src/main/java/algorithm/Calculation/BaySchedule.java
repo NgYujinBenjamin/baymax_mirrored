@@ -38,12 +38,10 @@ public class BaySchedule{
         this.quarterHC = quarterHC;
         schedule = new ArrayList<Bay>();
 
-        // Create new bays, up to the maximum provided
         for (int i = 0; i < maxBays; i++){
             schedule.add(new Bay(i));
         }
 
-        // Add baseline product to the bays
         if (baseLineProduct.size() <= maxBays){
             for (int j=0; j < baseLineProduct.size(); j++){
                 Bay b = schedule.get(j);
@@ -77,11 +75,6 @@ public class BaySchedule{
     public ArrayList<Product> getBaseLineProduct(){
         return baseLineProduct;
     }
-
-    // public HashMap<String, HashMap<String, Date>> getEarliestStartLatestEnd(){
-    //     return earliestStartLatestEnd;
-    // }
-
 
     public static String toJSONString(BaySchedule bs){
         Gson gson = new GsonBuilder().setExclusionStrategies(new JSONExclusionStrategy()).create();
@@ -165,14 +158,11 @@ public class BaySchedule{
         Date earliestToolStartDate;
         
         Date today = new Date();
-        // Date today = new Date(120, 2, 24); // For testing purposes
 
         if (bayAvailDate.after(today)){
             // If bayAvailableDate is after current date, we can pull forward up to the maxGap or the date when the bay is available
             Long diff = latestToolStartDate.getTime() - bayAvailDate.getTime();
             Integer diffDays = (int) (diff / (24 * 60 * 60 * 1000));
-                // diffDays +ve if latestToolStartDate is after bayAvailableDate
-                // diffDays -ve if latestToolStartDate is before bayAvailableDate
             
             earliestToolStartDate = DateUtils.addDays(latestToolStartDate, -Math.min(diffDays, gapDiff));
                 // if diffDays is -10 (i.e. toolStart is 10 days before bayAvailDate), then -Math.min(diffDays, gapDiff) will give +10
