@@ -3,7 +3,7 @@ import { TableContainer, Paper, Typography, Box, Table, TableHead, TableRow, Tab
 import Postresultbody from './Postresultbody';
 import PropTypes from 'prop-types';
 
-const Postresultqtr = ({ schedule, baseline, value, num, qtrs, quarter }) => {
+const Postresultqtr = ({ schedule, baseline, date, value, num, qtrs, quarter }) => {
 
     const TabPanel = (props) => {
         const { children, value, index, ...other } = props;
@@ -21,11 +21,6 @@ const Postresultqtr = ({ schedule, baseline, value, num, qtrs, quarter }) => {
             </Typography>
         );
     }
-    
-    let type = baseline
-    if(quarter in schedule){
-        type = schedule;
-    } 
 
     TabPanel.propTypes = {
         children: PropTypes.node,
@@ -52,14 +47,14 @@ const Postresultqtr = ({ schedule, baseline, value, num, qtrs, quarter }) => {
                                 <TableCell>Cycle Time Days</TableCell>
                                 <TableCell>Lock MRP Date?</TableCell>
                                 <TableCell>Move to Storage Date</TableCell>                                
-                                { type[quarter][0].map((date, index) =>
+                                { date[num].map((date, index) =>
                                     <TableCell key={index}>{date}</TableCell>
                                 )}
                             </TableRow>
                         </TableHead>
                         {/* TableRow */}
                         { qtrs.map((quarterName, index) => (quarterName === quarter) ?
-                            <Postresultbody result={quarterName in schedule ? schedule[quarterName].slice(1) : null} baseline={quarterName in baseline ? baseline[quarterName].slice(1) : null } key={index} quarter={quarterName}/> : null
+                            <Postresultbody result={quarterName in schedule ? schedule[quarterName].slice(1) : null} base={quarterName in baseline ? baseline[quarterName].slice(1) : null } key={index} quarter={quarterName}/> : null
                         )}
                     </Table>
                 </TableContainer>

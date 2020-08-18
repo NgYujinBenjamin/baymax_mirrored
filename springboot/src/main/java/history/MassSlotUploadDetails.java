@@ -139,10 +139,7 @@ public class MassSlotUploadDetails implements Comparable<MassSlotUploadDetails>{
         } catch (ParseException e){
             e.printStackTrace();
 
-        }        
-
-        // latestToolStartDate = DateUtils.addDays(endDate == null? "" : endDate, -cycleTimeDays);
-        // toolStartDate = latestToolStartDate;
+        }
 
         if (sendToStorageDate != null){
             leaveBayDate = sendToStorageDate;
@@ -152,8 +149,6 @@ public class MassSlotUploadDetails implements Comparable<MassSlotUploadDetails>{
         } else {
             leaveBayDate = endDate;
         }
-
-        //gapDays = (int) ((MFGCommitDate.getTime() - MRPDate.getTime())/ (24 * 60 * 60 * 1000)); 
     }
 
     public int compareTo(MassSlotUploadDetails other){
@@ -241,37 +236,30 @@ public class MassSlotUploadDetails implements Comparable<MassSlotUploadDetails>{
 
     public String getMrp_date() {
         return MRPDate != null ? formatter.format(MRPDate) : null;
-        // return MRPDate;
     }
 
     public String getInt_ops_ship_ready_date() {
         return intOpsShipReadinessDate != null ? formatter.format(intOpsShipReadinessDate) : null;
-        // return intOpsShipReadinessDate;
     }
 
     public String getMfg_commit_date() {
         return MFGCommitDate != null ? formatter.format(MFGCommitDate) : null;
-        // return MFGCommitDate;
     }
 
     public String getShip_recognition_date() {
         return shipRecogDate != null ? formatter.format(shipRecogDate) : null;
-        // return shipRecogDate;
     }
 
     public String getOff_date_to_de() {
         return handOffDateToDE != null ? formatter.format(handOffDateToDE) : null;
-        // return handOffDateToDE;
     }
 
     public String getOff_date_to_mfg() {
         return handOffDateBackToMFG != null ? formatter.format(handOffDateBackToMFG) : null;
-        // return handOffDateBackToMFG;
     }
 
     public String getInstall_start_date() {
         return installStartDate != null ? formatter.format(installStartDate) : null;
-        // return installStartDate;
     }
 
     public Integer getCycle_time_days() {
@@ -312,22 +300,18 @@ public class MassSlotUploadDetails implements Comparable<MassSlotUploadDetails>{
 
     public String getCore_need_date() {
         return coreNeedDate != null ? formatter.format(coreNeedDate) : null;
-        // return coreNeedDate;
     }
 
     public String getCore_arrival_date() {
         return coreArrivalDate != null ? formatter.format(coreArrivalDate) : null;
-        // return coreArrivalDate;
     }
 
     public String getRefurb_start_date() {
         return refurbStartDate != null ? formatter.format(refurbStartDate) : null;
-        // return refurbStartDate;
     }
 
     public String getRefurb_complete_date() {
         return refurbCompleteDate != null ? formatter.format(refurbCompleteDate) : null;
-        // return refurbCompleteDate;
     }
 
     public String getSendToStorage() {
@@ -336,7 +320,6 @@ public class MassSlotUploadDetails implements Comparable<MassSlotUploadDetails>{
             return "(NULL)";
         }
         return "'" + rv + "'";
-        // return refurbCompleteDate;
     }
 
     public String getDonor_status() {
@@ -378,22 +361,18 @@ public class MassSlotUploadDetails implements Comparable<MassSlotUploadDetails>{
 
     public String getToolStartDate() {
         return toolStartDate != null ? formatter.format(toolStartDate) : null;
-        // return toolStartDate;
     }
 
     public String getLatestToolStartDate() {
         return latestToolStartDate != null ? formatter.format(latestToolStartDate) : null;
-        // return latestToolStartDate;
     }
 
     public String getEndDate() {
         return endDate != null ? formatter.format(endDate) : null;
-        // return endDate;
     }
 
     public String getLeaveBayDate() {
         return leaveBayDate != null ? formatter.format(leaveBayDate) : null;
-        // return leaveBayDate;
     }
 
     public Integer getGapDays() {
@@ -497,7 +476,6 @@ public class MassSlotUploadDetails implements Comparable<MassSlotUploadDetails>{
 
     public void setSendToStorage(Date sendToStorageDate) {
         this.sendToStorageDate = sendToStorageDate;
-        // return refurbCompleteDate;
     }
 
     public void setShipRecogDate(Date shipRecogDate) {

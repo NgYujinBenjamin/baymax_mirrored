@@ -41,8 +41,8 @@ const Profile = () => {
         clearErrors();
         if(newpwd !== reenterpwd){
             setError({'newpwd': 'New password do not match! Please re-enter'});
-        } else if (newpwd.length < 8){
-            setError({'newpwd': 'Password length must be more than 8 characters'});
+        } else if (newpwd.length < 6){
+            setError({'newpwd': 'Password length must be more than or equal to 6 characters'});
         } else {
             updatePwd(user.username, oldpwd, newpwd);
             if (error == null){
@@ -76,7 +76,7 @@ const Profile = () => {
                     <Typography variant='h5' component='h3' gutterBottom>
                         <Avatar src=" " className={classes.large} style={{ margin: '0 auto', marginBottom: '10px' }}/>
                         {/* Got to change to first name and last name once backend has been set up */}
-                        { user && user.username.toUpperCase() + ' ' + user.lastname.toUpperCase() } 
+                        { user && user.firstname.toUpperCase() + ' ' + user.lastname.toUpperCase() } 
                     </Typography>
 
                     <Typography gutterBottom>
@@ -88,7 +88,7 @@ const Profile = () => {
                     {/* Check if user is admin; if so, show the button */}
                     {user !== null && user.role === "admin" && <Typography gutterBottom> 
                         <Link to='/admin' style={{ color: 'white', textDecoration:'none' }}>
-                            <Button variant="contained" id='viewUsers' color="primary" style={{ width: '25%' }}> View / Add Users </Button>
+                            <Button variant="contained" id='viewUsers' color="primary" style={{ width: '25%' }}> Manage Users </Button>
                         </Link>
                     </Typography>}
                     

@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestParam;
 
-// import main.java.algorithm.*;
-
 import java.util.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -19,11 +17,6 @@ import java.text.SimpleDateFormat;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.DateUtil;
-
-// import org.apache.poi.xssf.usermodel.XSSFSheet;  
-// import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import com.google.gson.*;
-import com.google.gson.reflect.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -79,9 +72,8 @@ public class AlgoController {
 
         while (quarterHCChanged && !pastQuarterHC) {
             baySchedule = new BaySchedule(baseLineProduct, allProduct, quarterHC, numBays, gapDiff);
-            // System.out.println(quarterHC);
 
-            // For Logging
+            // Logging
             ArrayList<Bay> schedule = baySchedule.getSchedule();
 
             try (PrintStream out = new PrintStream(new FileOutputStream("./firstScheduling_BayDiagnosis_LOG.txt"), true)) {
@@ -91,14 +83,12 @@ public class AlgoController {
                     out.println("%%%%%%%%%%%%%%%% Bay " + b.getBayID() + " %%%%%%%%%%%%%%%%");
                     for (Product p : productList) {
                         out.print("[ SlotID/UTID:" + p.getSlotID_UTID() + " | ToolStartDate:" + p.getToolStartDate() + " | LeaveBayDate:" + p.getLeaveBayDate() + "] ->");
-                        // out.print("[" + p.getArgoID() + " | " + p.getAssignedBayID() + " | "  + p.getGapDays() + "] ->");
                     }
                     out.println();
                 }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
-            // End of debugging
 
             allProduct = baySchedule.getAllProduct();
             baseLineProduct = baySchedule.getBaseLineProduct();
@@ -117,7 +107,6 @@ public class AlgoController {
                 quarterHC = newQuarterHC;
             }
         }
-        // System.out.println(BayRequirement.toJSONString(bayReq));
         return BayRequirement.toJSONString(bayReq);
     }
 
@@ -183,11 +172,9 @@ public class AlgoController {
         Boolean pastQuarterHC = false;
 
         while (quarterHCChanged && !pastQuarterHC) {
-            // System.out.println(quarterHC);
-
             baySchedule = new BaySchedule(baseLineProduct, allProduct, quarterHC, numBays, gapDiff);
 
-            // For Logging
+            // Logging
             ArrayList<Bay> schedule = baySchedule.getSchedule();
 
             try (PrintStream out = new PrintStream(new FileOutputStream("./subseqScheduling_BayDiagnosis_LOG.txt"), true)) {
@@ -197,15 +184,12 @@ public class AlgoController {
                     out.println("%%%%%%%%%%%%%%%% Bay " + b.getBayID() + " %%%%%%%%%%%%%%%%");
                     for (Product p : productList) {
                         out.print("[ SlotID/UTID:" + p.getSlotID_UTID() + " | ToolStartDate:" + p.getToolStartDate() + " | LeaveBayDate:" + p.getLeaveBayDate() + "] ->");
-                        // out.print("[" + p.getArgoID() + " | " + p.getAssignedBayID() + " | "  + p.getGapDays() + "] ->");
                     }
                     out.println();
                 }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
-            // End of debugging
-
 
             allProduct = baySchedule.getAllProduct();
             baseLineProduct = baySchedule.getBaseLineProduct();
@@ -225,7 +209,6 @@ public class AlgoController {
                 quarterHC = newQuarterHC;
             }
         }
-        // System.out.println(BayRequirement.toJSONString(bayReq));
         return BayRequirement.toJSONString(bayReq);
     }
 }

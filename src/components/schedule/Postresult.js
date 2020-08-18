@@ -17,33 +17,23 @@ const Postresult = () => {
     const [ value, setValue ] = useState(0); // this is for tab panel to display quarters
     const [ histCount, sethistCount ] = useState(0);
 
-    const { loadUser, updateNavItem } = authContext
-    const { histID, setNewMinGap, newMinGap, bays, minGap, maxGap, setBays, setMinGap, setMaxGap, currentQuarter, postResult, postResultDone, postResultErrors, tabChecker, updateReschedule, createExport, createExportSchedule, updateSave, clearAll, updatePostResultEmpties } = uploadContext;
+    const { user, loadUser, updateNavItem } = authContext
+    const { getBaseline, getQtrs, getUniqueDates, histID, setNewMinGap, newMinGap, bays, minGap, maxGap, setBays, setMinGap, setMaxGap, currentQuarter, postResult, postResultDone, postResultErrors, tabChecker, updateReschedule, createExport, createExportSchedule, updateSave, clearAll, updatePostResultEmpties } = uploadContext;
     
     useEffect(() => {
         updateNavItem(0);
-        if(postResult !== null){
+        if(postResult !== null && postResultDone == null){
             if("minGap" in postResult){
                 setMinGap(postResult.minGap);
             }
+            getBaseline(user.staff_id);
             setNewMinGap(minGap);
             updatePostResultEmpties(postResult, minGap);
         }
         //eslint-disable-next-line
     }, [postResult, minGap])
 
-    const qtrs = new Array();
-    if(postResult !== null){
-        Object.keys(postResult).map(type => {
-            if(type == 'baseLineOccupancy' || type == 'bayOccupancy'){
-                Object.keys(postResult[type]).map(quarterName => {
-                    if( !(qtrs.includes(quarterName)) ){
-                        qtrs.push(quarterName)
-                    }
-                })
-            }
-        })
-    }
+    let qtrs = getQtrs(postResult);
 
     const a11yProps = (index) => {
         return {
@@ -132,7 +122,7 @@ const Postresult = () => {
                 </AppBar>
                             
                 {postResultDone !== null && qtrs.map((qtr, index) =>
-                    <Postresultqtr schedule={postResultDone.bayOccupancy} baseline={postResultDone.baseLineOccupancy} value={value} num={index} qtrs={qtrs} quarter={qtr} key={index}/>
+                    <Postresultqtr schedule={postResultDone.bayOccupancy} baseline={postResultDone.baseLineOccupancy} date={getUniqueDates(postResultDone)} value={value} num={index} qtrs={qtrs} quarter={qtr} key={index}/>
                 )}
             </div>
             
